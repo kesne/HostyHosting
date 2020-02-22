@@ -1,0 +1,67 @@
+directive @auth on FIELD_DEFINITION
+
+type TOTPOnboarding {
+    secret: String!
+}
+
+type Organization {
+    id: Int!
+    name: String!
+    # users: [User!]!
+}
+
+# TODO: Users probably have roles.
+type User {
+    id: Int!
+    name: String!
+    email: String!
+    hasTOTP: Boolean!
+    onboardTOTP: TOTPOnboarding
+    organization: Organization
+}
+
+type Application {
+    id: Int!
+    name: String!
+    createdAt: String!
+}
+
+type Result {
+    ok: Boolean!
+}
+
+type SignInResult {
+    ok: Boolean!
+    requiresTOTP: Boolean!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String!
+    endCursor: String!
+}
+
+type ResetPassword {
+    complete: Boolean!
+}
+
+type Query {
+    me: User! @auth
+    application(id: Int!): Application! @auth
+}
+
+type Mutation {
+    # ACCOUNT MANAGEMENT:
+    signUp(organizationName: String!, name: String!, email: String!, password: String!): Result!
+    signIn(email: String!, password: String!): SignInResult!
+    exchangeTOTP(token: String!): Result!
+    enableTotp(secret: String!, token: String!): Result! @auth
+    disableTotp(password: String!): Result! @auth
+    updateAccount(name: String, email: String): User! @auth
+    forgotPassword(email: String!): Result!
+    resetPassword(uuid: String!, password: String): ResetPassword!
+
+    # APPLICATIONS:
+    createApplication(name: String!): Application! @auth
+}

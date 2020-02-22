@@ -1,0 +1,51 @@
+{
+  "name": "@daas/backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "scripts": {
+    "seed": "ts-node --transpile-only ./src/__dev__/seed.ts",
+    "codegen": "graphql-codegen",
+    "start": "ts-node-dev --respawn --watch ./schema.graphql --transpileOnly ./src/index.ts"
+  },
+  "dependencies": {
+    "@graphql-codegen/cli": "1.11.2",
+    "@graphql-codegen/typescript": "1.11.2",
+    "@graphql-codegen/typescript-resolvers": "1.11.2",
+    "@koa/cors": "^3.0.0",
+    "@koa/router": "^8.0.5",
+    "apollo-server-koa": "^2.9.15",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "bull": "^3.12.1",
+    "cookie": "^0.4.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.6",
+    "ioredis": "^4.14.1",
+    "koa": "^2.10.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-redis": "^4.0.0",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.12.3",
+    "otplib": "^12.0.0",
+    "pg": "^7.17.0",
+    "reflect-metadata": "^0.1.13",
+    "subscriptions-transport-ws": "^0.9.16",
+    "typeorm": "^0.2.22"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/bull": "^3.10.6",
+    "@types/cookie": "^0.3.3",
+    "@types/koa-redis": "^4.0.0",
+    "@types/koa-session": "^5.10.1",
+    "@types/koa__router": "^8.0.2",
+    "@types/node": "^13.1.2",
+    "node-dev": "^4.0.0",
+    "sqlite3": "^4.1.1",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.4"
+  }
+}

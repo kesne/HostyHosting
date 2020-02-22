@@ -1,0 +1,6 @@
+query Application($id: Int!) {
+    application(id: $id) {
+        id
+        name
+    }
+}

@@ -1,0 +1,10 @@
+fragment MeFragment on User {
+    id
+    name
+    email
+    hasTOTP
+    organization {
+        id
+        name
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "@daas/monorepo",
+    "repository": "git@github.com:kesne/daas.git",
+    "author": "Jordan Gensler <jordangens@gmail.com>",
+    "scripts": {
+        "codegen": "yarn workspace @daas/backend codegen && yarn workspace @daas/frontend codegen"
+    },
+    "workspaces": [
+        "packages/*"
+    ],
+    "license": "SEE LICENSE IN LICENSE.MD",
+    "private": true,
+    "dependencies": {},
+    "devDependencies": {}
+}

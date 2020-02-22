@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+    postgres:
+        container_name: 'daas-postgres'
+        image: 'postgres:11'
+        ports:
+            - '127.0.0.1:5432:5432'
+        volumes:
+            - 'pgdata:/var/lib/postgresql/data/'
+        environment:
+            POSTGRES_PASSWORD: daas
+
+    redis:
+        container_name: 'daas-redis'
+        image: 'redis'
+        ports:
+            - '127.0.0.1:6379:6379'
+        volumes:
+            - 'redisdata:/data'
+
+    backend:
+        image: node:12
+        command: yarn workspace @daas/backend start
+        ports:
+            - '127.0.0.1:1337:1337'
+        volumes:
+            - .:/srv/backend:rw
+        working_dir: /srv/backend
+        env_file:
+            - .env
+        depends_on:
+            - redis
+            - postgres
+
+    frontend:
+        image: node:12
+        command: yarn workspace @daas/frontend dev
+        ports:
+            - '127.0.0.1:3000:3000'
+            - '127.0.0.1:3001:3001'
+        volumes:
+            - .:/srv/frontend:rw
+        working_dir: /srv/frontend
+        depends_on:
+            - backend
+
+volumes:
+    pgdata: {}
+    redisdata: {}
