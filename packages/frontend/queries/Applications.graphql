@@ -1,0 +1,6 @@
+query Applications {
+    applications {
+        id
+        name
+    }
+}
