@@ -56,6 +56,7 @@ const server = new ApolloServer({
 
         return {
             user: ctx.user,
+            organization: ctx.organization,
             session: ctx.session,
             cookies: ctx.cookies
         };
@@ -65,6 +66,9 @@ const server = new ApolloServer({
 // TODO: Why is this defined up here?
 const auth: Koa.Middleware = async (ctx, next) => {
     ctx.user = await User.fromSession(ctx.session);
+    if (ctx.user) {
+        ctx.organization = await ctx.user.organization;
+    }
 
     return next();
 };

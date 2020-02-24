@@ -147,12 +147,12 @@ const MutationResolvers: MutationResolvers<Context> = {
         return { complete: false };
     },
 
-    async createApplication(_parent, { name }, { user }) {
-        const organization = await user.organization;
-
+    async createApplication(_parent, { name }, { user, organization }) {
         const app = new Application();
         app.name = name;
         app.organization = Promise.resolve(organization);
+        app.createdBy = Promise.resolve(user);
+        app.secrets = { foo: 'bar' };
         return await app.save();
     }
 };

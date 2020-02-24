@@ -15,7 +15,11 @@ export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  secrets: Array<Secret>,
+  createdBy?: Maybe<User>,
   createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
 };
 
 export type Mutation = {
@@ -102,6 +106,7 @@ export type PageInfo = {
 export type Query = {
    __typename?: 'Query',
   me: User,
+  applications: Array<Application>,
   application: Application,
 };
 
@@ -118,6 +123,12 @@ export type ResetPassword = {
 export type Result = {
    __typename?: 'Result',
   ok: Scalars['Boolean'],
+};
+
+export type Secret = {
+   __typename?: 'Secret',
+  key: Scalars['String'],
+  value: Scalars['String'],
 };
 
 export type SignInResult = {
@@ -222,6 +233,7 @@ export type ResolversTypes = ResolversObject<{
   TOTPOnboarding: ResolverTypeWrapper<TotpOnboarding>,
   Organization: ResolverTypeWrapper<Organization>,
   Application: ResolverTypeWrapper<Application>,
+  Secret: ResolverTypeWrapper<Secret>,
   Mutation: ResolverTypeWrapper<{}>,
   Result: ResolverTypeWrapper<Result>,
   SignInResult: ResolverTypeWrapper<SignInResult>,
@@ -239,6 +251,7 @@ export type ResolversParentTypes = ResolversObject<{
   TOTPOnboarding: TotpOnboarding,
   Organization: Organization,
   Application: Application,
+  Secret: Secret,
   Mutation: {},
   Result: Result,
   SignInResult: SignInResult,
@@ -251,7 +264,11 @@ export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = {  }
 export type ApplicationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  secrets?: Resolver<Array<ResolversTypes['Secret']>, ParentType, ContextType>,
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -280,6 +297,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  applications?: Resolver<Array<ResolversTypes['Application']>, ParentType, ContextType>,
   application?: Resolver<ResolversTypes['Application'], ParentType, ContextType, RequireFields<QueryApplicationArgs, 'id'>>,
 }>;
 
@@ -289,6 +307,11 @@ export type ResetPasswordResolvers<ContextType = any, ParentType extends Resolve
 
 export type ResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['Result'] = ResolversParentTypes['Result']> = ResolversObject<{
   ok?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
+}>;
+
+export type SecretResolvers<ContextType = any, ParentType extends ResolversParentTypes['Secret'] = ResolversParentTypes['Secret']> = ResolversObject<{
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 }>;
 
 export type SignInResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SignInResult'] = ResolversParentTypes['SignInResult']> = ResolversObject<{
@@ -317,6 +340,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>,
   ResetPassword?: ResetPasswordResolvers<ContextType>,
   Result?: ResultResolvers<ContextType>,
+  Secret?: SecretResolvers<ContextType>,
   SignInResult?: SignInResultResolvers<ContextType>,
   TOTPOnboarding?: TotpOnboardingResolvers<ContextType>,
   User?: UserResolvers<ContextType>,

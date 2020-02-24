@@ -20,10 +20,19 @@ type User {
     organization: Organization
 }
 
+type Secret {
+    key: String!
+    value: String!
+}
+
 type Application {
     id: Int!
     name: String!
+    description: String
+    secrets: [Secret!]!
+    createdBy: User
     createdAt: String!
+    updatedAt: String!
 }
 
 type Result {
@@ -48,6 +57,7 @@ type ResetPassword {
 
 type Query {
     me: User! @auth
+    applications: [Application!]! @auth
     application(id: Int!): Application! @auth
 }
 

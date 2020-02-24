@@ -8,10 +8,10 @@ import PageContainer from '../components/PageContainer';
 export default function Home() {
     return (
         <PageContainer>
-            <Typography.Title>Never reveal your phone number again</Typography.Title>
+            <Typography.Title>Run your docker containers in seconds</Typography.Title>
             <Typography.Title level={4}>
-                Send text messages to anyone without revealing your phone number, starting at just
-                $5 per month.
+                Tired of serverless? Spend a tiny amount of money, and we will let you run a
+                container forever (or at least until we run out of funding)
             </Typography.Title>
             <Spacing top={4} bottom={4}>
                 <Button type="primary" size="large" shape="round">
@@ -23,18 +23,18 @@ export default function Home() {
             <Row gutter={16}>
                 <ValueProp
                     Icon={LockOutlined}
-                    header="Private"
-                    description="Messages come from a completely unique phone number."
+                    header="Inexpensive"
+                    description="Get started for as little as $2.50 a month."
                 />
                 <ValueProp
                     Icon={ControlOutlined}
-                    header="In Control"
-                    description="Stop anyone from messaging you instantly by ending a conversation."
+                    header="TODO"
+                    description="Write a middle point."
                 />
                 <ValueProp
                     Icon={ThunderboltOutlined}
                     header="Fast"
-                    description="You can start conversations in seconds, without any setup."
+                    description="Spin up new containers in seconds."
                 />
             </Row>
         </PageContainer>

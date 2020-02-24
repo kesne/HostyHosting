@@ -1,30 +1,40 @@
-import { Button, Form, Input, Typography } from 'antd';
-import { useCreateApplicationMutation } from '../../queries';
-import { useEffect } from 'react';
-import Router from 'next/router';
+import { useState } from 'react';
+import { Button, PageHeader, List } from 'antd';
+import Link from 'next/link';
+import CreateApplication from '../../components/Applications/CreateApplication';
+import { useApplicationsQuery } from '../../queries';
 
 export default function Applications() {
-    const [createApplication, { data, loading }] = useCreateApplicationMutation();
-
-    useEffect(() => {
-        if (data) {
-            Router.push(`/applications/${data.createApplication.id}`);
-        }
-    }, [data]);
-
-    async function handleFinish(values: Record<string, string>) {
-        console.log('creating...');
-        createApplication({
-            variables: {
-                name: values.name
-            }
-        });
-    }
+    const { data, loading } = useApplicationsQuery();
+    const [visible, setVisible] = useState();
 
     return (
         <div>
-            <Typography.Title>Create Application</Typography.Title>
-            <Form onFinish={handleFinish}>
+            <PageHeader
+                ghost={false}
+                title="Applications"
+                extra={[
+                    <Button key="new" type="primary" onClick={() => setVisible(true)}>
+                        New
+                    </Button>
+                ]}
+            >
+                <List
+                    size="large"
+                    dataSource={data?.applications}
+                    loading={loading}
+                    renderItem={item => (
+                        <Link href="/applications/[id]" as={`/applications/${item.id}`}>
+                            <a>
+                                <List.Item>{item.name}</List.Item>
+                            </a>
+                        </Link>
+                    )}
+                />
+            </PageHeader>
+            <CreateApplication visible={visible} onClose={() => setVisible(false)} />
+
+            {/* <Form onFinish={handleFinish}>
                 <Form.Item name="name" label="Application Name">
                     <Input disabled={loading} />
                 </Form.Item>
@@ -33,7 +43,7 @@ export default function Applications() {
                         Create Application
                     </Button>
                 </Form.Item>
-            </Form>
+            </Form> */}
         </div>
     );
 }

@@ -2,8 +2,9 @@ import { Resolvers } from '../../schema.graphql';
 import QueryResolvers from './Query';
 import MutationResolvers from './Mutation';
 import { Context } from '../../types';
-import SubscriptionResolvers from './Subscription';
+// import SubscriptionResolvers from './Subscription';
 import UserResolvers from './User';
+import ApplicationResolvers from './Application';
 
 const resolvers: Resolvers<Context> = {
     Query: {
@@ -15,6 +16,9 @@ const resolvers: Resolvers<Context> = {
     // Subscription: {
     //     ...SubscriptionResolvers
     // },
+    Application: {
+        ...ApplicationResolvers,
+    },
     User: {
         ...UserResolvers
     }

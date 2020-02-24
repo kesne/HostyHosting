@@ -1,28 +1,13 @@
 import { useRouter } from 'next/router';
-import { Spin } from 'antd';
-import { useApplicationQuery } from '../../queries';
+import Application from '../../components/Application';
 
-function ApplicationPage({ id }: { id: number }) {
-    const { data, loading } = useApplicationQuery({
-        variables: {
-            id
-        }
-    });
-
-    if (loading) {
-        return <Spin />;
-    }
-
-    return <div>Application: {data?.application.name}</div>;
-}
-
-export default function Application() {
+export default function ApplicationRoute() {
     const router = useRouter();
     const { id } = router.query;
 
     if (!id) {
-        return <Spin />;
+        return null;
     }
 
-    return <ApplicationPage id={Number(id as string)} />;
+    return <Application id={Number(id as string)} />
 }

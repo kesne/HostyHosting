@@ -16,7 +16,11 @@ export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  secrets: Array<Secret>,
+  createdBy?: Maybe<User>,
   createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
 };
 
 export type Mutation = {
@@ -103,6 +107,7 @@ export type PageInfo = {
 export type Query = {
    __typename?: 'Query',
   me: User,
+  applications: Array<Application>,
   application: Application,
 };
 
@@ -119,6 +124,12 @@ export type ResetPassword = {
 export type Result = {
    __typename?: 'Result',
   ok: Scalars['Boolean'],
+};
+
+export type Secret = {
+   __typename?: 'Secret',
+  key: Scalars['String'],
+  value: Scalars['String'],
 };
 
 export type SignInResult = {
@@ -152,8 +163,26 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
-    & Pick<Application, 'id' | 'name'>
+    & Pick<Application, 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'>
+    & { secrets: Array<(
+      { __typename?: 'Secret' }
+      & Pick<Secret, 'key' | 'value'>
+    )>, createdBy: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    )> }
   ) }
+);
+
+export type ApplicationsQueryVariables = {};
+
+
+export type ApplicationsQuery = (
+  { __typename?: 'Query' }
+  & { applications: Array<(
+    { __typename?: 'Application' }
+    & Pick<Application, 'id' | 'name'>
+  )> }
 );
 
 export type CreateApplicationMutationVariables = {
@@ -332,6 +361,17 @@ export const ApplicationDocument = gql`
   application(id: $id) {
     id
     name
+    description
+    secrets {
+      key
+      value
+    }
+    createdBy {
+      id
+      name
+    }
+    createdAt
+    updatedAt
   }
 }
     `;
@@ -361,6 +401,39 @@ export function useApplicationLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type ApplicationQueryHookResult = ReturnType<typeof useApplicationQuery>;
 export type ApplicationLazyQueryHookResult = ReturnType<typeof useApplicationLazyQuery>;
 export type ApplicationQueryResult = ApolloReactCommon.QueryResult<ApplicationQuery, ApplicationQueryVariables>;
+export const ApplicationsDocument = gql`
+    query Applications {
+  applications {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useApplicationsQuery__
+ *
+ * To run a query within a React component, call `useApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useApplicationsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ApplicationsQuery, ApplicationsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ApplicationsQuery, ApplicationsQueryVariables>(ApplicationsDocument, baseOptions);
+      }
+export function useApplicationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ApplicationsQuery, ApplicationsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ApplicationsQuery, ApplicationsQueryVariables>(ApplicationsDocument, baseOptions);
+        }
+export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery>;
+export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
+export type ApplicationsQueryResult = ApolloReactCommon.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
 export const CreateApplicationDocument = gql`
     mutation CreateApplication($name: String!) {
   createApplication(name: $name) {

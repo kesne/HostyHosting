@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
 import { Organization } from './Organization';
+import { User } from './User';
 
 @Entity()
 export class Application extends BaseEntity {
@@ -8,6 +9,16 @@ export class Application extends BaseEntity {
 
     @Column()
     name!: string;
+
+    @Column({ nullable: true })
+    description!: string;
+
+    // TODO: What happens if a user deletes their account:
+    @ManyToOne(() => User)
+    createdBy!: Promise<User>;
+
+    @Column('json', { nullable: true })
+    secrets!: Record<string, string>;
 
     @CreateDateColumn()
     createdAt!: string;

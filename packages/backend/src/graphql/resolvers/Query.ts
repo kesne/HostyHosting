@@ -7,8 +7,17 @@ const QueryResolvers: QueryResolvers<Context> = {
         return user;
     },
 
-    async application(_parent, { id }, { user }) {
-        const organization = await user.organization;
+    async applications(_parent, _args, { organization }) {
+        const applications = Application.find({
+            where: {
+                organization
+            }
+        });
+
+        return applications;
+    },
+
+    async application(_parent, { id }, { organization }) {
         const app = await Application.findOne({
             where: {
                 id,

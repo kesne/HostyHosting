@@ -2,5 +2,16 @@ query Application($id: Int!) {
     application(id: $id) {
         id
         name
+        description
+        secrets {
+            key
+            value
+        }
+        createdBy {
+            id
+            name
+        }
+        createdAt
+        updatedAt
     }
 }
