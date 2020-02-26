@@ -1,0 +1,10 @@
+mutation UpdateApplication(
+    $id: Int!
+    $name: String
+    $description: String
+    $secret: SecretInput
+) {
+    updateApplication(id: $id, name: $name, description: $description, secret: $secret) {
+        ...ApplicationFragment
+    }
+}

@@ -3,6 +3,12 @@ import { Spin, PageHeader, Tag, Button, Descriptions, Tabs } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
+import Overview from './Overview';
+
+// TODO: We really can return this as a number instead of a string.
+function formatDate(timestamp: string) {
+    return new Date(+timestamp).toDateString();
+}
 
 export default function Application({ id }: { id: number }) {
     const { data, loading, error } = useApplicationQuery({
@@ -36,15 +42,15 @@ export default function Application({ id }: { id: number }) {
                         </Descriptions.Item>
                     )}
                     <Descriptions.Item label="Created At">
-                        {data.application.createdAt}
+                        {formatDate(data.application.createdAt)}
                     </Descriptions.Item>
                     <Descriptions.Item label="Last Updated">
-                        {data.application.updatedAt}
+                        {formatDate(data.application.updatedAt)}
                     </Descriptions.Item>
                 </Descriptions>
-                <Tabs defaultActiveKey="overview" size="large">
+                <Tabs defaultActiveKey="settings" size="large">
                     <Tabs.TabPane tab="Overview" key="overview">
-                        Overview
+                        <Overview />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Containers" key="containers">
                         Containers
@@ -61,7 +67,7 @@ export default function Application({ id }: { id: number }) {
                         }
                         key="settings"
                     >
-                        <Settings />
+                        <Settings application={data.application} />
                     </Tabs.TabPane>
                 </Tabs>
             </PageHeader>

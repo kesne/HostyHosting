@@ -35,6 +35,7 @@ export type Mutation = {
   resetPassword: ResetPassword,
   /** APPLICATIONS: */
   createApplication: Application,
+  updateApplication: Application,
 };
 
 
@@ -89,6 +90,14 @@ export type MutationCreateApplicationArgs = {
   name: Scalars['String']
 };
 
+
+export type MutationUpdateApplicationArgs = {
+  id: Scalars['Int'],
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>
+};
+
 export type Organization = {
    __typename?: 'Organization',
   id: Scalars['Int'],
@@ -127,6 +136,11 @@ export type Result = {
 
 export type Secret = {
    __typename?: 'Secret',
+  key: Scalars['String'],
+  value: Scalars['String'],
+};
+
+export type SecretInput = {
   key: Scalars['String'],
   value: Scalars['String'],
 };
@@ -238,6 +252,7 @@ export type ResolversTypes = ResolversObject<{
   Result: ResolverTypeWrapper<Result>,
   SignInResult: ResolverTypeWrapper<SignInResult>,
   ResetPassword: ResolverTypeWrapper<ResetPassword>,
+  SecretInput: SecretInput,
   PageInfo: ResolverTypeWrapper<PageInfo>,
 }>;
 
@@ -256,6 +271,7 @@ export type ResolversParentTypes = ResolversObject<{
   Result: Result,
   SignInResult: SignInResult,
   ResetPassword: ResetPassword,
+  SecretInput: SecretInput,
   PageInfo: PageInfo,
 }>;
 
@@ -281,6 +297,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   forgotPassword?: Resolver<ResolversTypes['Result'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>,
   resetPassword?: Resolver<ResolversTypes['ResetPassword'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'uuid'>>,
   createApplication?: Resolver<ResolversTypes['Application'], ParentType, ContextType, RequireFields<MutationCreateApplicationArgs, 'name'>>,
+  updateApplication?: Resolver<ResolversTypes['Application'], ParentType, ContextType, RequireFields<MutationUpdateApplicationArgs, 'id'>>,
 }>;
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = ResolversObject<{

@@ -36,6 +36,7 @@ export type Mutation = {
   resetPassword: ResetPassword,
   /** APPLICATIONS: */
   createApplication: Application,
+  updateApplication: Application,
 };
 
 
@@ -90,6 +91,14 @@ export type MutationCreateApplicationArgs = {
   name: Scalars['String']
 };
 
+
+export type MutationUpdateApplicationArgs = {
+  id: Scalars['Int'],
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>
+};
+
 export type Organization = {
    __typename?: 'Organization',
   id: Scalars['Int'],
@@ -132,6 +141,11 @@ export type Secret = {
   value: Scalars['String'],
 };
 
+export type SecretInput = {
+  key: Scalars['String'],
+  value: Scalars['String'],
+};
+
 export type SignInResult = {
    __typename?: 'SignInResult',
   ok: Scalars['Boolean'],
@@ -163,15 +177,20 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
-    & Pick<Application, 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'>
-    & { secrets: Array<(
-      { __typename?: 'Secret' }
-      & Pick<Secret, 'key' | 'value'>
-    )>, createdBy: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
-    )> }
+    & ApplicationFragmentFragment
   ) }
+);
+
+export type ApplicationFragmentFragment = (
+  { __typename?: 'Application' }
+  & Pick<Application, 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'>
+  & { secrets: Array<(
+    { __typename?: 'Secret' }
+    & Pick<Secret, 'key' | 'value'>
+  )>, createdBy: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name'>
+  )> }
 );
 
 export type ApplicationsQueryVariables = {};
@@ -344,6 +363,39 @@ export type UpdateAccountMutation = (
   ) }
 );
 
+export type UpdateApplicationMutationVariables = {
+  id: Scalars['Int'],
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>
+};
+
+
+export type UpdateApplicationMutation = (
+  { __typename?: 'Mutation' }
+  & { updateApplication: (
+    { __typename?: 'Application' }
+    & ApplicationFragmentFragment
+  ) }
+);
+
+export const ApplicationFragmentFragmentDoc = gql`
+    fragment ApplicationFragment on Application {
+  id
+  name
+  description
+  secrets {
+    key
+    value
+  }
+  createdBy {
+    id
+    name
+  }
+  createdAt
+  updatedAt
+}
+    `;
 export const MeFragmentFragmentDoc = gql`
     fragment MeFragment on User {
   id
@@ -359,22 +411,10 @@ export const MeFragmentFragmentDoc = gql`
 export const ApplicationDocument = gql`
     query Application($id: Int!) {
   application(id: $id) {
-    id
-    name
-    description
-    secrets {
-      key
-      value
-    }
-    createdBy {
-      id
-      name
-    }
-    createdAt
-    updatedAt
+    ...ApplicationFragment
   }
 }
-    `;
+    ${ApplicationFragmentFragmentDoc}`;
 
 /**
  * __useApplicationQuery__
@@ -798,3 +838,38 @@ export function useUpdateAccountMutation(baseOptions?: ApolloReactHooks.Mutation
 export type UpdateAccountMutationHookResult = ReturnType<typeof useUpdateAccountMutation>;
 export type UpdateAccountMutationResult = ApolloReactCommon.MutationResult<UpdateAccountMutation>;
 export type UpdateAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateAccountMutation, UpdateAccountMutationVariables>;
+export const UpdateApplicationDocument = gql`
+    mutation UpdateApplication($id: Int!, $name: String, $description: String, $secret: SecretInput) {
+  updateApplication(id: $id, name: $name, description: $description, secret: $secret) {
+    ...ApplicationFragment
+  }
+}
+    ${ApplicationFragmentFragmentDoc}`;
+export type UpdateApplicationMutationFn = ApolloReactCommon.MutationFunction<UpdateApplicationMutation, UpdateApplicationMutationVariables>;
+
+/**
+ * __useUpdateApplicationMutation__
+ *
+ * To run a mutation, you first call `useUpdateApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateApplicationMutation, { data, loading, error }] = useUpdateApplicationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *      secret: // value for 'secret'
+ *   },
+ * });
+ */
+export function useUpdateApplicationMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateApplicationMutation, UpdateApplicationMutationVariables>(UpdateApplicationDocument, baseOptions);
+      }
+export type UpdateApplicationMutationHookResult = ReturnType<typeof useUpdateApplicationMutation>;
+export type UpdateApplicationMutationResult = ApolloReactCommon.MutationResult<UpdateApplicationMutation>;
+export type UpdateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>;

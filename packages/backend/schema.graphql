@@ -61,6 +61,11 @@ type Query {
     application(id: Int!): Application! @auth
 }
 
+input SecretInput {
+    key: String!
+    value: String!
+}
+
 type Mutation {
     # ACCOUNT MANAGEMENT:
     signUp(organizationName: String!, name: String!, email: String!, password: String!): Result!
@@ -74,4 +79,10 @@ type Mutation {
 
     # APPLICATIONS:
     createApplication(name: String!): Application! @auth
+    updateApplication(
+        id: Int!
+        name: String
+        description: String
+        secret: SecretInput
+    ): Application! @auth
 }

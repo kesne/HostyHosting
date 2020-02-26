@@ -1,5 +1,5 @@
 import { authenticator } from 'otplib';
-import { MutationResolvers } from '../../schema.graphql';
+import { MutationResolvers, SecretInput } from '../../schema.graphql';
 import { Context } from '../../types';
 import { User, AuthType } from '../../entity/User';
 import { PasswordReset } from '../../entity/PasswordReset';
@@ -8,27 +8,27 @@ import { Application } from '../../entity/Application';
 
 const RESULT_OK = { ok: true };
 
+function secretInputToObject(secretInput: SecretInput[]): Record<string, string> {
+    const secrets: Record<string, string> = {};
+    secretInput.forEach(secret => {
+        secrets[secret.key] = secret.value;
+    });
+    return secrets;
+}
+
 const MutationResolvers: MutationResolvers<Context> = {
     async signUp(_parent, { name, email, password, organizationName }, { session, cookies }) {
-        console.log('CONSTRUCTING ORG');
         const organization = new Organization();
         organization.name = organizationName;
         await organization.save();
-
-        console.log('ORG CONSTRUCTED');
 
         const user = new User();
         user.name = name;
         user.email = email;
         user.organization = Promise.resolve(organization);
 
-        console.log('USER CONSTRUCTED');
-
         await user.setPassword(password);
-
-        console.log(`USER PASSWORD SET TO "${password}"`);
         await user.save();
-        console.log('user saved');
 
         user.signIn(session, cookies);
 
@@ -153,6 +153,34 @@ const MutationResolvers: MutationResolvers<Context> = {
         app.organization = Promise.resolve(organization);
         app.createdBy = Promise.resolve(user);
         app.secrets = { foo: 'bar' };
+        return await app.save();
+    },
+
+    async updateApplication(_parent, { id, name, description, secret }, { organization }) {
+        const app = await Application.findOne({
+            where: {
+                id,
+                organization
+            }
+        });
+
+        if (!app) {
+            throw new Error('Could not find application to update.');
+        }
+
+        if (typeof name !== 'undefined' && name !== null) {
+            app.name = name;
+        }
+        if (typeof description !== 'undefined' && description !== null) {
+            app.description = description;
+        }
+        if (typeof secret !== 'undefined' && secret !== null) {
+            app.secrets = {
+                ...app.secrets,
+                [secret.key]: secret.value
+            };
+        }
+
         return await app.save();
     }
 };

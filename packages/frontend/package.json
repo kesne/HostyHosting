@@ -35,6 +35,7 @@
         "react-infinite-scroller": "^1.2.4",
         "styled-components": "^5.0.0",
         "subscriptions-transport-ws": "^0.9.16",
+        "use-immer": "^0.3.5",
         "websocket": "^1.0.31",
         "zustand": "^2.2.2"
     },
