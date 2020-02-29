@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { Button, PageHeader, List } from 'antd';
+import { RightOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
 import Link from 'next/link';
 import CreateApplication from '../../components/Applications/CreateApplication';
 import { useApplicationsQuery } from '../../queries';
+
+const ListLink = styled.a`
+    display: block;
+    border-bottom: 1px solid #f0f0f0;
+    :last-child {
+        border-bottom: none;
+    }
+`;
 
 export default function Applications() {
     const { data, loading } = useApplicationsQuery();
@@ -25,25 +35,19 @@ export default function Applications() {
                     loading={loading}
                     renderItem={item => (
                         <Link href="/applications/[id]" as={`/applications/${item.id}`}>
-                            <a>
-                                <List.Item>{item.name}</List.Item>
-                            </a>
+                            <ListLink>
+                                <List.Item actions={[<RightOutlined />]}>
+                                    <List.Item.Meta
+                                        title={item.name}
+                                        description={item.description}
+                                    />
+                                </List.Item>
+                            </ListLink>
                         </Link>
                     )}
                 />
             </PageHeader>
             <CreateApplication visible={visible} onClose={() => setVisible(false)} />
-
-            {/* <Form onFinish={handleFinish}>
-                <Form.Item name="name" label="Application Name">
-                    <Input disabled={loading} />
-                </Form.Item>
-                <Form.Item>
-                    <Button htmlType="submit" loading={loading}>
-                        Create Application
-                    </Button>
-                </Form.Item>
-            </Form> */}
         </div>
     );
 }

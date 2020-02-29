@@ -10,7 +10,7 @@ type Props = {
 export default function Region({ title, description, children, last }: Props) {
     return (
         <>
-            <Row>
+            <Row gutter={16}>
                 <Col span={6}>
                     <Typography.Title level={4}>{title}</Typography.Title>
                     {description && <Typography.Paragraph>{description}</Typography.Paragraph>}

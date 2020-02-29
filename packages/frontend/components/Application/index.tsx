@@ -4,6 +4,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
+import Containers from './Containers';
 
 // TODO: We really can return this as a number instead of a string.
 function formatDate(timestamp: string) {
@@ -29,11 +30,7 @@ export default function Application({ id }: { id: number }) {
                 subTitle={data.application.description}
                 onBack={() => Router.push('/applications')}
                 tags={<Tag color="blue">Running</Tag>}
-                extra={[
-                    <Button key="delete" type="danger">
-                        Delete
-                    </Button>
-                ]}
+                extra={[<Button key="delete">More</Button>]}
             >
                 <Descriptions size="small" column={3}>
                     {data.application.createdBy && (
@@ -48,15 +45,15 @@ export default function Application({ id }: { id: number }) {
                         {formatDate(data.application.updatedAt)}
                     </Descriptions.Item>
                 </Descriptions>
-                <Tabs defaultActiveKey="settings" size="large">
+                <Tabs defaultActiveKey="containers" size="large">
                     <Tabs.TabPane tab="Overview" key="overview">
                         <Overview />
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Containers" key="containers">
-                        Containers
+                    <Tabs.TabPane tab="Deployments" key="deploy">
+                        Deployments
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Deploy" key="deploy">
-                        Deploy
+                    <Tabs.TabPane tab="Containers" key="containers">
+                        <Containers />
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         tab={

@@ -200,7 +200,7 @@ export type ApplicationsQuery = (
   { __typename?: 'Query' }
   & { applications: Array<(
     { __typename?: 'Application' }
-    & Pick<Application, 'id' | 'name'>
+    & Pick<Application, 'id' | 'name' | 'description'>
   )> }
 );
 
@@ -446,6 +446,7 @@ export const ApplicationsDocument = gql`
   applications {
     id
     name
+    description
   }
 }
     `;
