@@ -15,9 +15,69 @@ export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
-  description?: Maybe<Scalars['String']>,
+  description: Scalars['String'],
   secrets: Array<Secret>,
+  containers: Array<Container>,
+  deployments: Array<Deployment>,
   createdBy?: Maybe<User>,
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
+};
+
+export type ApplicationMutations = {
+   __typename?: 'ApplicationMutations',
+  update: Application,
+  createDeployment: Deployment,
+  updateDeployment: Deployment,
+  createContainer: Container,
+  updateContainer: Container,
+};
+
+
+export type ApplicationMutationsUpdateArgs = {
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>
+};
+
+
+export type ApplicationMutationsCreateDeploymentArgs = {
+  image: Scalars['String']
+};
+
+
+export type ApplicationMutationsUpdateDeploymentArgs = {
+  id: Scalars['Int'],
+  image: Scalars['String']
+};
+
+
+export type ApplicationMutationsCreateContainerArgs = {
+  size: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+
+export type ApplicationMutationsUpdateContainerArgs = {
+  id: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+export type Container = {
+   __typename?: 'Container',
+  id: Scalars['Int'],
+  size: Scalars['Int'],
+  number: Scalars['Int'],
+  /** TODO: Make this non-nullable once this link is enforced: */
+  deployment?: Maybe<Deployment>,
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
+};
+
+export type Deployment = {
+   __typename?: 'Deployment',
+  id: Scalars['Int'],
+  image: Scalars['String'],
   createdAt: Scalars['String'],
   updatedAt: Scalars['String'],
 };
@@ -35,7 +95,7 @@ export type Mutation = {
   resetPassword: ResetPassword,
   /** APPLICATIONS: */
   createApplication: Application,
-  updateApplication: Application,
+  application: ApplicationMutations,
 };
 
 
@@ -91,11 +151,8 @@ export type MutationCreateApplicationArgs = {
 };
 
 
-export type MutationUpdateApplicationArgs = {
-  id: Scalars['Int'],
-  name?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  secret?: Maybe<SecretInput>
+export type MutationApplicationArgs = {
+  id: Scalars['Int']
 };
 
 export type Organization = {
@@ -240,39 +297,45 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
-  User: ResolverTypeWrapper<User>,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
-  String: ResolverTypeWrapper<Scalars['String']>,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
-  TOTPOnboarding: ResolverTypeWrapper<TotpOnboarding>,
-  Organization: ResolverTypeWrapper<Organization>,
-  Application: ResolverTypeWrapper<Application>,
-  Secret: ResolverTypeWrapper<Secret>,
+  User: ResolverTypeWrapper<(Partial<User> & Record<string, any>)>,
+  Int: ResolverTypeWrapper<(Partial<Scalars['Int']> & Record<string, any>)>,
+  String: ResolverTypeWrapper<(Partial<Scalars['String']> & Record<string, any>)>,
+  Boolean: ResolverTypeWrapper<(Partial<Scalars['Boolean']> & Record<string, any>)>,
+  TOTPOnboarding: ResolverTypeWrapper<(Partial<TotpOnboarding> & Record<string, any>)>,
+  Organization: ResolverTypeWrapper<(Partial<Organization> & Record<string, any>)>,
+  Application: ResolverTypeWrapper<(Partial<Application> & Record<string, any>)>,
+  Secret: ResolverTypeWrapper<(Partial<Secret> & Record<string, any>)>,
+  Container: ResolverTypeWrapper<(Partial<Container> & Record<string, any>)>,
+  Deployment: ResolverTypeWrapper<(Partial<Deployment> & Record<string, any>)>,
   Mutation: ResolverTypeWrapper<{}>,
-  Result: ResolverTypeWrapper<Result>,
-  SignInResult: ResolverTypeWrapper<SignInResult>,
-  ResetPassword: ResolverTypeWrapper<ResetPassword>,
-  SecretInput: SecretInput,
-  PageInfo: ResolverTypeWrapper<PageInfo>,
+  Result: ResolverTypeWrapper<(Partial<Result> & Record<string, any>)>,
+  SignInResult: ResolverTypeWrapper<(Partial<SignInResult> & Record<string, any>)>,
+  ResetPassword: ResolverTypeWrapper<(Partial<ResetPassword> & Record<string, any>)>,
+  ApplicationMutations: ResolverTypeWrapper<(Partial<ApplicationMutations> & Record<string, any>)>,
+  SecretInput: ResolverTypeWrapper<(Partial<SecretInput> & Record<string, any>)>,
+  PageInfo: ResolverTypeWrapper<(Partial<PageInfo> & Record<string, any>)>,
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {},
-  User: User,
-  Int: Scalars['Int'],
-  String: Scalars['String'],
-  Boolean: Scalars['Boolean'],
-  TOTPOnboarding: TotpOnboarding,
-  Organization: Organization,
-  Application: Application,
-  Secret: Secret,
+  User: (Partial<User> & Record<string, any>),
+  Int: (Partial<Scalars['Int']> & Record<string, any>),
+  String: (Partial<Scalars['String']> & Record<string, any>),
+  Boolean: (Partial<Scalars['Boolean']> & Record<string, any>),
+  TOTPOnboarding: (Partial<TotpOnboarding> & Record<string, any>),
+  Organization: (Partial<Organization> & Record<string, any>),
+  Application: (Partial<Application> & Record<string, any>),
+  Secret: (Partial<Secret> & Record<string, any>),
+  Container: (Partial<Container> & Record<string, any>),
+  Deployment: (Partial<Deployment> & Record<string, any>),
   Mutation: {},
-  Result: Result,
-  SignInResult: SignInResult,
-  ResetPassword: ResetPassword,
-  SecretInput: SecretInput,
-  PageInfo: PageInfo,
+  Result: (Partial<Result> & Record<string, any>),
+  SignInResult: (Partial<SignInResult> & Record<string, any>),
+  ResetPassword: (Partial<ResetPassword> & Record<string, any>),
+  ApplicationMutations: (Partial<ApplicationMutations> & Record<string, any>),
+  SecretInput: (Partial<SecretInput> & Record<string, any>),
+  PageInfo: (Partial<PageInfo> & Record<string, any>),
 }>;
 
 export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = {  }> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
@@ -280,9 +343,35 @@ export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = {  }
 export type ApplicationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   secrets?: Resolver<Array<ResolversTypes['Secret']>, ParentType, ContextType>,
+  containers?: Resolver<Array<ResolversTypes['Container']>, ParentType, ContextType>,
+  deployments?: Resolver<Array<ResolversTypes['Deployment']>, ParentType, ContextType>,
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+}>;
+
+export type ApplicationMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ApplicationMutations'] = ResolversParentTypes['ApplicationMutations']> = ResolversObject<{
+  update?: Resolver<ResolversTypes['Application'], ParentType, ContextType, ApplicationMutationsUpdateArgs>,
+  createDeployment?: Resolver<ResolversTypes['Deployment'], ParentType, ContextType, RequireFields<ApplicationMutationsCreateDeploymentArgs, 'image'>>,
+  updateDeployment?: Resolver<ResolversTypes['Deployment'], ParentType, ContextType, RequireFields<ApplicationMutationsUpdateDeploymentArgs, 'id' | 'image'>>,
+  createContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsCreateContainerArgs, 'size' | 'number'>>,
+  updateContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsUpdateContainerArgs, 'id' | 'number'>>,
+}>;
+
+export type ContainerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Container'] = ResolversParentTypes['Container']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  deployment?: Resolver<Maybe<ResolversTypes['Deployment']>, ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+}>;
+
+export type DeploymentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Deployment'] = ResolversParentTypes['Deployment']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  image?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 }>;
@@ -297,7 +386,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   forgotPassword?: Resolver<ResolversTypes['Result'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>,
   resetPassword?: Resolver<ResolversTypes['ResetPassword'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'uuid'>>,
   createApplication?: Resolver<ResolversTypes['Application'], ParentType, ContextType, RequireFields<MutationCreateApplicationArgs, 'name'>>,
-  updateApplication?: Resolver<ResolversTypes['Application'], ParentType, ContextType, RequireFields<MutationUpdateApplicationArgs, 'id'>>,
+  application?: Resolver<ResolversTypes['ApplicationMutations'], ParentType, ContextType, RequireFields<MutationApplicationArgs, 'id'>>,
 }>;
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = ResolversObject<{
@@ -351,6 +440,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Application?: ApplicationResolvers<ContextType>,
+  ApplicationMutations?: ApplicationMutationsResolvers<ContextType>,
+  Container?: ContainerResolvers<ContextType>,
+  Deployment?: DeploymentResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Organization?: OrganizationResolvers<ContextType>,
   PageInfo?: PageInfoResolvers<ContextType>,

@@ -13,6 +13,12 @@ export default function CreateApplication({ visible, onClose }: Props) {
     const [form] = Form.useForm();
 
     useEffect(() => {
+        if (visible) {
+            form.resetFields();
+        }
+    }, [visible]);
+
+    useEffect(() => {
         if (data) {
             Router.push(`/applications/${data.createApplication.id}`);
         }

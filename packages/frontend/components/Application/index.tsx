@@ -5,6 +5,7 @@ import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
 import Containers from './Containers';
+import Deployments from './Deployments';
 
 // TODO: We really can return this as a number instead of a string.
 function formatDate(timestamp: string) {
@@ -50,10 +51,10 @@ export default function Application({ id }: { id: number }) {
                         <Overview />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Deployments" key="deploy">
-                        Deployments
+                        <Deployments application={data.application} />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Containers" key="containers">
-                        <Containers />
+                        <Containers application={data.application} />
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         tab={

@@ -1,5 +1,7 @@
 import { Card, Descriptions, Typography, Tag, Button } from 'antd';
 import styled from 'styled-components';
+import { Container as ContainerData } from '../../../queries';
+import ScaleContainer from './ScaleContainer';
 
 const Header = styled.div`
     display: flex;
@@ -12,49 +14,48 @@ const Title = styled.div`
 
 const Actions = styled.div`
     margin-left: 16px;
+    .ant-btn {
+        margin-right: 8px;
+        margin-bottom: 12px;
+    }
 `;
 
 const Spacer = styled.div`
     flex: 1;
 `;
 
-const Count = styled.div`
-    display: flex;
-`;
+type Props = {
+    applicationID: number;
+    container: Pick<ContainerData, 'id' | 'size' | 'number'>;
+};
 
-export default function Container() {
+export default function Container({ applicationID, container }: Props) {
     return (
-        <Card>
+        <Card size="small">
             <Header>
                 <Title>
-                    <Typography.Title level={3}>1x</Typography.Title>
+                    <Typography.Title level={3}>{container.size}x</Typography.Title>
                 </Title>
-                <Tag>1 CPU Unit, 128 MB</Tag>
+                <Tag>
+                    {container.size} CPU Unit, {container.size * 128} MB
+                </Tag>
                 <Spacer />
                 <Actions>
-                    <Count>
-                        {/*
-                            We probably want this to be a more explicit action
-                            via a modal, to change the scale of the containers.
-                            We also probably want some visualization of the individual
-                            containers in the container group (I think spinnaker has
-                            something like this?)
-                            Honestly this should probably just be a button like "Scale Container Group".
-                        */}
-                        <Button size="small">-</Button>
-                        <Typography.Text strong>Scale: 3</Typography.Text>
-                        <Button size="small">+</Button>
-                    </Count>
+                    <ScaleContainer applicationID={applicationID} id={container.id} currentNumber={container.number} />
+                    <Button size="small">Actions</Button>
                 </Actions>
             </Header>
 
             <Descriptions size="small">
+                <Descriptions.Item label="Number of Containers">
+                    <Typography.Text code>{container.number}</Typography.Text>
+                </Descriptions.Item>
                 <Descriptions.Item label="Deployment">
                     <Typography.Text code>jeopardy-bot</Typography.Text>
                 </Descriptions.Item>
             </Descriptions>
 
-            <Button type="danger">Delete</Button>
+            {/* <Button type="danger">Delete</Button> */}
         </Card>
     );
 }

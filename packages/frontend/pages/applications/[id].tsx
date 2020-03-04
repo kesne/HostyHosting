@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import Application from '../../components/Application';
+import { withAuth } from '../../components/utils/auth';
 
-export default function ApplicationRoute() {
+function ApplicationRoute() {
     const router = useRouter();
     const { id } = router.query;
 
@@ -9,5 +10,7 @@ export default function ApplicationRoute() {
         return null;
     }
 
-    return <Application id={Number(id as string)} />
+    return <Application id={Number(id as string)} />;
 }
+
+export default withAuth(ApplicationRoute);

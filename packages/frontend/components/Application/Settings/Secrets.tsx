@@ -27,8 +27,8 @@ const IconContainer = styled.div`
     margin-left: 8px;
 `;
 
-type Props = {
-    application: Application;
+export type Props = {
+    application: Pick<Application, 'id' | 'secrets'>;
 };
 
 export default function Secrets({ application }: Props) {

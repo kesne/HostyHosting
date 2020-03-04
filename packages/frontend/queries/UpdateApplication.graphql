@@ -4,7 +4,9 @@ mutation UpdateApplication(
     $description: String
     $secret: SecretInput
 ) {
-    updateApplication(id: $id, name: $name, description: $description, secret: $secret) {
-        ...ApplicationFragment
+    application(id: $id) {
+        update(name: $name, description: $description, secret: $secret) {
+            ...ApplicationFragment
+        }
     }
 }

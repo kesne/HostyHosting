@@ -1,8 +1,8 @@
 import { Modal, Typography, Button } from 'antd';
-import { useState } from 'react';
+import useBoolean from '../../utils/useBoolean';
 
 export default function Delete() {
-    const [visible, setVisible] = useState(false);
+    const [visible, { on, off }] = useBoolean(false);
 
     function handleDelete() {
         return;
@@ -10,14 +10,14 @@ export default function Delete() {
 
     return (
         <>
-            <Button type="danger" onClick={() => setVisible(true)}>
+            <Button type="danger" onClick={on}>
                 Delete Application
             </Button>
             <Typography.Paragraph>Deleting the application can not be undone.</Typography.Paragraph>
             <Modal
                 visible={visible}
                 onOk={handleDelete}
-                onCancel={() => setVisible(false)}
+                onCancel={off}
                 title="Delete Application"
             >
                 <Typography.Paragraph>

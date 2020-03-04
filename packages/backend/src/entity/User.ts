@@ -63,7 +63,6 @@ export class User extends BaseEntity {
     updatedAt!: string;
 
     async setPassword(newPassword: string) {
-        console.log('CALLING SET PASSWORD');
         this.passwordHash = await hash(newPassword, SALT_ROUNDS);
     }
 

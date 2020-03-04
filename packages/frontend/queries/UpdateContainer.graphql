@@ -1,0 +1,9 @@
+mutation UpdateContainer($applicationID: Int!, $id: Int!, $number: Int!) {
+    application(id: $applicationID) {
+        updateContainer(id: $id, number: $number) {
+            id
+            size
+            number
+        }
+    }
+}

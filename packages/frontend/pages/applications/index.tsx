@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import CreateApplication from '../../components/Applications/CreateApplication';
 import { useApplicationsQuery } from '../../queries';
+import { withAuth } from '../../components/utils/auth';
 
 const ListLink = styled.a`
     display: block;
@@ -14,7 +15,7 @@ const ListLink = styled.a`
     }
 `;
 
-export default function Applications() {
+function Applications() {
     const { data, loading } = useApplicationsQuery();
     const [visible, setVisible] = useState();
 
@@ -51,3 +52,5 @@ export default function Applications() {
         </div>
     );
 }
+
+export default withAuth(Applications);

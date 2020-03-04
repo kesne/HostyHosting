@@ -28,9 +28,28 @@ type Secret {
 type Application {
     id: Int!
     name: String!
-    description: String
+    description: String!
     secrets: [Secret!]!
+    containers: [Container!]!
+    deployments: [Deployment!]!
     createdBy: User
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Container {
+    id: Int!
+    size: Int!
+    number: Int!
+    # TODO: Make this non-nullable once this link is enforced:
+    deployment: Deployment
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Deployment {
+    id: Int!
+    image: String!
     createdAt: String!
     updatedAt: String!
 }
@@ -66,6 +85,21 @@ input SecretInput {
     value: String!
 }
 
+type ApplicationMutations {
+    update(
+        name: String
+        description: String
+        # TODO: Move this into discrete secret management APIs?
+        secret: SecretInput
+    ): Application! @auth
+
+    createDeployment(image: String!): Deployment! @auth
+    updateDeployment(id: Int!, image: String!): Deployment! @auth
+
+    createContainer(size: Int!, number: Int!): Container! @auth
+    updateContainer(id: Int!, number: Int!): Container! @auth
+}
+
 type Mutation {
     # ACCOUNT MANAGEMENT:
     signUp(organizationName: String!, name: String!, email: String!, password: String!): Result!
@@ -79,10 +113,5 @@ type Mutation {
 
     # APPLICATIONS:
     createApplication(name: String!): Application! @auth
-    updateApplication(
-        id: Int!
-        name: String
-        description: String
-        secret: SecretInput
-    ): Application! @auth
+    application(id: Int!): ApplicationMutations! @auth
 }

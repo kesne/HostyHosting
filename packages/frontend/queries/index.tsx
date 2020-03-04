@@ -16,9 +16,69 @@ export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
-  description?: Maybe<Scalars['String']>,
+  description: Scalars['String'],
   secrets: Array<Secret>,
+  containers: Array<Container>,
+  deployments: Array<Deployment>,
   createdBy?: Maybe<User>,
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
+};
+
+export type ApplicationMutations = {
+   __typename?: 'ApplicationMutations',
+  update: Application,
+  createDeployment: Deployment,
+  updateDeployment: Deployment,
+  createContainer: Container,
+  updateContainer: Container,
+};
+
+
+export type ApplicationMutationsUpdateArgs = {
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>
+};
+
+
+export type ApplicationMutationsCreateDeploymentArgs = {
+  image: Scalars['String']
+};
+
+
+export type ApplicationMutationsUpdateDeploymentArgs = {
+  id: Scalars['Int'],
+  image: Scalars['String']
+};
+
+
+export type ApplicationMutationsCreateContainerArgs = {
+  size: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+
+export type ApplicationMutationsUpdateContainerArgs = {
+  id: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+export type Container = {
+   __typename?: 'Container',
+  id: Scalars['Int'],
+  size: Scalars['Int'],
+  number: Scalars['Int'],
+  /** TODO: Make this non-nullable once this link is enforced: */
+  deployment?: Maybe<Deployment>,
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
+};
+
+export type Deployment = {
+   __typename?: 'Deployment',
+  id: Scalars['Int'],
+  image: Scalars['String'],
   createdAt: Scalars['String'],
   updatedAt: Scalars['String'],
 };
@@ -36,7 +96,7 @@ export type Mutation = {
   resetPassword: ResetPassword,
   /** APPLICATIONS: */
   createApplication: Application,
-  updateApplication: Application,
+  application: ApplicationMutations,
 };
 
 
@@ -92,11 +152,8 @@ export type MutationCreateApplicationArgs = {
 };
 
 
-export type MutationUpdateApplicationArgs = {
-  id: Scalars['Int'],
-  name?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  secret?: Maybe<SecretInput>
+export type MutationApplicationArgs = {
+  id: Scalars['Int']
 };
 
 export type Organization = {
@@ -177,6 +234,13 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
+    & { containers: Array<(
+      { __typename?: 'Container' }
+      & Pick<Container, 'id' | 'size' | 'number'>
+    )>, deployments: Array<(
+      { __typename?: 'Deployment' }
+      & Pick<Deployment, 'id' | 'image'>
+    )> }
     & ApplicationFragmentFragment
   ) }
 );
@@ -214,6 +278,41 @@ export type CreateApplicationMutation = (
   & { createApplication: (
     { __typename?: 'Application' }
     & Pick<Application, 'id'>
+  ) }
+);
+
+export type CreateContainerMutationVariables = {
+  applicationID: Scalars['Int'],
+  size: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+
+export type CreateContainerMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { createContainer: (
+      { __typename?: 'Container' }
+      & Pick<Container, 'id' | 'size' | 'number'>
+    ) }
+  ) }
+);
+
+export type CreateDeploymentMutationVariables = {
+  applicationID: Scalars['Int'],
+  image: Scalars['String']
+};
+
+
+export type CreateDeploymentMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { createDeployment: (
+      { __typename?: 'Deployment' }
+      & Pick<Deployment, 'id' | 'image'>
+    ) }
   ) }
 );
 
@@ -373,9 +472,30 @@ export type UpdateApplicationMutationVariables = {
 
 export type UpdateApplicationMutation = (
   { __typename?: 'Mutation' }
-  & { updateApplication: (
-    { __typename?: 'Application' }
-    & ApplicationFragmentFragment
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { update: (
+      { __typename?: 'Application' }
+      & ApplicationFragmentFragment
+    ) }
+  ) }
+);
+
+export type UpdateContainerMutationVariables = {
+  applicationID: Scalars['Int'],
+  id: Scalars['Int'],
+  number: Scalars['Int']
+};
+
+
+export type UpdateContainerMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { updateContainer: (
+      { __typename?: 'Container' }
+      & Pick<Container, 'id' | 'size' | 'number'>
+    ) }
   ) }
 );
 
@@ -412,6 +532,15 @@ export const ApplicationDocument = gql`
     query Application($id: Int!) {
   application(id: $id) {
     ...ApplicationFragment
+    containers {
+      id
+      size
+      number
+    }
+    deployments {
+      id
+      image
+    }
   }
 }
     ${ApplicationFragmentFragmentDoc}`;
@@ -507,6 +636,80 @@ export function useCreateApplicationMutation(baseOptions?: ApolloReactHooks.Muta
 export type CreateApplicationMutationHookResult = ReturnType<typeof useCreateApplicationMutation>;
 export type CreateApplicationMutationResult = ApolloReactCommon.MutationResult<CreateApplicationMutation>;
 export type CreateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApplicationMutation, CreateApplicationMutationVariables>;
+export const CreateContainerDocument = gql`
+    mutation CreateContainer($applicationID: Int!, $size: Int!, $number: Int!) {
+  application(id: $applicationID) {
+    createContainer(size: $size, number: $number) {
+      id
+      size
+      number
+    }
+  }
+}
+    `;
+export type CreateContainerMutationFn = ApolloReactCommon.MutationFunction<CreateContainerMutation, CreateContainerMutationVariables>;
+
+/**
+ * __useCreateContainerMutation__
+ *
+ * To run a mutation, you first call `useCreateContainerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateContainerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createContainerMutation, { data, loading, error }] = useCreateContainerMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      size: // value for 'size'
+ *      number: // value for 'number'
+ *   },
+ * });
+ */
+export function useCreateContainerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateContainerMutation, CreateContainerMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateContainerMutation, CreateContainerMutationVariables>(CreateContainerDocument, baseOptions);
+      }
+export type CreateContainerMutationHookResult = ReturnType<typeof useCreateContainerMutation>;
+export type CreateContainerMutationResult = ApolloReactCommon.MutationResult<CreateContainerMutation>;
+export type CreateContainerMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerMutation, CreateContainerMutationVariables>;
+export const CreateDeploymentDocument = gql`
+    mutation CreateDeployment($applicationID: Int!, $image: String!) {
+  application(id: $applicationID) {
+    createDeployment(image: $image) {
+      id
+      image
+    }
+  }
+}
+    `;
+export type CreateDeploymentMutationFn = ApolloReactCommon.MutationFunction<CreateDeploymentMutation, CreateDeploymentMutationVariables>;
+
+/**
+ * __useCreateDeploymentMutation__
+ *
+ * To run a mutation, you first call `useCreateDeploymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeploymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeploymentMutation, { data, loading, error }] = useCreateDeploymentMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useCreateDeploymentMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateDeploymentMutation, CreateDeploymentMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateDeploymentMutation, CreateDeploymentMutationVariables>(CreateDeploymentDocument, baseOptions);
+      }
+export type CreateDeploymentMutationHookResult = ReturnType<typeof useCreateDeploymentMutation>;
+export type CreateDeploymentMutationResult = ApolloReactCommon.MutationResult<CreateDeploymentMutation>;
+export type CreateDeploymentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDeploymentMutation, CreateDeploymentMutationVariables>;
 export const DisableTotpDocument = gql`
     mutation DisableTOTP($password: String!) {
   disableTotp(password: $password) {
@@ -841,8 +1044,10 @@ export type UpdateAccountMutationResult = ApolloReactCommon.MutationResult<Updat
 export type UpdateAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateAccountMutation, UpdateAccountMutationVariables>;
 export const UpdateApplicationDocument = gql`
     mutation UpdateApplication($id: Int!, $name: String, $description: String, $secret: SecretInput) {
-  updateApplication(id: $id, name: $name, description: $description, secret: $secret) {
-    ...ApplicationFragment
+  application(id: $id) {
+    update(name: $name, description: $description, secret: $secret) {
+      ...ApplicationFragment
+    }
   }
 }
     ${ApplicationFragmentFragmentDoc}`;
@@ -874,3 +1079,41 @@ export function useUpdateApplicationMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateApplicationMutationHookResult = ReturnType<typeof useUpdateApplicationMutation>;
 export type UpdateApplicationMutationResult = ApolloReactCommon.MutationResult<UpdateApplicationMutation>;
 export type UpdateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>;
+export const UpdateContainerDocument = gql`
+    mutation UpdateContainer($applicationID: Int!, $id: Int!, $number: Int!) {
+  application(id: $applicationID) {
+    updateContainer(id: $id, number: $number) {
+      id
+      size
+      number
+    }
+  }
+}
+    `;
+export type UpdateContainerMutationFn = ApolloReactCommon.MutationFunction<UpdateContainerMutation, UpdateContainerMutationVariables>;
+
+/**
+ * __useUpdateContainerMutation__
+ *
+ * To run a mutation, you first call `useUpdateContainerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateContainerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateContainerMutation, { data, loading, error }] = useUpdateContainerMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      id: // value for 'id'
+ *      number: // value for 'number'
+ *   },
+ * });
+ */
+export function useUpdateContainerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateContainerMutation, UpdateContainerMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateContainerMutation, UpdateContainerMutationVariables>(UpdateContainerDocument, baseOptions);
+      }
+export type UpdateContainerMutationHookResult = ReturnType<typeof useUpdateContainerMutation>;
+export type UpdateContainerMutationResult = ApolloReactCommon.MutationResult<UpdateContainerMutation>;
+export type UpdateContainerMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateContainerMutation, UpdateContainerMutationVariables>;

@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Button, Typography, Spin, PageHeader } from 'antd';
 import { useMeQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
+import useBoolean from '../utils/useBoolean';
 
 function TOTPModal({
     visible,
@@ -20,7 +20,7 @@ function TOTPModal({
 }
 
 export default function Security() {
-    const [totpModalVisible, setTOTPModalVisible] = useState(false);
+    const [totpModalVisible, { off, on }] = useBoolean(false);
     const { data, loading, refetch } = useMeQuery();
 
     if (loading || !data) {
@@ -28,7 +28,7 @@ export default function Security() {
     }
 
     function onClose() {
-        setTOTPModalVisible(false);
+        off();
         refetch();
     }
 
@@ -39,10 +39,7 @@ export default function Security() {
             <Typography.Text>
                 Two factor auth <strong>{data.me.hasTOTP ? 'is' : 'is not'}</strong> enabled.
             </Typography.Text>
-            <Button
-                type={data.me.hasTOTP ? 'danger' : 'default'}
-                onClick={() => setTOTPModalVisible(true)}
-            >
+            <Button type={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
                 {data.me.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
             </Button>
             <TOTPModal visible={totpModalVisible} hasTOTP={data.me.hasTOTP} onClose={onClose} />

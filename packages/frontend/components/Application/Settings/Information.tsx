@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Form, Input } from 'antd';
 import { useUpdateApplicationMutation, Application } from '../../../queries';
 
-type Props = {
-    application: Application;
+export type Props = {
+    application: Pick<Application, 'id' |'name' | 'description'>;
 };
 
 export default function Information({ application }: Props) {

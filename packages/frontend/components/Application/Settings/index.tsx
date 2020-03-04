@@ -1,11 +1,10 @@
 import Region from './Region';
 import Delete from './Delete';
-import Secrets from './Secrets';
-import Information from './Information';
-import { Application } from '../../../queries';
+import Secrets, { Props as SecretProps } from './Secrets';
+import Information, { Props as InformationProps } from './Information';
 
 type Props = {
-    application: Application;
+    application: InformationProps['application'] & SecretProps['application'];
 };
 
 export default function Settings({ application }: Props) {

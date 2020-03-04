@@ -1,7 +1,7 @@
 import { Button, List } from 'antd';
 import styled from 'styled-components';
-import Container from './Container';
-import CreateContainer from './CreateContainer';
+import Deployment from './Deployment';
+import CreateDeployment from './CreateDeployment';
 import useBoolean from '../../utils/useBoolean';
 import { Application } from '../../../queries';
 
@@ -12,26 +12,26 @@ const Actions = styled.div`
 `;
 
 type Props = {
-    application: Pick<Application, 'id' | 'containers'>;
+    application: Pick<Application, 'id' | 'deployments'>;
 };
 
-export default function Containers({ application }: Props) {
+export default function Deployments({ application }: Props) {
     const [createVisible, { on, off }] = useBoolean(false);
 
     return (
         <div>
             <Actions>
                 <Button type="primary" onClick={on}>
-                    Create Container
+                    Create Deployment
                 </Button>
             </Actions>
-            <CreateContainer id={application.id} visible={createVisible} onClose={off} />
+            <CreateDeployment id={application.id} visible={createVisible} onClose={off} />
             <List
                 grid={{ gutter: 16, column: 2 }}
-                dataSource={application.containers}
-                renderItem={container => (
+                dataSource={application.deployments}
+                renderItem={deployment => (
                     <List.Item>
-                        <Container applicationID={application.id} container={container} />
+                        <Deployment applicationID={application.id} deployment={deployment} />
                     </List.Item>
                 )}
             />
