@@ -1,0 +1,14 @@
+query ApplicationContainers($id: Int!) {
+    application(id: $id) {
+        id
+        containers {
+            id
+            size
+            number
+            deployment {
+                id
+                image
+            }
+        }
+    }
+}

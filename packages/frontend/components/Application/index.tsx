@@ -6,6 +6,7 @@ import Settings from './Settings';
 import Overview from './Overview';
 import Containers from './Containers';
 import Deployments from './Deployments';
+import ApplicationContext from './ApplicationContext';
 
 // TODO: We really can return this as a number instead of a string.
 function formatDate(timestamp: string) {
@@ -24,7 +25,7 @@ export default function Application({ id }: { id: number }) {
     }
 
     return (
-        <>
+        <ApplicationContext.Provider value={id}>
             <PageHeader
                 ghost={false}
                 title={data.application.name}
@@ -51,10 +52,10 @@ export default function Application({ id }: { id: number }) {
                         <Overview />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Deployments" key="deploy">
-                        <Deployments application={data.application} />
+                        <Deployments />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Containers" key="containers">
-                        <Containers application={data.application} />
+                        <Containers />
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         tab={
@@ -69,6 +70,6 @@ export default function Application({ id }: { id: number }) {
                     </Tabs.TabPane>
                 </Tabs>
             </PageHeader>
-        </>
+        </ApplicationContext.Provider>
     );
 }

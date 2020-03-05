@@ -30,8 +30,10 @@ export type ApplicationMutations = {
   update: Application,
   createDeployment: Deployment,
   updateDeployment: Deployment,
+  deleteDeployment: Deployment,
   createContainer: Container,
   updateContainer: Container,
+  deleteContainer: Container,
 };
 
 
@@ -53,7 +55,13 @@ export type ApplicationMutationsUpdateDeploymentArgs = {
 };
 
 
+export type ApplicationMutationsDeleteDeploymentArgs = {
+  id: Scalars['Int']
+};
+
+
 export type ApplicationMutationsCreateContainerArgs = {
+  deployment: Scalars['Int'],
   size: Scalars['Int'],
   number: Scalars['Int']
 };
@@ -62,6 +70,11 @@ export type ApplicationMutationsCreateContainerArgs = {
 export type ApplicationMutationsUpdateContainerArgs = {
   id: Scalars['Int'],
   number: Scalars['Int']
+};
+
+
+export type ApplicationMutationsDeleteContainerArgs = {
+  id: Scalars['Int']
 };
 
 export type Container = {
@@ -234,14 +247,45 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
+    & ApplicationFragmentFragment
+  ) }
+);
+
+export type ApplicationContainersQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type ApplicationContainersQuery = (
+  { __typename?: 'Query' }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
     & { containers: Array<(
       { __typename?: 'Container' }
       & Pick<Container, 'id' | 'size' | 'number'>
-    )>, deployments: Array<(
+      & { deployment: Maybe<(
+        { __typename?: 'Deployment' }
+        & Pick<Deployment, 'id' | 'image'>
+      )> }
+    )> }
+  ) }
+);
+
+export type ApplicationDeploymentsQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type ApplicationDeploymentsQuery = (
+  { __typename?: 'Query' }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
+    & { deployments: Array<(
       { __typename?: 'Deployment' }
       & Pick<Deployment, 'id' | 'image'>
     )> }
-    & ApplicationFragmentFragment
   ) }
 );
 
@@ -283,6 +327,7 @@ export type CreateApplicationMutation = (
 
 export type CreateContainerMutationVariables = {
   applicationID: Scalars['Int'],
+  deployment: Scalars['Int'],
   size: Scalars['Int'],
   number: Scalars['Int']
 };
@@ -295,6 +340,10 @@ export type CreateContainerMutation = (
     & { createContainer: (
       { __typename?: 'Container' }
       & Pick<Container, 'id' | 'size' | 'number'>
+      & { deployment: Maybe<(
+        { __typename?: 'Deployment' }
+        & Pick<Deployment, 'id' | 'image'>
+      )> }
     ) }
   ) }
 );
@@ -312,6 +361,40 @@ export type CreateDeploymentMutation = (
     & { createDeployment: (
       { __typename?: 'Deployment' }
       & Pick<Deployment, 'id' | 'image'>
+    ) }
+  ) }
+);
+
+export type DeleteContainerMutationVariables = {
+  applicationID: Scalars['Int'],
+  id: Scalars['Int']
+};
+
+
+export type DeleteContainerMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { deleteContainer: (
+      { __typename?: 'Container' }
+      & Pick<Container, 'id'>
+    ) }
+  ) }
+);
+
+export type DeleteDeploymentMutationVariables = {
+  applicationID: Scalars['Int'],
+  id: Scalars['Int']
+};
+
+
+export type DeleteDeploymentMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { deleteDeployment: (
+      { __typename?: 'Deployment' }
+      & Pick<Deployment, 'id'>
     ) }
   ) }
 );
@@ -532,15 +615,6 @@ export const ApplicationDocument = gql`
     query Application($id: Int!) {
   application(id: $id) {
     ...ApplicationFragment
-    containers {
-      id
-      size
-      number
-    }
-    deployments {
-      id
-      image
-    }
   }
 }
     ${ApplicationFragmentFragmentDoc}`;
@@ -570,6 +644,85 @@ export function useApplicationLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type ApplicationQueryHookResult = ReturnType<typeof useApplicationQuery>;
 export type ApplicationLazyQueryHookResult = ReturnType<typeof useApplicationLazyQuery>;
 export type ApplicationQueryResult = ApolloReactCommon.QueryResult<ApplicationQuery, ApplicationQueryVariables>;
+export const ApplicationContainersDocument = gql`
+    query ApplicationContainers($id: Int!) {
+  application(id: $id) {
+    id
+    containers {
+      id
+      size
+      number
+      deployment {
+        id
+        image
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useApplicationContainersQuery__
+ *
+ * To run a query within a React component, call `useApplicationContainersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationContainersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationContainersQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApplicationContainersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ApplicationContainersQuery, ApplicationContainersQueryVariables>) {
+        return ApolloReactHooks.useQuery<ApplicationContainersQuery, ApplicationContainersQueryVariables>(ApplicationContainersDocument, baseOptions);
+      }
+export function useApplicationContainersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ApplicationContainersQuery, ApplicationContainersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ApplicationContainersQuery, ApplicationContainersQueryVariables>(ApplicationContainersDocument, baseOptions);
+        }
+export type ApplicationContainersQueryHookResult = ReturnType<typeof useApplicationContainersQuery>;
+export type ApplicationContainersLazyQueryHookResult = ReturnType<typeof useApplicationContainersLazyQuery>;
+export type ApplicationContainersQueryResult = ApolloReactCommon.QueryResult<ApplicationContainersQuery, ApplicationContainersQueryVariables>;
+export const ApplicationDeploymentsDocument = gql`
+    query ApplicationDeployments($id: Int!) {
+  application(id: $id) {
+    id
+    deployments {
+      id
+      image
+    }
+  }
+}
+    `;
+
+/**
+ * __useApplicationDeploymentsQuery__
+ *
+ * To run a query within a React component, call `useApplicationDeploymentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationDeploymentsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationDeploymentsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApplicationDeploymentsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>(ApplicationDeploymentsDocument, baseOptions);
+      }
+export function useApplicationDeploymentsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>(ApplicationDeploymentsDocument, baseOptions);
+        }
+export type ApplicationDeploymentsQueryHookResult = ReturnType<typeof useApplicationDeploymentsQuery>;
+export type ApplicationDeploymentsLazyQueryHookResult = ReturnType<typeof useApplicationDeploymentsLazyQuery>;
+export type ApplicationDeploymentsQueryResult = ApolloReactCommon.QueryResult<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>;
 export const ApplicationsDocument = gql`
     query Applications {
   applications {
@@ -637,12 +790,16 @@ export type CreateApplicationMutationHookResult = ReturnType<typeof useCreateApp
 export type CreateApplicationMutationResult = ApolloReactCommon.MutationResult<CreateApplicationMutation>;
 export type CreateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApplicationMutation, CreateApplicationMutationVariables>;
 export const CreateContainerDocument = gql`
-    mutation CreateContainer($applicationID: Int!, $size: Int!, $number: Int!) {
+    mutation CreateContainer($applicationID: Int!, $deployment: Int!, $size: Int!, $number: Int!) {
   application(id: $applicationID) {
-    createContainer(size: $size, number: $number) {
+    createContainer(deployment: $deployment, size: $size, number: $number) {
       id
       size
       number
+      deployment {
+        id
+        image
+      }
     }
   }
 }
@@ -663,6 +820,7 @@ export type CreateContainerMutationFn = ApolloReactCommon.MutationFunction<Creat
  * const [createContainerMutation, { data, loading, error }] = useCreateContainerMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
+ *      deployment: // value for 'deployment'
  *      size: // value for 'size'
  *      number: // value for 'number'
  *   },
@@ -710,6 +868,76 @@ export function useCreateDeploymentMutation(baseOptions?: ApolloReactHooks.Mutat
 export type CreateDeploymentMutationHookResult = ReturnType<typeof useCreateDeploymentMutation>;
 export type CreateDeploymentMutationResult = ApolloReactCommon.MutationResult<CreateDeploymentMutation>;
 export type CreateDeploymentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDeploymentMutation, CreateDeploymentMutationVariables>;
+export const DeleteContainerDocument = gql`
+    mutation DeleteContainer($applicationID: Int!, $id: Int!) {
+  application(id: $applicationID) {
+    deleteContainer(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type DeleteContainerMutationFn = ApolloReactCommon.MutationFunction<DeleteContainerMutation, DeleteContainerMutationVariables>;
+
+/**
+ * __useDeleteContainerMutation__
+ *
+ * To run a mutation, you first call `useDeleteContainerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteContainerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteContainerMutation, { data, loading, error }] = useDeleteContainerMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteContainerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteContainerMutation, DeleteContainerMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteContainerMutation, DeleteContainerMutationVariables>(DeleteContainerDocument, baseOptions);
+      }
+export type DeleteContainerMutationHookResult = ReturnType<typeof useDeleteContainerMutation>;
+export type DeleteContainerMutationResult = ApolloReactCommon.MutationResult<DeleteContainerMutation>;
+export type DeleteContainerMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteContainerMutation, DeleteContainerMutationVariables>;
+export const DeleteDeploymentDocument = gql`
+    mutation DeleteDeployment($applicationID: Int!, $id: Int!) {
+  application(id: $applicationID) {
+    deleteDeployment(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type DeleteDeploymentMutationFn = ApolloReactCommon.MutationFunction<DeleteDeploymentMutation, DeleteDeploymentMutationVariables>;
+
+/**
+ * __useDeleteDeploymentMutation__
+ *
+ * To run a mutation, you first call `useDeleteDeploymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDeploymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDeploymentMutation, { data, loading, error }] = useDeleteDeploymentMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteDeploymentMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteDeploymentMutation, DeleteDeploymentMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteDeploymentMutation, DeleteDeploymentMutationVariables>(DeleteDeploymentDocument, baseOptions);
+      }
+export type DeleteDeploymentMutationHookResult = ReturnType<typeof useDeleteDeploymentMutation>;
+export type DeleteDeploymentMutationResult = ApolloReactCommon.MutationResult<DeleteDeploymentMutation>;
+export type DeleteDeploymentMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteDeploymentMutation, DeleteDeploymentMutationVariables>;
 export const DisableTotpDocument = gql`
     mutation DisableTOTP($password: String!) {
   disableTotp(password: $password) {

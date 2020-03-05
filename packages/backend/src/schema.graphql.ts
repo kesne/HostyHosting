@@ -29,8 +29,10 @@ export type ApplicationMutations = {
   update: Application,
   createDeployment: Deployment,
   updateDeployment: Deployment,
+  deleteDeployment: Deployment,
   createContainer: Container,
   updateContainer: Container,
+  deleteContainer: Container,
 };
 
 
@@ -52,7 +54,13 @@ export type ApplicationMutationsUpdateDeploymentArgs = {
 };
 
 
+export type ApplicationMutationsDeleteDeploymentArgs = {
+  id: Scalars['Int']
+};
+
+
 export type ApplicationMutationsCreateContainerArgs = {
+  deployment: Scalars['Int'],
   size: Scalars['Int'],
   number: Scalars['Int']
 };
@@ -61,6 +69,11 @@ export type ApplicationMutationsCreateContainerArgs = {
 export type ApplicationMutationsUpdateContainerArgs = {
   id: Scalars['Int'],
   number: Scalars['Int']
+};
+
+
+export type ApplicationMutationsDeleteContainerArgs = {
+  id: Scalars['Int']
 };
 
 export type Container = {
@@ -356,8 +369,10 @@ export type ApplicationMutationsResolvers<ContextType = any, ParentType extends 
   update?: Resolver<ResolversTypes['Application'], ParentType, ContextType, ApplicationMutationsUpdateArgs>,
   createDeployment?: Resolver<ResolversTypes['Deployment'], ParentType, ContextType, RequireFields<ApplicationMutationsCreateDeploymentArgs, 'image'>>,
   updateDeployment?: Resolver<ResolversTypes['Deployment'], ParentType, ContextType, RequireFields<ApplicationMutationsUpdateDeploymentArgs, 'id' | 'image'>>,
-  createContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsCreateContainerArgs, 'size' | 'number'>>,
+  deleteDeployment?: Resolver<ResolversTypes['Deployment'], ParentType, ContextType, RequireFields<ApplicationMutationsDeleteDeploymentArgs, 'id'>>,
+  createContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsCreateContainerArgs, 'deployment' | 'size' | 'number'>>,
   updateContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsUpdateContainerArgs, 'id' | 'number'>>,
+  deleteContainer?: Resolver<ResolversTypes['Container'], ParentType, ContextType, RequireFields<ApplicationMutationsDeleteContainerArgs, 'id'>>,
 }>;
 
 export type ContainerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Container'] = ResolversParentTypes['Container']> = ResolversObject<{

@@ -1,0 +1,7 @@
+mutation DeleteContainer($applicationID: Int!, $id: Int!) {
+    application(id: $applicationID) {
+        deleteContainer(id: $id) {
+            id
+        }
+    }
+}

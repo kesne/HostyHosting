@@ -1,0 +1,9 @@
+query ApplicationDeployments($id: Int!) {
+    application(id: $id) {
+        id
+        deployments {
+            id
+            image
+        }
+    }
+}

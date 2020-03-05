@@ -28,11 +28,22 @@ const ApplicationMutationsResolvers: ApplicationMutationsResolvers<Context, Pare
         return await application.save();
     },
 
-    async createContainer({ __application: application }, { size, number }) {
+    async createContainer(
+        { __application: application },
+        { deployment: deploymentID, size, number }
+    ) {
+        const deployment = await Deployment.findOneOrFail({
+            where: {
+                id: deploymentID,
+                application
+            }
+        });
+
         const container = new Container();
         container.application = Promise.resolve(application);
         container.size = size;
         container.number = number;
+        container.deployment = Promise.resolve(deployment);
         return await container.save();
     },
 
@@ -40,13 +51,26 @@ const ApplicationMutationsResolvers: ApplicationMutationsResolvers<Context, Pare
         const container = await Container.findOneOrFail({
             where: {
                 id,
-                application,
+                application
             }
         });
 
         container.number = number;
 
         return await container.save();
+    },
+
+    async deleteContainer({ __application: application }, { id }) {
+        const container = await Container.findOneOrFail({
+            where: {
+                id,
+                application
+            }
+        });
+
+        await Container.delete(container.id);
+
+        return container;
     },
 
     async createDeployment({ __application: application }, { image }) {
@@ -60,7 +84,7 @@ const ApplicationMutationsResolvers: ApplicationMutationsResolvers<Context, Pare
         const deployment = await Deployment.findOneOrFail({
             where: {
                 id,
-                application,
+                application
             }
         });
 
@@ -68,6 +92,25 @@ const ApplicationMutationsResolvers: ApplicationMutationsResolvers<Context, Pare
 
         return await deployment.save();
     },
+
+    async deleteDeployment({ __application: application }, { id }) {
+        const deployment = await Deployment.findOneOrFail({
+            where: {
+                id,
+                application
+            },
+            relations: ['containers']
+        });
+
+        const containers = await deployment.containers;
+        if (containers.length) {
+            throw new Error('You may only delete deployments with no containers.');
+        }
+
+        await Deployment.delete(deployment.id);
+
+        return deployment;
+    }
 };
 
 export default ApplicationMutationsResolvers;

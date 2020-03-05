@@ -1,9 +1,11 @@
-import { Button, List } from 'antd';
+import { Button, List, Spin } from 'antd';
 import styled from 'styled-components';
 import Deployment from './Deployment';
 import CreateDeployment from './CreateDeployment';
 import useBoolean from '../../utils/useBoolean';
-import { Application } from '../../../queries';
+import { useApplicationDeploymentsQuery } from '../../../queries';
+import { useContext } from 'react';
+import ApplicationContext from '../ApplicationContext';
 
 const Actions = styled.div`
     margin-bottom: 16px;
@@ -11,12 +13,18 @@ const Actions = styled.div`
     justify-content: flex-end;
 `;
 
-type Props = {
-    application: Pick<Application, 'id' | 'deployments'>;
-};
-
-export default function Deployments({ application }: Props) {
+export default function Deployments() {
+    const applicationID = useContext(ApplicationContext);
+    const { data, loading, error } = useApplicationDeploymentsQuery({
+        variables: {
+            id: applicationID
+        }
+    });
     const [createVisible, { on, off }] = useBoolean(false);
+
+    if (loading || !data || error) {
+        return <Spin />;
+    }
 
     return (
         <div>
@@ -25,13 +33,13 @@ export default function Deployments({ application }: Props) {
                     Create Deployment
                 </Button>
             </Actions>
-            <CreateDeployment id={application.id} visible={createVisible} onClose={off} />
+            <CreateDeployment id={data.application.id} visible={createVisible} onClose={off} />
             <List
                 grid={{ gutter: 16, column: 2 }}
-                dataSource={application.deployments}
+                dataSource={data.application.deployments}
                 renderItem={deployment => (
                     <List.Item>
-                        <Deployment applicationID={application.id} deployment={deployment} />
+                        <Deployment applicationID={data.application.id} deployment={deployment} />
                     </List.Item>
                 )}
             />

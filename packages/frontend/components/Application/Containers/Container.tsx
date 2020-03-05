@@ -2,6 +2,7 @@ import { Card, Descriptions, Typography, Tag, Button } from 'antd';
 import styled from 'styled-components';
 import { Container as ContainerData } from '../../../queries';
 import ScaleContainer from './ScaleContainer';
+import DeleteContainer from './DeleteContainer';
 
 const Header = styled.div`
     display: flex;
@@ -25,11 +26,11 @@ const Spacer = styled.div`
 `;
 
 type Props = {
-    applicationID: number;
-    container: Pick<ContainerData, 'id' | 'size' | 'number'>;
+    // TODO: This type is subtly wrong:
+    container: Pick<ContainerData, 'id' | 'size' | 'number' | 'deployment'>;
 };
 
-export default function Container({ applicationID, container }: Props) {
+export default function Container({ container }: Props) {
     return (
         <Card size="small">
             <Header>
@@ -41,7 +42,7 @@ export default function Container({ applicationID, container }: Props) {
                 </Tag>
                 <Spacer />
                 <Actions>
-                    <ScaleContainer applicationID={applicationID} id={container.id} currentNumber={container.number} />
+                    <ScaleContainer id={container.id} currentNumber={container.number} />
                     <Button size="small">Actions</Button>
                 </Actions>
             </Header>
@@ -51,11 +52,11 @@ export default function Container({ applicationID, container }: Props) {
                     <Typography.Text code>{container.number}</Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Deployment">
-                    <Typography.Text code>jeopardy-bot</Typography.Text>
+                    <Typography.Text code>{container.deployment?.image}</Typography.Text>
                 </Descriptions.Item>
             </Descriptions>
 
-            {/* <Button type="danger">Delete</Button> */}
+            <DeleteContainer id={container.id} />
         </Card>
     );
 }

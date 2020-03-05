@@ -1,18 +1,20 @@
 import { Modal, Form, Input } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import {
     useCreateDeploymentMutation,
-    ApplicationDocument,
-    ApplicationQuery
+    ApplicationDeploymentsQuery,
+    ApplicationDeploymentsDocument
 } from '../../../queries';
+import ApplicationContext from '../ApplicationContext';
+import produce from 'immer';
 
 type Props = {
-    id: number;
     visible: boolean;
     onClose(): void;
 };
 
-export default function CreateDeployment({ id, visible, onClose }: Props) {
+export default function CreateDeployment({ visible, onClose }: Props) {
+    const applicationID = useContext(ApplicationContext);
     const [form] = Form.useForm();
     const [createDeployment, { loading, data }] = useCreateDeploymentMutation({
         update(cache, { data }) {
@@ -20,17 +22,19 @@ export default function CreateDeployment({ id, visible, onClose }: Props) {
 
             // Read the data from our cache for this query.
             const { application } =
-                cache.readQuery<ApplicationQuery>({
-                    query: ApplicationDocument,
-                    variables: { id }
+                cache.readQuery<ApplicationDeploymentsQuery>({
+                    query: ApplicationDeploymentsDocument,
+                    variables: { id: applicationID }
                 }) ?? {};
 
-            application?.deployments.push(data.application.createDeployment);
+            const nextApplication = produce(application, (draftState) => {
+                draftState?.deployments.push(data.application.createDeployment);
+            });
 
             cache.writeQuery({
-                query: ApplicationDocument,
-                variables: { id },
-                data: application
+                query: ApplicationDeploymentsDocument,
+                variables: { id: applicationID },
+                data: { application: nextApplication }
             });
         }
     });
@@ -51,7 +55,7 @@ export default function CreateDeployment({ id, visible, onClose }: Props) {
         const values = await form.validateFields();
         await createDeployment({
             variables: {
-                applicationID: id,
+                applicationID,
                 image: values.image
             }
         });
@@ -66,10 +70,7 @@ export default function CreateDeployment({ id, visible, onClose }: Props) {
             onCancel={onClose}
             confirmLoading={loading}
         >
-            <Form
-                form={form}
-                layout="vertical"
-            >
+            <Form form={form} layout="vertical">
                 <Form.Item
                     name="image"
                     label="Image Name"

@@ -1,14 +1,5 @@
 query Application($id: Int!) {
     application(id: $id) {
         ...ApplicationFragment
-        containers {
-            id
-            size
-            number
-        }
-        deployments {
-            id
-            image
-        }
     }
 }

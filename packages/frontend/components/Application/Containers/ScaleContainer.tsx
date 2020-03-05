@@ -1,15 +1,16 @@
 import { Form, Modal, InputNumber, Button } from 'antd';
 import useBoolean from '../../utils/useBoolean';
 import { useUpdateContainerMutation } from '../../../queries';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
+import ApplicationContext from '../ApplicationContext';
 
 type Props = {
-    applicationID: number;
     id: number;
     currentNumber: number;
 };
 
-export default function ScaleContainer({ applicationID, id, currentNumber }: Props) {
+export default function ScaleContainer({ id, currentNumber }: Props) {
+    const applicationID = useContext(ApplicationContext);
     const [form] = Form.useForm();
     const [visible, { on, off }] = useBoolean(false);
     const [updateContainer, { loading }] = useUpdateContainerMutation();

@@ -95,9 +95,11 @@ type ApplicationMutations {
 
     createDeployment(image: String!): Deployment! @auth
     updateDeployment(id: Int!, image: String!): Deployment! @auth
+    deleteDeployment(id: Int!): Deployment! @auth
 
-    createContainer(size: Int!, number: Int!): Container! @auth
+    createContainer(deployment: Int!, size: Int!, number: Int!): Container! @auth
     updateContainer(id: Int!, number: Int!): Container! @auth
+    deleteContainer(id: Int!): Container! @auth
 }
 
 type Mutation {

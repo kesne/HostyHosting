@@ -1,9 +1,11 @@
-import { Button, List } from 'antd';
+import { Button, List, Spin } from 'antd';
 import styled from 'styled-components';
 import Container from './Container';
 import CreateContainer from './CreateContainer';
 import useBoolean from '../../utils/useBoolean';
-import { Application } from '../../../queries';
+import { useApplicationContainersQuery } from '../../../queries';
+import { useContext } from 'react';
+import ApplicationContext from '../ApplicationContext';
 
 const Actions = styled.div`
     margin-bottom: 16px;
@@ -11,12 +13,18 @@ const Actions = styled.div`
     justify-content: flex-end;
 `;
 
-type Props = {
-    application: Pick<Application, 'id' | 'containers'>;
-};
-
-export default function Containers({ application }: Props) {
+export default function Containers() {
+    const applicationID = useContext(ApplicationContext);
+    const { data, loading, error } = useApplicationContainersQuery({
+        variables: {
+            id: applicationID
+        }
+    });
     const [createVisible, { on, off }] = useBoolean(false);
+
+    if (loading || !data || error) {
+        return <Spin />;
+    }
 
     return (
         <div>
@@ -25,13 +33,13 @@ export default function Containers({ application }: Props) {
                     Create Container
                 </Button>
             </Actions>
-            <CreateContainer id={application.id} visible={createVisible} onClose={off} />
+            <CreateContainer visible={createVisible} onClose={off} />
             <List
                 grid={{ gutter: 16, column: 2 }}
-                dataSource={application.containers}
+                dataSource={data.application.containers}
                 renderItem={container => (
                     <List.Item>
-                        <Container applicationID={application.id} container={container} />
+                        <Container container={container} />
                     </List.Item>
                 )}
             />

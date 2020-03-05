@@ -1,36 +1,48 @@
-import { Modal, Form, InputNumber, Slider, Typography } from 'antd';
-import { useEffect } from 'react';
+import { Modal, Form, InputNumber, Slider, Typography, Select } from 'antd';
+import { useEffect, useContext } from 'react';
 import {
     useCreateContainerMutation,
-    ApplicationDocument,
-    ApplicationQuery
+    ApplicationContainersDocument,
+    ApplicationContainersQuery,
+    useApplicationDeploymentsQuery
 } from '../../../queries';
+import ApplicationContext from '../ApplicationContext';
+import produce from 'immer';
 
 type Props = {
-    id: number;
     visible: boolean;
     onClose(): void;
 };
 
-export default function CreateContainer({ id, visible, onClose }: Props) {
+export default function CreateContainer({ visible, onClose }: Props) {
+    const applicationID = useContext(ApplicationContext);
     const [form] = Form.useForm();
+
+    const deploymentsState = useApplicationDeploymentsQuery({
+        variables: {
+            id: applicationID
+        }
+    });
+
     const [createContainer, { loading, data }] = useCreateContainerMutation({
         update(cache, { data }) {
             if (!data) return;
 
             // Read the data from our cache for this query.
             const { application } =
-                cache.readQuery<ApplicationQuery>({
-                    query: ApplicationDocument,
-                    variables: { id }
+                cache.readQuery<ApplicationContainersQuery>({
+                    query: ApplicationContainersDocument,
+                    variables: { id: applicationID }
                 }) ?? {};
 
-            application?.containers.push(data.application.createContainer);
+            const nextApplication = produce(application, (draftState) => {
+                draftState?.containers.push(data.application.createContainer);
+            });
 
             cache.writeQuery({
-                query: ApplicationDocument,
-                variables: { id },
-                data: application
+                query: ApplicationContainersDocument,
+                variables: { id: applicationID },
+                data: { application: nextApplication }
             });
         }
     });
@@ -51,7 +63,8 @@ export default function CreateContainer({ id, visible, onClose }: Props) {
         const values = await form.validateFields();
         await createContainer({
             variables: {
-                applicationID: id,
+                applicationID,
+                deployment: values.deployment,
                 size: values.size,
                 number: values.number
             }
@@ -81,6 +94,30 @@ export default function CreateContainer({ id, visible, onClose }: Props) {
                     <Typography.Text strong>not</Typography.Text> be changed after it is created.
                     The number of deployments can be changed at any time.
                 </Typography.Paragraph>
+                <Form.Item
+                    name="deployment"
+                    label="Deployment"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'A deployment is required to create a container.'
+                        }
+                    ]}
+                >
+                    <Select
+                        showSearch
+                        placeholder="Select a deployment"
+                        optionFilterProp="children"
+                        loading={deploymentsState.loading}
+                        disabled={deploymentsState.loading}
+                    >
+                        {deploymentsState.data?.application.deployments.map(deployment => (
+                            <Select.Option key={deployment.id} value={deployment.id}>
+                                {deployment.image}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
                 <Form.Item name="size" label="Container Size">
                     <Slider
                         defaultValue={1}
