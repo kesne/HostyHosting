@@ -1,8 +1,17 @@
 import { authenticator } from 'otplib';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    BaseEntity,
+    ManyToOne,
+    CreateDateColumn,
+    UpdateDateColumn
+} from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Session, Cookies } from '../types';
 import { Organization } from './Organization';
+import { ObjectType, Field, Int } from 'type-graphql';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -15,6 +24,7 @@ export enum AuthType {
 }
 
 @Entity()
+@ObjectType()
 export class User extends BaseEntity {
     static async fromSession(
         session: Session,
@@ -26,39 +36,45 @@ export class User extends BaseEntity {
         return;
     }
 
-    static async fromTOTPSession(session: Session, token: string): Promise<User | undefined> {
+    static async fromTOTPSession(session: Session, token: string): Promise<User> {
         if (!session.userID || session.type !== AuthType.TOTP) {
-            return;
+            throw new Error('No TOTP session currently exists.');
         }
 
         const user = await this.findOne(session.userID);
         if (!user || !user.totpSecret) {
-            return;
+            throw new Error('No user was found in the current session.');
         }
 
         const isValid = authenticator.verify({ secret: user.totpSecret, token });
         if (!isValid) {
-            return;
+            throw new Error('The TOTP token provided was not valid.');
         }
 
         return user;
     }
 
+    @Field(type => Int)
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Field()
     @Column()
     name!: string;
 
+    @Field()
     @Column('citext', { unique: true })
     email!: string;
 
     @Column()
     passwordHash!: string;
 
+    // TODO: Need better types here:
+    @Field()
     @CreateDateColumn()
     createdAt!: string;
 
+    @Field()
     @UpdateDateColumn()
     updatedAt!: string;
 
@@ -70,7 +86,8 @@ export class User extends BaseEntity {
     @Column('varchar', { nullable: true })
     totpSecret?: string | null;
 
-    get hasTOTP() {
+    @Field()
+    get hasTOTP(): boolean {
         return !!this.totpSecret;
     }
 
@@ -106,6 +123,10 @@ export class User extends BaseEntity {
         }
     }
 
-    @ManyToOne(() => Organization, (organization) => organization.users)
+    @Field(() => Organization)
+    @ManyToOne(
+        () => Organization,
+        organization => organization.users
+    )
     organization!: Promise<Organization>;
 }

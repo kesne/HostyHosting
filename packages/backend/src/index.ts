@@ -8,60 +8,25 @@ import redisStore from 'koa-redis';
 import { ApolloServer } from 'apollo-server-koa';
 import { createConnection } from 'typeorm';
 import redis from './redis';
-import typeDefs from './graphql/typeDefs';
-import resolvers from './graphql/resolvers';
 import { User } from './entity/User';
-import AuthDirective from './graphql/AuthDirective';
 import ormconfig from '../ormconfig';
-import cookie from 'cookie';
+import { buildSchema, AuthChecker } from 'type-graphql';
 import { SESSION_NAME } from './constants';
+import { UserResolver } from './resolvers/UserResolver';
+import { TOTPResolver } from './resolvers/TOTPResolver';
+import path from 'path';
+import { ApplicationResolver } from './resolvers/ApplicationResolver';
+import { Context } from './types';
+import { ApplicationMutationsResolver } from './resolvers/ApplicationMutationsResolver';
 
 const app = new Koa();
 const router = new Router();
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    schemaDirectives: {
-        auth: AuthDirective
-    },
-    subscriptions: {
-        path: '/api/graphql/subscriptions',
-        onConnect: async (_connectionParams, _websocket, context) => {
-            // TODO: Use KeyGrip to verify the cookie:
-            const cookies = cookie.parse(context.request.headers.cookie!);
-            const sessionID = cookies[SESSION_NAME];
-            const sessionData = await redis.get(sessionID);
-            if (!sessionData) {
-                throw new Error('Could not authenticate from session.');
-            }
-
-            const session = JSON.parse(sessionData);
-            const user = await User.fromSession(session);
-
-            if (!user) {
-                throw new Error('Session did not contain a user.');
-            }
-
-            return {
-                user,
-                session
-            };
-        }
-    },
-    context: ({ ctx, connection }) => {
-        if (connection?.context) {
-            return connection.context;
-        }
-
-        return {
-            user: ctx.user,
-            organization: ctx.organization,
-            session: ctx.session,
-            cookies: ctx.cookies
-        };
-    }
-});
+// const server = new ApolloServer({
+//     schemaDirectives: {
+//         auth: AuthDirective
+//     },
+// });
 
 // TODO: Why is this defined up here?
 const auth: Koa.Middleware = async (ctx, next) => {
@@ -101,6 +66,37 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 async function main() {
+    const customAuthChecker: AuthChecker<Context> = ({ context }, _roles) => {
+        return !!context.user;
+    };
+
+    const schema = await buildSchema({
+        resolvers: [
+            UserResolver,
+            TOTPResolver,
+            ApplicationResolver,
+            ApplicationMutationsResolver
+        ],
+        emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
+        authChecker: customAuthChecker
+    });
+
+    const server = new ApolloServer({
+        schema,
+        context: ({ ctx, connection }) => {
+            if (connection?.context) {
+                return connection.context;
+            }
+
+            return {
+                user: ctx.user,
+                organization: ctx.organization,
+                session: ctx.session,
+                cookies: ctx.cookies
+            };
+        }
+    });
+
     const connection = await createConnection(ormconfig);
 
     app.use((ctx, next) => {

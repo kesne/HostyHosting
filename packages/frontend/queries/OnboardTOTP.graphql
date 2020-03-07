@@ -2,8 +2,6 @@ query OnboardTOTP {
     me {
         id
         name
-        onboardTOTP {
-            secret
-        }
+        onboardTOTP
     }
 }

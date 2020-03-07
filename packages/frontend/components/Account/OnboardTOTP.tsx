@@ -41,7 +41,7 @@ export default function OnboardTOTP({ visible, onClose }: Props) {
         await enableTotp({
             variables: {
                 token: String(values.token),
-                secret: data?.me.onboardTOTP?.secret ?? ''
+                secret: data?.me.onboardTOTP ?? ''
             }
         });
     }
@@ -53,7 +53,7 @@ export default function OnboardTOTP({ visible, onClose }: Props) {
     }, [totpEnableState.data, onClose]);
 
     const OTP_DATA = data
-        ? `otpauth://totp/${data.me.name}?secret=${data.me.onboardTOTP?.secret}`
+        ? `otpauth://totp/${data.me.name}?secret=${data.me.onboardTOTP}`
         : '';
 
     return (
@@ -88,7 +88,7 @@ export default function OnboardTOTP({ visible, onClose }: Props) {
                         <br />
                         <Code>
                             <Typography.Title level={3} code>
-                                {data.me.onboardTOTP?.secret}
+                                {data.me.onboardTOTP}
                             </Typography.Title>
                         </Code>
                     </Typography.Paragraph>

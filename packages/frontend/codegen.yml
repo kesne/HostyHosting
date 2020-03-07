@@ -1,4 +1,4 @@
-schema: ../backend/schema.graphql
+schema: ../backend/src/schema.gql
 documents: ./queries/*.graphql
 generates:
     ./queries/index.tsx:

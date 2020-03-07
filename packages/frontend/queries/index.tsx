@@ -11,18 +11,18 @@ export type Scalars = {
   Float: number,
 };
 
-
 export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
   description: Scalars['String'],
-  secrets: Array<Secret>,
-  containers: Array<Container>,
-  deployments: Array<Deployment>,
   createdBy?: Maybe<User>,
   createdAt: Scalars['String'],
   updatedAt: Scalars['String'],
+  organization: Organization,
+  containers: Array<Container>,
+  deployments: Array<Deployment>,
+  secrets: Array<Secret>,
 };
 
 export type ApplicationMutations = {
@@ -38,9 +38,9 @@ export type ApplicationMutations = {
 
 
 export type ApplicationMutationsUpdateArgs = {
-  name?: Maybe<Scalars['String']>,
+  secret?: Maybe<SecretInput>,
   description?: Maybe<Scalars['String']>,
-  secret?: Maybe<SecretInput>
+  name?: Maybe<Scalars['String']>
 };
 
 
@@ -50,8 +50,8 @@ export type ApplicationMutationsCreateDeploymentArgs = {
 
 
 export type ApplicationMutationsUpdateDeploymentArgs = {
-  id: Scalars['Int'],
-  image: Scalars['String']
+  image: Scalars['String'],
+  id: Scalars['Int']
 };
 
 
@@ -61,15 +61,15 @@ export type ApplicationMutationsDeleteDeploymentArgs = {
 
 
 export type ApplicationMutationsCreateContainerArgs = {
-  deployment: Scalars['Int'],
+  number: Scalars['Int'],
   size: Scalars['Int'],
-  number: Scalars['Int']
+  deployment: Scalars['Int']
 };
 
 
 export type ApplicationMutationsUpdateContainerArgs = {
-  id: Scalars['Int'],
-  number: Scalars['Int']
+  number: Scalars['Int'],
+  id: Scalars['Int']
 };
 
 
@@ -82,10 +82,9 @@ export type Container = {
   id: Scalars['Int'],
   size: Scalars['Int'],
   number: Scalars['Int'],
-  /** TODO: Make this non-nullable once this link is enforced: */
-  deployment?: Maybe<Deployment>,
   createdAt: Scalars['String'],
   updatedAt: Scalars['String'],
+  deployment: Deployment,
 };
 
 export type Deployment = {
@@ -94,58 +93,41 @@ export type Deployment = {
   image: Scalars['String'],
   createdAt: Scalars['String'],
   updatedAt: Scalars['String'],
+  containers: Array<Container>,
 };
 
 export type Mutation = {
    __typename?: 'Mutation',
-  /** ACCOUNT MANAGEMENT: */
   signUp: Result,
   signIn: SignInResult,
+  updateAccount: User,
+  forgotPassword: Result,
+  resetPassword: Result,
   exchangeTOTP: Result,
   enableTotp: Result,
   disableTotp: Result,
-  updateAccount: User,
-  forgotPassword: Result,
-  resetPassword: ResetPassword,
-  /** APPLICATIONS: */
   createApplication: Application,
   application: ApplicationMutations,
 };
 
 
 export type MutationSignUpArgs = {
-  organizationName: Scalars['String'],
-  name: Scalars['String'],
+  password: Scalars['String'],
   email: Scalars['String'],
-  password: Scalars['String']
+  name: Scalars['String'],
+  organizationName: Scalars['String']
 };
 
 
 export type MutationSignInArgs = {
-  email: Scalars['String'],
-  password: Scalars['String']
-};
-
-
-export type MutationExchangeTotpArgs = {
-  token: Scalars['String']
-};
-
-
-export type MutationEnableTotpArgs = {
-  secret: Scalars['String'],
-  token: Scalars['String']
-};
-
-
-export type MutationDisableTotpArgs = {
-  password: Scalars['String']
+  password: Scalars['String'],
+  email: Scalars['String']
 };
 
 
 export type MutationUpdateAccountArgs = {
-  name?: Maybe<Scalars['String']>,
-  email?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>,
+  name?: Maybe<Scalars['String']>
 };
 
 
@@ -155,8 +137,24 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationResetPasswordArgs = {
-  uuid: Scalars['String'],
-  password?: Maybe<Scalars['String']>
+  password: Scalars['String'],
+  uuid: Scalars['String']
+};
+
+
+export type MutationExchangeTotpArgs = {
+  token: Scalars['String']
+};
+
+
+export type MutationEnableTotpArgs = {
+  token: Scalars['String'],
+  secret: Scalars['String']
+};
+
+
+export type MutationDisableTotpArgs = {
+  password: Scalars['String']
 };
 
 
@@ -173,14 +171,8 @@ export type Organization = {
    __typename?: 'Organization',
   id: Scalars['Int'],
   name: Scalars['String'],
-};
-
-export type PageInfo = {
-   __typename?: 'PageInfo',
-  hasNextPage: Scalars['Boolean'],
-  hasPreviousPage: Scalars['Boolean'],
-  startCursor: Scalars['String'],
-  endCursor: Scalars['String'],
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
 };
 
 export type Query = {
@@ -195,11 +187,7 @@ export type QueryApplicationArgs = {
   id: Scalars['Int']
 };
 
-export type ResetPassword = {
-   __typename?: 'ResetPassword',
-  complete: Scalars['Boolean'],
-};
-
+/** Provides a boolean to determine if the action was successful or not. */
 export type Result = {
    __typename?: 'Result',
   ok: Scalars['Boolean'],
@@ -216,26 +204,26 @@ export type SecretInput = {
   value: Scalars['String'],
 };
 
+/** 
+ * A special type of result used just for SignIns. Provides a boolean for if the
+ * user requires a TOTP exchange before being fully logged in.
+ */
 export type SignInResult = {
    __typename?: 'SignInResult',
   ok: Scalars['Boolean'],
   requiresTOTP: Scalars['Boolean'],
 };
 
-export type TotpOnboarding = {
-   __typename?: 'TOTPOnboarding',
-  secret: Scalars['String'],
-};
-
-/** TODO: Users probably have roles. */
 export type User = {
    __typename?: 'User',
   id: Scalars['Int'],
   name: Scalars['String'],
   email: Scalars['String'],
+  createdAt: Scalars['String'],
+  updatedAt: Scalars['String'],
   hasTOTP: Scalars['Boolean'],
-  onboardTOTP?: Maybe<TotpOnboarding>,
-  organization?: Maybe<Organization>,
+  organization: Organization,
+  onboardTOTP: Scalars['String'],
 };
 
 export type ApplicationQueryVariables = {
@@ -264,10 +252,10 @@ export type ApplicationContainersQuery = (
     & { containers: Array<(
       { __typename?: 'Container' }
       & Pick<Container, 'id' | 'size' | 'number'>
-      & { deployment: Maybe<(
+      & { deployment: (
         { __typename?: 'Deployment' }
         & Pick<Deployment, 'id' | 'image'>
-      )> }
+      ) }
     )> }
   ) }
 );
@@ -340,10 +328,10 @@ export type CreateContainerMutation = (
     & { createContainer: (
       { __typename?: 'Container' }
       & Pick<Container, 'id' | 'size' | 'number'>
-      & { deployment: Maybe<(
+      & { deployment: (
         { __typename?: 'Deployment' }
         & Pick<Deployment, 'id' | 'image'>
-      )> }
+      ) }
     ) }
   ) }
 );
@@ -466,10 +454,10 @@ export type MeQuery = (
 export type MeFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'email' | 'hasTOTP'>
-  & { organization: Maybe<(
+  & { organization: (
     { __typename?: 'Organization' }
     & Pick<Organization, 'id' | 'name'>
-  )> }
+  ) }
 );
 
 export type OnboardTotpQueryVariables = {};
@@ -479,25 +467,21 @@ export type OnboardTotpQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name'>
-    & { onboardTOTP: Maybe<(
-      { __typename?: 'TOTPOnboarding' }
-      & Pick<TotpOnboarding, 'secret'>
-    )> }
+    & Pick<User, 'id' | 'name' | 'onboardTOTP'>
   ) }
 );
 
 export type ResetPasswordMutationVariables = {
   uuid: Scalars['String'],
-  password?: Maybe<Scalars['String']>
+  password: Scalars['String']
 };
 
 
 export type ResetPasswordMutation = (
   { __typename?: 'Mutation' }
   & { resetPassword: (
-    { __typename?: 'ResetPassword' }
-    & Pick<ResetPassword, 'complete'>
+    { __typename?: 'Result' }
+    & Pick<Result, 'ok'>
   ) }
 );
 
@@ -1104,9 +1088,7 @@ export const OnboardTotpDocument = gql`
   me {
     id
     name
-    onboardTOTP {
-      secret
-    }
+    onboardTOTP
   }
 }
     `;
@@ -1136,9 +1118,9 @@ export type OnboardTotpQueryHookResult = ReturnType<typeof useOnboardTotpQuery>;
 export type OnboardTotpLazyQueryHookResult = ReturnType<typeof useOnboardTotpLazyQuery>;
 export type OnboardTotpQueryResult = ApolloReactCommon.QueryResult<OnboardTotpQuery, OnboardTotpQueryVariables>;
 export const ResetPasswordDocument = gql`
-    mutation ResetPassword($uuid: String!, $password: String) {
+    mutation ResetPassword($uuid: String!, $password: String!) {
   resetPassword(uuid: $uuid, password: $password) {
-    complete
+    ok
   }
 }
     `;

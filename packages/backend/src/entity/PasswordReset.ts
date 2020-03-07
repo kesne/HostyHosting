@@ -9,10 +9,8 @@ import {
     JoinColumn,
     AfterInsert
 } from 'typeorm';
-import Queue from 'bull';
 import { User } from './User';
-
-const resetQueue = new Queue('reset emails');
+import sendEmail from '../utils/sendEmail';
 
 @Entity()
 export class PasswordReset extends BaseEntity {
@@ -59,9 +57,10 @@ export class PasswordReset extends BaseEntity {
 
     @AfterInsert()
     sendEmail() {
-        resetQueue.add({
-            to: this.user.email,
-            uuid: this.uuid
-        });
+        sendEmail(
+            this.user.email,
+            'Password Reset',
+            `You requested a password reset on Docker As A Service. To complete the password reset, click here: https://daas.dev/reset-password/${this.uuid}`
+        );
     }
 }

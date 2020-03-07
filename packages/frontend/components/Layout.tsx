@@ -9,7 +9,7 @@ const Root = styled.div`
     flex-direction: column;
     // TODO: This should probably be min-height,
     // we just need to sort out the messages view.
-    height: 100vh;
+height: 100vh;
 `;
 
 export default function App({ children }: { children: any }) {
