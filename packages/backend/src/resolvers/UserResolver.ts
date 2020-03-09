@@ -41,7 +41,7 @@ export class UserResolver {
         const user = new User();
         user.name = name;
         user.email = email;
-        user.organization = Promise.resolve(organization);
+        user.organization = organization;
 
         await user.setPassword(password);
         await user.save();

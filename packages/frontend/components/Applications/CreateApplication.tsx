@@ -28,7 +28,8 @@ export default function CreateApplication({ visible, onClose }: Props) {
         const values = await form.validateFields();
         createApplication({
             variables: {
-                name: values.name
+                name: values.name,
+                description: values.description
             }
         });
     }
@@ -43,8 +44,15 @@ export default function CreateApplication({ visible, onClose }: Props) {
             onCancel={onClose}
         >
             <Form form={form} name="create_application" layout="vertical">
-                <Form.Item name="name" label="Application Name">
+                <Form.Item
+                    name="name"
+                    label="Application Name"
+                    rules={[{ required: true, message: 'An application name is required.' }]}
+                >
                     <Input disabled={loading} />
+                </Form.Item>
+                <Form.Item name="description" label="Description">
+                    <Input.TextArea disabled={loading} />
                 </Form.Item>
             </Form>
         </Modal>

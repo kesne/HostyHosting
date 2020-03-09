@@ -2,61 +2,55 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    BaseEntity,
     ManyToOne,
     CreateDateColumn,
-    UpdateDateColumn,
-    OneToOne,
-    JoinColumn
+    UpdateDateColumn
 } from 'typeorm';
-import { Application } from './Application';
-import { Deployment } from './Deployment';
 import { ObjectType, Field, Int } from 'type-graphql';
+import { BaseEntity } from './BaseEntity';
+import { ContainerGroup } from './ContainerGroup';
+import { Lazy } from '../types';
 
+export enum Status {
+    UNKNOWN = 'UNKNOWN',
+    STARTING = 'STARTING',
+    RUNNING = 'RUNNING',
+    ERROR = 'ERROR',
+    CRASHED = 'CRASHED'
+}
+
+// TODO: We need to make sure that when we create a container, that we have two
+// types of capacity:
+//   - System capacity (we litterally have enough hardward to back the container)
+//   - User capacity (this user is trusted enough to boot an additional container)
 @Entity()
 @ObjectType()
 export class Container extends BaseEntity {
-    static findByApplicationAndId(application: Application, id: number) {
-        return Container.findOneOrFail({
-            where: {
-                id,
-                application
-            }
-        });
-    }
-
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
 
-    // TODO: Size is probably not just a number:
-    @Field(() => Int)
-    @Column()
-    size!: number;
-
-    // TODO: This column name sux:
-    @Field(() => Int)
-    @Column()
-    number!: number;
+    @Field()
+    @Column({
+        type: 'enum',
+        enum: Status,
+        default: Status.UNKNOWN
+    })
+    status!: Status;
 
     @Field()
-    @CreateDateColumn()
-    createdAt!: string;
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn()
-    updatedAt!: string;
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date;
 
+    @Field(() => ContainerGroup)
     @ManyToOne(
-        () => Application,
-        application => application.containers
+        () => ContainerGroup,
+        containerGroup => containerGroup.containers,
+        { lazy: true }
     )
-    application!: Promise<Application>;
-
-    @Field(() => Deployment)
-    @ManyToOne(
-        () => Deployment,
-        deployment => deployment.containers
-    )
-    deployment!: Promise<Deployment>;
+    containerGroup!: Lazy<ContainerGroup>;
 }

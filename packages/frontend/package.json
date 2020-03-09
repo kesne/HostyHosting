@@ -43,7 +43,9 @@
         "codegen": "graphql-codegen",
         "start": "NODE_ENV=production node server.js",
         "build": "next build",
-        "dev": "NODE_ENV=development node server.js"
+        "dev": "concurrently -n codegen,next 'yarn run dev:codegen' 'yarn run dev:server'",
+        "dev:codegen": "graphql-codegen --watch",
+        "dev:server": "NODE_ENV=development node server.js"
     },
     "devDependencies": {
         "@types/js-cookie": "^2.2.4",
@@ -51,6 +53,7 @@
         "@types/react-dom": "^16.9.4",
         "@types/styled-components": "^4.4.2",
         "babel-plugin-styled-components": "^1.10.6",
+        "concurrently": "^5.1.0",
         "http-proxy-middleware": "^0.20.0",
         "typescript": "^3.7.4"
     }

@@ -4,13 +4,12 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
-import Containers from './Containers';
+import ContainerGroups from './ContainerGroups';
 import Deployments from './Deployments';
 import ApplicationContext from './ApplicationContext';
 
-// TODO: We really can return this as a number instead of a string.
 function formatDate(timestamp: string) {
-    return new Date(+timestamp).toDateString();
+    return new Date(timestamp).toDateString();
 }
 
 export default function Application({ id }: { id: number }) {
@@ -47,15 +46,15 @@ export default function Application({ id }: { id: number }) {
                         {formatDate(data.application.updatedAt)}
                     </Descriptions.Item>
                 </Descriptions>
-                <Tabs defaultActiveKey="containers" size="large">
+                <Tabs defaultActiveKey="overview" size="large">
                     <Tabs.TabPane tab="Overview" key="overview">
                         <Overview />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Deployments" key="deploy">
                         <Deployments />
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Containers" key="containers">
-                        <Containers />
+                    <Tabs.TabPane tab="Container Groups" key="containergroups">
+                        <ContainerGroups />
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         tab={

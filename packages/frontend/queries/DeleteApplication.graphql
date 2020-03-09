@@ -1,0 +1,7 @@
+mutation DeleteApplication($id: Int!) {
+    application(id: $id) {
+        delete {
+            id
+        }
+    }
+}

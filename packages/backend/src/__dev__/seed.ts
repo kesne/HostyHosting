@@ -4,13 +4,13 @@ import { User } from '../entity/User';
 import { PasswordReset } from '../entity/PasswordReset';
 import { Application } from '../entity/Application';
 import { Organization } from '../entity/Organization';
-import { Container } from '../entity/Container';
+import { ContainerGroup } from '../entity/ContainerGroup';
 
 async function seed() {
     const connection = await createConnection(ormconfig);
 
     // Start by removing the ENTIRE world.
-    await Container.delete({});
+    await ContainerGroup.delete({});
     await Application.delete({});
     await Organization.delete({});
     await PasswordReset.delete({});
@@ -24,7 +24,7 @@ async function seed() {
     const user = new User();
     user.email = 'admin@vapejuicejordan.rip';
     user.name = 'Admin (DEV)';
-    user.organization = Promise.resolve(organization);
+    user.organization = organization;
     await user.setPassword('admin');
     await user.save();
 

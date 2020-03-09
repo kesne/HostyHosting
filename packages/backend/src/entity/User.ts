@@ -3,15 +3,16 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    BaseEntity,
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
-import { Session, Cookies } from '../types';
+import { Session, Cookies, Lazy } from '../types';
 import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
+import { IsEmail, Length } from 'class-validator';
+import { BaseEntity } from './BaseEntity';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -54,16 +55,18 @@ export class User extends BaseEntity {
         return user;
     }
 
-    @Field(type => Int)
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
 
     @Field()
     @Column()
+    @Length(1, 50)
     name!: string;
 
     @Field()
     @Column('citext', { unique: true })
+    @IsEmail()
     email!: string;
 
     @Column()
@@ -71,12 +74,12 @@ export class User extends BaseEntity {
 
     // TODO: Need better types here:
     @Field()
-    @CreateDateColumn()
-    createdAt!: string;
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn()
-    updatedAt!: string;
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date;
 
     async setPassword(newPassword: string) {
         this.passwordHash = await hash(newPassword, SALT_ROUNDS);
@@ -126,7 +129,8 @@ export class User extends BaseEntity {
     @Field(() => Organization)
     @ManyToOne(
         () => Organization,
-        organization => organization.users
+        organization => organization.users,
+        { lazy: true }
     )
-    organization!: Promise<Organization>;
+    organization!: Lazy<Organization>;
 }

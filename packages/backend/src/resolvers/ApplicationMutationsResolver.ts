@@ -3,7 +3,8 @@ import { Application } from '../entity/Application';
 import { SecretInput } from './types/Secret';
 import { Context } from '../types';
 import { Deployment } from '../entity/Deployment';
-import { Container } from '../entity/Container';
+import { ContainerGroup } from '../entity/ContainerGroup';
+import { Container, Status } from '../entity/Container';
 
 @ObjectType()
 class ApplicationMutations {
@@ -11,6 +12,16 @@ class ApplicationMutations {
 
     constructor(application: Application) {
         this.application = application;
+    }
+
+    // TODO: This needs to delete all associated resources. (cascasde should solve this)
+    @Field(() => Application)
+    async delete() {
+        // TODO: Spin down all resources, and instead of immedietly deleting, mark
+        // it in a state of deletion, and don't allow modification to the model.
+        await Application.delete(this.application.id);
+
+        return this.application;
     }
 
     @Field(() => Application)
@@ -40,7 +51,7 @@ class ApplicationMutations {
     @Field(() => Deployment)
     async createDeployment(@Arg('image') image: string) {
         const deployment = new Deployment();
-        deployment.application = Promise.resolve(this.application);
+        deployment.application = this.application;
         deployment.image = image;
         return await deployment.save();
     }
@@ -58,9 +69,9 @@ class ApplicationMutations {
     async deleteDeployment(@Arg('id', () => Int) id: number) {
         const deployment = await Deployment.findByApplicationAndId(this.application, id);
 
-        const containers = await deployment.containers;
-        if (containers.length) {
-            throw new Error('You may only delete deployments with no containers.');
+        const containerGroups = await deployment.containerGroups;
+        if (containerGroups.length) {
+            throw new Error('You may only delete deployments with no container groups.');
         }
 
         await Deployment.delete(deployment.id);
@@ -68,43 +79,60 @@ class ApplicationMutations {
         return deployment;
     }
 
-    @Field(() => Container)
-    async createContainer(
+    @Field(() => ContainerGroup)
+    async createContainerGroup(
+        @Arg('label') label: string,
         @Arg('deployment', () => Int) deploymentID: number,
         @Arg('size', () => Int) size: number,
         @Arg('number', () => Int) number: number
     ) {
         const deployment = await Deployment.findByApplicationAndId(this.application, deploymentID);
 
-        const container = new Container();
-        // TODO: Look into a Lazy wrapper that is Promise<T> | T, because I think that technically works
-        // and would solve a lot of annoying patterns around constructing these.
-        container.application = Promise.resolve(this.application);
-        container.size = size;
-        container.number = number;
-        container.deployment = Promise.resolve(deployment);
-        return await container.save();
+        const containerGroup = new ContainerGroup();
+        containerGroup.application = this.application;
+        containerGroup.label = label;
+        containerGroup.size = size;
+        containerGroup.deployment = deployment;
+
+        await containerGroup.save();
+
+        await Promise.all(
+            Array.from({ length: number }, () => {
+                const container = new Container();
+                container.status = Status.STARTING;
+                container.containerGroup = containerGroup;
+                return container.save();
+            })
+        );
+
+        return containerGroup;
     }
 
-    @Field(() => Container)
-    async updateContainer(
+    @Field(() => ContainerGroup)
+    async updateContainerGroup(
         @Arg('id', () => Int) id: number,
-        @Arg('number', () => Int) number: number
+        @Arg('label', { nullable: true }) label?: string,
+        @Arg('number', () => Int, { nullable: true }) number?: number
     ) {
-        const container = await Container.findByApplicationAndId(this.application, id);
+        const containerGroup = await ContainerGroup.findByApplicationAndId(this.application, id);
 
-        container.number = number;
+        if (label) {
+            containerGroup.label = label;
+        }
 
-        return await container.save();
+        // TODO: This needs to do something.
+        // containerGroup.number = number;
+
+        return await containerGroup.save();
     }
 
-    @Field(() => Container)
-    async deleteContainer(@Arg('id', () => Int) id: number) {
-        const container = await Container.findByApplicationAndId(this.application, id);
+    @Field(() => ContainerGroup)
+    async deleteContainerGroup(@Arg('id', () => Int) id: number) {
+        const containerGroup = await ContainerGroup.findByApplicationAndId(this.application, id);
 
-        await Container.delete(container.id);
+        await ContainerGroup.delete(containerGroup.id);
 
-        return container;
+        return containerGroup;
     }
 }
 

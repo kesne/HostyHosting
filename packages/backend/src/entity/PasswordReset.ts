@@ -1,13 +1,13 @@
 import {
     Entity,
-    BaseEntity,
     PrimaryGeneratedColumn,
     OneToOne,
     CreateDateColumn,
     Column,
     Generated,
     JoinColumn,
-    AfterInsert
+    AfterInsert,
+    BaseEntity
 } from 'typeorm';
 import { User } from './User';
 import sendEmail from '../utils/sendEmail';
@@ -52,8 +52,8 @@ export class PasswordReset extends BaseEntity {
     @JoinColumn()
     user!: User;
 
-    @CreateDateColumn()
-    createdAt!: string;
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
 
     @AfterInsert()
     sendEmail() {

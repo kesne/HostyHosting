@@ -1,9 +1,9 @@
 import { Button, List, Spin } from 'antd';
 import styled from 'styled-components';
-import Container from './Container';
-import CreateContainer from './CreateContainer';
+import ContainerGroup from './ContainerGroup';
+import CreateContainerGroup from './CreateContainerGroup';
 import useBoolean from '../../utils/useBoolean';
-import { useApplicationContainersQuery } from '../../../queries';
+import { useApplicationContainerGroupsQuery } from '../../../queries';
 import { useContext } from 'react';
 import ApplicationContext from '../ApplicationContext';
 
@@ -13,9 +13,9 @@ const Actions = styled.div`
     justify-content: flex-end;
 `;
 
-export default function Containers() {
+export default function ContainerGroups() {
     const applicationID = useContext(ApplicationContext);
-    const { data, loading, error } = useApplicationContainersQuery({
+    const { data, loading, error } = useApplicationContainerGroupsQuery({
         variables: {
             id: applicationID
         }
@@ -30,16 +30,16 @@ export default function Containers() {
         <div>
             <Actions>
                 <Button type="primary" onClick={on}>
-                    Create Container
+                    Create Container Group
                 </Button>
             </Actions>
-            <CreateContainer visible={createVisible} onClose={off} />
+            <CreateContainerGroup visible={createVisible} onClose={off} />
             <List
-                grid={{ gutter: 16, column: 2 }}
-                dataSource={data.application.containers}
-                renderItem={container => (
+                grid={{ gutter: 16, xs: 1, sm: 1, md: 2 }}
+                dataSource={data.application.containerGroups}
+                renderItem={containerGroup => (
                     <List.Item>
-                        <Container container={container} />
+                        <ContainerGroup containerGroup={containerGroup} />
                     </List.Item>
                 )}
             />

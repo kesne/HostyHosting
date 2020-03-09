@@ -1,6 +1,6 @@
 import { Form, Modal, InputNumber, Button } from 'antd';
 import useBoolean from '../../utils/useBoolean';
-import { useUpdateContainerMutation } from '../../../queries';
+import { useUpdateContainerGroupMutation } from '../../../queries';
 import { useEffect, useContext } from 'react';
 import ApplicationContext from '../ApplicationContext';
 
@@ -13,7 +13,7 @@ export default function ScaleContainer({ id, currentNumber }: Props) {
     const applicationID = useContext(ApplicationContext);
     const [form] = Form.useForm();
     const [visible, { on, off }] = useBoolean(false);
-    const [updateContainer, { loading }] = useUpdateContainerMutation();
+    const [updateContainerGroup, { loading }] = useUpdateContainerGroupMutation();
 
     useEffect(() => {
         if (visible) {
@@ -25,7 +25,7 @@ export default function ScaleContainer({ id, currentNumber }: Props) {
         const values = await form.validateFields();
 
         if (values.number !== currentNumber) {
-            await updateContainer({
+            await updateContainerGroup({
                 variables: {
                     applicationID,
                     id,
@@ -40,7 +40,7 @@ export default function ScaleContainer({ id, currentNumber }: Props) {
     return (
         <>
             <Button size="small" onClick={on}>
-                Scale Container
+                Scale
             </Button>
             <Modal
                 title="Scale Container"

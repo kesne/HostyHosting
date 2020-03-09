@@ -1,8 +1,8 @@
 import { Button } from 'antd';
 import {
-    useDeleteContainerMutation,
-    ApplicationContainersQuery,
-    ApplicationContainersDocument
+    useDeleteContainerGroupMutation,
+    ApplicationContainerGroupsQuery,
+    ApplicationContainerGroupsDocument
 } from '../../../queries';
 import produce from 'immer';
 import { useContext } from 'react';
@@ -14,7 +14,7 @@ type Props = {
 
 export default function DeleteContainer({ id }: Props) {
     const applicationID = useContext(ApplicationContext);
-    const [deleteContainer] = useDeleteContainerMutation({
+    const [deleteContainerGroup] = useDeleteContainerGroupMutation({
         variables: {
             applicationID,
             id
@@ -24,26 +24,26 @@ export default function DeleteContainer({ id }: Props) {
 
             // Read the data from our cache for this query.
             const { application } =
-                cache.readQuery<ApplicationContainersQuery>({
-                    query: ApplicationContainersDocument,
-                    variables: { id: applicationID }
+                cache.readQuery<ApplicationContainerGroupsQuery>({
+                    query: ApplicationContainerGroupsDocument,
+                    variables: { wid: applicationID }
                 }) ?? {};
 
-            if (!application?.containers) {
+            if (!application?.containerGroups) {
                 return;
             }
 
-            const nextAppliction = produce(application, (draftState) => {
-                draftState.containers.splice(
-                    draftState.containers.findIndex(
-                        container => container.id === data.application.deleteContainer.id
+            const nextAppliction = produce(application, draftState => {
+                draftState.containerGroups.splice(
+                    draftState.containerGroups.findIndex(
+                        container => container.id === data.application.deleteContainerGroup.id
                     ),
                     1
                 );
             });
 
             cache.writeQuery({
-                query: ApplicationContainersDocument,
+                query: ApplicationContainerGroupsDocument,
                 variables: { id: applicationID },
                 data: { application: nextAppliction }
             });
@@ -51,7 +51,7 @@ export default function DeleteContainer({ id }: Props) {
     });
 
     return (
-        <Button type="danger" onClick={() => deleteContainer()}>
+        <Button type="danger" onClick={() => deleteContainerGroup()}>
             Delete
         </Button>
     );

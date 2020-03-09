@@ -14,3 +14,5 @@ export type Context = {
     session: Session;
     cookies: Cookies;
 };
+
+export type Lazy<T> = T | Promise<T>;

@@ -5,19 +5,21 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    OneToMany,
 } from 'typeorm';
-import { ObjectType, Field, Int } from 'type-graphql';
 import { Application } from './Application';
-import { ContainerGroup } from './ContainerGroup';
+import { Deployment } from './Deployment';
+import { ObjectType, Field, Int } from 'type-graphql';
+import { Length, Min, Max } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
+import { Container } from './Container';
 
 @Entity()
 @ObjectType()
-export class Deployment extends BaseEntity {
+export class ContainerGroup extends BaseEntity {
     static findByApplicationAndId(application: Application, id: number) {
-        return Deployment.findOneOrFail({
+        return ContainerGroup.findOneOrFail({
             where: {
                 id,
                 application
@@ -29,11 +31,17 @@ export class Deployment extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    // TODO: When you specify the image, we should attempt to resolve it against our
-    // registry so that we can verify that this will be "launchable".
     @Field()
     @Column()
-    image!: string;
+    @Length(3, 20)
+    label!: string;
+
+    // TODO: Should this be an enum of the supported types for sizes?
+    @Field(() => Int)
+    @Column()
+    @Min(1)
+    @Max(5)
+    size!: number;
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
@@ -43,6 +51,14 @@ export class Deployment extends BaseEntity {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
 
+    @Field(() => [Container])
+    @OneToMany(
+        () => Container,
+        container => container.containerGroup,
+        { lazy: true }
+    )
+    containers!: Lazy<Container[]>;
+
     @ManyToOne(
         () => Application,
         application => application.containerGroups,
@@ -50,11 +66,11 @@ export class Deployment extends BaseEntity {
     )
     application!: Lazy<Application>;
 
-    @Field(() => [ContainerGroup])
-    @OneToMany(
-        () => ContainerGroup,
-        containerGroup => containerGroup.deployment,
+    @Field(() => Deployment)
+    @ManyToOne(
+        () => Deployment,
+        deployment => deployment.containerGroups,
         { lazy: true }
     )
-    containerGroups!: Lazy<ContainerGroup[]>;
+    deployment!: Lazy<Deployment>;
 }

@@ -2,7 +2,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    BaseEntity,
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
@@ -10,9 +9,12 @@ import {
 } from 'typeorm';
 import { Organization } from './Organization';
 import { User } from './User';
-import { Container } from './Container';
+import { ContainerGroup } from './ContainerGroup';
 import { Deployment } from './Deployment';
 import { ObjectType, Field, Int } from 'type-graphql';
+import { Length } from 'class-validator';
+import { BaseEntity } from './BaseEntity';
+import { Lazy } from '../types';
 
 @Entity()
 @ObjectType()
@@ -21,48 +23,56 @@ export class Application extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    // NOTE: We don't enforce casing or spaces or anything else currently. This
+    // might make it hard to work with CLIs, so we might want to consider it in
+    // the future.
     @Field()
-    @Column()
+    @Column({ unique: true })
+    @Length(3, 20)
     name!: string;
 
     @Field()
     @Column({ default: '' })
+    @Length(0, 250)
     description!: string;
 
     // TODO: What happens if a user deletes their account:
     @Field(() => User, { nullable: true })
-    @ManyToOne(() => User)
-    createdBy!: Promise<User>;
+    @ManyToOne(() => User, { lazy: true })
+    createdBy!: Lazy<User>;
 
     @Column('json', { nullable: true })
     secrets!: Record<string, string>;
 
     @Field()
-    @CreateDateColumn()
-    createdAt!: string;
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
 
     @Field()
-    @UpdateDateColumn()
-    updatedAt!: string;
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date;
 
     @Field(() => Organization)
     @ManyToOne(
         () => Organization,
-        organization => organization.users
+        organization => organization.users,
+        { lazy: true }
     )
-    organization!: Promise<Organization>;
+    organization!: Lazy<Organization>;
 
-    @Field(() => [Container])
+    @Field(() => [ContainerGroup])
     @OneToMany(
-        () => Container,
-        container => container.application
+        () => ContainerGroup,
+        containerGroup => containerGroup.application,
+        { lazy: true }
     )
-    containers!: Promise<Container[]>;
+    containerGroups!: Lazy<ContainerGroup[]>;
 
     @Field(() => [Deployment])
     @OneToMany(
         () => Deployment,
-        deployment => deployment.application
+        deployment => deployment.application,
+        { lazy: true }
     )
-    deployments!: Promise<Deployment[]>;
+    deployments!: Lazy<Deployment[]>;
 }

@@ -1,9 +1,9 @@
-import { Modal, Form, InputNumber, Slider, Typography, Select } from 'antd';
+import { Modal, Form, Input, InputNumber, Slider, Typography, Select } from 'antd';
 import { useEffect, useContext } from 'react';
 import {
-    useCreateContainerMutation,
-    ApplicationContainersDocument,
-    ApplicationContainersQuery,
+    useCreateContainerGroupMutation,
+    ApplicationContainerGroupsDocument,
+    ApplicationContainerGroupsQuery,
     useApplicationDeploymentsQuery
 } from '../../../queries';
 import ApplicationContext from '../ApplicationContext';
@@ -24,23 +24,23 @@ export default function CreateContainer({ visible, onClose }: Props) {
         }
     });
 
-    const [createContainer, { loading, data }] = useCreateContainerMutation({
+    const [createContainerGroup, { loading, data }] = useCreateContainerGroupMutation({
         update(cache, { data }) {
             if (!data) return;
 
             // Read the data from our cache for this query.
             const { application } =
-                cache.readQuery<ApplicationContainersQuery>({
-                    query: ApplicationContainersDocument,
+                cache.readQuery<ApplicationContainerGroupsQuery>({
+                    query: ApplicationContainerGroupsDocument,
                     variables: { id: applicationID }
                 }) ?? {};
 
-            const nextApplication = produce(application, (draftState) => {
-                draftState?.containers.push(data.application.createContainer);
+            const nextApplication = produce(application, draftState => {
+                draftState?.containerGroups.push(data.application.createContainerGroup);
             });
 
             cache.writeQuery({
-                query: ApplicationContainersDocument,
+                query: ApplicationContainerGroupsDocument,
                 variables: { id: applicationID },
                 data: { application: nextApplication }
             });
@@ -61,9 +61,10 @@ export default function CreateContainer({ visible, onClose }: Props) {
 
     async function handleOk() {
         const values = await form.validateFields();
-        await createContainer({
+        await createContainerGroup({
             variables: {
                 applicationID,
+                label: values.label,
                 deployment: values.deployment,
                 size: values.size,
                 number: values.number
@@ -94,6 +95,18 @@ export default function CreateContainer({ visible, onClose }: Props) {
                     <Typography.Text strong>not</Typography.Text> be changed after it is created.
                     The number of deployments can be changed at any time.
                 </Typography.Paragraph>
+                <Form.Item
+                    name="label"
+                    label="Label"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'A label is required to create a container.'
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
                 <Form.Item
                     name="deployment"
                     label="Deployment"

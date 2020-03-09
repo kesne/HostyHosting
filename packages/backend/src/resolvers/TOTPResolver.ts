@@ -4,7 +4,7 @@ import Result from './types/Result';
 import { User } from '../entity/User';
 import { Context } from '../types';
 
-@Resolver(of => Result)
+@Resolver()
 export class TOTPResolver {
     @Mutation(() => Result)
     async exchangeTOTP(@Ctx() { session, cookies }: Context, @Arg('token') token: string) {

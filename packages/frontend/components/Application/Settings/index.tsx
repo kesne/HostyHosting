@@ -1,10 +1,12 @@
 import Region from './Region';
-import Delete from './Delete';
+import Delete, { Props as DeleteProps } from './Delete';
 import Secrets, { Props as SecretProps } from './Secrets';
 import Information, { Props as InformationProps } from './Information';
 
 type Props = {
-    application: InformationProps['application'] & SecretProps['application'];
+    application: InformationProps['application'] &
+        SecretProps['application'] &
+        DeleteProps['application'];
 };
 
 export default function Settings({ application }: Props) {
@@ -20,7 +22,7 @@ export default function Settings({ application }: Props) {
                 <Secrets application={application} />
             </Region>
             <Region title="App Management" last>
-                <Delete />
+                <Delete application={application} />
             </Region>
         </>
     );

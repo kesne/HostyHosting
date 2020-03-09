@@ -17,11 +17,16 @@ import { Secret } from './types/Secret';
 export class ApplicationResolver {
     @Authorized()
     @Mutation(() => Application)
-    async createApplication(@Ctx() { organization, user }: Context, @Arg('name') name: string) {
+    async createApplication(
+        @Ctx() { organization, user }: Context,
+        @Arg('name') name: string,
+        @Arg('description', { nullable: true }) description?: string
+    ) {
         const app = new Application();
         app.name = name;
-        app.organization = Promise.resolve(organization);
-        app.createdBy = Promise.resolve(user);
+        app.description = description ?? '';
+        app.organization = organization;
+        app.createdBy = user;
         app.secrets = {};
         return await app.save();
     }
