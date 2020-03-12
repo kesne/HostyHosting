@@ -16,17 +16,18 @@ async function seed() {
     await PasswordReset.delete({});
     await User.delete({});
 
-    // Create an org and a user account:
-    const organization = new Organization();
-    organization.name = 'DaaS';
-    await organization.save();
-
+    // Create an admin user:
     const user = new User();
     user.email = 'admin@vapejuicejordan.rip';
     user.name = 'Admin (DEV)';
-    user.organization = organization;
     await user.setPassword('admin');
     await user.save();
+
+    // Create an org:
+    const organization = new Organization();
+    organization.name = 'DaaS';
+    organization.users = [user];
+    await organization.save();
 
     await connection.close();
 }

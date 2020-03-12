@@ -12,27 +12,18 @@ import { User } from './entity/User';
 import ormconfig from '../ormconfig';
 import { buildSchema, AuthChecker } from 'type-graphql';
 import { SESSION_NAME } from './constants';
-import { UserResolver } from './resolvers/UserResolver';
-import { TOTPResolver } from './resolvers/TOTPResolver';
 import path from 'path';
-import { ApplicationResolver } from './resolvers/ApplicationResolver';
 import { Context } from './types';
-import { ApplicationMutationsResolver } from './resolvers/ApplicationMutationsResolver';
 
 const app = new Koa();
 const router = new Router();
-
-// const server = new ApolloServer({
-//     schemaDirectives: {
-//         auth: AuthDirective
-//     },
-// });
 
 // TODO: Why is this defined up here?
 const auth: Koa.Middleware = async (ctx, next) => {
     ctx.user = await User.fromSession(ctx.session);
     if (ctx.user) {
-        ctx.organization = await ctx.user.organization;
+        // TODO: This is wrong:
+        ctx.organization = (await ctx.user.organizations)[0];
     }
 
     return next();
@@ -71,12 +62,7 @@ async function main() {
     };
 
     const schema = await buildSchema({
-        resolvers: [
-            UserResolver,
-            TOTPResolver,
-            ApplicationResolver,
-            ApplicationMutationsResolver
-        ],
+        resolvers: [ __dirname + "/resolvers/**/*.{ts,js}"],
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
         authChecker: customAuthChecker
     });

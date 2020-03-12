@@ -5,6 +5,7 @@ query ApplicationContainerGroups($id: Int!) {
             id
             label
             size
+            containerCount
             containers {
                 id
                 status

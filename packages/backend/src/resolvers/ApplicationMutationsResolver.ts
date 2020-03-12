@@ -4,7 +4,6 @@ import { SecretInput } from './types/Secret';
 import { Context } from '../types';
 import { Deployment } from '../entity/Deployment';
 import { ContainerGroup } from '../entity/ContainerGroup';
-import { Container, Status } from '../entity/Container';
 
 @ObjectType()
 class ApplicationMutations {
@@ -93,19 +92,9 @@ class ApplicationMutations {
         containerGroup.label = label;
         containerGroup.size = size;
         containerGroup.deployment = deployment;
+        containerGroup.containerCount = number;
 
-        await containerGroup.save();
-
-        await Promise.all(
-            Array.from({ length: number }, () => {
-                const container = new Container();
-                container.status = Status.STARTING;
-                container.containerGroup = containerGroup;
-                return container.save();
-            })
-        );
-
-        return containerGroup;
+        return await containerGroup.save();
     }
 
     @Field(() => ContainerGroup)
@@ -120,8 +109,9 @@ class ApplicationMutations {
             containerGroup.label = label;
         }
 
-        // TODO: This needs to do something.
-        // containerGroup.number = number;
+        if (number) {
+            containerGroup.containerCount = number;
+        }
 
         return await containerGroup.save();
     }

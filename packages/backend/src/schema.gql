@@ -30,19 +30,17 @@ type ApplicationMutations {
 type Container {
   id: Int!
   status: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  containerGroup: ContainerGroup!
 }
 
 type ContainerGroup {
   id: Int!
   label: String!
   size: Int!
+  containerCount: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-  containers: [Container!]!
   deployment: Deployment!
+  containers: [Container!]!
 }
 
 """
@@ -59,29 +57,30 @@ type Deployment {
 }
 
 type Mutation {
-  signUp(password: String!, email: String!, name: String!, organizationName: String!): Result!
+  application(id: Int!): ApplicationMutations!
+  createApplication(description: String, name: String!): Application!
+  exchangeTOTP(token: String!): Result!
+  enableTotp(token: String!, secret: String!): Result!
+  disableTotp(password: String!): Result!
+  signUp(password: String!, email: String!, name: String!): Result!
   signIn(password: String!, email: String!): SignInResult!
   updateAccount(email: String, name: String): User!
   forgotPassword(email: String!): Result!
   resetPassword(password: String!, uuid: String!): Result!
-  exchangeTOTP(token: String!): Result!
-  enableTotp(token: String!, secret: String!): Result!
-  disableTotp(password: String!): Result!
-  createApplication(description: String, name: String!): Application!
-  application(id: Int!): ApplicationMutations!
 }
 
 type Organization {
   id: Int!
+  isPersonal: Boolean!
   name: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 type Query {
-  me: User!
   applications: [Application!]!
   application(id: Int!): Application!
+  me: User!
 }
 
 """Provides a boolean to determine if the action was successful or not."""
@@ -115,6 +114,6 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   hasTOTP: Boolean!
-  organization: Organization!
+  organizations: [Organization!]!
   onboardTOTP: String!
 }

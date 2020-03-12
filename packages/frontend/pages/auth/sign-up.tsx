@@ -8,15 +8,6 @@ import Spacing from '../../components/Spacing';
 import Container from '../../components/Auth/Container';
 import { useSignUpMutation } from '../../queries';
 
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
-
 const LinkContainer = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -34,7 +25,6 @@ function SignUp() {
     const onFinish = (values: Record<string, string>) => {
         signUp({
             variables: {
-                orgName: values.orgName,
                 name: values.name,
                 email: values.email,
                 password: values.password
@@ -44,14 +34,7 @@ function SignUp() {
 
     return (
         <Container title="Sign up">
-            <Form name="signup" onFinish={onFinish} layout="vertical">
-                <Form.Item
-                    label="Organization Name"
-                    name="orgName"
-                    rules={[{ required: true, message: 'Please input an organization name!' }]}
-                >
-                    <Input autoFocus />
-                </Form.Item>
+            <Form name="signup" onFinish={onFinish} layout="vertical" hideRequiredMark>
                 <Form.Item
                     label="Name"
                     name="name"

@@ -29,22 +29,22 @@ export class UserResolver {
     @Mutation(() => Result)
     async signUp(
         @Ctx() { session, cookies }: Context,
-        @Arg('organizationName') organizationName: string,
         @Arg('name') name: string,
         @Arg('email') email: string,
         @Arg('password') password: string
     ) {
-        const organization = new Organization();
-        organization.name = organizationName;
-        await organization.save();
-
         const user = new User();
         user.name = name;
         user.email = email;
-        user.organization = organization;
 
         await user.setPassword(password);
         await user.save();
+
+        const organization = new Organization();
+        organization.name = "Personal";
+        organization.isPersonal = true;
+        organization.users = [user];
+        await organization.save();
 
         user.signIn(session, cookies);
 

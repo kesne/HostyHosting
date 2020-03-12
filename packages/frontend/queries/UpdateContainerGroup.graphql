@@ -3,6 +3,7 @@ mutation UpdateContainerGroup($applicationID: Int!, $id: Int!, $number: Int!) {
         updateContainerGroup(id: $id, number: $number) {
             id
             size
+            containerCount
             containers {
                 id
                 status

@@ -3,8 +3,4 @@ fragment MeFragment on User {
     name
     email
     hasTOTP
-    organization {
-        id
-        name
-    }
 }

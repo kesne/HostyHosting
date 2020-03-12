@@ -5,15 +5,6 @@ import Spacing from '../Spacing';
 import Row from '../Row';
 import { useSignInMutation } from '../../queries';
 
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
-
 type Props = {
     onSignIn(): void;
     onRequiresTOTP(): void;
@@ -43,7 +34,7 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
 
     return (
         <>
-            <Form {...layout} name="login" onFinish={onFinish}>
+            <Form name="login" onFinish={onFinish} layout="vertical" hideRequiredMark>
                 <Form.Item
                     label="Email"
                     name="email"
@@ -60,7 +51,7 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
                     <Input.Password />
                 </Form.Item>
 
-                <Form.Item {...tailLayout}>
+                <Form.Item>
                     <Button type="primary" htmlType="submit" disabled={loading}>
                         Sign In
                     </Button>

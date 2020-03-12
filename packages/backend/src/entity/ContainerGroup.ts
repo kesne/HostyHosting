@@ -5,7 +5,6 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany,
 } from 'typeorm';
 import { Application } from './Application';
 import { Deployment } from './Deployment';
@@ -13,7 +12,6 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Length, Min, Max } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { Container } from './Container';
 
 @Entity()
 @ObjectType()
@@ -44,20 +42,19 @@ export class ContainerGroup extends BaseEntity {
     size!: number;
 
     @Field()
+    @Column()
+    @Min(1)
+    // TODO: This maxumum value should really be a dynamic per-account value.
+    @Max(10)
+    containerCount!: number;
+
+    @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 
     @Field()
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
-
-    @Field(() => [Container])
-    @OneToMany(
-        () => Container,
-        container => container.containerGroup,
-        { lazy: true }
-    )
-    containers!: Lazy<Container[]>;
 
     @ManyToOne(
         () => Application,

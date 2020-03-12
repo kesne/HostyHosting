@@ -7,15 +7,6 @@ import Container from '../../components/Auth/Container';
 import { withNoAuth } from '../../components/utils/auth';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
-
 const RightAlign = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -57,7 +48,7 @@ function Forgot() {
                         to reset your password.
                     </Typography.Paragraph>
                     <Spacing top={2}>
-                        <Form {...layout} name="login" onFinish={onFinish}>
+                        <Form name="login" onFinish={onFinish} layout="vertical" hideRequiredMark>
                             <Form.Item
                                 label="Email"
                                 name="email"
@@ -66,7 +57,7 @@ function Forgot() {
                                 <Input autoFocus />
                             </Form.Item>
 
-                            <Form.Item {...tailLayout}>
+                            <Form.Item>
                                 <Button type="primary" htmlType="submit" disabled={loading}>
                                     Email Recovery Link
                                 </Button>

@@ -86,9 +86,6 @@ export type Container = {
    __typename?: 'Container',
   id: Scalars['Int'],
   status: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  containerGroup: ContainerGroup,
 };
 
 export type ContainerGroup = {
@@ -96,10 +93,11 @@ export type ContainerGroup = {
   id: Scalars['Int'],
   label: Scalars['String'],
   size: Scalars['Int'],
+  containerCount: Scalars['Float'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
-  containers: Array<Container>,
   deployment: Deployment,
+  containers: Array<Container>,
 };
 
 
@@ -114,24 +112,50 @@ export type Deployment = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  application: ApplicationMutations,
+  createApplication: Application,
+  exchangeTOTP: Result,
+  enableTotp: Result,
+  disableTotp: Result,
   signUp: Result,
   signIn: SignInResult,
   updateAccount: User,
   forgotPassword: Result,
   resetPassword: Result,
-  exchangeTOTP: Result,
-  enableTotp: Result,
-  disableTotp: Result,
-  createApplication: Application,
-  application: ApplicationMutations,
+};
+
+
+export type MutationApplicationArgs = {
+  id: Scalars['Int']
+};
+
+
+export type MutationCreateApplicationArgs = {
+  description?: Maybe<Scalars['String']>,
+  name: Scalars['String']
+};
+
+
+export type MutationExchangeTotpArgs = {
+  token: Scalars['String']
+};
+
+
+export type MutationEnableTotpArgs = {
+  token: Scalars['String'],
+  secret: Scalars['String']
+};
+
+
+export type MutationDisableTotpArgs = {
+  password: Scalars['String']
 };
 
 
 export type MutationSignUpArgs = {
   password: Scalars['String'],
   email: Scalars['String'],
-  name: Scalars['String'],
-  organizationName: Scalars['String']
+  name: Scalars['String']
 };
 
 
@@ -157,36 +181,10 @@ export type MutationResetPasswordArgs = {
   uuid: Scalars['String']
 };
 
-
-export type MutationExchangeTotpArgs = {
-  token: Scalars['String']
-};
-
-
-export type MutationEnableTotpArgs = {
-  token: Scalars['String'],
-  secret: Scalars['String']
-};
-
-
-export type MutationDisableTotpArgs = {
-  password: Scalars['String']
-};
-
-
-export type MutationCreateApplicationArgs = {
-  description?: Maybe<Scalars['String']>,
-  name: Scalars['String']
-};
-
-
-export type MutationApplicationArgs = {
-  id: Scalars['Int']
-};
-
 export type Organization = {
    __typename?: 'Organization',
   id: Scalars['Int'],
+  isPersonal: Scalars['Boolean'],
   name: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
@@ -194,9 +192,9 @@ export type Organization = {
 
 export type Query = {
    __typename?: 'Query',
-  me: User,
   applications: Array<Application>,
   application: Application,
+  me: User,
 };
 
 
@@ -239,7 +237,7 @@ export type User = {
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
-  organization: Organization,
+  organizations: Array<Organization>,
   onboardTOTP: Scalars['String'],
 };
 
@@ -268,7 +266,7 @@ export type ApplicationContainerGroupsQuery = (
     & Pick<Application, 'id'>
     & { containerGroups: Array<(
       { __typename?: 'ContainerGroup' }
-      & Pick<ContainerGroup, 'id' | 'label' | 'size'>
+      & Pick<ContainerGroup, 'id' | 'label' | 'size' | 'containerCount'>
       & { containers: Array<(
         { __typename?: 'Container' }
         & Pick<Container, 'id' | 'status'>
@@ -495,10 +493,6 @@ export type MeQuery = (
 export type MeFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'email' | 'hasTOTP'>
-  & { organization: (
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'id' | 'name'>
-  ) }
 );
 
 export type OnboardTotpQueryVariables = {};
@@ -541,7 +535,6 @@ export type SignInMutation = (
 );
 
 export type SignUpMutationVariables = {
-  orgName: Scalars['String'],
   name: Scalars['String'],
   email: Scalars['String'],
   password: Scalars['String']
@@ -602,7 +595,7 @@ export type UpdateContainerGroupMutation = (
     { __typename?: 'ApplicationMutations' }
     & { updateContainerGroup: (
       { __typename?: 'ContainerGroup' }
-      & Pick<ContainerGroup, 'id' | 'size'>
+      & Pick<ContainerGroup, 'id' | 'size' | 'containerCount'>
       & { containers: Array<(
         { __typename?: 'Container' }
         & Pick<Container, 'id' | 'status'>
@@ -634,10 +627,6 @@ export const MeFragmentFragmentDoc = gql`
   name
   email
   hasTOTP
-  organization {
-    id
-    name
-  }
 }
     `;
 export const ApplicationDocument = gql`
@@ -681,6 +670,7 @@ export const ApplicationContainerGroupsDocument = gql`
       id
       label
       size
+      containerCount
       containers {
         id
         status
@@ -1274,8 +1264,8 @@ export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = ApolloReactCommon.MutationResult<SignInMutation>;
 export type SignInMutationOptions = ApolloReactCommon.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($orgName: String!, $name: String!, $email: String!, $password: String!) {
-  signUp(organizationName: $orgName, name: $name, email: $email, password: $password) {
+    mutation SignUp($name: String!, $email: String!, $password: String!) {
+  signUp(name: $name, email: $email, password: $password) {
     ok
   }
 }
@@ -1295,7 +1285,6 @@ export type SignUpMutationFn = ApolloReactCommon.MutationFunction<SignUpMutation
  * @example
  * const [signUpMutation, { data, loading, error }] = useSignUpMutation({
  *   variables: {
- *      orgName: // value for 'orgName'
  *      name: // value for 'name'
  *      email: // value for 'email'
  *      password: // value for 'password'
@@ -1384,6 +1373,7 @@ export const UpdateContainerGroupDocument = gql`
     updateContainerGroup(id: $id, number: $number) {
       id
       size
+      containerCount
       containers {
         id
         status

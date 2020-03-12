@@ -27,7 +27,7 @@ const Spacer = styled.div`
 
 type Props = {
     // TODO: This type is subtly wrong:
-    containerGroup: Pick<ContainerGroupData, 'id' | 'size' | 'number' | 'label' | 'deployment'>;
+    containerGroup: Pick<ContainerGroupData, 'id' | 'size' | 'containerCount' | 'label' | 'deployment'>;
 };
 
 export default function Container({ containerGroup }: Props) {
@@ -41,7 +41,7 @@ export default function Container({ containerGroup }: Props) {
                 <Actions>
                     <ScaleContainerGroup
                         id={containerGroup.id}
-                        currentNumber={containerGroup.number}
+                        currentNumber={containerGroup.containerCount}
                     />
                     <Button size="small">Actions</Button>
                 </Actions>
@@ -56,7 +56,7 @@ export default function Container({ containerGroup }: Props) {
                     <Typography.Text code>{containerGroup.size}x</Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Number of Containers">
-                    <Typography.Text code>{containerGroup.number}</Typography.Text>
+                    <Typography.Text code>{containerGroup.containerCount}</Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Deployment">
                     <Typography.Text code>{containerGroup.deployment?.image}</Typography.Text>
