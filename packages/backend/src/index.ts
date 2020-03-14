@@ -21,10 +21,6 @@ const router = new Router();
 // TODO: Why is this defined up here?
 const auth: Koa.Middleware = async (ctx, next) => {
     ctx.user = await User.fromSession(ctx.session);
-    if (ctx.user) {
-        // TODO: This is wrong:
-        ctx.organization = (await ctx.user.organizations)[0];
-    }
 
     return next();
 };

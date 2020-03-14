@@ -1,12 +1,13 @@
 import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { SecretInput } from './types/Secret';
-import { Context } from '../types';
 import { Deployment } from '../entity/Deployment';
 import { ContainerGroup } from '../entity/ContainerGroup';
+import { Context } from '../types';
+import { In } from 'typeorm';
 
 @ObjectType()
-class ApplicationMutations {
+export class ApplicationMutations {
     application: Application;
 
     constructor(application: Application) {
@@ -129,11 +130,13 @@ class ApplicationMutations {
 export class ApplicationMutationsResolver {
     @Authorized()
     @Mutation(() => ApplicationMutations)
-    async application(@Ctx() { organization }: Context, @Arg('id', () => Int) id: number) {
+    async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
+        const organizations = await user.organizations;
+
         const application = await Application.findOneOrFail({
             where: {
                 id,
-                organization
+                organization: In(organizations.map(({ id }) => id))
             }
         });
 

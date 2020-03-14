@@ -19,7 +19,7 @@ export default function Delete({ application }: Props) {
 
     useEffect(() => {
         if (data) {
-            Router.push('/applications');
+            Router.push('/home');
         }
     }, [data]);
 

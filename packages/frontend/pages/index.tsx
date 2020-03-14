@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { Typography, Button, Row } from 'antd';
 import { ThunderboltOutlined, LockOutlined, ControlOutlined } from '@ant-design/icons';
-import ValueProp from '../components/Home/ValueProp';
+import ValueProp from '../components/Landing/ValueProp';
 import Spacing from '../components/Spacing';
 import PageContainer from '../components/PageContainer';
 
-export default function Home() {
+export default function Landing() {
     return (
         <PageContainer>
             <Typography.Title>Run your docker containers in seconds</Typography.Title>

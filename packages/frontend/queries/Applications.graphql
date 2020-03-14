@@ -1,7 +1,10 @@
-query Applications {
-    applications {
+query Applications($org: Int) {
+    organization(id: $org) {
         id
-        name
-        description
+        applications {
+            id
+            name
+            description
+        }
     }
 }

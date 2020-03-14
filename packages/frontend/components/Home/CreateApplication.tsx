@@ -4,11 +4,12 @@ import { useEffect } from 'react';
 import Router from 'next/router';
 
 type Props = {
+    organization?: number
     visible: boolean;
     onClose(): void;
 };
 
-export default function CreateApplication({ visible, onClose }: Props) {
+export default function CreateApplication({ organization, visible, onClose }: Props) {
     const [createApplication, { data, loading }] = useCreateApplicationMutation();
     const [form] = Form.useForm();
 
@@ -20,7 +21,7 @@ export default function CreateApplication({ visible, onClose }: Props) {
 
     useEffect(() => {
         if (data) {
-            Router.push(`/applications/${data.createApplication.id}`);
+            Router.push(`/applications/${data.organization.createApplication.id}`);
         }
     }, [data]);
 
@@ -28,6 +29,7 @@ export default function CreateApplication({ visible, onClose }: Props) {
         const values = await form.validateFields();
         createApplication({
             variables: {
+                org: organization,
                 name: values.name,
                 description: values.description
             }

@@ -1,55 +1,20 @@
-import {
-    Query,
-    Resolver,
-    Ctx,
-    Arg,
-    Int,
-    FieldResolver,
-    Root,
-    Authorized,
-    Mutation
-} from 'type-graphql';
+import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int } from 'type-graphql';
 import { Application } from '../entity/Application';
-import { Context } from '../types';
 import { Secret } from './types/Secret';
+import { In } from 'typeorm';
+import { Context } from '../types';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
     @Authorized()
-    @Mutation(() => Application)
-    async createApplication(
-        @Ctx() { organization, user }: Context,
-        @Arg('name') name: string,
-        @Arg('description', { nullable: true }) description?: string
-    ) {
-        const app = new Application();
-        app.name = name;
-        app.description = description ?? '';
-        app.organization = organization;
-        app.createdBy = user;
-        app.secrets = {};
-        return await app.save();
-    }
-
-    @Authorized()
-    @Query(() => [Application])
-    async applications(@Ctx() { organization }: Context) {
-        const applications = await Application.find({
-            where: {
-                organization
-            }
-        });
-
-        return applications;
-    }
-
-    @Authorized()
     @Query(() => Application)
-    async application(@Ctx() { organization }: Context, @Arg('id', () => Int) id: number) {
+    async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
+        const organizations = await user.organizations;
+
         const app = await Application.findOneOrFail({
             where: {
                 id,
-                organization
+                organization: In(organizations.map(({ id }) => id))
             }
         });
 

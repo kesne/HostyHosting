@@ -113,7 +113,7 @@ export type Deployment = {
 export type Mutation = {
    __typename?: 'Mutation',
   application: ApplicationMutations,
-  createApplication: Application,
+  organization: OrganizationMutations,
   exchangeTOTP: Result,
   enableTotp: Result,
   disableTotp: Result,
@@ -130,9 +130,8 @@ export type MutationApplicationArgs = {
 };
 
 
-export type MutationCreateApplicationArgs = {
-  description?: Maybe<Scalars['String']>,
-  name: Scalars['String']
+export type MutationOrganizationArgs = {
+  id?: Maybe<Scalars['Int']>
 };
 
 
@@ -188,18 +187,35 @@ export type Organization = {
   name: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  applications: Array<Application>,
+};
+
+export type OrganizationMutations = {
+   __typename?: 'OrganizationMutations',
+  createApplication: Application,
+};
+
+
+export type OrganizationMutationsCreateApplicationArgs = {
+  description?: Maybe<Scalars['String']>,
+  name: Scalars['String']
 };
 
 export type Query = {
    __typename?: 'Query',
-  applications: Array<Application>,
   application: Application,
+  organization: Organization,
   me: User,
 };
 
 
 export type QueryApplicationArgs = {
   id: Scalars['Int']
+};
+
+
+export type QueryOrganizationArgs = {
+  id?: Maybe<Scalars['Int']>
 };
 
 /** Provides a boolean to determine if the action was successful or not. */
@@ -237,6 +253,7 @@ export type User = {
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
+  personalOrganization: Organization,
   organizations: Array<Organization>,
   onboardTOTP: Scalars['String'],
 };
@@ -307,18 +324,25 @@ export type ApplicationFragmentFragment = (
   )> }
 );
 
-export type ApplicationsQueryVariables = {};
+export type ApplicationsQueryVariables = {
+  org?: Maybe<Scalars['Int']>
+};
 
 
 export type ApplicationsQuery = (
   { __typename?: 'Query' }
-  & { applications: Array<(
-    { __typename?: 'Application' }
-    & Pick<Application, 'id' | 'name' | 'description'>
-  )> }
+  & { organization: (
+    { __typename?: 'Organization' }
+    & Pick<Organization, 'id'>
+    & { applications: Array<(
+      { __typename?: 'Application' }
+      & Pick<Application, 'id' | 'name' | 'description'>
+    )> }
+  ) }
 );
 
 export type CreateApplicationMutationVariables = {
+  org?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
   description?: Maybe<Scalars['String']>
 };
@@ -326,9 +350,12 @@ export type CreateApplicationMutationVariables = {
 
 export type CreateApplicationMutation = (
   { __typename?: 'Mutation' }
-  & { createApplication: (
-    { __typename?: 'Application' }
-    & Pick<Application, 'id'>
+  & { organization: (
+    { __typename?: 'OrganizationMutations' }
+    & { createApplication: (
+      { __typename?: 'Application' }
+      & Pick<Application, 'id'>
+    ) }
   ) }
 );
 
@@ -493,6 +520,24 @@ export type MeQuery = (
 export type MeFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'email' | 'hasTOTP'>
+);
+
+export type MyOrganizationsQueryVariables = {};
+
+
+export type MyOrganizationsQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+    & { personalOrganization: (
+      { __typename?: 'Organization' }
+      & Pick<Organization, 'id'>
+    ), organizations: Array<(
+      { __typename?: 'Organization' }
+      & Pick<Organization, 'id' | 'name'>
+    )> }
+  ) }
 );
 
 export type OnboardTotpQueryVariables = {};
@@ -747,11 +792,14 @@ export type ApplicationDeploymentsQueryHookResult = ReturnType<typeof useApplica
 export type ApplicationDeploymentsLazyQueryHookResult = ReturnType<typeof useApplicationDeploymentsLazyQuery>;
 export type ApplicationDeploymentsQueryResult = ApolloReactCommon.QueryResult<ApplicationDeploymentsQuery, ApplicationDeploymentsQueryVariables>;
 export const ApplicationsDocument = gql`
-    query Applications {
-  applications {
+    query Applications($org: Int) {
+  organization(id: $org) {
     id
-    name
-    description
+    applications {
+      id
+      name
+      description
+    }
   }
 }
     `;
@@ -768,6 +816,7 @@ export const ApplicationsDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationsQuery({
  *   variables: {
+ *      org: // value for 'org'
  *   },
  * });
  */
@@ -781,9 +830,11 @@ export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery
 export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
 export type ApplicationsQueryResult = ApolloReactCommon.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
 export const CreateApplicationDocument = gql`
-    mutation CreateApplication($name: String!, $description: String) {
-  createApplication(name: $name, description: $description) {
-    id
+    mutation CreateApplication($org: Int, $name: String!, $description: String) {
+  organization(id: $org) {
+    createApplication(name: $name, description: $description) {
+      id
+    }
   }
 }
     `;
@@ -802,6 +853,7 @@ export type CreateApplicationMutationFn = ApolloReactCommon.MutationFunction<Cre
  * @example
  * const [createApplicationMutation, { data, loading, error }] = useCreateApplicationMutation({
  *   variables: {
+ *      org: // value for 'org'
  *      name: // value for 'name'
  *      description: // value for 'description'
  *   },
@@ -1162,6 +1214,45 @@ export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptio
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export const MyOrganizationsDocument = gql`
+    query MyOrganizations {
+  me {
+    id
+    personalOrganization {
+      id
+    }
+    organizations {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyOrganizationsQuery__
+ *
+ * To run a query within a React component, call `useMyOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyOrganizationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyOrganizationsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>) {
+        return ApolloReactHooks.useQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(MyOrganizationsDocument, baseOptions);
+      }
+export function useMyOrganizationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(MyOrganizationsDocument, baseOptions);
+        }
+export type MyOrganizationsQueryHookResult = ReturnType<typeof useMyOrganizationsQuery>;
+export type MyOrganizationsLazyQueryHookResult = ReturnType<typeof useMyOrganizationsLazyQuery>;
+export type MyOrganizationsQueryResult = ApolloReactCommon.QueryResult<MyOrganizationsQuery, MyOrganizationsQueryVariables>;
 export const OnboardTotpDocument = gql`
     query OnboardTOTP {
   me {

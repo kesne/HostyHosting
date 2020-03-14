@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import { Layout, Menu } from 'antd';
-import { useRouter } from 'next/router';
 import UserButton from './UserButton';
 import { useHasUser } from '../utils/user';
 import Row from '../Row';
@@ -20,11 +19,10 @@ const HeaderContents = styled.div`
     display: flex;
 `;
 
-export default function Header() {
-    const router = useRouter();
-    const hasUser = useHasUser();
+export { default as default } from './header2';
 
-    const [, selectedKey] = router.route.split('/');
+function Header() {
+    const hasUser = useHasUser();
 
     return (
         <Layout.Header>
@@ -50,27 +48,11 @@ export default function Header() {
             >
                 <HeaderContents>
                     <Logo>
-                        <Link href="/">
+                        {/* TODO: Make this /home or / depending on the user state. */}
+                        <Link href="/home">
                             <HeaderLink>DaaS</HeaderLink>
                         </Link>
                     </Logo>
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        selectedKeys={[selectedKey]}
-                        style={{ lineHeight: '64px' }}
-                    >
-                        <Menu.Item key="applications">
-                            <Link href="/applications">
-                                <a>Applications</a>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item key="routing">
-                            <Link href="/routing">
-                                <a>Routing</a>
-                            </Link>
-                        </Menu.Item>
-                    </Menu>
                 </HeaderContents>
             </Row>
         </Layout.Header>

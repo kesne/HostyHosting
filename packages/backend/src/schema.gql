@@ -58,7 +58,13 @@ type Deployment {
 
 type Mutation {
   application(id: Int!): ApplicationMutations!
-  createApplication(description: String, name: String!): Application!
+  organization(
+    """
+    The ID of the organization that you will be performing mutations on. If
+    empty, we will use the signed-in users personal organization.
+    """
+    id: Int
+  ): OrganizationMutations!
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
   disableTotp(password: String!): Result!
@@ -75,11 +81,21 @@ type Organization {
   name: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  applications: [Application!]!
+}
+
+type OrganizationMutations {
+  createApplication(description: String, name: String!): Application!
 }
 
 type Query {
-  applications: [Application!]!
   application(id: Int!): Application!
+  organization(
+    """
+    The ID of the organization to load. If empty, we will use the signed-in users personal organization.
+    """
+    id: Int
+  ): Organization!
   me: User!
 }
 
@@ -114,6 +130,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   hasTOTP: Boolean!
+  personalOrganization: Organization!
   organizations: [Organization!]!
   onboardTOTP: String!
 }

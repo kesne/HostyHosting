@@ -1,5 +1,7 @@
-mutation CreateApplication($name: String!, $description: String) {
-    createApplication(name: $name, description: $description) {
-        id
+mutation CreateApplication($org: Int, $name: String!, $description: String) {
+    organization(id: $org) {
+        createApplication(name: $name, description: $description) {
+            id
+        }
     }
 }

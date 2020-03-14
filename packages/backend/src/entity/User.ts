@@ -5,7 +5,8 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToMany
+    ManyToMany,
+    ManyToOne
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Session, Cookies, Lazy } from '../types';
@@ -125,6 +126,10 @@ export class User extends BaseEntity {
             cookies.set('hasUser', '1', { httpOnly: false, signed: false });
         }
     }
+
+    @Field(() => Organization)
+    @ManyToOne(() => Organization, { lazy: true })
+    personalOrganization!: Lazy<Organization>;
 
     @Field(() => [Organization])
     @ManyToMany(

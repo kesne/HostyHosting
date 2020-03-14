@@ -1,6 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToMany,
+    JoinTable
+} from 'typeorm';
 import { User } from './User';
-import { Application} from './Application';
+import { Application } from './Application';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
@@ -41,9 +50,11 @@ export class Organization extends BaseEntity {
     @JoinTable()
     users!: Lazy<User[]>;
 
+    @Field(() => [Application])
     @OneToMany(
         () => Application,
-        application => application.organization
+        application => application.organization,
+        { lazy: true }
     )
-    applications!: Application[];
+    applications!: Lazy<Application[]>;
 }

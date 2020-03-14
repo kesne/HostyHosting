@@ -1,4 +1,14 @@
-import { Resolver, Query, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
+import {
+    Resolver,
+    Query,
+    Ctx,
+    Mutation,
+    Arg,
+    FieldResolver,
+    Root,
+    Authorized,
+    Field
+} from 'type-graphql';
 import { User, AuthType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
@@ -33,16 +43,21 @@ export class UserResolver {
         @Arg('email') email: string,
         @Arg('password') password: string
     ) {
+        // First create the users' personal organization:
+        const organization = new Organization();
+        organization.name = 'Personal';
+        organization.isPersonal = true;
+        await organization.save();
+
+        // Then create the user themself:
         const user = new User();
         user.name = name;
         user.email = email;
-
+        user.personalOrganization = organization;
         await user.setPassword(password);
         await user.save();
 
-        const organization = new Organization();
-        organization.name = "Personal";
-        organization.isPersonal = true;
+        // Finally, add the user into their own organization:
         organization.users = [user];
         await organization.save();
 
@@ -113,6 +128,16 @@ export class UserResolver {
         await PasswordReset.createForEmail(email);
 
         return new Result();
+    }
+
+    // TODO: Once we move all of this to be paginated (probably), we can implement this
+    // at the query level.
+    // TODO: Should we just bite the bullet and make personal organizations returned at
+    // the top-level as well. (this would move to be a client concern)
+    @FieldResolver(() => Organization)
+    async organizations(@Root() user: User) {
+        const organizations = await user.organizations;
+        return organizations.filter(({ isPersonal }) => !isPersonal);
     }
 
     @Mutation(() => Result)

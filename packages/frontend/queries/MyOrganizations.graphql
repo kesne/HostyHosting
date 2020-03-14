@@ -1,0 +1,12 @@
+query MyOrganizations {
+    me {
+        id
+        personalOrganization {
+            id
+        }
+        organizations {
+            id
+            name
+        }
+    }
+}
