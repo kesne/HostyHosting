@@ -1,7 +1,7 @@
 import 'antd/dist/antd.min.css';
 // TODO: We really should move this but VSCode gets mad and I'm too lazy
 // to figure out how to fix it right now.
-import '../../../css/output.css';
+import '../css/styles.css';
 import Layout from '../components/Layout';
 
 type Props = {

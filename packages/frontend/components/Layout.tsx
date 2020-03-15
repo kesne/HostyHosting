@@ -17,6 +17,7 @@ export default function App({ children }: { children: any }) {
     return (
         <Layout>
             <Head>
+                <title>DaaS - Run your docker containers in seconds</title>
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
             </Head>
             <ApolloProvider client={client}>

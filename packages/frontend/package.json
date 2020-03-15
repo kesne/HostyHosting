@@ -43,7 +43,6 @@
         "react-transition-group": "^4.3.0",
         "styled-components": "^5.0.0",
         "subscriptions-transport-ws": "^0.9.16",
-        "tailwindcss": "^1.2.0",
         "use-immer": "^0.3.5",
         "websocket": "^1.0.31",
         "zustand": "^2.2.2"
@@ -57,13 +56,16 @@
         "dev:server": "NODE_ENV=development node server.js"
     },
     "devDependencies": {
+        "@fullhuman/postcss-purgecss": "^2.1.0",
         "@types/js-cookie": "^2.2.4",
         "@types/react": "^16.9.17",
         "@types/react-dom": "^16.9.4",
         "@types/styled-components": "^4.4.2",
+        "autoprefixer": "^9.7.4",
         "babel-plugin-styled-components": "^1.10.6",
         "concurrently": "^5.1.0",
         "http-proxy-middleware": "^0.20.0",
+        "tailwindcss": "^1.2.0",
         "typescript": "^3.7.4"
     }
 }

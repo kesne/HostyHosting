@@ -40,6 +40,7 @@ export default function Application({ id }: { id: number }) {
                     pills
                     secondary
                     value="overview"
+                    onChange={() => console.log('changed')}
                     tabs={[
                         { label: 'Overview', value: 'overview' },
                         { label: 'Deployments', value: 'deployments' },
