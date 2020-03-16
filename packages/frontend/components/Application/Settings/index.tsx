@@ -1,28 +1,32 @@
+import Delete from './Delete';
+import Information from './Information';
 import Region from './Region';
-import Delete, { Props as DeleteProps } from './Delete';
-import Secrets, { Props as SecretProps } from './Secrets';
-import Information, { Props as InformationProps } from './Information';
+import Secrets from './Secrets';
+import { useApplicationID } from '../ApplicationContext';
+import { useApplicationQuery } from '../../../queries';
 
-type Props = {
-    application: InformationProps['application'] &
-        SecretProps['application'] &
-        DeleteProps['application'];
-};
+export default function Settings() {
+    const id = useApplicationID();
+    const { data } = useApplicationQuery({ variables: { id } });
 
-export default function Settings({ application }: Props) {
+    // TODO:
+    if (!data) {
+        return null;
+    }
+
     return (
         <>
             <Region title="Information">
-                <Information application={application} />
+                <Information application={data.application} />
             </Region>
             <Region
                 title="Secrets"
                 description="Manage environment variables that will be set when your application starts."
             >
-                <Secrets application={application} />
+                <Secrets application={data.application} />
             </Region>
             <Region title="App Management" last>
-                <Delete application={application} />
+                <Delete application={data.application} />
             </Region>
         </>
     );

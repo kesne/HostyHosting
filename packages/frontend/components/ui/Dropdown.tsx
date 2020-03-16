@@ -1,5 +1,5 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import OutsideClickHandler from 'react-outside-click-handler';
-import { CSSTransition } from 'react-transition-group';
 import useBoolean from '../utils/useBoolean';
 import { AnchorHTMLAttributes } from 'react';
 
@@ -52,22 +52,21 @@ export default function Dropdown({
                         </button>
                     </span>
                 </div>
-                <CSSTransition
-                    in={open}
-                    timeout={100}
-                    classNames={{
-                        enterActive: 'transform opacity-0 scale-95',
-                        enterDone: 'transform opacity-100 scale-100',
-                        exitActive: 'transform opacity-100 scale-100',
-                        exitDone: 'transform opacity-0 scale-95'
-                    }}
-                >
-                    <div className="duration-100 transition origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg transform opacity-0 scale-95">
-                        <div className="rounded-md bg-white shadow-xs">
-                            <div className="py-1">{children}</div>
-                        </div>
-                    </div>
-                </CSSTransition>
+                <AnimatePresence>
+                    {open && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.1 }}
+                            className="duration-100 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg"
+                        >
+                            <div className="rounded-md bg-white shadow-xs">
+                                <div className="py-1">{children}</div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </OutsideClickHandler>
     );

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import Application from '../../components/Application';
-import { withAuth } from '../../components/utils/auth';
+import Application from '../../../components/Application';
+import { withAuth } from '../../../components/utils/auth';
 
 function ApplicationRoute() {
     const router = useRouter();

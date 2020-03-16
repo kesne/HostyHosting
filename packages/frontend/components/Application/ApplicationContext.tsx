@@ -1,5 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-// NOTE: I use "null as any" here to make the default value `null`, BUT make the
-// consumption of the context always result in `number`.
-export default React.createContext<number>(null as any);
+const ApplicationContext = React.createContext<number | null>(null);
+
+export function useApplicationID() {
+    const id = useContext(ApplicationContext);
+
+    if (!id) {
+        throw new Error(
+            'No application ID was found. Please render this component under an ApplicationContext.Provider.'
+        );
+    }
+
+    return id;
+}
+
+export default ApplicationContext;

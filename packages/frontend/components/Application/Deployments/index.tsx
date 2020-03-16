@@ -1,20 +1,15 @@
-import { Button, List, Spin } from 'antd';
-import styled from 'styled-components';
+import { List, Spin } from 'antd';
 import Deployment from './Deployment';
 import CreateDeployment from './CreateDeployment';
 import useBoolean from '../../utils/useBoolean';
 import { useApplicationDeploymentsQuery } from '../../../queries';
-import { useContext } from 'react';
-import ApplicationContext from '../ApplicationContext';
-
-const Actions = styled.div`
-    margin-bottom: 16px;
-    display: flex;
-    justify-content: flex-end;
-`;
+import { useApplicationID } from '../ApplicationContext';
+import Card from '../../ui/Card';
+import Button from '../../ui/Button';
+import { ListItem } from '../../ui/List';
 
 export default function Deployments() {
-    const applicationID = useContext(ApplicationContext);
+    const applicationID = useApplicationID();
     const { data, loading, error } = useApplicationDeploymentsQuery({
         variables: {
             id: applicationID
@@ -27,22 +22,23 @@ export default function Deployments() {
     }
 
     return (
-        <div>
-            <Actions>
-                <Button type="primary" onClick={on}>
+        <Card
+            title="Deployments"
+            actions={
+                <Button variant="primary" onClick={on}>
                     Create Deployment
                 </Button>
-            </Actions>
-            <CreateDeployment id={data.application.id} visible={createVisible} onClose={off} />
+            }
+        >
+            <CreateDeployment visible={createVisible} onClose={off} />
             <List
-                grid={{ gutter: 16, column: 2 }}
                 dataSource={data.application.deployments}
-                renderItem={deployment => (
-                    <List.Item>
-                        <Deployment applicationID={data.application.id} deployment={deployment} />
-                    </List.Item>
+                renderItem={(deployment, i) => (
+                    <ListItem href="/" last={i === data.application.deployments.length - 1}>
+                        <Deployment deployment={deployment} />
+                    </ListItem>
                 )}
             />
-        </div>
+        </Card>
     );
 }

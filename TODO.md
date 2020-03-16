@@ -1,5 +1,9 @@
-Todo today:
+# TODO list for upcoming streams:
 
-- Make application pages work.
-- Improve our header and remove some of our components that use custom styles
-  - These will be replaced with Tailwind.
+- Migrate off of Next.JS for our admin site (name TBD)
+- Create a marketing / docs site.
+- Finish the migration to Tailwind UI
+  - Make loading button state.
+- Add more validation states to forms.
+- Handle no data / errors / loading in a more elegant way.
+
