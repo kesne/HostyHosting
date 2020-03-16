@@ -1,4 +1,4 @@
-import { Card, Typography } from 'antd';
+import { Typography } from 'antd';
 import { Deployment as DeploymentData } from '../../../queries';
 import DeleteDeployment from './DeleteDeployment';
 
@@ -8,9 +8,9 @@ type Props = {
 
 export default function Container({ deployment }: Props) {
     return (
-        <Card size="small">
+        <div>
             <Typography.Text code>{deployment.image}</Typography.Text>
             <DeleteDeployment id={deployment.id} />
-        </Card>
+        </div>
     );
 }

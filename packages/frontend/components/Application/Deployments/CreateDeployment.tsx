@@ -1,12 +1,15 @@
-import { Modal, Form, Input } from 'antd';
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import {
     useCreateDeploymentMutation,
     ApplicationDeploymentsQuery,
     ApplicationDeploymentsDocument
 } from '../../../queries';
-import ApplicationContext from '../ApplicationContext';
+import { useApplicationID } from '../ApplicationContext';
 import produce from 'immer';
+import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
+import Input from '../../ui/Input';
+import Button, { ButtonGroup } from '../../ui/Button';
 
 type Props = {
     visible: boolean;
@@ -14,8 +17,7 @@ type Props = {
 };
 
 export default function CreateDeployment({ visible, onClose }: Props) {
-    const applicationID = useContext(ApplicationContext);
-    const [form] = Form.useForm();
+    const applicationID = useApplicationID();
     const [createDeployment, { loading, data }] = useCreateDeploymentMutation({
         update(cache, { data }) {
             if (!data) return;
@@ -27,7 +29,7 @@ export default function CreateDeployment({ visible, onClose }: Props) {
                     variables: { id: applicationID }
                 }) ?? {};
 
-            const nextApplication = produce(application, (draftState) => {
+            const nextApplication = produce(application, draftState => {
                 draftState?.deployments.push(data.application.createDeployment);
             });
 
@@ -38,10 +40,11 @@ export default function CreateDeployment({ visible, onClose }: Props) {
             });
         }
     });
+    const { register, handleSubmit, errors, reset } = useForm();
 
     useEffect(() => {
         if (visible) {
-            form.resetFields();
+            reset();
         }
     }, [visible]);
 
@@ -51,34 +54,40 @@ export default function CreateDeployment({ visible, onClose }: Props) {
         }
     }, [data]);
 
-    async function handleOk() {
-        const values = await form.validateFields();
+    async function onSubmit(data: Record<string, string>) {
         await createDeployment({
             variables: {
                 applicationID,
-                image: values.image
+                image: data.image
             }
         });
     }
 
     return (
-        <Modal
-            visible={visible}
-            title="Create Deployment"
-            onOk={handleOk}
-            okText="Create"
-            onCancel={onClose}
-            confirmLoading={loading}
-        >
-            <Form form={form} layout="vertical">
-                <Form.Item
-                    name="image"
-                    label="Image Name"
-                    rules={[{ required: true, message: 'You must specify an image name.' }]}
-                >
-                    <Input />
-                </Form.Item>
-            </Form>
-        </Modal>
+        <>
+            <Modal open={visible} onClose={onClose}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <ModalContent title="Create Deployment">
+                        <Input
+                            label="Image Name"
+                            name="image"
+                            ref={register({ required: true })}
+                            error={errors.image && 'The image name is required.'}
+                        />
+                    </ModalContent>
+                    <ModalFooter>
+                        <ButtonGroup>
+                            {/* TODO: These styles belong elsewhere */}
+                            <Button type="submit" variant="primary" className="shadow-sm w-full">
+                                Create
+                            </Button>
+                            <Button className="shadow-sm w-full" onClick={onClose}>
+                                Cancel
+                            </Button>
+                        </ButtonGroup>
+                    </ModalFooter>
+                </form>
+            </Modal>
+        </>
     );
 }
