@@ -4,27 +4,29 @@ import Layout from './components/Layout';
 import Home from './components/Home';
 import Auth from './components/Auth';
 import Application from './components/Application';
+import PrivateRoute from './components/PrivateRoute';
+import Account from './components/Account';
 
 export default function App() {
     return (
         <Layout>
             <Router>
                 <Switch>
-                    <Route path="/" exact>
+                    <PrivateRoute path="/" exact>
                         <Home />
-                    </Route>
-                    <Route path="/orgs/:id">
+                    </PrivateRoute>
+                    <PrivateRoute path="/orgs/:id">
                         <Home />
-                    </Route>
-                    <Route path="/applications/:id">
+                    </PrivateRoute>
+                    <PrivateRoute path="/applications/:id">
                         <Application />
-                    </Route>
-                    <Route path="/auth">
+                    </PrivateRoute>
+                    <PrivateRoute path="/auth" unauthenticated>
                         <Auth />
-                    </Route>
-                    <Route path="/account">
-                        <div>account</div>
-                    </Route>
+                    </PrivateRoute>
+                    <PrivateRoute path="/account">
+                        <Account />
+                    </PrivateRoute>
                 </Switch>
             </Router>
         </Layout>

@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import Router, { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 import { Button, Form, Input, Typography } from 'antd';
-import { useResetPasswordMutation } from '../../../queries';
-import Container from '../../../components/Auth/Container';
+import { useResetPasswordMutation } from '../../queries';
+import Container from './Container';
+import { Redirect, useParams } from 'react-router-dom';
 
 const layout = {
     labelCol: { span: 8 },
@@ -13,28 +13,26 @@ const tailLayout = {
     wrapperCol: { offset: 8, span: 16 }
 };
 
-export default function ResetPassword() {
-    const { query } = useRouter();
+export default function Reset() {
+    const { uuid } = useParams<{ uuid: string }>();
     const [resetPassword, { data, loading }] = useResetPasswordMutation();
 
     useEffect(() => {
         resetPassword();
     }, [resetPassword]);
 
-    useEffect(() => {
-        if (data && data.resetPassword.complete) {
-            Router.push('/account');
-        }
-    }, [data]);
-
     const onFinish = (values: Record<string, string>) => {
         resetPassword({
             variables: {
-                uuid: query.uuid as string,
+                uuid,
                 password: values.password
             }
         });
     };
+
+    if (data) {
+        return <Redirect to="/" />;
+    }
 
     return (
         <Container title="Password Reset">

@@ -5,13 +5,12 @@ import VerifyTOTP from './VerifyTOTP';
 import EmailPassword from './EmailPassword';
 import useBoolean from '../../utils/useBoolean';
 
-export default 
+export default
 function SignIn() {
     const [requiresTOTP, { on }] = useBoolean(false);
     const history = useHistory();
 
-    const onSignIn = useCa
-    llback(() => {
+    const onSignIn = useCallback(() => {
         history.push('/account');
     }, []);
 
