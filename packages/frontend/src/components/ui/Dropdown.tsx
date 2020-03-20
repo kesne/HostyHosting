@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OutsideClickHandler from 'react-outside-click-handler';
-import useBoolean from '../utils/useBoolean';
+import useBoolean from '../../utils/useBoolean';
 import { AnchorHTMLAttributes } from 'react';
 
 export function DropdownItem({

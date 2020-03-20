@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Layout, Menu } from 'antd';
 import UserButton from './UserButton';
-import { useHasUser } from '../utils/user';
+import { useHasUser } from '../../utils/user';
 import Row from '../Row';
 
 const Logo = styled.div`

@@ -4,7 +4,7 @@ import { Application, useUpdateApplicationMutation, Secret } from '../../../quer
 import EditSecret from './EditSecret';
 import Input from '../../ui/Input';
 import Button from '../../ui/Button';
-import useBoolean from '../../utils/useBoolean';
+import useBoolean from '../../../utils/useBoolean';
 
 export type Props = {
     application: Pick<Application, 'id' | 'secrets'>;

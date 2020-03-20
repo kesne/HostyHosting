@@ -1,16 +1,17 @@
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { withNoAuth } from '../utils/auth';
 import Container from './Container';
 import VerifyTOTP from './VerifyTOTP';
 import EmailPassword from './EmailPassword';
-import useBoolean from '../utils/useBoolean';
+import useBoolean from '../../utils/useBoolean';
 
+export default 
 function SignIn() {
     const [requiresTOTP, { on }] = useBoolean(false);
     const history = useHistory();
 
-    const onSignIn = useCallback(() => {
+    const onSignIn = useCa
+    llback(() => {
         history.push('/account');
     }, []);
 
@@ -24,5 +25,3 @@ function SignIn() {
         </Container>
     );
 }
-
-export default withNoAuth(SignIn);

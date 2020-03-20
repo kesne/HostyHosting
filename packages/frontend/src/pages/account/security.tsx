@@ -1,13 +1,11 @@
-import { withAuth } from '../../components/utils/auth';
+import React from 'react';
 import Security from '../../components/Account/Security';
 import Container from '../../components/Account/Container';
 
-function SecurityRoute() {
+export default function SecurityRoute() {
     return (
         <Container selected="security">
             <Security />
         </Container>
     );
 }
-
-export default withAuth(SecurityRoute);

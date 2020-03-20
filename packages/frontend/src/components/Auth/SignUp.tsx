@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Redirect, Link } from 'react-router-dom';
 import { Form, Button, Input } from 'antd';
-import { withNoAuth } from '../../components/utils/auth';
 import Spacing from '../../components/Spacing';
 import Container from '../../components/Auth/Container';
 import { useSignUpMutation } from '../../queries';
@@ -12,7 +11,7 @@ const LinkContainer = styled.div`
     justify-content: flex-end;
 `;
 
-function SignUp() {
+export default function SignUp() {
     const [signUp, { data, loading }] = useSignUpMutation();
 
     const onFinish = (values: Record<string, string>) => {
@@ -69,5 +68,3 @@ function SignUp() {
         </Container>
     );
 }
-
-export default withNoAuth(SignUp);

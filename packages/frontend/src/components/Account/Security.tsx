@@ -3,7 +3,7 @@ import { Button, Typography, Spin, PageHeader } from 'antd';
 import { useMeQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
-import useBoolean from '../utils/useBoolean';
+import useBoolean from '../../utils/useBoolean';
 
 function TOTPModal({
     visible,

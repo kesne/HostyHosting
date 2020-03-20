@@ -1,7 +1,7 @@
 import React from 'react';
 import ContainerGroup from './ContainerGroup';
 import CreateContainerGroup from './CreateContainerGroup';
-import useBoolean from '../../utils/useBoolean';
+import useBoolean from '../../../utils/useBoolean';
 import { useApplicationContainerGroupsQuery } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
 import Card from '../../ui/Card';

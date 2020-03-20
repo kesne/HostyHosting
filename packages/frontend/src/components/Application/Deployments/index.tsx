@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Spin } from 'antd';
 import Deployment from './Deployment';
 import CreateDeployment from './CreateDeployment';
-import useBoolean from '../../utils/useBoolean';
+import useBoolean from '../../../utils/useBoolean';
 import { useApplicationDeploymentsQuery } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
 import Card from '../../ui/Card';

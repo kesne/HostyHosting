@@ -1,13 +1,11 @@
-import { withAuth } from '../../components/utils/auth';
+import React from 'react';
 import Container from '../../components/Account/Container';
 import EditAccount from '../../components/Account/EditAccount';
 
-function AccountRoute() {
+export default function AccountRoute() {
     return (
         <Container selected="account">
             <EditAccount />
         </Container>
     );
 }
-
-export default withAuth(AccountRoute);

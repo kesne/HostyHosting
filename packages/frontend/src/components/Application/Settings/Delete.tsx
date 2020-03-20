@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useBoolean from '../../utils/useBoolean';
+import useBoolean from '../../../utils/useBoolean';
 import { Application, useDeleteApplicationMutation } from '../../../queries';
 import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
 import Button, { ButtonGroup } from '../../ui/Button';

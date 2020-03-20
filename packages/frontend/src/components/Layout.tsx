@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-import client from './utils/client';
+import client from '../utils/client';
 import Header from './Header';
 
 export default function App({ children }: { children: any }) {

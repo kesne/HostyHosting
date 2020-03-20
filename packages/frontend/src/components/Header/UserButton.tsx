@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { useMeQuery } from '../../queries';
-import { signOut } from '../utils/user';
+import { signOut } from '../../utils/user';
 
 export default function UserButton() {
     const { data, loading } = useMeQuery();
