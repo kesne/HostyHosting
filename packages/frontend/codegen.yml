@@ -1,7 +1,7 @@
 schema: ../backend/src/schema.gql
-documents: ./queries/*.graphql
+documents: ./src/queries/*.graphql
 generates:
-    ./queries/index.tsx:
+    ./src/queries/index.tsx:
         plugins:
             - typescript
             - typescript-operations

@@ -1,0 +1,23 @@
+mutation CreateContainerGroup(
+    $applicationID: Int!
+    $label: String!
+    $deployment: Int!
+    $size: Int!
+    $number: Int!
+) {
+    application(id: $applicationID) {
+        createContainerGroup(label: $label, deployment: $deployment, size: $size, number: $number) {
+            id
+            label
+            size
+            containers {
+                id
+                status
+            }
+            deployment {
+                id
+                image
+            }
+        }
+    }
+}

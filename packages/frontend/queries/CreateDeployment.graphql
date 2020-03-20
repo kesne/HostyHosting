@@ -1,8 +1,0 @@
-mutation CreateDeployment($applicationID: Int!, $image: String!) {
-    application(id: $applicationID) {
-        createDeployment(image: $image) {
-            id
-            image
-        }
-    }
-}

@@ -1,0 +1,5 @@
+query Application($id: Int!) {
+    application(id: $id) {
+        ...ApplicationFragment
+    }
+}

@@ -1,0 +1,5 @@
+mutation DisableTOTP($password: String!) {
+    disableTotp(password: $password) {
+        ok
+    }
+}

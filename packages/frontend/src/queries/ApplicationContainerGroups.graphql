@@ -1,0 +1,19 @@
+query ApplicationContainerGroups($id: Int!) {
+    application(id: $id) {
+        id
+        containerGroups {
+            id
+            label
+            size
+            containerCount
+            containers {
+                id
+                status
+            }
+            deployment {
+                id
+                image
+            }
+        }
+    }
+}

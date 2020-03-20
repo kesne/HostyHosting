@@ -1,0 +1,7 @@
+mutation CreateApplication($org: Int, $name: String!, $description: String) {
+    organization(id: $org) {
+        createApplication(name: $name, description: $description) {
+            id
+        }
+    }
+}

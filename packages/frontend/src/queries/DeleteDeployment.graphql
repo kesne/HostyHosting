@@ -1,0 +1,7 @@
+mutation DeleteDeployment($applicationID: Int!, $id: Int!) {
+    application(id: $applicationID) {
+        deleteDeployment(id: $id) {
+            id
+        }
+    }
+}

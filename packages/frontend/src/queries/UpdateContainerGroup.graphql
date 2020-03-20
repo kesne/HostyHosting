@@ -1,0 +1,13 @@
+mutation UpdateContainerGroup($applicationID: Int!, $id: Int!, $number: Int!) {
+    application(id: $applicationID) {
+        updateContainerGroup(id: $id, number: $number) {
+            id
+            size
+            containerCount
+            containers {
+                id
+                status
+            }
+        }
+    }
+}

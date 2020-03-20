@@ -1,5 +1,0 @@
-mutation UpdateAccount($name: String!, $email: String!) {
-    updateAccount(name: $name, email: $email) {
-        ...MeFragment
-    }
-}
