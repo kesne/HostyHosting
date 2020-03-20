@@ -1,0 +1,40 @@
+{
+  "name": "@daas/landing",
+  "private": true,
+  "description": "The landing page.",
+  "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "@tailwindcss/ui": "^0.1.3",
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "autoprefixer": "^9.7.4",
+    "clsx": "^1.1.0",
+    "gatsby": "^2.19.45",
+    "gatsby-image": "^2.2.45",
+    "gatsby-plugin-mailchimp": "^5.1.2",
+    "gatsby-plugin-postcss": "^2.1.22",
+    "gatsby-plugin-react-helmet": "^3.1.24",
+    "gatsby-plugin-sharp": "^2.4.13",
+    "gatsby-plugin-typescript": "^2.2.5",
+    "gatsby-source-filesystem": "^2.1.57",
+    "gatsby-transformer-sharp": "^2.3.19",
+    "postcss-import": "^12.0.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-helmet": "^5.2.1",
+    "tailwindcss": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/react-helmet": "^5.0.15",
+    "prettier": "^1.19.1"
+  }
+}
