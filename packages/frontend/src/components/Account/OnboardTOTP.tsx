@@ -1,26 +1,18 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { Modal, InputNumber, Form, Typography, Skeleton, Alert } from 'antd';
 import { useOnboardTotpLazyQuery, useEnableTotpMutation } from '../../queries';
+import { useForm } from 'react-hook-form';
+import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
+import Button, { ButtonGroup } from '../ui/Button';
+import Input from '../ui/Input';
+import tokenInputRules from '../../utils/tokenInputRules';
 
 type Props = {
     visible: boolean;
     onClose(): void;
 };
 
-const Code = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const QRCode = styled.img`
-    display: block;
-    margin: 16px auto;
-`;
-
 export default function OnboardTOTP({ visible, onClose }: Props) {
-    const [form] = Form.useForm();
+    const { reset, register, errors, handleSubmit } = useForm();
     const [fetchOnboardTOTP, { data, error, loading }] = useOnboardTotpLazyQuery({
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true
@@ -30,14 +22,12 @@ export default function OnboardTOTP({ visible, onClose }: Props) {
 
     useEffect(() => {
         if (visible) {
-            form.resetFields();
+            reset();
             fetchOnboardTOTP();
         }
     }, [visible]);
 
-    async function handleOk() {
-        const values = await form.validateFields();
-
+    async function handleOk(values: Record<string, string>) {
         await enableTotp({
             variables: {
                 token: String(values.token),
@@ -52,58 +42,48 @@ export default function OnboardTOTP({ visible, onClose }: Props) {
         }
     }, [totpEnableState.data, onClose]);
 
-    const OTP_DATA = data
-        ? `otpauth://totp/${data.me.name}?secret=${data.me.onboardTOTP}`
-        : '';
+    const OTP_DATA = data ? `otpauth://totp/${data.me.name}?secret=${data.me.onboardTOTP}` : '';
 
     return (
-        <Modal
-            visible={visible}
-            title="Two Factor Auth Setup"
-            onCancel={onClose}
-            onOk={handleOk}
-            confirmLoading={totpEnableState.loading}
-        >
-            {loading ? (
-                <Skeleton />
-            ) : !data || error ? (
-                <Alert
-                    message="Sorry we couldn't enable two-factor authentication"
-                    description="Please try again later"
-                    type="error"
-                />
-            ) : (
-                <Form form={form} layout="vertical" name="totp">
-                    <Typography.Paragraph>
+        <Modal open={visible} onClose={onClose}>
+            <form onSubmit={handleSubmit(handleOk)}>
+                <ModalContent title="Enable Two-Factor Authentication">
+                    <p className="text-gray-800 text-sm font-normal mb-4">
                         Scan this QR code in an authenticator app to enable Two Factor
-                        Authentication. This will require you to enter a pin from the authenticator
+                        Authentication. This will require you to enter a token from the authenticator
                         app every time you sign in.
-                    </Typography.Paragraph>
-                    <QRCode
+                    </p>
+                    <img
                         alt="Enable Two Factor Authentication"
                         src={`https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=${OTP_DATA}`}
+                        className="shadow-lg block mx-auto my-6 rounded"
                     />
-                    <Typography.Paragraph>
+                    <div className="text-gray-600 text-sm text-center">
                         Or enter it manually:
                         <br />
-                        <Code>
-                            <Typography.Title level={3} code>
-                                {data.me.onboardTOTP}
-                            </Typography.Title>
-                        </Code>
-                    </Typography.Paragraph>
-                    <Form.Item label="Token" name="token">
-                        <InputNumber
-                            size="large"
-                            placeholder="6 digit code..."
-                            maxLength={6}
-                            pattern="[0-9]{6}"
-                            required
-                            autoFocus
-                        />
-                    </Form.Item>
-                </Form>
-            )}
+                        <div className="mt-2 mb-6">
+                            <span className="px-2 py-1 border border-gray-200 bg-gray-100 font-mono leading-tight rounded">
+                                {data?.me.onboardTOTP}
+                            </span>
+                        </div>
+                    </div>
+                    <Input
+                        label="6 digit code"
+                        type="number"
+                        name="token"
+                        errors={errors}
+                        ref={register(tokenInputRules)}
+                    />
+                </ModalContent>
+                <ModalFooter>
+                    <ButtonGroup>
+                        <Button variant="primary" type="submit">
+                            Enable
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ButtonGroup>
+                </ModalFooter>
+            </form>
         </Modal>
     );
 }

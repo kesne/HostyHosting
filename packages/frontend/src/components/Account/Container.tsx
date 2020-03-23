@@ -1,38 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { Layout, Menu } from 'antd';
+import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
+import { useRouteMatch } from 'react-router-dom';
+import UIContainer from '../ui/Container';
+import Card, { CardContent } from '../ui/Card';
 
 type Props = {
-    selected: string;
     children: React.ReactNode;
 };
 
-const SiderStyled = styled(Layout.Sider)`
-    background: #fff;
-    margin-right: 16px;
-`;
+export default function Container({ children }: Props) {
+    const { url } = useRouteMatch('/account/:page?')!;
 
-export default function Container({ selected, children }: Props) {
     return (
-        <Layout>
-            <SiderStyled width={200}>
-                <Menu mode="inline" selectedKeys={[selected]} style={{ height: '100%' }}>
-                    <Menu.Item key="account">
-                        <Link to="/account">Account</Link>
-                    </Menu.Item>
-                    <Menu.Item key="organization">
-                        <Link to="/account/organization">Organization</Link>
-                    </Menu.Item>
-                    <Menu.Item key="security">
-                        <Link to="/account/security">Security</Link>
-                    </Menu.Item>
-                    <Menu.Item key="billing">
-                        <Link to="/account/billing">Billing</Link>
-                    </Menu.Item>
-                </Menu>
-            </SiderStyled>
-            <Layout.Content>{children}</Layout.Content>
-        </Layout>
+        <UIContainer>
+            <div className="flex flex-col sm:flex-row mt-6">
+                <div className="sm:w-64">
+                    <VerticalNav value={url}>
+                        <VerticalNavItem to="/account" label="Account" />
+                        <VerticalNavItem to="/account/security" label="Security" />
+                        <VerticalNavItem to="/account/organizations" label="Organizations" />
+                        <VerticalNavItem to="/account/billing" label="Billing" />
+                    </VerticalNav>
+                </div>
+                <div className="flex-1 mt-4 sm:ml-6 sm:mt-0">
+                    <Card>
+                        <CardContent>{children}</CardContent>
+                    </Card>
+                </div>
+            </div>
+        </UIContainer>
     );
 }

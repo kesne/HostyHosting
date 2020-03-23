@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Typography, Spin, PageHeader } from 'antd';
 import { useMeQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
 import useBoolean from '../../utils/useBoolean';
+import Button from '../ui/Button';
+import Spinner from '../Spinner';
 
 function TOTPModal({
     visible,
@@ -25,7 +26,7 @@ export default function Security() {
     const { data, loading, refetch } = useMeQuery();
 
     if (loading || !data) {
-        return <Spin />;
+        return <Spinner />;
     }
 
     function onClose() {
@@ -34,16 +35,16 @@ export default function Security() {
     }
 
     return (
-        <PageHeader title="Security" ghost={false}>
+        <>
             <Button>Change Password</Button>
-            <hr />
-            <Typography.Text>
+            <hr className="my-6" />
+            <p className="text-gray-700 leading-normal mb-2">
                 Two factor auth <strong>{data.me.hasTOTP ? 'is' : 'is not'}</strong> enabled.
-            </Typography.Text>
-            <Button type={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
+            </p>
+            <Button variant={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
                 {data.me.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
             </Button>
             <TOTPModal visible={totpModalVisible} hasTOTP={data.me.hasTOTP} onClose={onClose} />
-        </PageHeader>
+        </>
     );
 }

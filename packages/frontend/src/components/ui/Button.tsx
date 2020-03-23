@@ -1,5 +1,6 @@
-import React, { Children, ButtonHTMLAttributes } from 'react';
+import React, { Children, ButtonHTMLAttributes, useContext } from 'react';
 import clsx from 'clsx';
+import { ModalFooterContext } from './Modal';
 
 export function ButtonGroup({ children }: { children: React.ReactNode }) {
     return (
@@ -40,11 +41,17 @@ const VARIANTS = {
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: keyof typeof VARIANTS;
-    modal?: boolean;
+    fullWidth?: boolean;
 };
 
 // TODO: Size + responsive button (larger on small screens)
-export default function Button({ className, variant = 'default', modal, ...props }: Props) {
+export default function Button({
+    className,
+    variant = 'default',
+    fullWidth,
+    ...props
+}: Props) {
+    const modal = useContext(ModalFooterContext);
     const variantStyles = VARIANTS[variant] || VARIANTS.default;
 
     return (
@@ -56,6 +63,7 @@ export default function Button({ className, variant = 'default', modal, ...props
                 props.disabled && 'cursor-default',
                 props.disabled ? variantStyles.disabled : variantStyles.active,
                 modal && 'w-full sm:w-auto',
+                fullWidth && 'w-full text-center justify-center',
                 className
             )}
             {...props}

@@ -14,7 +14,9 @@ export default function FormItem({
             <label className="block text-sm font-medium leading-5 text-gray-700">
                 {label}
                 <div className="mt-1 relative rounded-md shadow-sm">{children}</div>
-                {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+                {typeof error !== 'undefined' && (
+                    <p className="mt-2 text-sm text-red-600">{error}</p>
+                )}
             </label>
         </div>
     );

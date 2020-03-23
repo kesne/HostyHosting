@@ -12,11 +12,9 @@ export default function SelectOrganization({ organization }: Props) {
     const { data, loading } = useMyOrganizationsQuery();
     const history = useHistory();
 
-    console.log('HELLLO !! ???');
-
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (event.target.value === PERSONAL) {
-            history.push('/home');
+            history.push('/');
         } else {
             history.push(`/orgs/${event.target.value}`);
         }

@@ -6,13 +6,12 @@ import EditAccount from './EditAccount';
 
 export default function Account() {
     const { path, url } = useRouteMatch();
-    const pageMatch = useRouteMatch<{ page: string }>(`${path}/:page`);
 
     return (
-        <Container selected={pageMatch?.params.page ?? 'account'}>
+        <Container>
             <Switch>
                 <Route path={`${path}/billing`}>billing</Route>
-                <Route path={`${path}/organization`}>org</Route>
+                <Route path={`${path}/organizations`}>orgs</Route>
                 <Route path={`${path}/security`}>
                     <Security />
                 </Route>

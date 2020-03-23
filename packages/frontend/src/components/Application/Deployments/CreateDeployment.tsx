@@ -77,10 +77,10 @@ export default function CreateDeployment({ visible, onClose }: Props) {
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button type="submit" variant="primary" modal>
+                            <Button type="submit" variant="primary">
                                 Create
                             </Button>
-                            <Button modal onClick={onClose}>
+                            <Button onClick={onClose}>
                                 Cancel
                             </Button>
                         </ButtonGroup>

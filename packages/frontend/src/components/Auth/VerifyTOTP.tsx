@@ -1,15 +1,9 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Typography } from 'antd';
 import { useExchangeTotpMutation } from '../../queries';
-
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
+import tokenInputRules from '../../utils/tokenInputRules';
+import { useForm } from 'react-hook-form';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
 
 type Props = {
     onSignIn(): void;
@@ -17,6 +11,7 @@ type Props = {
 
 export default function VerifyTOTP({ onSignIn }: Props) {
     const [exchangeTotp, { data, loading }] = useExchangeTotpMutation();
+    const { register, errors, handleSubmit } = useForm();
 
     useEffect(() => {
         if (data) {
@@ -33,25 +28,23 @@ export default function VerifyTOTP({ onSignIn }: Props) {
     }
 
     return (
-        <Form {...layout} name="verify-totp" onFinish={handleFinish}>
-            <Typography.Paragraph>
+        <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(handleFinish)}>
+            <p className="text-sm leading-5 text-gray-700">
                 Two factor auth is enabled on this account. Please enter the token from your
                 authenticator app below:
-            </Typography.Paragraph>
+            </p>
 
-            <Form.Item
+            <Input
                 label="Token"
                 name="token"
-                rules={[{ required: true, message: 'Please enter the two factor auth token.' }]}
-            >
-                <Input pattern="[0-9]{6}" maxLength={6} autoFocus />
-            </Form.Item>
+                ref={register(tokenInputRules)}
+                errors={errors}
+                autoFocus
+            />
 
-            <Form.Item {...tailLayout}>
-                <Button type="primary" htmlType="submit" disabled={loading}>
-                    Verify Two Factor Auth
-                </Button>
-            </Form.Item>
-        </Form>
+            <Button variant="primary" type="submit" disabled={loading} fullWidth>
+                Verify Two Factor Auth
+            </Button>
+        </form>
     );
 }

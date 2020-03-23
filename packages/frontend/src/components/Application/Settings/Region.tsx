@@ -1,15 +1,18 @@
 import React from 'react';
+import clsx from 'clsx';
 import Card, { CardContent } from '../../ui/Card';
+import { EnterItem } from '../../ui/motion/Enter';
 
 type Props = {
     title: string;
     description?: string;
     children: React.ReactNode;
+    first?: boolean;
 };
 
-export default function Region({ title, description, children }: Props) {
+export default function Region({ title, description, children, first }: Props) {
     return (
-        <div className="my-6">
+        <EnterItem className={clsx('my-6', first && 'mt-0')}>
             <Card>
                 <CardContent>
                     <div className="md:grid md:grid-cols-3 md:gap-6">
@@ -25,6 +28,6 @@ export default function Region({ title, description, children }: Props) {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </EnterItem>
     );
 }

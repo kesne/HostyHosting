@@ -1,28 +1,13 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import Card from '../../ui/Card';
 import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import Spinner from '../../Spinner';
+import { EnterContainer, EnterItem } from '../../ui/motion/Enter';
 
 function formatDate(timestamp: string) {
     return new Date(timestamp).toDateString();
 }
-
-const list = {
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    },
-    hidden: { opacity: 0 }
-};
-
-const item = {
-    visible: { opacity: 1, y: 0, transition: { ease: 'circOut', duration: 0.5 } },
-    hidden: { opacity: 0, y: 50 }
-};
 
 export default function Overview() {
     const id = useApplicationID();
@@ -37,13 +22,8 @@ export default function Overview() {
     }
 
     return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={list}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-            <motion.div variants={item}>
+        <EnterContainer className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <EnterItem>
                 <Card
                     header={
                         <h3 className="text-lg leading-6 font-medium text-gray-900">Details</h3>
@@ -86,8 +66,8 @@ export default function Overview() {
                         </dl>
                     </div>
                 </Card>
-            </motion.div>
-            <motion.div variants={item}>
+            </EnterItem>
+            <EnterItem>
                 <Card
                     header={
                         <h3 className="text-lg leading-6 font-medium text-gray-900">
@@ -97,8 +77,8 @@ export default function Overview() {
                 >
                     TODO
                 </Card>
-            </motion.div>
-            <motion.div variants={item}>
+            </EnterItem>
+            <EnterItem>
                 <Card
                     header={
                         <h3 className="text-lg leading-6 font-medium text-gray-900">Containers</h3>
@@ -106,7 +86,7 @@ export default function Overview() {
                 >
                     TODO
                 </Card>
-            </motion.div>
-        </motion.div>
+            </EnterItem>
+        </EnterContainer>
     );
 }

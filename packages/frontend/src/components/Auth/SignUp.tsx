@@ -1,18 +1,15 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Redirect, Link } from 'react-router-dom';
-import { Form, Button, Input } from 'antd';
-import Spacing from '../../components/Spacing';
-import Container from '../../components/Auth/Container';
+import { Redirect } from 'react-router-dom';
+import Container from './Container';
 import { useSignUpMutation } from '../../queries';
-
-const LinkContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-`;
+import Link from '../ui/Link';
+import { useForm } from 'react-hook-form';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
 
 export default function SignUp() {
     const [signUp, { data, loading }] = useSignUpMutation();
+    const { register, errors, handleSubmit } = useForm();
 
     const onFinish = (values: Record<string, string>) => {
         signUp({
@@ -29,42 +26,42 @@ export default function SignUp() {
     }
 
     return (
-        <Container title="Sign up">
-            <Form name="signup" onFinish={onFinish} layout="vertical" hideRequiredMark>
-                <Form.Item
+        <Container
+            title="Create a new account"
+            subtitle={
+                <span>
+                    Or <Link to="/auth/sign-in">sign in to your existing account.</Link>
+                </span>
+            }
+        >
+            <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+                <Input
                     label="Name"
                     name="name"
-                    rules={[{ required: true, message: 'Please input your name!' }]}
-                >
-                    <Input autoFocus />
-                </Form.Item>
-                <Form.Item
+                    errors={errors}
+                    ref={register({ required: true })}
+                    autoFocus
+                />
+
+                <Input
                     label="Email"
                     name="email"
-                    rules={[{ required: true, message: 'Please input your email!' }]}
-                >
-                    <Input />
-                </Form.Item>
+                    errors={errors}
+                    ref={register({ required: true })}
+                />
 
-                <Form.Item
+                <Input
                     label="Password"
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password />
-                </Form.Item>
+                    type="password"
+                    errors={errors}
+                    ref={register({ required: true })}
+                />
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={loading}>
-                        Sign Up
-                    </Button>
-                </Form.Item>
-                <Spacing top={3}>
-                    <LinkContainer>
-                        <Link to="/auth/sign-in">Already have an account? Sign in</Link>
-                    </LinkContainer>
-                </Spacing>
-            </Form>
+                <Button variant="primary" type="submit" disabled={loading} fullWidth>
+                    Sign Up
+                </Button>
+            </form>
         </Container>
     );
 }

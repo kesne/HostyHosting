@@ -29092,6 +29092,11 @@ video {
   transition-duration: 1000ms;
 }
 
+form {
+  -webkit-margin-after: 0;
+          margin-block-end: 0;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;

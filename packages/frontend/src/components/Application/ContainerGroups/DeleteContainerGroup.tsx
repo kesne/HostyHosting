@@ -1,19 +1,19 @@
-import React, { useContext } from 'react';
-import { Button } from 'antd';
+import React from 'react';
 import {
     useDeleteContainerGroupMutation,
     ApplicationContainerGroupsQuery,
     ApplicationContainerGroupsDocument
 } from '../../../queries';
 import produce from 'immer';
-import ApplicationContext from '../ApplicationContext';
+import { useApplicationID } from '../ApplicationContext';
+import Button from '../../ui/Button';
 
 type Props = {
     id: number;
 };
 
 export default function DeleteContainer({ id }: Props) {
-    const applicationID = useContext(ApplicationContext);
+    const applicationID = useApplicationID();
     const [deleteContainerGroup] = useDeleteContainerGroupMutation({
         variables: {
             applicationID,
@@ -51,7 +51,7 @@ export default function DeleteContainer({ id }: Props) {
     });
 
     return (
-        <Button type="danger" onClick={() => deleteContainerGroup()}>
+        <Button variant="danger" onClick={() => deleteContainerGroup()}>
             Delete
         </Button>
     );

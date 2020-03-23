@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button } from 'antd';
-import { Link } from 'react-router-dom';
-import Spacing from '../Spacing';
-import Row from '../Row';
+import { useForm } from 'react-hook-form';
 import { useSignInMutation } from '../../queries';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
+import Checkbox from '../ui/Checkbox';
+import Link from '../ui/Link';
 
 type Props = {
     onSignIn(): void;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
+    const { register, errors, handleSubmit } = useForm();
     const [signIn, { data, loading }] = useSignInMutation();
 
     useEffect(() => {
@@ -33,39 +35,31 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
     };
 
     return (
-        <>
-            <Form name="login" onFinish={onFinish} layout="vertical" hideRequiredMark>
-                <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true, message: 'Please input your email!' }]}
-                >
-                    <Input autoFocus />
-                </Form.Item>
+        <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+            <Input
+                label="Email address"
+                name="email"
+                ref={register({ required: true })}
+                autoFocus
+            />
 
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password />
-                </Form.Item>
+            <Input
+                label="Password"
+                name="password"
+                type="password"
+                ref={register({ required: true })}
+            />
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={loading}>
-                        Sign In
-                    </Button>
-                </Form.Item>
-            </Form>
-            <Spacing top={3}>
-                <Row
-                    after={
-                        <Link to="/auth/sign-up">Don't have an account? Sign Up</Link>
-                    }
-                >
-                    <Link to="/auth/forgot">Forgot password?</Link>
-                </Row>
-            </Spacing>
-        </>
+            <div className="flex items-center justify-between">
+                <Checkbox />
+                <span className="text-sm leading-5">
+                    <Link to="/auth/forgot">Forgot your password?</Link>
+                </span>
+            </div>
+
+            <Button type="submit" variant="primary" disabled={loading} fullWidth>
+                Sign In
+            </Button>
+        </form>
     );
 }

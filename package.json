@@ -3,7 +3,8 @@
     "repository": "git@github.com:kesne/daas.git",
     "author": "Jordan Gensler <jordangens@gmail.com>",
     "scripts": {
-        "codegen": "yarn workspace @daas/frontend codegen"
+        "codegen": "yarn workspace @daas/frontend codegen",
+        "css": "npx tailwind build ./css/styles.css --output ./css/output.css"
     },
     "workspaces": [
         "packages/*"

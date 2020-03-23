@@ -75,8 +75,6 @@ export default function CreateContainer({ visible, onClose }: Props) {
         });
     }
 
-    console.log(errors);
-
     return (
         <Modal open={visible} onClose={onClose}>
             <form onSubmit={handleSubmit(handleOk)}>
@@ -147,10 +145,10 @@ export default function CreateContainer({ visible, onClose }: Props) {
                 </ModalContent>
                 <ModalFooter>
                     <ButtonGroup>
-                        <Button type="submit" variant="primary" modal>
+                        <Button type="submit" variant="primary">
                             Create
                         </Button>
-                        <Button modal onClick={onClose}>
+                        <Button onClick={onClose}>
                             Cancel
                         </Button>
                     </ButtonGroup>

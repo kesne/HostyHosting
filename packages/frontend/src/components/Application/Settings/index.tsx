@@ -5,6 +5,7 @@ import Region from './Region';
 import Secrets from './Secrets';
 import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
+import { EnterContainer } from '../../ui/motion/Enter';
 
 export default function Settings() {
     const id = useApplicationID();
@@ -16,8 +17,8 @@ export default function Settings() {
     }
 
     return (
-        <>
-            <Region title="Information">
+        <EnterContainer>
+            <Region title="Information" first>
                 <Information application={data.application} />
             </Region>
             <Region
@@ -29,6 +30,6 @@ export default function Settings() {
             <Region title="App Management">
                 <Delete application={data.application} />
             </Region>
-        </>
+        </EnterContainer>
     );
 }

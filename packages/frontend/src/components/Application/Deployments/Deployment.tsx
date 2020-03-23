@@ -1,5 +1,4 @@
 import React from 'react';
-import { Typography } from 'antd';
 import { Deployment as DeploymentData } from '../../../queries';
 import DeleteDeployment from './DeleteDeployment';
 
@@ -10,7 +9,7 @@ type Props = {
 export default function Container({ deployment }: Props) {
     return (
         <div>
-            <Typography.Text code>{deployment.image}</Typography.Text>
+            <p>{deployment.image}</p>
             <DeleteDeployment id={deployment.id} />
         </div>
     );

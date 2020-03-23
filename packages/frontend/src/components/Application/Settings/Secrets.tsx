@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MinusCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { Application, useUpdateApplicationMutation, Secret } from '../../../queries';
 import EditSecret from './EditSecret';
 import Input from '../../ui/Input';
@@ -47,8 +46,8 @@ export default function Secrets({ application }: Props) {
                             </div>
 
                             <div>
-                                <EditOutlined onClick={() => setEditing(secret)} />
-                                <MinusCircleOutlined />
+                                <Button onClick={() => setEditing(secret)}>Edit</Button>
+                                <Button>Delete</Button>
                             </div>
                         </div>
                     );

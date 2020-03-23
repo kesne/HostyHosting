@@ -13,8 +13,8 @@ type Props = {
 export function ModalContent({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="sm:flex sm:items-start">
-                <div className="mt-3 text-center sm:mt-0 sm:text-left">
+            <div className="">
+                <div className="mt-3 sm:mt-0">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">{title}</h3>
                     <div className="mt-2">{children}</div>
                 </div>
@@ -23,9 +23,15 @@ export function ModalContent({ title, children }: { title: string; children: Rea
     );
 }
 
+export const ModalFooterContext = React.createContext(false);
+
 export function ModalFooter({ children }: { children: React.ReactNode }) {
     return (
-        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">{children}</div>
+        <ModalFooterContext.Provider value={true}>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                {children}
+            </div>
+        </ModalFooterContext.Provider>
     );
 }
 

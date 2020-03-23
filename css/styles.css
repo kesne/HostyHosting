@@ -3,3 +3,7 @@
 @tailwind components;
 
 @tailwind utilities;
+
+form {
+    margin-block-end: 0;
+}

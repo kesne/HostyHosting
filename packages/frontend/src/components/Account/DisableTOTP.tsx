@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, Typography } from 'antd';
 import { useDisableTotpMutation } from '../../queries';
+import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
+import Button, { ButtonGroup } from '../ui/Button';
+import Input from '../ui/Input';
+import { useForm } from 'react-hook-form';
 
 type Props = {
-    visible: boolean
+    visible: boolean;
     onClose(): void;
 };
 
 export default function DisableTOTP({ visible, onClose }: Props) {
-    const [form] = Form.useForm();
     const [disableTOTP, { data, loading }] = useDisableTotpMutation();
+    const { register, errors, reset, handleSubmit } = useForm();
 
     useEffect(() => {
         if (data) {
@@ -19,13 +22,11 @@ export default function DisableTOTP({ visible, onClose }: Props) {
 
     useEffect(() => {
         if (visible) {
-            form.resetFields();
+            reset();
         }
-    }, [visible])
+    }, [visible]);
 
-    async function handleOk() {
-        const values = await form.validateFields();
-
+    async function handleOk(values: Record<string, string>) {
         await disableTOTP({
             variables: {
                 password: values.password
@@ -34,19 +35,33 @@ export default function DisableTOTP({ visible, onClose }: Props) {
     }
 
     return (
-        <Modal
-            title="Disable Two Factor Auth"
-            visible={visible}
-            onCancel={onClose}
-            onOk={handleOk}
-            confirmLoading={loading}
-        >
-            <Typography.Paragraph>Please enter your password to disable two-factor authentication on your account.</Typography.Paragraph>
-            <Form form={form} layout="vertical" name="disable-totp">
-                <Form.Item label="Password" name="password">
-                    <Input type="password" size="large" placeholder="Password..." required autoFocus />
-                </Form.Item>
-            </Form>
+        <Modal open={visible} onClose={onClose}>
+            <form onSubmit={handleSubmit(handleOk)}>
+                <ModalContent title="Disable Two Factor Authentication">
+                    <p className="text-gray-800 text-sm font-normal mb-4">
+                        Please enter your password to disable two-factor authentication on your
+                        account.
+                    </p>
+                    <Input
+                        name="password"
+                        type="password"
+                        label="Password"
+                        placeholder="Password..."
+                        ref={register({ required: true })}
+                        errors={errors}
+                        required
+                        autoFocus
+                    />
+                </ModalContent>
+                <ModalFooter>
+                    <ButtonGroup>
+                        <Button type="submit" variant="primary">
+                            Disable
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ButtonGroup>
+                </ModalFooter>
+            </form>
         </Modal>
     );
 }

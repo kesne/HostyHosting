@@ -8,9 +8,12 @@ export default forwardRef<HTMLTextAreaElement, Props>(({ label, error, ...props 
     return (
         <FormItem label={label} error={error}>
             <textarea
-                className={clsx('form-textarea block w-full sm:text-sm sm:leading-5', {
-                    'pr-10 border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red': error
-                })}
+                className={clsx(
+                    'form-textarea block w-full sm:text-sm sm:leading-5',
+                    error &&
+                        'pr-10 border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red',
+                    props.disabled && 'bg-gray-100'
+                )}
                 ref={ref}
                 {...props}
             />

@@ -25,7 +25,7 @@ export default function Delete({ application }: Props) {
     }
 
     if (data) {
-        return <Redirect to="/" />
+        return <Redirect to="/" />;
     }
 
     return (
@@ -69,13 +69,10 @@ export default function Delete({ application }: Props) {
                                 type="submit"
                                 variant="danger"
                                 disabled={loading || name !== application.name}
-                                modal
                             >
                                 Delete
                             </Button>
-                            <Button modal onClick={off}>
-                                Cancel
-                            </Button>
+                            <Button onClick={off}>Cancel</Button>
                         </ButtonGroup>
                     </ModalFooter>
                 </form>

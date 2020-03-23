@@ -1,21 +1,16 @@
 import React, { useEffect } from 'react';
-import { Button, Form, Input, Typography } from 'antd';
 import { useResetPasswordMutation } from '../../queries';
 import Container from './Container';
 import { Redirect, useParams } from 'react-router-dom';
-
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
+import { useForm } from 'react-hook-form';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 
 export default function Reset() {
     const { uuid } = useParams<{ uuid: string }>();
     const [resetPassword, { data, loading }] = useResetPasswordMutation();
+
+    const { register, errors, handleSubmit } = useForm();
 
     useEffect(() => {
         resetPassword();
@@ -35,27 +30,26 @@ export default function Reset() {
     }
 
     return (
-        <Container title="Password Reset">
-            <Typography.Paragraph>
-                You can set a new password for your account below, which can be used for all future
-                sign-ins.
-            </Typography.Paragraph>
+        <Container title="Finish resetting your password">
+            <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+                <p className="text-sm leading-5 text-gray-700">
+                    You can set a new password for your account below, which can be used for all
+                    future sign-ins.
+                </p>
 
-            <Form {...layout} name="login" onFinish={onFinish}>
-                <Form.Item
+                <Input
                     label="Password"
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password autoFocus />
-                </Form.Item>
+                    type="password"
+                    ref={register({ required: true })}
+                    errors={errors}
+                    autoFocus
+                />
 
-                <Form.Item {...tailLayout}>
-                    <Button type="primary" htmlType="submit" disabled={loading}>
-                        Reset Password
-                    </Button>
-                </Form.Item>
-            </Form>
+                <Button variant="primary" type="submit" disabled={loading} fullWidth>
+                    Reset Password
+                </Button>
+            </form>
         </Container>
     );
 }

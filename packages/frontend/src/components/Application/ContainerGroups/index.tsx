@@ -8,6 +8,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import List from '../../ui/List';
 import Spinner from '../../Spinner';
+import { EnterItem, EnterContainer } from '../../ui/motion/Enter';
 
 export default function ContainerGroups() {
     const applicationID = useApplicationID();
@@ -23,18 +24,22 @@ export default function ContainerGroups() {
     }
 
     return (
-        <Card
-            title="Container Groups"
-            actions={
-                <Button variant="primary" onClick={on}>
-                    Create Container Group
-                </Button>
-            }
-        >
-            <CreateContainerGroup visible={createVisible} onClose={off} />
-            <List items={data.application.containerGroups}>
-                {item => <ContainerGroup key={item.id} containerGroup={item} />}
-            </List>
-        </Card>
+        <EnterContainer>
+            <EnterItem>
+                <Card
+                    title="Container Groups"
+                    actions={
+                        <Button variant="primary" onClick={on}>
+                            Create Container Group
+                        </Button>
+                    }
+                >
+                    <CreateContainerGroup visible={createVisible} onClose={off} />
+                    <List items={data.application.containerGroups}>
+                        {item => <ContainerGroup key={item.id} containerGroup={item} />}
+                    </List>
+                </Card>
+            </EnterItem>
+        </EnterContainer>
     );
 }

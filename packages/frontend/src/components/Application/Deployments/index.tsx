@@ -1,5 +1,4 @@
 import React from 'react';
-import { List, Spin } from 'antd';
 import Deployment from './Deployment';
 import CreateDeployment from './CreateDeployment';
 import useBoolean from '../../../utils/useBoolean';
@@ -7,7 +6,9 @@ import { useApplicationDeploymentsQuery } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
-import { ListItem } from '../../ui/List';
+import Spinner from '../../Spinner';
+import List, { ListItem } from '../../ui/List';
+import { EnterContainer, EnterItem } from '../../ui/motion/Enter';
 
 export default function Deployments() {
     const applicationID = useApplicationID();
@@ -19,27 +20,30 @@ export default function Deployments() {
     const [createVisible, { on, off }] = useBoolean(false);
 
     if (loading || !data || error) {
-        return <Spin />;
+        return <Spinner />;
     }
 
     return (
-        <Card
-            title="Deployments"
-            actions={
-                <Button variant="primary" onClick={on}>
-                    Create Deployment
-                </Button>
-            }
-        >
-            <CreateDeployment visible={createVisible} onClose={off} />
-            <List
-                dataSource={data.application.deployments}
-                renderItem={(deployment, i) => (
-                    <ListItem to="/" last={i === data.application.deployments.length - 1}>
-                        <Deployment deployment={deployment} />
-                    </ListItem>
-                )}
-            />
-        </Card>
+        <EnterContainer>
+            <EnterItem>
+                <Card
+                    title="Deployments"
+                    actions={
+                        <Button variant="primary" onClick={on}>
+                            Create Deployment
+                        </Button>
+                    }
+                >
+                    <CreateDeployment visible={createVisible} onClose={off} />
+                    <List items={data.application.deployments}>
+                        {(deployment, i) => (
+                            <ListItem to="/" last={i === data.application.deployments.length - 1}>
+                                <Deployment deployment={deployment} />
+                            </ListItem>
+                        )}
+                    </List>
+                </Card>
+            </EnterItem>
+        </EnterContainer>
     );
 }

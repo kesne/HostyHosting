@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Modal } from 'antd';
 import { useUpdateApplicationMutation, Secret } from '../../../queries';
+import { useForm } from 'react-hook-form';
+import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
+import Input from '../../ui/Input';
+import Button, { ButtonGroup } from '../../ui/Button';
 
 type Props = {
     id: number;
@@ -9,15 +12,14 @@ type Props = {
 };
 
 export default function EditSecret({ id, secret, onClose }: Props) {
-    const [form] = Form.useForm();
+    const { register, errors, reset, handleSubmit } = useForm();
     const [updateApplication, { loading }] = useUpdateApplicationMutation();
 
     useEffect(() => {
-        form.resetFields();
+        reset();
     }, [secret]);
 
-    async function handleSubmit() {
-        const values = await form.validateFields();
+    async function onSubmit(values: Record<string, string>) {
         await updateApplication({
             variables: {
                 id,
@@ -32,26 +34,39 @@ export default function EditSecret({ id, secret, onClose }: Props) {
     }
 
     return (
-        <Modal
-            title="Edit Secret"
-            visible={!!secret}
-            onCancel={onClose}
-            onOk={handleSubmit}
-            confirmLoading={loading}
-            okText="Save"
-        >
-            <Form
-                layout="vertical"
-                form={form}
-                initialValues={{ key: secret?.key ?? '', value: secret?.value ?? '' }}
-            >
-                <Form.Item label="KEY" name="key">
-                    <Input disabled={loading} />
-                </Form.Item>
-                <Form.Item label="VALUE" name="value">
-                    <Input disabled={loading} />
-                </Form.Item>
-            </Form>
+        <Modal open={!!secret} onClose={onClose}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <ModalContent title="Edit Secret">
+                    <div className="flex-1 grid grid-cols-1 row-gap-6">
+                        <Input
+                            label="Key"
+                            placeholder="KEY"
+                            name="key"
+                            defaultValue={secret?.key}
+                            disabled={loading}
+                            ref={register({ required: true })}
+                            errors={errors}
+                        />
+                        <Input
+                            label="Value"
+                            placeholder="VALUE"
+                            name="value"
+                            defaultValue={secret?.value}
+                            disabled={loading}
+                            ref={register({ required: true })}
+                            errors={errors}
+                        />
+                    </div>
+                </ModalContent>
+                <ModalFooter>
+                    <ButtonGroup>
+                        <Button type="submit" variant="primary">
+                            Save
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ButtonGroup>
+                </ModalFooter>
+            </form>
         </Modal>
     );
 }

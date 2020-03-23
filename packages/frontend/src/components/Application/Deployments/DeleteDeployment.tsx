@@ -1,19 +1,19 @@
-import React, { useContext } from 'react';
-import { Button } from 'antd';
+import React from 'react';
 import {
     useDeleteDeploymentMutation,
     ApplicationDeploymentsQuery,
     ApplicationDeploymentsDocument
 } from '../../../queries';
 import produce from 'immer';
-import ApplicationContext from '../ApplicationContext';
+import { useApplicationID } from '../ApplicationContext';
+import Button from '../../ui/Button';
 
 type Props = {
     id: number;
 };
 
 export default function DeleteDeployment({ id }: Props) {
-    const applicationID = useContext(ApplicationContext);
+    const applicationID = useApplicationID();
     const [deleteDeployment] = useDeleteDeploymentMutation({
         variables: {
             applicationID,
@@ -51,7 +51,7 @@ export default function DeleteDeployment({ id }: Props) {
     });
 
     return (
-        <Button type="danger" onClick={() => deleteDeployment()}>
+        <Button variant="danger" onClick={() => deleteDeployment()}>
             Delete
         </Button>
     );

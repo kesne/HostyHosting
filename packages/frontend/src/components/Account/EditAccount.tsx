@@ -1,11 +1,15 @@
 import React from 'react';
-import { Button, Input, Form, PageHeader, Alert } from 'antd';
 import { useUpdateAccountMutation, useMeQuery } from '../../queries';
 import Spinner from '../Spinner';
+import { useForm } from 'react-hook-form';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 
 export default function EditAccount() {
-    const { data, loading, error } = useMeQuery();
+    const { data, loading } = useMeQuery();
     const [updateAccount, updateAccountState] = useUpdateAccountMutation();
+
+    const { register, errors, handleSubmit } = useForm();
 
     function handleFinish(values: Record<string, any>) {
         updateAccount({
@@ -16,43 +20,34 @@ export default function EditAccount() {
         });
     }
 
+    if (loading) {
+        return <Spinner />;
+    }
+
     return (
-        <PageHeader title="Your Account" ghost={false}>
-            {loading ? (
-                <Spinner />
-            ) : !data || error ? (
-                <Alert
-                    message="Sorry we couldn't load your account."
-                    description={
-                        error ? error.message : 'An unknown error occurred. Please try again later.'
-                    }
-                    type="error"
-                />
-            ) : (
-                <Form
-                    initialValues={{
-                        name: data.me.name,
-                        email: data.me.email
-                    }}
-                    onFinish={handleFinish}
-                >
-                    <Form.Item label="Name" name="name">
-                        <Input placeholder="Name" disabled={updateAccountState.loading} />
-                    </Form.Item>
-                    <Form.Item label="Email" name="email">
-                        <Input placeholder="Email" disabled={updateAccountState.loading} />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button
-                            disabled={updateAccountState.loading}
-                            type="primary"
-                            htmlType="submit"
-                        >
-                            Save Changes
-                        </Button>
-                    </Form.Item>
-                </Form>
-            )}
-        </PageHeader>
+        <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(handleFinish)}>
+            <Input
+                label="Name"
+                name="name"
+                disabled={updateAccountState.loading}
+                defaultValue={data?.me.name}
+                ref={register({ required: true })}
+                errors={errors}
+            />
+            <Input
+                label="Email"
+                name="email"
+                disabled={updateAccountState.loading}
+                defaultValue={data?.me.email}
+                ref={register({ required: true })}
+                errors={errors}
+            />
+
+            <div>
+                <Button disabled={updateAccountState.loading} variant="primary" type="submit">
+                    Save Changes
+                </Button>
+            </div>
+        </form>
     );
 }
