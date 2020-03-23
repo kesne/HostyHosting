@@ -3,6 +3,9 @@ import FocusTrap from 'focus-trap-react';
 import noScroll from 'no-scroll';
 import useKeyboardEvent from './util/useKeyboardEvent';
 import Portal from './util/Portal';
+import { AnimatePresence, motion } from 'framer-motion';
+import useMediaQuery from '../../utils/useMediaQuery';
+import { MEDIA_QUERIES } from './constants';
 
 type Props = {
     open: boolean;
@@ -36,6 +39,28 @@ export function ModalFooter({ children }: { children: React.ReactNode }) {
 }
 
 export default function Modal({ open, onClose, children }: Props) {
+    const atLeastSmall = useMediaQuery(MEDIA_QUERIES.SMALL);
+
+    const modalInitial = atLeastSmall
+        ? {
+              opacity: 0,
+              scale: 0.95
+          }
+        : {
+              opacity: 0,
+              y: 25
+          };
+
+    const modalIn = atLeastSmall
+        ? {
+              opacity: 1,
+              scale: 1
+          }
+        : {
+              opacity: 1,
+              y: 0
+          };
+
     useEffect(() => {
         if (open) {
             noScroll.on();
@@ -50,22 +75,37 @@ export default function Modal({ open, onClose, children }: Props) {
         onClose();
     });
 
-    return open ? (
-        <Portal>
-            <FocusTrap>
-                <div className="z-10 fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-                    <div className="fixed inset-0 transition-opacity" onClick={onClose}>
-                        <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-                    </div>
+    return (
+        <AnimatePresence>
+            {open && (
+                <Portal>
+                    <FocusTrap>
+                        <div className="z-10 fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: 'easeOut' }}
+                                className="fixed inset-0 transition-opacity"
+                                onClick={onClose}
+                            >
+                                <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                            </motion.div>
 
-                    <div
-                        role="dialog"
-                        className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
-                    >
-                        {children}
-                    </div>
-                </div>
-            </FocusTrap>
-        </Portal>
-    ) : null;
+                            <motion.div
+                                initial={modalInitial}
+                                animate={modalIn}
+                                exit={modalInitial}
+                                transition={{ duration: 0.2, ease: 'easeOut' }}
+                                role="dialog"
+                                className="relative bg-white rounded-lg overflow-hidden shadow-xl sm:max-w-lg sm:w-full z-10"
+                            >
+                                {children}
+                            </motion.div>
+                        </div>
+                    </FocusTrap>
+                </Portal>
+            )}
+        </AnimatePresence>
+    );
 }

@@ -48,6 +48,8 @@ export type ApplicationMutationsUpdateArgs = {
 
 
 export type ApplicationMutationsCreateDeploymentArgs = {
+  strategy: DeploymentStrategy,
+  label: Scalars['String'],
   image: Scalars['String']
 };
 
@@ -92,7 +94,7 @@ export type ContainerGroup = {
    __typename?: 'ContainerGroup',
   id: Scalars['Int'],
   label: Scalars['String'],
-  size: Scalars['Int'],
+  size: ContainerSize,
   containerCount: Scalars['Float'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
@@ -100,15 +102,30 @@ export type ContainerGroup = {
   containers: Array<Container>,
 };
 
+export enum ContainerSize {
+  S1x1 = 'S1x1',
+  S2x2 = 'S2x2',
+  S4x4 = 'S4x4',
+  S8x8 = 'S8x8',
+  S16x16 = 'S16x16'
+}
+
 
 export type Deployment = {
    __typename?: 'Deployment',
   id: Scalars['Int'],
+  label: Scalars['String'],
+  strategy: DeploymentStrategy,
   image: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   containerGroups: Array<ContainerGroup>,
 };
+
+export enum DeploymentStrategy {
+  Replace = 'REPLACE',
+  Recreate = 'RECREATE'
+}
 
 export type Mutation = {
    __typename?: 'Mutation',
@@ -388,7 +405,9 @@ export type CreateContainerGroupMutation = (
 
 export type CreateDeploymentMutationVariables = {
   applicationID: Scalars['Int'],
-  image: Scalars['String']
+  image: Scalars['String'],
+  label: Scalars['String'],
+  strategy: DeploymentStrategy
 };
 
 
@@ -914,9 +933,9 @@ export type CreateContainerGroupMutationHookResult = ReturnType<typeof useCreate
 export type CreateContainerGroupMutationResult = ApolloReactCommon.MutationResult<CreateContainerGroupMutation>;
 export type CreateContainerGroupMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
 export const CreateDeploymentDocument = gql`
-    mutation CreateDeployment($applicationID: Int!, $image: String!) {
+    mutation CreateDeployment($applicationID: Int!, $image: String!, $label: String!, $strategy: DeploymentStrategy!) {
   application(id: $applicationID) {
-    createDeployment(image: $image) {
+    createDeployment(image: $image, label: $label, strategy: $strategy) {
       id
       image
     }
@@ -940,6 +959,8 @@ export type CreateDeploymentMutationFn = ApolloReactCommon.MutationFunction<Crea
  *   variables: {
  *      applicationID: // value for 'applicationID'
  *      image: // value for 'image'
+ *      label: // value for 'label'
+ *      strategy: // value for 'strategy'
  *   },
  * });
  */

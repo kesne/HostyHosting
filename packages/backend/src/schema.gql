@@ -19,7 +19,7 @@ type Application {
 type ApplicationMutations {
   delete: Application!
   update(secret: SecretInput, description: String, name: String): Application!
-  createDeployment(image: String!): Deployment!
+  createDeployment(strategy: DeploymentStrategy!, label: String!, image: String!): Deployment!
   updateDeployment(image: String!, id: Int!): Deployment!
   deleteDeployment(id: Int!): Deployment!
   createContainerGroup(number: Int!, size: Int!, deployment: Int!, label: String!): ContainerGroup!
@@ -35,12 +35,20 @@ type Container {
 type ContainerGroup {
   id: Int!
   label: String!
-  size: Int!
+  size: ContainerSize!
   containerCount: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
   deployment: Deployment!
   containers: [Container!]!
+}
+
+enum ContainerSize {
+  S1x1
+  S2x2
+  S4x4
+  S8x8
+  S16x16
 }
 
 """
@@ -50,10 +58,17 @@ scalar DateTime
 
 type Deployment {
   id: Int!
+  label: String!
+  strategy: DeploymentStrategy!
   image: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroups: [ContainerGroup!]!
+}
+
+enum DeploymentStrategy {
+  REPLACE
+  RECREATE
 }
 
 type Mutation {

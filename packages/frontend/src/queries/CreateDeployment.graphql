@@ -1,6 +1,11 @@
-mutation CreateDeployment($applicationID: Int!, $image: String!) {
+mutation CreateDeployment(
+    $applicationID: Int!
+    $image: String!
+    $label: String!
+    $strategy: DeploymentStrategy!
+) {
     application(id: $applicationID) {
-        createDeployment(image: $image) {
+        createDeployment(image: $image, label: $label, strategy: $strategy) {
             id
             image
         }

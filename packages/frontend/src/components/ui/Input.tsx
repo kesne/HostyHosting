@@ -1,11 +1,8 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import FormItem from './FormItem';
-
-type FieldError = {
-    type: string;
-    message?: string;
-};
+import { FieldError } from 'react-hook-form';
+import getError from './util/getError';
 
 type Props = {
     label: string;
@@ -13,39 +10,22 @@ type Props = {
     errors?: Record<string, FieldError>;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-function getErrorMessage(error?: FieldError) {
-    if (!error) {
-        return undefined;
-    }
-
-    if (error.message) {
-        return error.message;
-    }
-
-    if (error.type === 'required') {
-        return 'This field is required.';
-    }
-
-    return '';
-}
-
 export default forwardRef<HTMLInputElement, Props>(({ label, error, errors, ...props }, ref) => {
-    const errorForField = error ?? getErrorMessage(errors?.[props.name ?? '']);
-    const hasError = typeof errorForField !== 'undefined';
+    const errorMessage = getError({ name: props.name, error, errors });
 
     return (
-        <FormItem label={label} error={errorForField}>
+        <FormItem label={label} error={errorMessage}>
             <input
                 className={clsx(
                     'form-input block w-full sm:text-sm sm:leading-5',
-                    hasError &&
+                    errorMessage &&
                         'pr-10 border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red',
                     props.disabled && 'bg-gray-100'
                 )}
                 ref={ref}
                 {...props}
             />
-            {hasError && (
+            {errorMessage && (
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                         <path

@@ -1,7 +1,7 @@
 import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { SecretInput } from './types/Secret';
-import { Deployment } from '../entity/Deployment';
+import { Deployment, DeploymentStrategy } from '../entity/Deployment';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Context } from '../types';
 import { In } from 'typeorm';
@@ -28,7 +28,7 @@ export class ApplicationMutations {
     async update(
         @Arg('name', { nullable: true }) name?: string,
         @Arg('description', { nullable: true }) description?: string,
-        @Arg('secret', { nullable: true }) secret?: SecretInput
+        @Arg('secret', { nullable: true }) secret?: SecretInput,
     ) {
         if (typeof name !== 'undefined' && name !== null) {
             this.application.name = name;
@@ -41,7 +41,7 @@ export class ApplicationMutations {
         if (typeof secret !== 'undefined' && secret !== null) {
             this.application.secrets = {
                 ...this.application.secrets,
-                [secret.key]: secret.value
+                [secret.key]: secret.value,
             };
         }
 
@@ -49,10 +49,16 @@ export class ApplicationMutations {
     }
 
     @Field(() => Deployment)
-    async createDeployment(@Arg('image') image: string) {
+    async createDeployment(
+        @Arg('image') image: string,
+        @Arg('label') label: string,
+        @Arg('strategy', () => DeploymentStrategy) strategy: DeploymentStrategy,
+    ) {
         const deployment = new Deployment();
         deployment.application = this.application;
+        deployment.label = label;
         deployment.image = image;
+        deployment.strategy = strategy;
         return await deployment.save();
     }
 
@@ -84,7 +90,7 @@ export class ApplicationMutations {
         @Arg('label') label: string,
         @Arg('deployment', () => Int) deploymentID: number,
         @Arg('size', () => Int) size: number,
-        @Arg('number', () => Int) number: number
+        @Arg('number', () => Int) number: number,
     ) {
         const deployment = await Deployment.findByApplicationAndId(this.application, deploymentID);
 
@@ -102,7 +108,7 @@ export class ApplicationMutations {
     async updateContainerGroup(
         @Arg('id', () => Int) id: number,
         @Arg('label', { nullable: true }) label?: string,
-        @Arg('number', () => Int, { nullable: true }) number?: number
+        @Arg('number', () => Int, { nullable: true }) number?: number,
     ) {
         const containerGroup = await ContainerGroup.findByApplicationAndId(this.application, id);
 
@@ -136,8 +142,8 @@ export class ApplicationMutationsResolver {
         const application = await Application.findOneOrFail({
             where: {
                 id,
-                organization: In(organizations.map(({ id }) => id))
-            }
+                organization: In(organizations.map(({ id }) => id)),
+            },
         });
 
         return new ApplicationMutations(application);

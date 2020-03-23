@@ -18,13 +18,6 @@ import { Context } from './types';
 const app = new Koa();
 const router = new Router();
 
-// TODO: Why is this defined up here?
-const auth: Koa.Middleware = async (ctx, next) => {
-    ctx.user = await User.fromSession(ctx.session);
-
-    return next();
-};
-
 app.keys = ['Some key here ignore'];
 
 const SESSION_CONFIG = {
@@ -86,7 +79,11 @@ async function main() {
         return next();
     });
 
-    app.use(auth);
+    app.use(async (ctx, next) => {
+        ctx.user = await User.fromSession(ctx.session);
+
+        return next();
+    });
 
     server.applyMiddleware({ app, path: '/api/graphql' });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Deployment as DeploymentData } from '../../../queries';
+import { Deployment as DeploymentData } from '../../../../queries';
 import DeleteDeployment from './DeleteDeployment';
 
 type Props = {

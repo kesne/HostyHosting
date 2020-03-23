@@ -3,10 +3,10 @@ import {
     useDeleteDeploymentMutation,
     ApplicationDeploymentsQuery,
     ApplicationDeploymentsDocument
-} from '../../../queries';
+} from '../../../../queries';
 import produce from 'immer';
-import { useApplicationID } from '../ApplicationContext';
-import Button from '../../ui/Button';
+import { useApplicationID } from '../../ApplicationContext';
+import Button from '../../../ui/Button';
 
 type Props = {
     id: number;
