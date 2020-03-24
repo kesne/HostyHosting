@@ -6,7 +6,9 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToMany,
-    ManyToOne
+    OneToMany,
+    OneToOne,
+    JoinColumn,
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Session, Cookies, Lazy } from '../types';
@@ -14,6 +16,7 @@ import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
+import { APIKey } from './APIKey';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -22,18 +25,43 @@ const SALT_ROUNDS = 10;
 export enum AuthType {
     FULL = 'FULL',
     TOTP = 'TOTP',
-    PASSWORD_RESET = 'PASSWORD_RESET'
+    PASSWORD_RESET = 'PASSWORD_RESET',
+}
+
+export enum GrantType {
+    NONE = 'NONE',
+    SESSION = 'SESSION',
+    API_KEY = 'API_KEY'
 }
 
 @Entity()
 @ObjectType()
 export class User extends BaseEntity {
+    static async fromAPIKey(apiKey: string): Promise<User | undefined> {
+        const key = await APIKey.findOne({
+            where: {
+                key: apiKey,
+            },
+            relations: ['user'],
+        });
+
+        if (key?.user) {
+            key.user.grantType = GrantType.API_KEY;
+        }
+
+        return key?.user;
+    }
+
     static async fromSession(
         session: Session,
-        allowedType: AuthType = AuthType.FULL
+        allowedType: AuthType = AuthType.FULL,
     ): Promise<User | undefined> {
         if (session.userID && session.type === allowedType) {
-            return await this.findOne(session.userID);
+            const user = await this.findOne(session.userID);
+            if (user) {
+                user.grantType = GrantType.SESSION;
+            }
+            return user;
         }
         return;
     }
@@ -55,6 +83,11 @@ export class User extends BaseEntity {
 
         return user;
     }
+
+    /**
+     * Denotes how the User entity was authenticated.
+     */
+    grantType: GrantType = GrantType.NONE;
 
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -128,14 +161,28 @@ export class User extends BaseEntity {
     }
 
     @Field(() => Organization)
-    @ManyToOne(() => Organization, { lazy: true })
+    @OneToOne(() => Organization, { lazy: true })
+    @JoinColumn()
     personalOrganization!: Lazy<Organization>;
 
     @Field(() => [Organization])
     @ManyToMany(
         () => Organization,
         organization => organization.users,
-        { lazy: true }
+        { lazy: true },
     )
     organizations!: Lazy<Organization[]>;
+
+    @OneToMany(
+        () => APIKey,
+        apiKey => apiKey.user,
+        { lazy: true },
+    )
+    apiKeys!: Lazy<APIKey>;
+
+    async createAPIKey() {
+        const apiKey = new APIKey();
+        apiKey.user = this;
+        return await apiKey.save();
+    }
 }

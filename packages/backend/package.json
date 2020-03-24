@@ -32,15 +32,18 @@
     "reflect-metadata": "^0.1.13",
     "subscriptions-transport-ws": "^0.9.16",
     "type-graphql": "^0.17.6",
-    "typeorm": "^0.2.22"
+    "typeorm": "^0.2.22",
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie": "^0.3.3",
+    "@types/ioredis": "^4.14.9",
     "@types/koa-redis": "^4.0.0",
     "@types/koa-session": "^5.10.1",
     "@types/koa__router": "^8.0.2",
     "@types/node": "^13.1.2",
+    "@types/uuid": "^7.0.2",
     "node-dev": "^4.0.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.4"

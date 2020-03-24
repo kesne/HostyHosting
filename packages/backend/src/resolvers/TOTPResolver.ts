@@ -1,11 +1,13 @@
 import { authenticator } from 'otplib';
 import { Resolver, Ctx, Arg, Mutation, Authorized } from 'type-graphql';
 import Result from './types/Result';
-import { User } from '../entity/User';
+import { User, GrantType } from '../entity/User';
 import { Context } from '../types';
 
 @Resolver()
 export class TOTPResolver {
+    // NOTE: This is intentionally unauthorized because we don't yet have a full
+    // user session that can be resolved.
     @Mutation(() => Result)
     async exchangeTOTP(@Ctx() { session, cookies }: Context, @Arg('token') token: string) {
         const user = await User.fromTOTPSession(session, token);
@@ -13,7 +15,7 @@ export class TOTPResolver {
         return new Result();
     }
 
-    @Authorized()
+    @Authorized(GrantType.SESSION)
     @Mutation(() => Result)
     async enableTotp(
         @Ctx() { user }: Context,
@@ -34,7 +36,7 @@ export class TOTPResolver {
         return new Result();
     }
 
-    @Authorized()
+    @Authorized(GrantType.SESSION)
     @Mutation(() => Result)
     async disableTotp(@Ctx() { user }: Context, @Arg('password') password: string) {
         await user.disableTOTP(password);

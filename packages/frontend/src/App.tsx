@@ -6,6 +6,7 @@ import Auth from './components/Auth';
 import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
+import GrantAPIKey from './components/Auth/GrantAPIKey';
 
 export default function App() {
     return (
@@ -20,6 +21,9 @@ export default function App() {
                     </PrivateRoute>
                     <PrivateRoute path="/applications/:id">
                         <Application />
+                    </PrivateRoute>
+                    <PrivateRoute path="/grant/:uuid">
+                        <GrantAPIKey />
                     </PrivateRoute>
                     <PrivateRoute path="/auth" unauthenticated>
                         <Auth />

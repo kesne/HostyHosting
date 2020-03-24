@@ -36,8 +36,14 @@ export function signOut() {
     checkCookies();
 }
 
+export function getHasUser() {
+    return current;
+}
+
 export function useHasUser() {
-    const [hasUser, setHasUser] = useState(() => cookie.get(HAS_USER_COOKIE) === '1');
+    const [hasUser, setHasUser] = useState(current);
+
     useEffect(() => subscribe(value => setHasUser(value)), []);
+
     return hasUser;
 }

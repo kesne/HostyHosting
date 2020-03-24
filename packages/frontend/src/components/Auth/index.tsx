@@ -4,6 +4,7 @@ import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Forgot from './Forgot';
 import Reset from './Reset';
+import GrantAPIKey from './GrantAPIKey';
 
 export default function Auth() {
     const { path } = useRouteMatch();

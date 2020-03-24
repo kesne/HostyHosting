@@ -1,27 +1,28 @@
 import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
-import { useHasUser } from '../utils/user';
+import { getHasUser } from '../utils/user';
 
 type Props = {
     unauthenticated?: boolean;
 } & RouteProps;
 
 export default function PrivateRoute({ children, unauthenticated, ...rest }: Props) {
-    const hasUser = useHasUser();
-
     return (
         <Route
             {...rest}
             render={({ location }) => {
+                const hasUser = getHasUser();
+
                 if (hasUser && unauthenticated) {
                     return <Redirect to="/" />;
                 }
+
                 if (!hasUser && !unauthenticated) {
                     return (
                         <Redirect
                             to={{
                                 pathname: '/auth/sign-in',
-                                state: { from: location }
+                                state: { from: location.pathname }
                             }}
                         />
                     );

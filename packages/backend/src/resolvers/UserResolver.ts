@@ -1,15 +1,5 @@
-import {
-    Resolver,
-    Query,
-    Ctx,
-    Mutation,
-    Arg,
-    FieldResolver,
-    Root,
-    Authorized,
-    Field
-} from 'type-graphql';
-import { User, AuthType } from '../entity/User';
+import { Resolver, Query, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
+import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
 import { Organization } from '../entity/Organization';
@@ -27,12 +17,21 @@ export class UserResolver {
         return user;
     }
 
+    // TODO: The fact that this field exists on all users is a red flag to me.
+    // We probably want to move this outside of the user object.
+    @Authorized(GrantType.SESSION)
     @FieldResolver()
-    onboardTOTP(@Root() user: User): string {
+    onboardTOTP(@Ctx() { user: currentUser }: Context, @Root() user: User): string {
+        if (user.id !== currentUser.id) {
+            throw new Error('You can only enable TOTP for your own account.');
+        }
+
         if (user.totpSecret) {
             throw new Error('TOTP Already Enabled');
         }
 
+        // TODO: Move this outside of the user model, it doesn't really make sense
+        // to be there. We can make a util file that does TOTP stuff.
         return user.generateTotpSecret();
     }
 
@@ -41,7 +40,7 @@ export class UserResolver {
         @Ctx() { session, cookies }: Context,
         @Arg('name') name: string,
         @Arg('email') email: string,
-        @Arg('password') password: string
+        @Arg('password') password: string,
     ) {
         // First create the users' personal organization:
         const organization = new Organization();
@@ -70,7 +69,7 @@ export class UserResolver {
     async signIn(
         @Ctx() { session, cookies }: Context,
         @Arg('email') email: string,
-        @Arg('password') password: string
+        @Arg('password') password: string,
     ) {
         const user = await User.findOne({ where: { email } });
 
@@ -93,7 +92,7 @@ export class UserResolver {
 
             return {
                 ok: true,
-                requiresTOTP: true
+                requiresTOTP: true,
             };
         }
 
@@ -101,16 +100,16 @@ export class UserResolver {
 
         return {
             ok: true,
-            requiresTOTP: false
+            requiresTOTP: false,
         };
     }
 
-    @Authorized()
+    @Authorized(GrantType.SESSION)
     @Mutation(() => User)
     async updateAccount(
         @Ctx() { user }: Context,
         @Arg('name', { nullable: true }) name?: string,
-        @Arg('email', { nullable: true }) email?: string
+        @Arg('email', { nullable: true }) email?: string,
     ) {
         if (name) {
             user.name = name;
@@ -144,7 +143,7 @@ export class UserResolver {
     async resetPassword(
         @Ctx() { session, cookies }: Context,
         @Arg('uuid') uuid: string,
-        @Arg('password') password: string
+        @Arg('password') password: string,
     ) {
         const reset = await PasswordReset.findOne({ where: { uuid }, relations: ['user'] });
 

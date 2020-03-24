@@ -129,6 +129,8 @@ export enum DeploymentStrategy {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  createAPIKeyRequest: Scalars['String'],
+  grantAPIKey: Result,
   application: ApplicationMutations,
   organization: OrganizationMutations,
   exchangeTOTP: Result,
@@ -139,6 +141,11 @@ export type Mutation = {
   updateAccount: User,
   forgotPassword: Result,
   resetPassword: Result,
+};
+
+
+export type MutationGrantApiKeyArgs = {
+  uuid: Scalars['String']
 };
 
 
@@ -220,9 +227,15 @@ export type OrganizationMutationsCreateApplicationArgs = {
 
 export type Query = {
    __typename?: 'Query',
+  getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
   organization: Organization,
   me: User,
+};
+
+
+export type QueryGetApiKeyFromRequestArgs = {
+  uuid: Scalars['String']
 };
 
 
@@ -520,6 +533,19 @@ export type ForgotPasswordMutationVariables = {
 export type ForgotPasswordMutation = (
   { __typename?: 'Mutation' }
   & { forgotPassword: (
+    { __typename?: 'Result' }
+    & Pick<Result, 'ok'>
+  ) }
+);
+
+export type GrantApiKeyMutationVariables = {
+  uuid: Scalars['String']
+};
+
+
+export type GrantApiKeyMutation = (
+  { __typename?: 'Mutation' }
+  & { grantAPIKey: (
     { __typename?: 'Result' }
     & Pick<Result, 'ok'>
   ) }
@@ -1203,6 +1229,38 @@ export function useForgotPasswordMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = ApolloReactCommon.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const GrantApiKeyDocument = gql`
+    mutation GrantAPIKey($uuid: String!) {
+  grantAPIKey(uuid: $uuid) {
+    ok
+  }
+}
+    `;
+export type GrantApiKeyMutationFn = ApolloReactCommon.MutationFunction<GrantApiKeyMutation, GrantApiKeyMutationVariables>;
+
+/**
+ * __useGrantApiKeyMutation__
+ *
+ * To run a mutation, you first call `useGrantApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGrantApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [grantApiKeyMutation, { data, loading, error }] = useGrantApiKeyMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGrantApiKeyMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<GrantApiKeyMutation, GrantApiKeyMutationVariables>) {
+        return ApolloReactHooks.useMutation<GrantApiKeyMutation, GrantApiKeyMutationVariables>(GrantApiKeyDocument, baseOptions);
+      }
+export type GrantApiKeyMutationHookResult = ReturnType<typeof useGrantApiKeyMutation>;
+export type GrantApiKeyMutationResult = ApolloReactCommon.MutationResult<GrantApiKeyMutation>;
+export type GrantApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<GrantApiKeyMutation, GrantApiKeyMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

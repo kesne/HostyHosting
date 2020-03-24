@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Container from './Container';
 import VerifyTOTP from './VerifyTOTP';
 import EmailPassword from './EmailPassword';
@@ -9,9 +9,13 @@ import Link from '../ui/Link';
 export default function SignIn() {
     const [requiresTOTP, { on }] = useBoolean(false);
     const history = useHistory();
+    const location = useLocation<{ from?: string }>();
+
+    console.log(location);
 
     const onSignIn = useCallback(() => {
-        history.push('/account');
+        console.log('PUSHING', location.state?.from);
+        history.push(location.state?.from ?? '/');
     }, []);
 
     return (

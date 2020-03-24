@@ -72,6 +72,8 @@ enum DeploymentStrategy {
 }
 
 type Mutation {
+  createAPIKeyRequest: String!
+  grantAPIKey(uuid: String!): Result!
   application(id: Int!): ApplicationMutations!
   organization(
     """
@@ -104,6 +106,7 @@ type OrganizationMutations {
 }
 
 type Query {
+  getAPIKeyFromRequest(uuid: String!): String
   application(id: Int!): Application!
   organization(
     """

@@ -30,14 +30,14 @@ const SESSION_CONFIG = {
     rolling: true,
     renew: false,
     store: redisStore({
-        client: redis
-    })
+        client: redis,
+    }),
 };
 
 app.use(
     cors({
-        credentials: true
-    })
+        credentials: true,
+    }),
 );
 
 app.use(session(SESSION_CONFIG, app));
@@ -46,14 +46,27 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 async function main() {
-    const customAuthChecker: AuthChecker<Context> = ({ context }, _roles) => {
-        return !!context.user;
+    const customAuthChecker: AuthChecker<Context> = ({ context }, roles) => {
+        if (!context.user) {
+            return false;
+        }
+
+        if (!roles || roles.length === 0) {
+            return true;
+        }
+
+        // TODO: Expand this into other roles eventually:
+        if (!roles.includes(context.user.grantType)) {
+            return false;
+        }
+
+        return true;
     };
 
     const schema = await buildSchema({
-        resolvers: [ __dirname + "/resolvers/**/*.{ts,js}"],
+        resolvers: [__dirname + '/resolvers/**/*.{ts,js}'],
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
-        authChecker: customAuthChecker
+        authChecker: customAuthChecker,
     });
 
     const server = new ApolloServer({
@@ -67,9 +80,9 @@ async function main() {
                 user: ctx.user,
                 organization: ctx.organization,
                 session: ctx.session,
-                cookies: ctx.cookies
+                cookies: ctx.cookies,
             };
-        }
+        },
     });
 
     const connection = await createConnection(ormconfig);
@@ -80,7 +93,11 @@ async function main() {
     });
 
     app.use(async (ctx, next) => {
-        ctx.user = await User.fromSession(ctx.session);
+        if (ctx.get('Authentication')) {
+            ctx.user = await User.fromAPIKey(ctx.get('Authentication').slice('Bearer '.length));
+        } else {
+            ctx.user = await User.fromSession(ctx.session);
+        }
 
         return next();
     });

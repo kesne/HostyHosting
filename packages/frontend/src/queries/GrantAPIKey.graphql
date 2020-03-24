@@ -1,0 +1,5 @@
+mutation GrantAPIKey($uuid: String!) {
+    grantAPIKey(uuid: $uuid) {
+        ok
+    }
+}
