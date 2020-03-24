@@ -1,9 +1,9 @@
 import React from 'react';
-import Card from '../../ui/Card';
+import Card from '@daas/ui/Card';
 import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import Spinner from '../../Spinner';
-import { EnterContainer, EnterItem } from '../../ui/motion/Enter';
+import { EnterContainer, EnterItem } from '@daas/ui/motion/Enter';
 
 function formatDate(timestamp: string) {
     return new Date(timestamp).toDateString();

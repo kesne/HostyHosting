@@ -3,7 +3,7 @@ import { useMeQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
 import useBoolean from '../../utils/useBoolean';
-import Button from '../ui/Button';
+import Button from '@daas/ui/Button';
 import Spinner from '../Spinner';
 
 function TOTPModal({

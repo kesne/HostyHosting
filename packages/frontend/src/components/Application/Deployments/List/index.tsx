@@ -4,11 +4,11 @@ import CreateDeployment from './CreateDeployment';
 import useBoolean from '../../../../utils/useBoolean';
 import { useApplicationDeploymentsQuery } from '../../../../queries';
 import { useApplicationID } from '../../ApplicationContext';
-import Card from '../../../ui/Card';
-import Button from '../../../ui/Button';
+import Card from '@daas/ui/Card';
+import Button from '@daas/ui/Button';
 import Spinner from '../../../Spinner';
-import List, { ListItem } from '../../../ui/List';
-import { EnterContainer, EnterItem } from '../../../ui/motion/Enter';
+import List, { ListItem } from '@daas/ui/List';
+import { EnterContainer, EnterItem } from '@daas/ui/motion/Enter';
 
 export default function Deployments() {
     const applicationID = useApplicationID();

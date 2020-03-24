@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Application, useUpdateApplicationMutation, Secret } from '../../../queries';
 import EditSecret from './EditSecret';
-import Input from '../../ui/Input';
-import Button from '../../ui/Button';
+import Input from '@daas/ui/Input';
+import Button from '@daas/ui/Button';
 import useBoolean from '../../../utils/useBoolean';
 
 export type Props = {

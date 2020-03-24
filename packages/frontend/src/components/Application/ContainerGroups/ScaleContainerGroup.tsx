@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import useBoolean from '../../../utils/useBoolean';
 import { useUpdateContainerGroupMutation } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
-import Button, { ButtonGroup } from '../../ui/Button';
-import Input from '../../ui/Input';
-import Modal, { ModalFooter, ModalContent } from '../../ui/Modal';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
+import Modal, { ModalFooter, ModalContent } from '@daas/ui/Modal';
 import { useForm } from 'react-hook-form';
 
 type Props = {

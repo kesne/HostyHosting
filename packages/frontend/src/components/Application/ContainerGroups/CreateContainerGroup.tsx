@@ -8,10 +8,10 @@ import {
 import { useApplicationID } from '../ApplicationContext';
 import produce from 'immer';
 import { useForm } from 'react-hook-form';
-import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
-import Button, { ButtonGroup } from '../../ui/Button';
-import Input from '../../ui/Input';
-import Select from '../../ui/Select';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
+import Select from '@daas/ui/Select';
 
 type Props = {
     visible: boolean;

@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useExchangeTotpMutation } from '../../queries';
 import tokenInputRules from '../../utils/tokenInputRules';
 import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import Input from '@daas/ui/Input';
+import Button from '@daas/ui/Button';
 
 type Props = {
     onSignIn(): void;

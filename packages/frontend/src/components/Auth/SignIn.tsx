@@ -4,7 +4,7 @@ import Container from './Container';
 import VerifyTOTP from './VerifyTOTP';
 import EmailPassword from './EmailPassword';
 import useBoolean from '../../utils/useBoolean';
-import Link from '../ui/Link';
+import Link from '@daas/ui/Link';
 
 export default function SignIn() {
     const [requiresTOTP, { on }] = useBoolean(false);

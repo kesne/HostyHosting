@@ -2,9 +2,9 @@ import React from 'react';
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 import Security from './Security';
 import EditAccount from './EditAccount';
-import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
-import Card, { CardContent } from '../ui/Card';
-import Container from '../ui/Container';
+import VerticalNav, { VerticalNavItem } from '@daas/ui/VerticalNav';
+import Card, { CardContent } from '@daas/ui/Card';
+import Container from '@daas/ui/Container';
 import APIKeys from './APIKeys';
 
 export default function Account() {

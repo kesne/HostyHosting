@@ -5,7 +5,7 @@ import Region from './Region';
 import Secrets from './Secrets';
 import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
-import { EnterContainer } from '../../ui/motion/Enter';
+import { EnterContainer } from '@daas/ui/motion/Enter';
 
 export default function Settings() {
     const id = useApplicationID();

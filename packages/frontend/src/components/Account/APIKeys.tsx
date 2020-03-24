@@ -1,5 +1,5 @@
 import React from 'react';
-import List, { ListItem } from '../ui/List';
+import List, { ListItem } from '@daas/ui/List';
 import { useMyApiKeysQuery } from '../../queries';
 
 export default function APIKeys() {

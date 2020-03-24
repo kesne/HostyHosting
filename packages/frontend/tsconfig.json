@@ -21,7 +21,10 @@
         "moduleResolution": "node",
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "react"
+        "jsx": "react",
+        "paths": {
+            "@daas/*": ["../*"]
+        }
     },
     "include": ["src", "pages", "components", "types", "queries"],
     "exclude": ["node_modules"]

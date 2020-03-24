@@ -8,10 +8,10 @@ import {
 } from '../../../../queries';
 import { useApplicationID } from '../../ApplicationContext';
 import produce from 'immer';
-import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
-import Input from '../../../ui/Input';
-import Button, { ButtonGroup } from '../../../ui/Button';
-import Select from '../../../ui/Select';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Input from '@daas/ui/Input';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Select from '@daas/ui/Select';
 
 type Props = {
     visible: boolean;

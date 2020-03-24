@@ -6,9 +6,9 @@ import Overview from './Overview';
 import ContainerGroups from './ContainerGroups';
 import Deployments from './Deployments';
 import ApplicationContext from './ApplicationContext';
-import TailwindPageHeader from '../ui/PageHeader';
-import TailwindTabs from '../ui/Tabs';
-import Container from '../ui/Container';
+import TailwindPageHeader from '@daas/ui/PageHeader';
+import TailwindTabs from '@daas/ui/Tabs';
+import Container from '@daas/ui/Container';
 import Spinner from '../Spinner';
 
 export default function Application() {

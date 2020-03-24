@@ -2,7 +2,7 @@ import React from 'react';
 import { ContainerGroup as ContainerGroupData } from '../../../queries';
 // import ScaleContainerGroup from './ScaleContainerGroup';
 // import DeleteContainerGroup from './DeleteContainerGroup';
-import { ListItem } from '../../ui/List';
+import { ListItem } from '@daas/ui/List';
 
 type Props = {
     // TODO: This type is subtly wrong:

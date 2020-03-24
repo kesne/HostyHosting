@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import useBoolean from '../../../utils/useBoolean';
 import { Application, useDeleteApplicationMutation } from '../../../queries';
-import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
-import Button, { ButtonGroup } from '../../ui/Button';
-import Input from '../../ui/Input';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
 import { Redirect } from 'react-router-dom';
 
 export type Props = {

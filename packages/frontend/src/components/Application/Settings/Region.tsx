@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import Card, { CardContent } from '../../ui/Card';
-import { EnterItem } from '../../ui/motion/Enter';
+import Card, { CardContent } from '@daas/ui/Card';
+import { EnterItem } from '@daas/ui/motion/Enter';
 
 type Props = {
     title: string;

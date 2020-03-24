@@ -1,10 +1,10 @@
 import React from 'react';
 import { useForgotPasswordMutation } from '../../queries';
 import Container from '../../components/Auth/Container';
-import Link from '../ui/Link';
+import Link from '@daas/ui/Link';
 import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import Input from '@daas/ui/Input';
+import Button from '@daas/ui/Button';
 
 export default function Forgot() {
     const [forgotPassword, { data, loading }] = useForgotPasswordMutation();

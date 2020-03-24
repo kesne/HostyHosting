@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useCreateApplicationMutation } from '../../queries';
 import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
-import Button, { ButtonGroup } from '../ui/Button';
-import Input from '../ui/Input';
-import TextArea from '../ui/TextArea';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
+import TextArea from '@daas/ui/TextArea';
 
 type Props = {
     organization?: number;

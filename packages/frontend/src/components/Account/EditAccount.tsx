@@ -2,8 +2,8 @@ import React from 'react';
 import { useUpdateAccountMutation, useMeQuery } from '../../queries';
 import Spinner from '../Spinner';
 import { useForm } from 'react-hook-form';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
+import Button from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
 
 export default function EditAccount() {
     const { data, loading } = useMeQuery();

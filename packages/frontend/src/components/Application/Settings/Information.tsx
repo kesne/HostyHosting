@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUpdateApplicationMutation, Application } from '../../../queries';
-import Input from '../../ui/Input';
-import TextArea from '../../ui/TextArea';
+import Input from '@daas/ui/Input';
+import TextArea from '@daas/ui/TextArea';
 
 export type Props = {
     application: Pick<Application, 'id' | 'name' | 'description'>;

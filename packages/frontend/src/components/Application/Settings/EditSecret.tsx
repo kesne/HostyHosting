@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useUpdateApplicationMutation, Secret } from '../../../queries';
 import { useForm } from 'react-hook-form';
-import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
-import Input from '../../ui/Input';
-import Button, { ButtonGroup } from '../../ui/Button';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Input from '@daas/ui/Input';
+import Button, { ButtonGroup } from '@daas/ui/Button';
 
 type Props = {
     id: number;

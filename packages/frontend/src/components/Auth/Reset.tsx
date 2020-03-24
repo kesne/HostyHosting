@@ -3,8 +3,8 @@ import { useResetPasswordMutation } from '../../queries';
 import Container from './Container';
 import { Redirect, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
+import Button from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
 
 export default function Reset() {
     const { uuid } = useParams<{ uuid: string }>();

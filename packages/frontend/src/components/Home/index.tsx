@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import CreateApplication from './CreateApplication';
 import { useApplicationsQuery } from '../../queries';
 import SelectOrganization from './SelectOrganization';
-import PageHeader from '../ui/PageHeader';
-import TailwindDropdown, { DropdownItem } from '../ui/Dropdown';
-import { ListItem } from '../ui/List';
-import Card from '../ui/Card';
+import PageHeader from '@daas/ui/PageHeader';
+import TailwindDropdown, { DropdownItem } from '@daas/ui/Dropdown';
+import { ListItem } from '@daas/ui/List';
+import Card from '@daas/ui/Card';
 import { useParams } from 'react-router-dom';
 
 export default function Home() {

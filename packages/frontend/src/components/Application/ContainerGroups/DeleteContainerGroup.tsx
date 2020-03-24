@@ -6,7 +6,7 @@ import {
 } from '../../../queries';
 import produce from 'immer';
 import { useApplicationID } from '../ApplicationContext';
-import Button from '../../ui/Button';
+import Button from '@daas/ui/Button';
 
 type Props = {
     id: number;

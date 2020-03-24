@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Container from './Container';
-import Button from '../ui/Button';
+import Button from '@daas/ui/Button';
 import { useGrantApiKeyMutation } from '../../queries';
 
 // jHiYNCYFE2esw99NodZBK6we4aeNU+4rjex6479QmpJkIj9n4Sp1nKJ9RiHS+SgejJf6OumzIlUCQZWK9MkeRA==

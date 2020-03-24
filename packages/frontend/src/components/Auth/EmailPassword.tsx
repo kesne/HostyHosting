@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSignInMutation } from '../../queries';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
-import Checkbox from '../ui/Checkbox';
-import Link from '../ui/Link';
+import Input from '@daas/ui/Input';
+import Button from '@daas/ui/Button';
+import Checkbox from '@daas/ui/Checkbox';
+import Link from '@daas/ui/Link';
 
 type Props = {
     onSignIn(): void;

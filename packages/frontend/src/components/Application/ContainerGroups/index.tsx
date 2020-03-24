@@ -4,11 +4,11 @@ import CreateContainerGroup from './CreateContainerGroup';
 import useBoolean from '../../../utils/useBoolean';
 import { useApplicationContainerGroupsQuery } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
-import Card from '../../ui/Card';
-import Button from '../../ui/Button';
-import List from '../../ui/List';
+import Card from '@daas/ui/Card';
+import Button from '@daas/ui/Button';
+import List from '@daas/ui/List';
 import Spinner from '../../Spinner';
-import { EnterItem, EnterContainer } from '../../ui/motion/Enter';
+import { EnterItem, EnterContainer } from '@daas/ui/motion/Enter';
 
 export default function ContainerGroups() {
     const applicationID = useApplicationID();

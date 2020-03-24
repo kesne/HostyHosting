@@ -2,10 +2,10 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import Container from './Container';
 import { useSignUpMutation } from '../../queries';
-import Link from '../ui/Link';
+import Link from '@daas/ui/Link';
 import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import Input from '@daas/ui/Input';
+import Button from '@daas/ui/Button';
 
 export default function SignUp() {
     const [signUp, { data, loading }] = useSignUpMutation();

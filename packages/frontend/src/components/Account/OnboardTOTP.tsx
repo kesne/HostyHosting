@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useOnboardTotpLazyQuery, useEnableTotpMutation } from '../../queries';
 import { useForm } from 'react-hook-form';
-import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
-import Button, { ButtonGroup } from '../ui/Button';
-import Input from '../ui/Input';
+import Modal, { ModalContent, ModalFooter } from '@daas/ui/Modal';
+import Button, { ButtonGroup } from '@daas/ui/Button';
+import Input from '@daas/ui/Input';
 import tokenInputRules from '../../utils/tokenInputRules';
 
 type Props = {
