@@ -23,8 +23,9 @@
         "noEmit": true,
         "jsx": "react",
         "paths": {
-            "@daas/*": ["../*"]
-        }
+            "@daas/ui/*": ["../ui/src/*"]
+        },
+        "baseUrl": "."
     },
     "include": ["src", "pages", "components", "types", "queries"],
     "exclude": ["node_modules"]
