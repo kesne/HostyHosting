@@ -173,6 +173,7 @@ export class User extends BaseEntity {
     )
     organizations!: Lazy<Organization[]>;
 
+    @Field(() => [APIKey])
     @OneToMany(
         () => APIKey,
         apiKey => apiKey.user,

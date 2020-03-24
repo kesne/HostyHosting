@@ -13,6 +13,13 @@ export type Scalars = {
   DateTime: any,
 };
 
+export type ApiKey = {
+   __typename?: 'APIKey',
+  id: Scalars['Int'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
+};
+
 export type Application = {
    __typename?: 'Application',
   id: Scalars['Int'],
@@ -285,6 +292,7 @@ export type User = {
   hasTOTP: Scalars['Boolean'],
   personalOrganization: Organization,
   organizations: Array<Organization>,
+  apiKeys: Array<ApiKey>,
   onboardTOTP: Scalars['String'],
 };
 
@@ -565,6 +573,21 @@ export type MeQuery = (
 export type MeFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'email' | 'hasTOTP'>
+);
+
+export type MyApiKeysQueryVariables = {};
+
+
+export type MyApiKeysQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+    & { apiKeys: Array<(
+      { __typename?: 'APIKey' }
+      & Pick<ApiKey, 'id' | 'createdAt'>
+    )> }
+  ) }
 );
 
 export type MyOrganizationsQueryVariables = {};
@@ -1293,6 +1316,42 @@ export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptio
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export const MyApiKeysDocument = gql`
+    query MyAPIKeys {
+  me {
+    id
+    apiKeys {
+      id
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyApiKeysQuery__
+ *
+ * To run a query within a React component, call `useMyApiKeysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyApiKeysQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyApiKeysQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyApiKeysQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MyApiKeysQuery, MyApiKeysQueryVariables>) {
+        return ApolloReactHooks.useQuery<MyApiKeysQuery, MyApiKeysQueryVariables>(MyApiKeysDocument, baseOptions);
+      }
+export function useMyApiKeysLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MyApiKeysQuery, MyApiKeysQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MyApiKeysQuery, MyApiKeysQueryVariables>(MyApiKeysDocument, baseOptions);
+        }
+export type MyApiKeysQueryHookResult = ReturnType<typeof useMyApiKeysQuery>;
+export type MyApiKeysLazyQueryHookResult = ReturnType<typeof useMyApiKeysLazyQuery>;
+export type MyApiKeysQueryResult = ApolloReactCommon.QueryResult<MyApiKeysQuery, MyApiKeysQueryVariables>;
 export const MyOrganizationsDocument = gql`
     query MyOrganizations {
   me {

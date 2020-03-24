@@ -4,11 +4,14 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter var', ...defaultTheme.fontFamily.sans]
-            }
-        }
+                sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+            },
+        },
     },
-    variants: {},
+    variants: {
+        borderWidth: ['responsive', 'last', 'hover', 'focus'],
+        margin: ['responsive', 'last'],
+    },
     plugins: [],
-    plugins: [require('@tailwindcss/ui')]
+    plugins: [require('@tailwindcss/ui')],
 };

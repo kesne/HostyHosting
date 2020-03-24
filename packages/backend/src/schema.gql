@@ -3,6 +3,12 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type APIKey {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Application {
   id: Int!
   name: String!
@@ -150,5 +156,6 @@ type User {
   hasTOTP: Boolean!
   personalOrganization: Organization!
   organizations: [Organization!]!
+  apiKeys: [APIKey!]!
   onboardTOTP: String!
 }

@@ -1,0 +1,9 @@
+query MyAPIKeys {
+    me {
+        id
+        apiKeys {
+            id
+            createdAt
+        }
+    }
+}

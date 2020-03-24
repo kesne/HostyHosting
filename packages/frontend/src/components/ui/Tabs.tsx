@@ -8,15 +8,14 @@ type Tab = {
     to?: string;
 };
 
-function TabItem({ tab, selected, last }: { tab: Tab; selected: boolean; last?: boolean }) {
+function TabItem({ tab, selected }: { tab: Tab; selected: boolean }) {
     return (
         <button
             className={clsx(
-                'whitespace-no-wrap py-4 px-1 border-b-2 border-transparent font-medium text-sm leading-5 focus:outline-none',
+                'whitespace-no-wrap py-4 px-1 border-b-2 border-transparent font-medium text-sm leading-5 focus:outline-none mr-8 last:mr-0',
                 selected
                     ? 'border-indigo-500 text-indigo-600 focus:text-indigo-800 focus:border-indigo-700'
                     : 'text-gray-500 hover:text-gray-700 focus:text-gray-700 focus:border-gray-300 hover:border-gray-300',
-                !last && 'mr-8'
             )}
         >
             {tab.label}
@@ -27,27 +26,24 @@ function PillsTabItem({
     tab,
     secondary,
     selected,
-    last
 }: {
     tab: Tab;
     selected: boolean;
     secondary?: boolean;
-    last?: boolean;
 }) {
     return (
         <ButtonOrLink
             to={tab.to}
             className={clsx(
-                'py-2 px-3 font-medium text-sm leading-5 rounded-md focus:outline-none',
+                'py-2 px-3 font-medium text-sm leading-5 rounded-md focus:outline-none mr-4 last:mr-0',
                 !secondary && {
                     'text-indigo-700 bg-indigo-100 focus:text-indigo-800 focus:bg-indigo-200': selected,
-                    'text-gray-500 hover:text-gray-700 focus:text-indigo-600 focus:bg-indigo-50': !selected
+                    'text-gray-500 hover:text-gray-700 focus:text-indigo-600 focus:bg-indigo-50': !selected,
                 },
                 secondary && {
                     'text-gray-800 bg-gray-200 focus:bg-gray-300': selected,
-                    'text-gray-600 hover:text-gray-800 focus:text-gray-800 focus:bg-gray-200': !selected
+                    'text-gray-600 hover:text-gray-800 focus:text-gray-800 focus:bg-gray-200': !selected,
                 },
-                !last && 'mr-4'
             )}
         >
             {tab.label}
@@ -60,7 +56,7 @@ export default function Tabs({
     pills,
     tabs,
     value,
-    onChange
+    onChange,
 }: {
     secondary?: boolean;
     pills?: boolean;
@@ -78,7 +74,9 @@ export default function Tabs({
                     value={value}
                 >
                     {tabs.map(tab => (
-                        <option key={tab.value} value={tab.value}>{tab.label}</option>
+                        <option key={tab.value} value={tab.value}>
+                            {tab.label}
+                        </option>
                     ))}
                 </select>
             </div>
@@ -92,16 +90,10 @@ export default function Tabs({
                                     secondary={secondary}
                                     tab={tab}
                                     selected={value === tab.value}
-                                    last={i === tabs.length - 1}
                                 />
                             ) : (
-                                <TabItem
-                                    key={i}
-                                    tab={tab}
-                                    selected={value === tab.value}
-                                    last={i === tabs.length - 1}
-                                />
-                            )
+                                <TabItem key={i} tab={tab} selected={value === tab.value} />
+                            ),
                         )}
                     </nav>
                 </div>

@@ -10,21 +10,27 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { BaseEntity } from './BaseEntity';
+import { ObjectType, Field, Int } from 'type-graphql';
 
+@ObjectType()
 @Entity()
 export class APIKey extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
 
+    // NOTE: Never expose this column externally via GraphQL.
     @Column()
     key!: string;
 
     @ManyToOne(() => User)
     user!: User;
 
+    @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 
+    @Field()
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
 

@@ -36,11 +36,10 @@ export default function Deployments() {
                 >
                     <CreateDeployment visible={createVisible} onClose={off} />
                     <List items={data.application.deployments}>
-                        {(deployment, i) => (
+                        {deployment => (
                             // TODO: Use route match url isntead of re-creating full URL?
                             <ListItem
                                 to={`/applications/${applicationID}/deployments/${deployment.id}`}
-                                last={i === data.application.deployments.length - 1}
                             >
                                 <Deployment deployment={deployment} />
                             </ListItem>
