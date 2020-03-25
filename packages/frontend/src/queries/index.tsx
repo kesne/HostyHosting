@@ -291,9 +291,9 @@ export type User = {
   updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
   personalOrganization: Organization,
-  organizations: Array<Organization>,
   apiKeys: Array<ApiKey>,
   onboardTOTP: Scalars['String'],
+  organizations: Array<Organization>,
 };
 
 export type ApplicationQueryVariables = {

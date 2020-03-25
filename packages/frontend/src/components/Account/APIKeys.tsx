@@ -9,7 +9,7 @@ export default function APIKeys() {
     return (
         <List items={data?.me.apiKeys ?? []}>
             {apiKey => (
-                <ListItem>
+                <ListItem key={apiKey.id}>
                     {apiKey.id} - {apiKey.createdAt}
                 </ListItem>
             )}

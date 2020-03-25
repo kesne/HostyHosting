@@ -39,6 +39,7 @@ export default function Deployments() {
                         {deployment => (
                             // TODO: Use route match url isntead of re-creating full URL?
                             <ListItem
+                                key={deployment.id}
                                 to={`/applications/${applicationID}/deployments/${deployment.id}`}
                             >
                                 <Deployment deployment={deployment} />

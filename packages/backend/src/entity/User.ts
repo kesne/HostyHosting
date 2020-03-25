@@ -17,6 +17,7 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
+import { OrganizationMembership } from './OrganizationMembership';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -31,7 +32,7 @@ export enum AuthType {
 export enum GrantType {
     NONE = 'NONE',
     SESSION = 'SESSION',
-    API_KEY = 'API_KEY'
+    API_KEY = 'API_KEY',
 }
 
 @Entity()
@@ -160,18 +161,18 @@ export class User extends BaseEntity {
         }
     }
 
+    // TODO: Could we instead track personal organizaiton via the membership object?
     @Field(() => Organization)
     @OneToOne(() => Organization, { lazy: true })
     @JoinColumn()
     personalOrganization!: Lazy<Organization>;
 
-    @Field(() => [Organization])
-    @ManyToMany(
-        () => Organization,
-        organization => organization.users,
+    @OneToMany(
+        () => OrganizationMembership,
+        membership => membership.user,
         { lazy: true },
     )
-    organizations!: Lazy<Organization[]>;
+    organizationMemberships!: Lazy<OrganizationMembership[]>;
 
     @Field(() => [APIKey])
     @OneToMany(

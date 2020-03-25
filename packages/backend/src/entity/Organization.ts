@@ -5,8 +5,6 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToMany,
-    JoinTable
 } from 'typeorm';
 import { User } from './User';
 import { Application } from './Application';
@@ -14,6 +12,7 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
+import { OrganizationMembership } from './OrganizationMembership';
 
 @Entity()
 @ObjectType()
@@ -42,13 +41,12 @@ export class Organization extends BaseEntity {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
 
-    @ManyToMany(
-        () => User,
-        user => user.organizations,
+    @OneToMany(
+        () => OrganizationMembership,
+        membership => membership.organization,
         { lazy: true }
     )
-    @JoinTable()
-    users!: Lazy<User[]>;
+    memberships!: Lazy<OrganizationMembership[]>;
 
     @Field(() => [Application])
     @OneToMany(

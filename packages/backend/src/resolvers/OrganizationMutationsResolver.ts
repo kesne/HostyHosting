@@ -2,6 +2,8 @@ import { ObjectType, Arg, Mutation, Int, Ctx, Authorized, Field, Resolver } from
 import { Context } from '../types';
 import { Organization } from '../entity/Organization';
 import { Application } from '../entity/Application';
+import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
+import { OrganizationAccess } from '../utils/permissions';
 
 @ObjectType()
 class OrganizationMutations {
@@ -11,11 +13,16 @@ class OrganizationMutations {
         this.organization = organization;
     }
 
+    @OrganizationAccess(
+        () => OrganizationMutations,
+        (orgMutations) => orgMutations.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Application)
     async createApplication(
         @Ctx() { user }: Context,
         @Arg('name') name: string,
-        @Arg('description', { nullable: true }) description?: string
+        @Arg('description', { nullable: true }) description?: string,
     ) {
         const app = new Application();
         app.name = name;
@@ -36,28 +43,24 @@ export class OrganizationMutationsResolver {
         @Arg('id', () => Int, {
             nullable: true,
             description:
-                'The ID of the organization that you will be performing mutations on. If empty, we will use the signed-in users personal organization.'
+                'The ID of the organization that you will be performing mutations on. If empty, we will use the signed-in users personal organization.',
         })
-        id?: number
+        id?: number,
     ) {
         if (!id) {
             const organization = await user.personalOrganization;
             return new OrganizationMutations(organization);
         }
 
-        // TODO: Use query builder to do this:
-        const organization = await Organization.findOneOrFail({
+        const membership = await OrganizationMembership.findOneOrFail({
             where: {
-                id
-            }
+                user,
+                organization: {
+                    id,
+                },
+            },
         });
 
-        const users = await organization.users;
-
-        if (!users.find(({ id }) => id === user.id)) {
-            throw new Error('You do not have access to that organization');
-        }
-
-        return new OrganizationMutations(organization);
+        return new OrganizationMutations(await membership.organization);
     }
 }

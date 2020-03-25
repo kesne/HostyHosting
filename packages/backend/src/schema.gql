@@ -155,7 +155,7 @@ type User {
   updatedAt: DateTime!
   hasTOTP: Boolean!
   personalOrganization: Organization!
-  organizations: [Organization!]!
   apiKeys: [APIKey!]!
   onboardTOTP: String!
+  organizations: [Organization!]!
 }

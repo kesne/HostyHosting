@@ -4,7 +4,8 @@ import { SecretInput } from './types/Secret';
 import { Deployment, DeploymentStrategy } from '../entity/Deployment';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Context } from '../types';
-import { In } from 'typeorm';
+import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
+import { OrganizationAccess } from '../utils/permissions';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -15,6 +16,11 @@ export class ApplicationMutations {
     }
 
     // TODO: This needs to delete all associated resources. (cascasde should solve this)
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Application)
     async delete() {
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
@@ -24,6 +30,11 @@ export class ApplicationMutations {
         return this.application;
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Application)
     async update(
         @Arg('name', { nullable: true }) name?: string,
@@ -48,6 +59,11 @@ export class ApplicationMutations {
         return await this.application.save();
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Deployment)
     async createDeployment(
         @Arg('image') image: string,
@@ -62,6 +78,11 @@ export class ApplicationMutations {
         return await deployment.save();
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Deployment)
     async updateDeployment(@Arg('id', () => Int) id: number, @Arg('image') image: string) {
         const deployment = await Deployment.findByApplicationAndId(this.application, id);
@@ -71,6 +92,11 @@ export class ApplicationMutations {
         return await deployment.save();
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => Deployment)
     async deleteDeployment(@Arg('id', () => Int) id: number) {
         const deployment = await Deployment.findByApplicationAndId(this.application, id);
@@ -85,6 +111,11 @@ export class ApplicationMutations {
         return deployment;
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => ContainerGroup)
     async createContainerGroup(
         @Arg('label') label: string,
@@ -104,6 +135,11 @@ export class ApplicationMutations {
         return await containerGroup.save();
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => ContainerGroup)
     async updateContainerGroup(
         @Arg('id', () => Int) id: number,
@@ -123,6 +159,11 @@ export class ApplicationMutations {
         return await containerGroup.save();
     }
 
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
     @Field(() => ContainerGroup)
     async deleteContainerGroup(@Arg('id', () => Int) id: number) {
         const containerGroup = await ContainerGroup.findByApplicationAndId(this.application, id);
@@ -137,12 +178,16 @@ export class ApplicationMutationsResolver {
     @Authorized()
     @Mutation(() => ApplicationMutations)
     async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
-        const organizations = await user.organizations;
-
         const application = await Application.findOneOrFail({
             where: {
                 id,
-                organization: In(organizations.map(({ id }) => id)),
+            },
+        });
+
+        await OrganizationMembership.findOneOrFail({
+            where: {
+                user,
+                organization: await application.organization,
             },
         });
 

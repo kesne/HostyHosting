@@ -11,10 +11,7 @@ export default function SignIn() {
     const history = useHistory();
     const location = useLocation<{ from?: string }>();
 
-    console.log(location);
-
     const onSignIn = useCallback(() => {
-        console.log('PUSHING', location.state?.from);
         history.push(location.state?.from ?? '/');
     }, []);
 

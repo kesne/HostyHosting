@@ -6,16 +6,20 @@ import { Application } from '../entity/Application';
 import { Organization } from '../entity/Organization';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Deployment } from '../entity/Deployment';
+import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
+import { APIKey } from '../entity/APIKey';
 
 // TODO: Make this execute a bunch of GraphQL commands, instead of just being ORM operations.
 async function seed() {
     const connection = await createConnection(ormconfig);
 
     // Start by removing the ENTIRE world.
+    await APIKey.delete({})
     await ContainerGroup.delete({});
     await Deployment.delete({});
     await Application.delete({});
     await PasswordReset.delete({});
+    await OrganizationMembership.delete({});
     await User.delete({});
     await Organization.delete({});
 
@@ -30,18 +34,27 @@ async function seed() {
     const personalOrg = new Organization();
     personalOrg.name = 'Personal';
     personalOrg.isPersonal = true;
-    personalOrg.users = [user];
-    user.personalOrganization = personalOrg;
-
     await personalOrg.save();
-    await user.save();
 
+    const membership = new OrganizationMembership();
+    membership.user = user;
+    membership.organization = personalOrg;
+    membership.permission = OrganizationPermission.ADMIN;
+    await membership.save();
+
+    user.personalOrganization = personalOrg;
+    await user.save();
 
     // Create orgs:
     const netflixOrg = new Organization();
     netflixOrg.name = 'Netflix';
-    netflixOrg.users = [user];
     await netflixOrg.save();
+
+    const netflixMembership = new OrganizationMembership();
+    netflixMembership.user = user;
+    netflixMembership.organization = netflixOrg;
+    netflixMembership.permission = OrganizationPermission.ADMIN;
+    await netflixMembership.save();
 
     await connection.close();
 }

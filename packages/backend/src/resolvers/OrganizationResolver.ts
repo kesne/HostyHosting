@@ -1,31 +1,31 @@
 import { Resolver, Query, Int, Arg, Ctx } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
+import { OrganizationMembership } from '../entity/OrganizationMembership';
 
 @Resolver()
 export class OrganizationResolver {
     @Query(() => Organization)
-    async organization(@Ctx() { user }: Context, @Arg('id', () => Int, {
-        nullable: true,
-        description:
-            'The ID of the organization to load. If empty, we will use the signed-in users personal organization.'
-    }) id?: number) {
+    async organization(
+        @Ctx() { user }: Context,
+        @Arg('id', () => Int, {
+            nullable: true,
+            description:
+                'The ID of the organization to load. If empty, we will use the signed-in users personal organization.',
+        })
+        id?: number,
+    ) {
         if (!id) {
             return await user.personalOrganization;
         }
 
-        // TODO: This is bad and we need a better query to determine if users are included or not.
-        const organization = await Organization.findOneOrFail({
+        const membership = await OrganizationMembership.findOneOrFail({
             where: {
-                id
-            }
+                user: user,
+                organization: { id: id },
+            },
         });
 
-        const users = await organization.users;
-        if (!users.find(({ id }) => id === user.id)) {
-            throw new Error('No access.');
-        }
-
-        return organization;
+        return membership.organization;
     }
 }

@@ -16,8 +16,8 @@ export default function Home() {
 
     const { data, loading } = useApplicationsQuery({
         variables: {
-            org: organization
-        }
+            org: organization,
+        },
     });
 
     // TODO: Convert to useBoolean
@@ -52,6 +52,7 @@ export default function Home() {
                             <ul>
                                 {data?.organization.applications.map(application => (
                                     <ListItem
+                                        key={application.id}
                                         to={`/applications/${application.id}`}
                                     >
                                         <div className="text-sm leading-5 font-medium text-indigo-600 truncate">

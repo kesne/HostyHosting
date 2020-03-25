@@ -5,6 +5,7 @@ import Result from './types/Result';
 import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { PasswordReset } from '../entity/PasswordReset';
+import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
@@ -57,8 +58,11 @@ export class UserResolver {
         await user.save();
 
         // Finally, add the user into their own organization:
-        organization.users = [user];
-        await organization.save();
+        const membership = new OrganizationMembership();
+        membership.user = user;
+        membership.organization = organization;
+        membership.permission = OrganizationPermission.ADMIN;
+        await membership.save();
 
         user.signIn(session, cookies);
 
@@ -133,10 +137,15 @@ export class UserResolver {
     // at the query level.
     // TODO: Should we just bite the bullet and make personal organizations returned at
     // the top-level as well. (this would move to be a client concern)
-    @FieldResolver(() => Organization)
+    @FieldResolver(() => [Organization])
     async organizations(@Root() user: User) {
-        const organizations = await user.organizations;
-        return organizations.filter(({ isPersonal }) => !isPersonal);
+        // TODO: Rather than leveraging lazy relations, we may want to instead try to load all of
+        // the organizations alongside their memberships.
+        // TODO: The way to do this is to load the OrganizationMembership objects directly! And probably ditch lazy relations on them.
+        const memberships = await user.organizationMemberships;
+        const orgs = await Promise.all(memberships.map(membership => membership.organization));
+        // TODO: This won't work when we have external collaborators.
+        return orgs.filter((org) => !org.isPersonal);
     }
 
     @Mutation(() => Result)

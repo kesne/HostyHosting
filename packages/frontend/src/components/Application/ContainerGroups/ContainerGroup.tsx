@@ -14,7 +14,7 @@ type Props = {
 
 export default function Container({ containerGroup }: Props) {
     return (
-        <ListItem to="#">
+        <ListItem key={containerGroup.id}>
             <div className="flex justify-between">
                 <span className="text-indigo-700 text-lg">{containerGroup.label}</span>
                 {/* <ScaleContainerGroup
