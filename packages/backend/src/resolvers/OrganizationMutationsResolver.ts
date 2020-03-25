@@ -15,7 +15,7 @@ class OrganizationMutations {
 
     @OrganizationAccess(
         () => OrganizationMutations,
-        (orgMutations) => orgMutations.organization,
+        orgMutations => orgMutations.organization,
         OrganizationPermission.WRITE,
     )
     @Field(() => Application)
@@ -59,8 +59,9 @@ export class OrganizationMutationsResolver {
                     id,
                 },
             },
+            relations: ['organization'],
         });
 
-        return new OrganizationMutations(await membership.organization);
+        return new OrganizationMutations(membership.organization);
     }
 }

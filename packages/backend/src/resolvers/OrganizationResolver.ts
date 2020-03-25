@@ -24,6 +24,7 @@ export class OrganizationResolver {
                 user: user,
                 organization: { id: id },
             },
+            relations: ['organization'],
         });
 
         return membership.organization;

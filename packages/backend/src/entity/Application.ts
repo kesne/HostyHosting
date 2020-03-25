@@ -15,6 +15,7 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
+import { OrganizationMembership } from './OrganizationMembership';
 
 @Entity()
 @ObjectType()
@@ -75,4 +76,17 @@ export class Application extends BaseEntity {
         { lazy: true }
     )
     deployments!: Lazy<Deployment[]>;
+
+    /**
+     * Verifies that a given user has access to this applciation.
+     * If they do not, it will throw.
+     */
+    async userHasPermission(user: User) {
+        await OrganizationMembership.findOneOrFail({
+            where: {
+                user,
+                organization: await this.organization
+            }
+        });
+    }
 }

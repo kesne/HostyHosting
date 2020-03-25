@@ -133,19 +133,20 @@ export class UserResolver {
         return new Result();
     }
 
-    // TODO: Once we move all of this to be paginated (probably), we can implement this
-    // at the query level.
+    // TODO: Why is this on the user and not just a Query method.
     // TODO: Should we just bite the bullet and make personal organizations returned at
     // the top-level as well. (this would move to be a client concern)
     @FieldResolver(() => [Organization])
     async organizations(@Root() user: User) {
-        // TODO: Rather than leveraging lazy relations, we may want to instead try to load all of
-        // the organizations alongside their memberships.
-        // TODO: The way to do this is to load the OrganizationMembership objects directly! And probably ditch lazy relations on them.
-        const memberships = await user.organizationMemberships;
-        const orgs = await Promise.all(memberships.map(membership => membership.organization));
+        const memberships = await OrganizationMembership.find({
+            where: {
+                user: user,
+            },
+            relations: ['organization']
+        });
+
         // TODO: This won't work when we have external collaborators.
-        return orgs.filter((org) => !org.isPersonal);
+        return memberships.map((membership) => membership.organization).filter((org) => !org.isPersonal);
     }
 
     @Mutation(() => Result)

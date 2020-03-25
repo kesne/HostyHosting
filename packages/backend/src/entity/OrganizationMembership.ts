@@ -49,16 +49,14 @@ export class OrganizationMembership extends BaseEntity {
     @ManyToOne(
         () => Organization,
         organization => organization.memberships,
-        { lazy: true },
     )
-    organization!: Lazy<Organization>;
+    organization!: Organization;
 
     @ManyToOne(
         () => User,
         user => user.organizationMemberships,
-        { lazy: true },
     )
-    user!: Lazy<User>;
+    user!: User;
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;

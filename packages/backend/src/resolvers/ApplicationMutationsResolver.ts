@@ -184,12 +184,8 @@ export class ApplicationMutationsResolver {
             },
         });
 
-        await OrganizationMembership.findOneOrFail({
-            where: {
-                user,
-                organization: await application.organization,
-            },
-        });
+        // Ensure the current user has permission to this application:
+        await application.userHasPermission(user);
 
         return new ApplicationMutations(application);
     }
