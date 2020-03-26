@@ -1,0 +1,10 @@
+schema: ../backend/src/schema.gql
+documents: ./src/queries/*.graphql
+generates:
+    ./src/queries/index.ts:
+        plugins:
+            - typescript
+            - typescript-operations
+            - typescript-document-nodes
+        config:
+            skipTypename: true
