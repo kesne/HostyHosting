@@ -17,7 +17,7 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
-import { OrganizationMembership } from './OrganizationMembership';
+import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -85,6 +85,44 @@ export class User extends BaseEntity {
         return user;
     }
 
+    static async signUp(
+        session: Session,
+        cookies: Cookies,
+        {
+            name,
+            email,
+            password,
+            githubID,
+        }: { name: string; email: string; password?: string; githubID?: string },
+    ) {
+        // First create the users' personal organization:
+        const organization = new Organization();
+        organization.name = 'Personal';
+        organization.isPersonal = true;
+        await organization.save();
+
+        // Then create the user themself:
+        const user = new User();
+        user.name = name;
+        user.githubID = githubID;
+        user.email = email;
+        user.personalOrganization = organization;
+        // TODO: Do we really want this?
+        if (password) {
+            await user.setPassword(password);
+        }
+        await user.save();
+
+        // Finally, add the user into their own organization:
+        const membership = new OrganizationMembership();
+        membership.user = user;
+        membership.organization = organization;
+        membership.permission = OrganizationPermission.ADMIN;
+        await membership.save();
+
+        user.signIn(session, cookies);
+    }
+
     /**
      * Denotes how the User entity was authenticated.
      */
@@ -93,6 +131,10 @@ export class User extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field(() => Int, { nullable: true })
+    @Column({ nullable: true })
+    githubID?: string;
 
     @Field()
     @Column()
@@ -104,7 +146,8 @@ export class User extends BaseEntity {
     @IsEmail()
     email!: string;
 
-    @Column()
+    // TODO: Should this actually be nullable? Are github sign-ups password-less?
+    @Column({ nullable: true })
     passwordHash!: string;
 
     // TODO: Need better types here:

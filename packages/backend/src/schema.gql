@@ -93,6 +93,7 @@ type Mutation {
   disableTotp(password: String!): Result!
   signUp(password: String!, email: String!, name: String!): Result!
   signIn(password: String!, email: String!): SignInResult!
+  gitHubSignIn(code: String!): SignInResult!
   updateAccount(email: String, name: String): User!
   forgotPassword(email: String!): Result!
   resetPassword(password: String!, uuid: String!): Result!
@@ -149,6 +150,7 @@ type SignInResult {
 
 type User {
   id: Int!
+  githubID: Int
   name: String!
   email: String!
   createdAt: DateTime!

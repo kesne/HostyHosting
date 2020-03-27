@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Resolver, Query, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
 import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
@@ -43,28 +44,11 @@ export class UserResolver {
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
-        // First create the users' personal organization:
-        const organization = new Organization();
-        organization.name = 'Personal';
-        organization.isPersonal = true;
-        await organization.save();
-
-        // Then create the user themself:
-        const user = new User();
-        user.name = name;
-        user.email = email;
-        user.personalOrganization = organization;
-        await user.setPassword(password);
-        await user.save();
-
-        // Finally, add the user into their own organization:
-        const membership = new OrganizationMembership();
-        membership.user = user;
-        membership.organization = organization;
-        membership.permission = OrganizationPermission.ADMIN;
-        await membership.save();
-
-        user.signIn(session, cookies);
+        await User.signUp(session, cookies, {
+            name,
+            email,
+            password,
+        });
 
         return new Result();
     }
@@ -94,18 +78,81 @@ export class UserResolver {
         if (user.totpSecret) {
             user.signIn(session, cookies, AuthType.TOTP);
 
-            return {
-                ok: true,
-                requiresTOTP: true,
-            };
+            return new SignInResult(true);
         }
 
         user.signIn(session, cookies);
 
-        return {
-            ok: true,
-            requiresTOTP: false,
+        return new SignInResult(false);
+    }
+
+    @Mutation(() => SignInResult)
+    async gitHubSignIn(@Ctx() { session, cookies }: Context, @Arg('code') code: string) {
+        const params = {
+            client_id: 'c30bdab49350c27729d7',
+            client_secret: 'fa7330d0ae21de0c4c50f33caf954b669f5a69c8',
+            code,
         };
+
+        const res = await axios.post('https://github.com/login/oauth/access_token', params, {
+            headers: {
+                Accept: 'application/json',
+            },
+        });
+
+        const githubUser = await axios.post(
+            'https://api.github.com/graphql',
+            {
+                query: `
+                query {
+                    viewer {
+                        id
+                        login
+                        email
+                        name
+                    }
+                }
+            `,
+            },
+            {
+                headers: {
+                    Authorization: `bearer ${res.data.access_token}`,
+                },
+            },
+        );
+
+        const { viewer } = githubUser.data.data;
+
+        const user = await User.findOne({
+            where: {
+                githubID: viewer.id,
+                email: viewer.email,
+            },
+        });
+
+        if (!user) {
+            await User.signUp(session, cookies, {
+                githubID: viewer.id,
+                name: viewer.name,
+                email: viewer.email
+            });
+
+            return new SignInResult(false);
+        }
+
+        // TODO: Move this into the User itself:
+        // Remove any password reset so that it is no longer valid after signing in:
+        PasswordReset.removeForUser(user);
+
+        if (user.totpSecret) {
+            user.signIn(session, cookies, AuthType.TOTP);
+
+            return new SignInResult(true);
+        }
+
+        user.signIn(session, cookies);
+
+        return new SignInResult(false);
     }
 
     @Authorized(GrantType.SESSION)
@@ -142,11 +189,13 @@ export class UserResolver {
             where: {
                 user: user,
             },
-            relations: ['organization']
+            relations: ['organization'],
         });
 
         // TODO: This won't work when we have external collaborators.
-        return memberships.map((membership) => membership.organization).filter((org) => !org.isPersonal);
+        return memberships
+            .map(membership => membership.organization)
+            .filter(org => !org.isPersonal);
     }
 
     @Mutation(() => Result)

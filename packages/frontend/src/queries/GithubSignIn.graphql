@@ -1,0 +1,6 @@
+mutation GitHubSignIn($code: String!) {
+    gitHubSignIn(code: $code) {
+        ok
+        requiresTOTP
+    }
+}

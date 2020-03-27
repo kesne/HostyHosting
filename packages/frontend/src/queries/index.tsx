@@ -145,6 +145,7 @@ export type Mutation = {
   disableTotp: Result,
   signUp: Result,
   signIn: SignInResult,
+  gitHubSignIn: SignInResult,
   updateAccount: User,
   forgotPassword: Result,
   resetPassword: Result,
@@ -192,6 +193,11 @@ export type MutationSignUpArgs = {
 export type MutationSignInArgs = {
   password: Scalars['String'],
   email: Scalars['String']
+};
+
+
+export type MutationGitHubSignInArgs = {
+  code: Scalars['String']
 };
 
 
@@ -285,6 +291,7 @@ export type SignInResult = {
 export type User = {
    __typename?: 'User',
   id: Scalars['Int'],
+  githubID?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
   email: Scalars['String'],
   createdAt: Scalars['DateTime'],
@@ -543,6 +550,19 @@ export type ForgotPasswordMutation = (
   & { forgotPassword: (
     { __typename?: 'Result' }
     & Pick<Result, 'ok'>
+  ) }
+);
+
+export type GitHubSignInMutationVariables = {
+  code: Scalars['String']
+};
+
+
+export type GitHubSignInMutation = (
+  { __typename?: 'Mutation' }
+  & { gitHubSignIn: (
+    { __typename?: 'SignInResult' }
+    & Pick<SignInResult, 'ok' | 'requiresTOTP'>
   ) }
 );
 
@@ -1252,6 +1272,39 @@ export function useForgotPasswordMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = ApolloReactCommon.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const GitHubSignInDocument = gql`
+    mutation GitHubSignIn($code: String!) {
+  gitHubSignIn(code: $code) {
+    ok
+    requiresTOTP
+  }
+}
+    `;
+export type GitHubSignInMutationFn = ApolloReactCommon.MutationFunction<GitHubSignInMutation, GitHubSignInMutationVariables>;
+
+/**
+ * __useGitHubSignInMutation__
+ *
+ * To run a mutation, you first call `useGitHubSignInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGitHubSignInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [gitHubSignInMutation, { data, loading, error }] = useGitHubSignInMutation({
+ *   variables: {
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useGitHubSignInMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<GitHubSignInMutation, GitHubSignInMutationVariables>) {
+        return ApolloReactHooks.useMutation<GitHubSignInMutation, GitHubSignInMutationVariables>(GitHubSignInDocument, baseOptions);
+      }
+export type GitHubSignInMutationHookResult = ReturnType<typeof useGitHubSignInMutation>;
+export type GitHubSignInMutationResult = ApolloReactCommon.MutationResult<GitHubSignInMutation>;
+export type GitHubSignInMutationOptions = ApolloReactCommon.BaseMutationOptions<GitHubSignInMutation, GitHubSignInMutationVariables>;
 export const GrantApiKeyDocument = gql`
     mutation GrantAPIKey($uuid: String!) {
   grantAPIKey(uuid: $uuid) {

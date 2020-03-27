@@ -5,6 +5,7 @@ import SignUp from './SignUp';
 import Forgot from './Forgot';
 import Reset from './Reset';
 import GrantAPIKey from './GrantAPIKey';
+import GitHubCallback from './GitHubCallback';
 
 export default function Auth() {
     const { path } = useRouteMatch();
@@ -21,6 +22,9 @@ export default function Auth() {
             </Route>
             <Route path={`${path}/reset/:uuid`}>
                 <Reset />
+            </Route>
+            <Route path={`${path}/github/callback`}>
+                <GitHubCallback />
             </Route>
             <Redirect to={`${path}/sign-in`} />
         </Switch>
