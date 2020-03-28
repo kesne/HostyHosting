@@ -1,0 +1,5 @@
+mutation DeleteAPIKey($id: Int!) {
+    deleteAPIKey(id: $id) {
+        ok
+    }
+}

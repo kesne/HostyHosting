@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Query, Arg, Authorized, Ctx } from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int } from 'type-graphql';
 import { v4 as uuidv4 } from 'uuid';
 import redis from '../redis';
 import Result from './types/Result';
@@ -63,5 +63,20 @@ export class APIKeyResolver {
     async createAPIKey(@Ctx() { user }: Context, @Arg('description') description: string): Promise<String> {
         const key = await user.createAPIKey(description);
         return key.key;
+    }
+
+    @Authorized(GrantType.SESSION)
+    @Mutation(() => Result)
+    async deleteAPIKey(@Ctx() { user }: Context, @Arg('id', () => Int) id: number): Promise<Result> {
+        const apiKey = await APIKey.findOneOrFail({
+            where: {
+                id,
+                user
+            }
+        });
+
+        await APIKey.delete(apiKey.id);
+
+        return new Result();
     }
 }

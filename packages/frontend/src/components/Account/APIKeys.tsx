@@ -1,6 +1,6 @@
 import React from 'react';
 import List, { ListItem } from '../ui/List';
-import { useMyApiKeysQuery } from '../../queries';
+import { useMyApiKeysQuery, useDeleteApiKeyMutation } from '../../queries';
 import Card from '../ui/Card';
 import CreateAPIKey from './CreateAPIKey';
 import Button from '../ui/Button';
@@ -9,6 +9,13 @@ import useBoolean from '../../utils/useBoolean';
 export default function APIKeys() {
     const [open, { on, off }] = useBoolean(false);
     const { data } = useMyApiKeysQuery();
+    const [deleteAPIKey] = useDeleteApiKeyMutation();
+
+    function handleDelete(id: number) {
+        return () => {
+            deleteAPIKey({ variables: { id } });
+        };
+    }
 
     // TODO: Handle undefined / empty / loading better:
     return (
@@ -19,7 +26,12 @@ export default function APIKeys() {
                         <ListItem key={apiKey.id}>
                             <div className="flex justify-between">
                                 <div>{apiKey.description}</div>
-                                <div>{new Date(apiKey.createdAt).toLocaleString()}</div>
+                                <div>
+                                    {new Date(apiKey.createdAt).toLocaleString()}
+                                    <Button variant="danger" onClick={handleDelete(apiKey.id)}>
+                                        Delete
+                                    </Button>
+                                </div>
                             </div>
                         </ListItem>
                     )}

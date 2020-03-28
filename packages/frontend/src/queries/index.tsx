@@ -140,6 +140,7 @@ export type Mutation = {
   createAPIKeyRequest: Scalars['String'],
   grantAPIKey: Result,
   createAPIKey: Scalars['String'],
+  deleteAPIKey: Result,
   application: ApplicationMutations,
   organization: OrganizationMutations,
   exchangeTOTP: Result,
@@ -161,6 +162,11 @@ export type MutationGrantApiKeyArgs = {
 
 export type MutationCreateApiKeyArgs = {
   description: Scalars['String']
+};
+
+
+export type MutationDeleteApiKeyArgs = {
+  id: Scalars['Int']
 };
 
 
@@ -464,6 +470,19 @@ export type CreateDeploymentMutation = (
       { __typename?: 'Deployment' }
       & Pick<Deployment, 'id' | 'image'>
     ) }
+  ) }
+);
+
+export type DeleteApiKeyMutationVariables = {
+  id: Scalars['Int']
+};
+
+
+export type DeleteApiKeyMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteAPIKey: (
+    { __typename?: 'Result' }
+    & Pick<Result, 'ok'>
   ) }
 );
 
@@ -1086,6 +1105,38 @@ export function useCreateDeploymentMutation(baseOptions?: ApolloReactHooks.Mutat
 export type CreateDeploymentMutationHookResult = ReturnType<typeof useCreateDeploymentMutation>;
 export type CreateDeploymentMutationResult = ApolloReactCommon.MutationResult<CreateDeploymentMutation>;
 export type CreateDeploymentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDeploymentMutation, CreateDeploymentMutationVariables>;
+export const DeleteApiKeyDocument = gql`
+    mutation DeleteAPIKey($id: Int!) {
+  deleteAPIKey(id: $id) {
+    ok
+  }
+}
+    `;
+export type DeleteApiKeyMutationFn = ApolloReactCommon.MutationFunction<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>;
+
+/**
+ * __useDeleteApiKeyMutation__
+ *
+ * To run a mutation, you first call `useDeleteApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteApiKeyMutation, { data, loading, error }] = useDeleteApiKeyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteApiKeyMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>(DeleteApiKeyDocument, baseOptions);
+      }
+export type DeleteApiKeyMutationHookResult = ReturnType<typeof useDeleteApiKeyMutation>;
+export type DeleteApiKeyMutationResult = ApolloReactCommon.MutationResult<DeleteApiKeyMutation>;
+export type DeleteApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>;
 export const DeleteApplicationDocument = gql`
     mutation DeleteApplication($id: Int!) {
   application(id: $id) {

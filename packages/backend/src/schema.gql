@@ -82,6 +82,7 @@ type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
   createAPIKey(description: String!): String!
+  deleteAPIKey(id: Int!): Result!
   application(id: Int!): ApplicationMutations!
   organization(
     """
