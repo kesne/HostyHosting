@@ -6,6 +6,7 @@ import Link from '../ui/Link';
 import { useForm } from 'react-hook-form';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import GithubButton from './GithubButton';
 
 export default function SignUp() {
     const [signUp, { data, loading }] = useSignUpMutation();
@@ -16,8 +17,8 @@ export default function SignUp() {
             variables: {
                 name: values.name,
                 email: values.email,
-                password: values.password
-            }
+                password: values.password,
+            },
         });
     };
 
@@ -61,6 +62,7 @@ export default function SignUp() {
                 <Button variant="primary" type="submit" disabled={loading} fullWidth>
                     Sign Up
                 </Button>
+                <GithubButton />
             </form>
         </Container>
     );

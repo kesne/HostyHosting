@@ -5,7 +5,6 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToMany,
     OneToMany,
     OneToOne,
     JoinColumn,
@@ -225,8 +224,9 @@ export class User extends BaseEntity {
     )
     apiKeys!: Lazy<APIKey>;
 
-    async createAPIKey() {
+    async createAPIKey(description: string) {
         const apiKey = new APIKey();
+        apiKey.description = description;
         apiKey.user = this;
         return await apiKey.save();
     }

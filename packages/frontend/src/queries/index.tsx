@@ -16,6 +16,7 @@ export type Scalars = {
 export type ApiKey = {
    __typename?: 'APIKey',
   id: Scalars['Int'],
+  description: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
@@ -138,6 +139,7 @@ export type Mutation = {
    __typename?: 'Mutation',
   createAPIKeyRequest: Scalars['String'],
   grantAPIKey: Result,
+  createAPIKey: Scalars['String'],
   application: ApplicationMutations,
   organization: OrganizationMutations,
   exchangeTOTP: Result,
@@ -154,6 +156,11 @@ export type Mutation = {
 
 export type MutationGrantApiKeyArgs = {
   uuid: Scalars['String']
+};
+
+
+export type MutationCreateApiKeyArgs = {
+  description: Scalars['String']
 };
 
 
@@ -386,6 +393,16 @@ export type ApplicationsQuery = (
   ) }
 );
 
+export type CreateApiKeyMutationVariables = {
+  description: Scalars['String']
+};
+
+
+export type CreateApiKeyMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createAPIKey'>
+);
+
 export type CreateApplicationMutationVariables = {
   org?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
@@ -605,7 +622,7 @@ export type MyApiKeysQuery = (
     & Pick<User, 'id'>
     & { apiKeys: Array<(
       { __typename?: 'APIKey' }
-      & Pick<ApiKey, 'id' | 'createdAt'>
+      & Pick<ApiKey, 'id' | 'description' | 'createdAt'>
     )> }
   ) }
 );
@@ -917,6 +934,36 @@ export function useApplicationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQuer
 export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery>;
 export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
 export type ApplicationsQueryResult = ApolloReactCommon.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
+export const CreateApiKeyDocument = gql`
+    mutation CreateAPIKey($description: String!) {
+  createAPIKey(description: $description)
+}
+    `;
+export type CreateApiKeyMutationFn = ApolloReactCommon.MutationFunction<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
+
+/**
+ * __useCreateApiKeyMutation__
+ *
+ * To run a mutation, you first call `useCreateApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApiKeyMutation, { data, loading, error }] = useCreateApiKeyMutation({
+ *   variables: {
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useCreateApiKeyMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateApiKeyMutation, CreateApiKeyMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateApiKeyMutation, CreateApiKeyMutationVariables>(CreateApiKeyDocument, baseOptions);
+      }
+export type CreateApiKeyMutationHookResult = ReturnType<typeof useCreateApiKeyMutation>;
+export type CreateApiKeyMutationResult = ApolloReactCommon.MutationResult<CreateApiKeyMutation>;
+export type CreateApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateApplicationDocument = gql`
     mutation CreateApplication($org: Int, $name: String!, $description: String) {
   organization(id: $org) {
@@ -1375,6 +1422,7 @@ export const MyApiKeysDocument = gql`
     id
     apiKeys {
       id
+      description
       createdAt
     }
   }

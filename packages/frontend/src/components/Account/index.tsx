@@ -24,24 +24,20 @@ export default function Account() {
                     </VerticalNav>
                 </div>
                 <div className="flex-1 mt-4 sm:ml-6 sm:mt-0">
-                    <Card>
-                        <CardContent>
-                            <Switch>
-                                <Route path={`${path}/billing`}>billing</Route>
-                                <Route path={`${path}/organizations`}>orgs</Route>
-                                <Route path={`${path}/apikeys`}>
-                                    <APIKeys />
-                                </Route>
-                                <Route path={`${path}/security`}>
-                                    <Security />
-                                </Route>
-                                <Route path={path} exact>
-                                    <EditAccount />
-                                </Route>
-                                <Redirect to={url} />
-                            </Switch>
-                        </CardContent>
-                    </Card>
+                    <Switch>
+                        <Route path={`${path}/billing`}>billing</Route>
+                        <Route path={`${path}/organizations`}>orgs</Route>
+                        <Route path={`${path}/apikeys`}>
+                            <APIKeys />
+                        </Route>
+                        <Route path={`${path}/security`}>
+                            <Security />
+                        </Route>
+                        <Route path={path} exact>
+                            <EditAccount />
+                        </Route>
+                        <Redirect to={url} />
+                    </Switch>
                 </div>
             </div>
         </Container>

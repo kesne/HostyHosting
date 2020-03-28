@@ -23,6 +23,10 @@ export class APIKey extends BaseEntity {
     @Column()
     key!: string;
 
+    @Field()
+    @Column()
+    description!: String
+
     @ManyToOne(() => User)
     user!: User;
 

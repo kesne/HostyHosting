@@ -5,6 +5,7 @@
 
 type APIKey {
   id: Int!
+  description: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -80,6 +81,7 @@ enum DeploymentStrategy {
 type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
+  createAPIKey(description: String!): String!
   application(id: Int!): ApplicationMutations!
   organization(
     """

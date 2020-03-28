@@ -1,0 +1,3 @@
+mutation CreateAPIKey($description: String!) {
+    createAPIKey(description: $description)
+}

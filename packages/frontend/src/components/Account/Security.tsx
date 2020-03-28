@@ -5,11 +5,12 @@ import DisableTOTP from './DisableTOTP';
 import useBoolean from '../../utils/useBoolean';
 import Button from '../ui/Button';
 import Spinner from '../Spinner';
+import Card, { CardContent } from '../ui/Card';
 
 function TOTPModal({
     visible,
     hasTOTP,
-    onClose
+    onClose,
 }: {
     visible: boolean;
     hasTOTP: boolean;
@@ -35,16 +36,18 @@ export default function Security() {
     }
 
     return (
-        <>
-            <Button>Change Password</Button>
-            <hr className="my-6" />
-            <p className="text-gray-700 leading-normal mb-2">
-                Two factor auth <strong>{data.me.hasTOTP ? 'is' : 'is not'}</strong> enabled.
-            </p>
-            <Button variant={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
-                {data.me.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
-            </Button>
-            <TOTPModal visible={totpModalVisible} hasTOTP={data.me.hasTOTP} onClose={onClose} />
-        </>
+        <Card>
+            <CardContent>
+                <Button>Change Password</Button>
+                <hr className="my-6" />
+                <p className="text-gray-700 leading-normal mb-2">
+                    Two factor auth <strong>{data.me.hasTOTP ? 'is' : 'is not'}</strong> enabled.
+                </p>
+                <Button variant={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
+                    {data.me.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
+                </Button>
+                <TOTPModal visible={totpModalVisible} hasTOTP={data.me.hasTOTP} onClose={onClose} />
+            </CardContent>
+        </Card>
     );
 }

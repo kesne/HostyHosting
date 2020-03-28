@@ -51,10 +51,17 @@ export class APIKeyResolver {
             throw new Error('The request was not found');
         }
 
-        const apiKey = await user.createAPIKey();
+        const apiKey = await user.createAPIKey('HostyHosting CLI');
 
         await redis.set(getRedisKeyName(uuid), apiKey.id);
 
         return new Result();
+    }
+
+    @Authorized(GrantType.SESSION)
+    @Mutation(() => String)
+    async createAPIKey(@Ctx() { user }: Context, @Arg('description') description: string): Promise<String> {
+        const key = await user.createAPIKey(description);
+        return key.key;
     }
 }

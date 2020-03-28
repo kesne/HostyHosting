@@ -3,6 +3,7 @@ query MyAPIKeys {
         id
         apiKeys {
             id
+            description
             createdAt
         }
     }
