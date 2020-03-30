@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMeQuery } from '../../queries';
+import { useMeDaddyQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
 import useBoolean from '../../utils/useBoolean';
@@ -24,7 +24,7 @@ function TOTPModal({
 
 export default function Security() {
     const [totpModalVisible, { off, on }] = useBoolean(false);
-    const { data, loading, refetch } = useMeQuery();
+    const { data, loading, refetch } = useMeDaddyQuery();
 
     if (loading || !data) {
         return <Spinner />;

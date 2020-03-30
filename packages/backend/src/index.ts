@@ -78,9 +78,11 @@ async function main() {
 
             return {
                 user: ctx.user,
-                organization: ctx.organization,
                 session: ctx.session,
                 cookies: ctx.cookies,
+                destroySession() {
+                    ctx.session = null;
+                },
             };
         },
     });

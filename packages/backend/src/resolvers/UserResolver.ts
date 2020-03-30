@@ -6,7 +6,7 @@ import Result from './types/Result';
 import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { PasswordReset } from '../entity/PasswordReset';
-import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
+import { OrganizationMembership } from '../entity/OrganizationMembership';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
@@ -134,7 +134,7 @@ export class UserResolver {
             await User.signUp(session, cookies, {
                 githubID: viewer.id,
                 name: viewer.name,
-                email: viewer.email
+                email: viewer.email,
             });
 
             return new SignInResult(false);
@@ -230,6 +230,14 @@ export class UserResolver {
 
         reset.user.signIn(session, cookies, AuthType.PASSWORD_RESET);
 
+        return new Result();
+    }
+
+    @Authorized(GrantType.SESSION)
+    @Mutation(() => Result)
+    signOut(@Ctx() { user, cookies, destroySession }: Context) {
+        user.signOut(cookies);
+        destroySession();
         return new Result();
     }
 }

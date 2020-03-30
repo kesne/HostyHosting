@@ -1,4 +1,4 @@
-query Me {
+query MeDaddy {
     me {
         ...MeFragment
     }

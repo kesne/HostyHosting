@@ -7,11 +7,12 @@ import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
 import GrantAPIKey from './components/Auth/GrantAPIKey';
+import FourOhFour from './components/404';
 
 export default function App() {
     return (
-        <Layout>
-            <Router>
+        <Router>
+            <Layout>
                 <Switch>
                     <PrivateRoute path="/" exact>
                         <Home />
@@ -31,8 +32,11 @@ export default function App() {
                     <PrivateRoute path="/account">
                         <Account />
                     </PrivateRoute>
+                    <Route>
+                        <FourOhFour />
+                    </Route>
                 </Switch>
-            </Router>
-        </Layout>
+            </Layout>
+        </Router>
     );
 }

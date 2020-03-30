@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUpdateAccountMutation, useMeQuery } from '../../queries';
+import { useUpdateAccountMutation, useMeDaddyQuery } from '../../queries';
 import Spinner from '../Spinner';
 import { useForm } from 'react-hook-form';
 import Button from '../ui/Button';
@@ -7,7 +7,7 @@ import Input from '../ui/Input';
 import Card, { CardContent } from '../ui/Card';
 
 export default function EditAccount() {
-    const { data, loading } = useMeQuery();
+    const { data, loading } = useMeDaddyQuery();
     const [updateAccount, updateAccountState] = useUpdateAccountMutation();
 
     const { register, errors, handleSubmit } = useForm();

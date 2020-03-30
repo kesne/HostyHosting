@@ -203,6 +203,10 @@ export class User extends BaseEntity {
         }
     }
 
+    signOut(cookies: Cookies) {
+        cookies.set('hasUser', '0', { httpOnly: false, signed: false });
+    }
+
     // TODO: Could we instead track personal organizaiton via the membership object?
     @Field(() => Organization)
     @OneToOne(() => Organization, { lazy: true })

@@ -152,6 +152,7 @@ export type Mutation = {
   updateAccount: User,
   forgotPassword: Result,
   resetPassword: Result,
+  signOut: Result,
 };
 
 
@@ -615,10 +616,10 @@ export type GrantApiKeyMutation = (
   ) }
 );
 
-export type MeQueryVariables = {};
+export type MeDaddyQueryVariables = {};
 
 
-export type MeQuery = (
+export type MeDaddyQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
@@ -700,6 +701,17 @@ export type SignInMutation = (
   & { signIn: (
     { __typename?: 'SignInResult' }
     & Pick<SignInResult, 'ok' | 'requiresTOTP'>
+  ) }
+);
+
+export type SignOutMutationVariables = {};
+
+
+export type SignOutMutation = (
+  { __typename?: 'Mutation' }
+  & { signOut: (
+    { __typename?: 'Result' }
+    & Pick<Result, 'ok'>
   ) }
 );
 
@@ -1435,8 +1447,8 @@ export function useGrantApiKeyMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type GrantApiKeyMutationHookResult = ReturnType<typeof useGrantApiKeyMutation>;
 export type GrantApiKeyMutationResult = ApolloReactCommon.MutationResult<GrantApiKeyMutation>;
 export type GrantApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<GrantApiKeyMutation, GrantApiKeyMutationVariables>;
-export const MeDocument = gql`
-    query Me {
+export const MeDaddyDocument = gql`
+    query MeDaddy {
   me {
     ...MeFragment
   }
@@ -1444,29 +1456,29 @@ export const MeDocument = gql`
     ${MeFragmentFragmentDoc}`;
 
 /**
- * __useMeQuery__
+ * __useMeDaddyQuery__
  *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * To run a query within a React component, call `useMeDaddyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeDaddyQuery` returns an object from Apollo Client that contains loading, error, and data properties 
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMeQuery({
+ * const { data, loading, error } = useMeDaddyQuery({
  *   variables: {
  *   },
  * });
  */
-export function useMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+export function useMeDaddyQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeDaddyQuery, MeDaddyQueryVariables>) {
+        return ApolloReactHooks.useQuery<MeDaddyQuery, MeDaddyQueryVariables>(MeDaddyDocument, baseOptions);
       }
-export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+export function useMeDaddyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeDaddyQuery, MeDaddyQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MeDaddyQuery, MeDaddyQueryVariables>(MeDaddyDocument, baseOptions);
         }
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export type MeDaddyQueryHookResult = ReturnType<typeof useMeDaddyQuery>;
+export type MeDaddyLazyQueryHookResult = ReturnType<typeof useMeDaddyLazyQuery>;
+export type MeDaddyQueryResult = ApolloReactCommon.QueryResult<MeDaddyQuery, MeDaddyQueryVariables>;
 export const MyApiKeysDocument = gql`
     query MyAPIKeys {
   me {
@@ -1644,6 +1656,37 @@ export function useSignInMutation(baseOptions?: ApolloReactHooks.MutationHookOpt
 export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = ApolloReactCommon.MutationResult<SignInMutation>;
 export type SignInMutationOptions = ApolloReactCommon.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
+export const SignOutDocument = gql`
+    mutation SignOut {
+  signOut {
+    ok
+  }
+}
+    `;
+export type SignOutMutationFn = ApolloReactCommon.MutationFunction<SignOutMutation, SignOutMutationVariables>;
+
+/**
+ * __useSignOutMutation__
+ *
+ * To run a mutation, you first call `useSignOutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignOutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signOutMutation, { data, loading, error }] = useSignOutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSignOutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SignOutMutation, SignOutMutationVariables>) {
+        return ApolloReactHooks.useMutation<SignOutMutation, SignOutMutationVariables>(SignOutDocument, baseOptions);
+      }
+export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
+export type SignOutMutationResult = ApolloReactCommon.MutationResult<SignOutMutation>;
+export type SignOutMutationOptions = ApolloReactCommon.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
 export const SignUpDocument = gql`
     mutation SignUp($name: String!, $email: String!, $password: String!) {
   signUp(name: $name, email: $email, password: $password) {

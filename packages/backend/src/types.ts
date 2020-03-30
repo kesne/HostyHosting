@@ -11,6 +11,7 @@ export type Context = {
     user: User;
     session: Session;
     cookies: Cookies;
+    destroySession(): void;
 };
 
 export type Lazy<T> = T | Promise<T>;

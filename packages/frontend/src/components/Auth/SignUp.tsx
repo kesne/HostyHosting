@@ -23,7 +23,7 @@ export default function SignUp() {
     };
 
     if (data) {
-        return <Redirect to="/account" />;
+        return <Redirect to="/" />;
     }
 
     return (
