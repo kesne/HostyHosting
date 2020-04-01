@@ -27,8 +27,10 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
         createApplication({
             variables: {
                 org: organization,
-                name: values.name,
-                description: values.description
+                application: {
+                    name: values.name,
+                    description: values.description
+                }
             }
         });
     }

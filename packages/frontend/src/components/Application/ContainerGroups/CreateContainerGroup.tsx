@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     useCreateContainerGroupMutation,
     ApplicationContainerGroupsDocument,
     ApplicationContainerGroupsQuery,
-    useApplicationDeploymentsQuery
+    useApplicationDeploymentsQuery,
+    ContainerSize,
 } from '../../../queries';
 import { useApplicationID } from '../ApplicationContext';
 import produce from 'immer';
@@ -12,6 +13,15 @@ import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
 import Button, { ButtonGroup } from '../../ui/Button';
 import Input from '../../ui/Input';
 import Select from '../../ui/Select';
+import clsx from 'clsx';
+import Label from '../../ui/Label';
+
+const Sizes = [
+    { name: ContainerSize.S1x1, label: '1 CPU, 128 mb' },
+    { name: ContainerSize.S2x2, label: '2 CPU, 256 mb' },
+    { name: ContainerSize.S4x4, label: '4 CPU, 512 mb' },
+    { name: ContainerSize.S8x8, label: '8 CPU, 1024 mb' },
+];
 
 type Props = {
     visible: boolean;
@@ -21,11 +31,12 @@ type Props = {
 export default function CreateContainer({ visible, onClose }: Props) {
     const applicationID = useApplicationID();
     const { register, handleSubmit, errors, reset } = useForm();
+    const [containerSize, setContainerSize] = useState<ContainerSize>(ContainerSize.S1x1);
 
     const deploymentsState = useApplicationDeploymentsQuery({
         variables: {
-            id: applicationID
-        }
+            id: applicationID,
+        },
     });
 
     const [createContainerGroup, { loading, data }] = useCreateContainerGroupMutation({
@@ -36,7 +47,7 @@ export default function CreateContainer({ visible, onClose }: Props) {
             const { application } =
                 cache.readQuery<ApplicationContainerGroupsQuery>({
                     query: ApplicationContainerGroupsDocument,
-                    variables: { id: applicationID }
+                    variables: { id: applicationID },
                 }) ?? {};
 
             const nextApplication = produce(application, draftState => {
@@ -46,9 +57,9 @@ export default function CreateContainer({ visible, onClose }: Props) {
             cache.writeQuery({
                 query: ApplicationContainerGroupsDocument,
                 variables: { id: applicationID },
-                data: { application: nextApplication }
+                data: { application: nextApplication },
             });
-        }
+        },
     });
 
     useEffect(() => {
@@ -67,11 +78,13 @@ export default function CreateContainer({ visible, onClose }: Props) {
         await createContainerGroup({
             variables: {
                 applicationID,
-                label: data.label,
-                deployment: Number(data.deployment),
-                size: Number(data.size),
-                number: Number(data.number)
-            }
+                containerGroup: {
+                    deploymentID: Number(data.deployment),
+                    label: data.label,
+                    size: containerSize,
+                    number: Number(data.number),
+                },
+            },
         });
     }
 
@@ -108,24 +121,29 @@ export default function CreateContainer({ visible, onClose }: Props) {
                                 </option>
                             ))}
                         </Select>
-                        TODO: Put slider replacement here!
-                        {/*
-                    <Form.Item name="size" label="Container Size">
-                        <Slider
-                            defaultValue={1}
-                            min={1}
-                            max={5}
-                            tooltipVisible={false}
-                            tooltipPlacement="bottom"
-                            marks={{
-                                1: '1x',
-                                2: '2x',
-                                3: '3x',
-                                4: '4x',
-                                5: '5x'
-                            }}
-                        />
-                    </Form.Item> */}
+                        <div>
+                            <Label>Container Size</Label>
+                            <div className="grid grid-cols-2 gap-3 mt-1">
+                                {Sizes.map(size => (
+                                    <button
+                                        type="button"
+                                        onClick={() => setContainerSize(size.name)}
+                                        className={clsx(
+                                            'rounded p-3 transition duration-150 ease-in-out focus:outline-none text-left',
+                                            containerSize !== size.name &&
+                                                'border bg-gray-50 border-gray-200',
+                                            containerSize === size.name &&
+                                                'bg-white border-indigo-600 border-2 shadow',
+                                        )}
+                                    >
+                                        <div className="text-base text-gray-800">{size.name}</div>
+                                        <div className="mt-1 text-xs rounded bg-gray-200 border border-gray-300 text-gray-800 inline p-1">
+                                            {size.label}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                         <Input
                             defaultValue={1}
                             type="number"
@@ -136,8 +154,8 @@ export default function CreateContainer({ visible, onClose }: Props) {
                                 min: { value: 1, message: 'You must deploy at least 1 container.' },
                                 max: {
                                     value: 10,
-                                    message: 'You cannot deploy more than 10 containers.'
-                                }
+                                    message: 'You cannot deploy more than 10 containers.',
+                                },
                             })}
                             error={errors.number && errors.number.message}
                         />
@@ -148,9 +166,7 @@ export default function CreateContainer({ visible, onClose }: Props) {
                         <Button type="submit" variant="primary">
                             Create
                         </Button>
-                        <Button onClick={onClose}>
-                            Cancel
-                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
                     </ButtonGroup>
                 </ModalFooter>
             </form>

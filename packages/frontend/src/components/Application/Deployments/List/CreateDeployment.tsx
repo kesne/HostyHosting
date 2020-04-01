@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     useCreateDeploymentMutation,
@@ -12,6 +12,7 @@ import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
 import Input from '../../../ui/Input';
 import Button, { ButtonGroup } from '../../../ui/Button';
 import Select from '../../../ui/Select';
+import Tabs from '../../../ui/Tabs';
 
 type Props = {
     visible: boolean;
@@ -20,6 +21,7 @@ type Props = {
 
 export default function CreateDeployment({ visible, onClose }: Props) {
     const applicationID = useApplicationID();
+    const [deploymentType, setDeploymentType] = useState('docker-registry');
     const [createDeployment, { loading, data }] = useCreateDeploymentMutation({
         update(cache, { data }) {
             if (!data) return;
@@ -60,9 +62,11 @@ export default function CreateDeployment({ visible, onClose }: Props) {
         await createDeployment({
             variables: {
                 applicationID,
-                image: data.image,
-                label: data.label,
-                strategy: data.strategy as DeploymentStrategy,
+                deployment: {
+                    image: data.image,
+                    label: data.label,
+                    strategy: data.strategy as DeploymentStrategy,
+                },
             },
         });
     }
@@ -73,6 +77,16 @@ export default function CreateDeployment({ visible, onClose }: Props) {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalContent title="Create Deployment">
                         <div className="grid grid-cols-1 row-gap-6">
+                            <Tabs
+                                flex
+                                value={deploymentType}
+                                onChange={(value) => setDeploymentType(value)}
+                                tabs={[
+                                    { label: 'Docker Registry', value: 'docker-registry' },
+                                    { label: 'Github', value: 'github' },
+                                    { label: 'Custom Registry', value: 'custom-registry' },
+                                ]}
+                            />
                             <Input
                                 label="Label"
                                 name="label"

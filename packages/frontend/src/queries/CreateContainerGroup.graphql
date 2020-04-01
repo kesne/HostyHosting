@@ -1,12 +1,9 @@
 mutation CreateContainerGroup(
     $applicationID: Int!
-    $label: String!
-    $deployment: Int!
-    $size: Int!
-    $number: Int!
+    $containerGroup: ContainerGroupInput!
 ) {
     application(id: $applicationID) {
-        createContainerGroup(label: $label, deployment: $deployment, size: $size, number: $number) {
+        createContainerGroup(containerGroup: $containerGroup) {
             id
             label
             size

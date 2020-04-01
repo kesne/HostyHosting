@@ -1,11 +1,13 @@
 import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized } from 'type-graphql';
 import { Application } from '../entity/Application';
-import { SecretInput } from './types/Secret';
-import { Deployment, DeploymentStrategy } from '../entity/Deployment';
+import { Deployment } from '../entity/Deployment';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Context } from '../types';
-import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
+import { OrganizationPermission } from '../entity/OrganizationMembership';
 import { OrganizationAccess } from '../utils/permissions';
+import { DeploymentInput } from './types/DeploymentInput';
+import { ApplicationInput } from './types/ApplicationInput';
+import { ContainerGroupInput } from './types/ContainerGroupInput';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -36,23 +38,22 @@ export class ApplicationMutations {
         OrganizationPermission.WRITE,
     )
     @Field(() => Application)
-    async update(
-        @Arg('name', { nullable: true }) name?: string,
-        @Arg('description', { nullable: true }) description?: string,
-        @Arg('secret', { nullable: true }) secret?: SecretInput,
-    ) {
-        if (typeof name !== 'undefined' && name !== null) {
-            this.application.name = name;
+    async update(@Arg('application', () => ApplicationInput) applicationInput: ApplicationInput) {
+        if (typeof applicationInput.name !== 'undefined' && applicationInput.name !== null) {
+            this.application.name = applicationInput.name;
         }
 
-        if (typeof description !== 'undefined' && description !== null) {
-            this.application.description = description;
+        if (
+            typeof applicationInput.description !== 'undefined' &&
+            applicationInput.description !== null
+        ) {
+            this.application.description = applicationInput.description;
         }
 
-        if (typeof secret !== 'undefined' && secret !== null) {
+        if (typeof applicationInput.secret !== 'undefined' && applicationInput.secret !== null) {
             this.application.secrets = {
                 ...this.application.secrets,
-                [secret.key]: secret.value,
+                [applicationInput.secret.key]: applicationInput.secret.value,
             };
         }
 
@@ -66,15 +67,13 @@ export class ApplicationMutations {
     )
     @Field(() => Deployment)
     async createDeployment(
-        @Arg('image') image: string,
-        @Arg('label') label: string,
-        @Arg('strategy', () => DeploymentStrategy) strategy: DeploymentStrategy,
+        @Arg('deployment', () => DeploymentInput) deploymentInput: DeploymentInput,
     ) {
         const deployment = new Deployment();
         deployment.application = this.application;
-        deployment.label = label;
-        deployment.image = image;
-        deployment.strategy = strategy;
+        deployment.label = deploymentInput.label;
+        deployment.image = deploymentInput.image;
+        deployment.strategy = deploymentInput.strategy;
         return await deployment.save();
     }
 
@@ -84,6 +83,7 @@ export class ApplicationMutations {
         OrganizationPermission.WRITE,
     )
     @Field(() => Deployment)
+    // TODO: I'm leaving this as-is for now and not using an input type because this probably needs a lot of work anyway:
     async updateDeployment(@Arg('id', () => Int) id: number, @Arg('image') image: string) {
         const deployment = await Deployment.findByApplicationAndId(this.application, id);
 
@@ -118,19 +118,19 @@ export class ApplicationMutations {
     )
     @Field(() => ContainerGroup)
     async createContainerGroup(
-        @Arg('label') label: string,
-        @Arg('deployment', () => Int) deploymentID: number,
-        @Arg('size', () => Int) size: number,
-        @Arg('number', () => Int) number: number,
+        @Arg('containerGroup', () => ContainerGroupInput) containerGroupInput: ContainerGroupInput,
     ) {
-        const deployment = await Deployment.findByApplicationAndId(this.application, deploymentID);
+        const deployment = await Deployment.findByApplicationAndId(
+            this.application,
+            containerGroupInput.deploymentID,
+        );
 
         const containerGroup = new ContainerGroup();
         containerGroup.application = this.application;
-        containerGroup.label = label;
-        containerGroup.size = size;
+        containerGroup.label = containerGroupInput.label;
+        containerGroup.size = containerGroupInput.size;
         containerGroup.deployment = deployment;
-        containerGroup.containerCount = number;
+        containerGroup.containerCount = containerGroupInput.number;
 
         return await containerGroup.save();
     }
@@ -141,6 +141,7 @@ export class ApplicationMutations {
         OrganizationPermission.WRITE,
     )
     @Field(() => ContainerGroup)
+    // TODO: Move to input type.
     async updateContainerGroup(
         @Arg('id', () => Int) id: number,
         @Arg('label', { nullable: true }) label?: string,

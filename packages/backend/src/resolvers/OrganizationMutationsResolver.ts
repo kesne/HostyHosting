@@ -4,6 +4,7 @@ import { Organization } from '../entity/Organization';
 import { Application } from '../entity/Application';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { OrganizationAccess } from '../utils/permissions';
+import { ApplicationInput } from './types/ApplicationInput';
 
 @ObjectType()
 class OrganizationMutations {
@@ -21,12 +22,16 @@ class OrganizationMutations {
     @Field(() => Application)
     async createApplication(
         @Ctx() { user }: Context,
-        @Arg('name') name: string,
-        @Arg('description', { nullable: true }) description?: string,
+        @Arg('application') applicationInput: ApplicationInput
     ) {
         const app = new Application();
-        app.name = name;
-        app.description = description ?? '';
+
+        if (!applicationInput.name) {
+            throw new Error('The application name is required when creating an application.');
+        }
+
+        app.name = applicationInput.name;
+        app.description = applicationInput.description ?? '';
         app.organization = this.organization;
         app.createdBy = user;
         app.secrets = {};

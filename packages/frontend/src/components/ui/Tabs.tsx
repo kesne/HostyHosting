@@ -2,24 +2,39 @@ import React from 'react';
 import clsx from 'clsx';
 import ButtonOrLink from './util/ButtonOrLink';
 
+type OnChange = (value: string) => void;
+
 type Tab = {
     label: string;
     value: string;
     to?: string;
 };
 
-function TabItem({ tab, selected }: { tab: Tab; selected: boolean }) {
+function TabItem({
+    tab,
+    selected,
+    flex,
+    onChange,
+}: {
+    tab: Tab;
+    selected: boolean;
+    flex?: boolean;
+    onChange?: OnChange;
+}) {
     return (
-        <button
+        <ButtonOrLink
+            to={tab.to}
             className={clsx(
                 'whitespace-no-wrap py-4 px-1 border-b-2 border-transparent font-medium text-sm leading-5 focus:outline-none mr-8 last:mr-0',
                 selected
                     ? 'border-indigo-500 text-indigo-600 focus:text-indigo-800 focus:border-indigo-700'
                     : 'text-gray-500 hover:text-gray-700 focus:text-gray-700 focus:border-gray-300 hover:border-gray-300',
+                flex && 'flex-1',
             )}
+            onClick={() => onChange?.(tab.value)}
         >
             {tab.label}
-        </button>
+        </ButtonOrLink>
     );
 }
 function PillsTabItem({
@@ -51,18 +66,21 @@ function PillsTabItem({
     );
 }
 
+// TODO: The responsive variant here doesn't actually work.
 export default function Tabs({
     secondary,
+    flex,
     pills,
     tabs,
     value,
     onChange,
 }: {
     secondary?: boolean;
+    flex?: boolean;
     pills?: boolean;
     tabs: Tab[];
     value: string;
-    onChange?: () => void;
+    onChange?: OnChange;
 }) {
     return (
         <>
@@ -92,7 +110,13 @@ export default function Tabs({
                                     selected={value === tab.value}
                                 />
                             ) : (
-                                <TabItem key={i} tab={tab} selected={value === tab.value} />
+                                <TabItem
+                                    key={i}
+                                    tab={tab}
+                                    selected={value === tab.value}
+                                    flex={flex}
+                                    onChange={onChange}
+                                />
                             ),
                         )}
                     </nav>

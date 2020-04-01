@@ -28,7 +28,7 @@ export class Application extends BaseEntity {
     // might make it hard to work with CLIs, so we might want to consider it in
     // the future.
     @Field()
-    @Column({ unique: true })
+    @Column()
     @Length(3, 20)
     name!: string;
 

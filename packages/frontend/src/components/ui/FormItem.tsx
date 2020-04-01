@@ -1,9 +1,10 @@
 import React from 'react';
+import Label from './Label';
 
 export default function FormItem({
     label,
     children,
-    error
+    error,
 }: {
     label: string;
     children: React.ReactNode;
@@ -11,13 +12,13 @@ export default function FormItem({
 }) {
     return (
         <div>
-            <label className="block text-sm font-medium leading-5 text-gray-700">
+            <Label>
                 {label}
                 <div className="mt-1 relative rounded-md shadow-sm">{children}</div>
                 {typeof error !== 'undefined' && (
                     <p className="mt-2 text-sm text-red-600">{error}</p>
                 )}
-            </label>
+            </Label>
         </div>
     );
 }

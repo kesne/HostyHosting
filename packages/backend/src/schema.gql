@@ -23,13 +23,19 @@ type Application {
   secrets: [Secret!]!
 }
 
+input ApplicationInput {
+  name: String
+  description: String
+  secret: SecretInput
+}
+
 type ApplicationMutations {
   delete: Application!
-  update(secret: SecretInput, description: String, name: String): Application!
-  createDeployment(strategy: DeploymentStrategy!, label: String!, image: String!): Deployment!
+  update(application: ApplicationInput!): Application!
+  createDeployment(deployment: DeploymentInput!): Deployment!
   updateDeployment(image: String!, id: Int!): Deployment!
   deleteDeployment(id: Int!): Deployment!
-  createContainerGroup(number: Int!, size: Int!, deployment: Int!, label: String!): ContainerGroup!
+  createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
   updateContainerGroup(number: Int, label: String, id: Int!): ContainerGroup!
   deleteContainerGroup(id: Int!): ContainerGroup!
 }
@@ -48,6 +54,13 @@ type ContainerGroup {
   updatedAt: DateTime!
   deployment: Deployment!
   containers: [Container!]!
+}
+
+input ContainerGroupInput {
+  label: String!
+  deploymentID: Int!
+  size: ContainerSize!
+  number: Int!
 }
 
 enum ContainerSize {
@@ -71,6 +84,12 @@ type Deployment {
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroups: [ContainerGroup!]!
+}
+
+input DeploymentInput {
+  image: String!
+  label: String!
+  strategy: DeploymentStrategy!
 }
 
 enum DeploymentStrategy {
@@ -113,7 +132,7 @@ type Organization {
 }
 
 type OrganizationMutations {
-  createApplication(description: String, name: String!): Application!
+  createApplication(application: ApplicationInput!): Application!
 }
 
 type Query {

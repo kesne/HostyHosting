@@ -4,110 +4,116 @@ import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string,
-  String: string,
-  Boolean: boolean,
-  Int: number,
-  Float: number,
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: any,
+  DateTime: any;
 };
 
 export type ApiKey = {
-   __typename?: 'APIKey',
-  id: Scalars['Int'],
-  description: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
+   __typename?: 'APIKey';
+  id: Scalars['Int'];
+  description: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Application = {
-   __typename?: 'Application',
-  id: Scalars['Int'],
-  name: Scalars['String'],
-  description: Scalars['String'],
-  createdBy?: Maybe<User>,
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  organization: Organization,
-  containerGroups: Array<ContainerGroup>,
-  deployments: Array<Deployment>,
-  secrets: Array<Secret>,
+   __typename?: 'Application';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  createdBy?: Maybe<User>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  organization: Organization;
+  containerGroups: Array<ContainerGroup>;
+  deployments: Array<Deployment>;
+  secrets: Array<Secret>;
+};
+
+export type ApplicationInput = {
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  secret?: Maybe<SecretInput>;
 };
 
 export type ApplicationMutations = {
-   __typename?: 'ApplicationMutations',
-  delete: Application,
-  update: Application,
-  createDeployment: Deployment,
-  updateDeployment: Deployment,
-  deleteDeployment: Deployment,
-  createContainerGroup: ContainerGroup,
-  updateContainerGroup: ContainerGroup,
-  deleteContainerGroup: ContainerGroup,
+   __typename?: 'ApplicationMutations';
+  delete: Application;
+  update: Application;
+  createDeployment: Deployment;
+  updateDeployment: Deployment;
+  deleteDeployment: Deployment;
+  createContainerGroup: ContainerGroup;
+  updateContainerGroup: ContainerGroup;
+  deleteContainerGroup: ContainerGroup;
 };
 
 
 export type ApplicationMutationsUpdateArgs = {
-  secret?: Maybe<SecretInput>,
-  description?: Maybe<Scalars['String']>,
-  name?: Maybe<Scalars['String']>
+  application: ApplicationInput;
 };
 
 
 export type ApplicationMutationsCreateDeploymentArgs = {
-  strategy: DeploymentStrategy,
-  label: Scalars['String'],
-  image: Scalars['String']
+  deployment: DeploymentInput;
 };
 
 
 export type ApplicationMutationsUpdateDeploymentArgs = {
-  image: Scalars['String'],
-  id: Scalars['Int']
+  image: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
 export type ApplicationMutationsDeleteDeploymentArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
 export type ApplicationMutationsCreateContainerGroupArgs = {
-  number: Scalars['Int'],
-  size: Scalars['Int'],
-  deployment: Scalars['Int'],
-  label: Scalars['String']
+  containerGroup: ContainerGroupInput;
 };
 
 
 export type ApplicationMutationsUpdateContainerGroupArgs = {
-  number?: Maybe<Scalars['Int']>,
-  label?: Maybe<Scalars['String']>,
-  id: Scalars['Int']
+  number?: Maybe<Scalars['Int']>;
+  label?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
 };
 
 
 export type ApplicationMutationsDeleteContainerGroupArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 export type Container = {
-   __typename?: 'Container',
-  id: Scalars['Int'],
-  status: Scalars['String'],
+   __typename?: 'Container';
+  id: Scalars['Int'];
+  status: Scalars['String'];
 };
 
 export type ContainerGroup = {
-   __typename?: 'ContainerGroup',
-  id: Scalars['Int'],
-  label: Scalars['String'],
-  size: ContainerSize,
-  containerCount: Scalars['Float'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  deployment: Deployment,
-  containers: Array<Container>,
+   __typename?: 'ContainerGroup';
+  id: Scalars['Int'];
+  label: Scalars['String'];
+  size: ContainerSize;
+  containerCount: Scalars['Float'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  deployment: Deployment;
+  containers: Array<Container>;
+};
+
+export type ContainerGroupInput = {
+  label: Scalars['String'];
+  deploymentID: Scalars['Int'];
+  size: ContainerSize;
+  number: Scalars['Int'];
 };
 
 export enum ContainerSize {
@@ -120,14 +126,20 @@ export enum ContainerSize {
 
 
 export type Deployment = {
-   __typename?: 'Deployment',
-  id: Scalars['Int'],
-  label: Scalars['String'],
-  strategy: DeploymentStrategy,
-  image: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  containerGroups: Array<ContainerGroup>,
+   __typename?: 'Deployment';
+  id: Scalars['Int'];
+  label: Scalars['String'];
+  strategy: DeploymentStrategy;
+  image: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  containerGroups: Array<ContainerGroup>;
+};
+
+export type DeploymentInput = {
+  image: Scalars['String'];
+  label: Scalars['String'];
+  strategy: DeploymentStrategy;
 };
 
 export enum DeploymentStrategy {
@@ -136,189 +148,188 @@ export enum DeploymentStrategy {
 }
 
 export type Mutation = {
-   __typename?: 'Mutation',
-  createAPIKeyRequest: Scalars['String'],
-  grantAPIKey: Result,
-  createAPIKey: Scalars['String'],
-  deleteAPIKey: Result,
-  application: ApplicationMutations,
-  organization: OrganizationMutations,
-  exchangeTOTP: Result,
-  enableTotp: Result,
-  disableTotp: Result,
-  signUp: Result,
-  signIn: SignInResult,
-  gitHubSignIn: SignInResult,
-  updateAccount: User,
-  forgotPassword: Result,
-  resetPassword: Result,
-  signOut: Result,
+   __typename?: 'Mutation';
+  createAPIKeyRequest: Scalars['String'];
+  grantAPIKey: Result;
+  createAPIKey: Scalars['String'];
+  deleteAPIKey: Result;
+  application: ApplicationMutations;
+  organization: OrganizationMutations;
+  exchangeTOTP: Result;
+  enableTotp: Result;
+  disableTotp: Result;
+  signUp: Result;
+  signIn: SignInResult;
+  gitHubSignIn: SignInResult;
+  updateAccount: User;
+  forgotPassword: Result;
+  resetPassword: Result;
+  signOut: Result;
 };
 
 
 export type MutationGrantApiKeyArgs = {
-  uuid: Scalars['String']
+  uuid: Scalars['String'];
 };
 
 
 export type MutationCreateApiKeyArgs = {
-  description: Scalars['String']
+  description: Scalars['String'];
 };
 
 
 export type MutationDeleteApiKeyArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
 export type MutationApplicationArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
 export type MutationOrganizationArgs = {
-  id?: Maybe<Scalars['Int']>
+  id?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationExchangeTotpArgs = {
-  token: Scalars['String']
+  token: Scalars['String'];
 };
 
 
 export type MutationEnableTotpArgs = {
-  token: Scalars['String'],
-  secret: Scalars['String']
+  token: Scalars['String'];
+  secret: Scalars['String'];
 };
 
 
 export type MutationDisableTotpArgs = {
-  password: Scalars['String']
+  password: Scalars['String'];
 };
 
 
 export type MutationSignUpArgs = {
-  password: Scalars['String'],
-  email: Scalars['String'],
-  name: Scalars['String']
+  password: Scalars['String'];
+  email: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
 export type MutationSignInArgs = {
-  password: Scalars['String'],
-  email: Scalars['String']
+  password: Scalars['String'];
+  email: Scalars['String'];
 };
 
 
 export type MutationGitHubSignInArgs = {
-  code: Scalars['String']
+  code: Scalars['String'];
 };
 
 
 export type MutationUpdateAccountArgs = {
-  email?: Maybe<Scalars['String']>,
-  name?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationForgotPasswordArgs = {
-  email: Scalars['String']
+  email: Scalars['String'];
 };
 
 
 export type MutationResetPasswordArgs = {
-  password: Scalars['String'],
-  uuid: Scalars['String']
+  password: Scalars['String'];
+  uuid: Scalars['String'];
 };
 
 export type Organization = {
-   __typename?: 'Organization',
-  id: Scalars['Int'],
-  isPersonal: Scalars['Boolean'],
-  name: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  applications: Array<Application>,
+   __typename?: 'Organization';
+  id: Scalars['Int'];
+  isPersonal: Scalars['Boolean'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  applications: Array<Application>;
 };
 
 export type OrganizationMutations = {
-   __typename?: 'OrganizationMutations',
-  createApplication: Application,
+   __typename?: 'OrganizationMutations';
+  createApplication: Application;
 };
 
 
 export type OrganizationMutationsCreateApplicationArgs = {
-  description?: Maybe<Scalars['String']>,
-  name: Scalars['String']
+  application: ApplicationInput;
 };
 
 export type Query = {
-   __typename?: 'Query',
-  getAPIKeyFromRequest?: Maybe<Scalars['String']>,
-  application: Application,
-  organization: Organization,
-  me: User,
+   __typename?: 'Query';
+  getAPIKeyFromRequest?: Maybe<Scalars['String']>;
+  application: Application;
+  organization: Organization;
+  me: User;
 };
 
 
 export type QueryGetApiKeyFromRequestArgs = {
-  uuid: Scalars['String']
+  uuid: Scalars['String'];
 };
 
 
 export type QueryApplicationArgs = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
 export type QueryOrganizationArgs = {
-  id?: Maybe<Scalars['Int']>
+  id?: Maybe<Scalars['Int']>;
 };
 
 /** Provides a boolean to determine if the action was successful or not. */
 export type Result = {
-   __typename?: 'Result',
-  ok: Scalars['Boolean'],
+   __typename?: 'Result';
+  ok: Scalars['Boolean'];
 };
 
 export type Secret = {
-   __typename?: 'Secret',
-  key: Scalars['String'],
-  value: Scalars['String'],
+   __typename?: 'Secret';
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type SecretInput = {
-  key: Scalars['String'],
-  value: Scalars['String'],
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
-/** 
+/**
  * A special type of result used just for SignIns. Provides a boolean for if the
  * user requires a TOTP exchange before being fully logged in.
  */
 export type SignInResult = {
-   __typename?: 'SignInResult',
-  ok: Scalars['Boolean'],
-  requiresTOTP: Scalars['Boolean'],
+   __typename?: 'SignInResult';
+  ok: Scalars['Boolean'];
+  requiresTOTP: Scalars['Boolean'];
 };
 
 export type User = {
-   __typename?: 'User',
-  id: Scalars['Int'],
-  githubID?: Maybe<Scalars['Int']>,
-  name: Scalars['String'],
-  email: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  hasTOTP: Scalars['Boolean'],
-  personalOrganization: Organization,
-  apiKeys: Array<ApiKey>,
-  onboardTOTP: Scalars['String'],
-  organizations: Array<Organization>,
+   __typename?: 'User';
+  id: Scalars['Int'];
+  githubID?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
+  email: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  hasTOTP: Scalars['Boolean'];
+  personalOrganization: Organization;
+  apiKeys: Array<ApiKey>;
+  onboardTOTP: Scalars['String'];
+  organizations: Array<Organization>;
 };
 
 export type ApplicationQueryVariables = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
@@ -331,7 +342,7 @@ export type ApplicationQuery = (
 );
 
 export type ApplicationContainerGroupsQueryVariables = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
@@ -355,7 +366,7 @@ export type ApplicationContainerGroupsQuery = (
 );
 
 export type ApplicationDeploymentsQueryVariables = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
@@ -377,14 +388,14 @@ export type ApplicationFragmentFragment = (
   & { secrets: Array<(
     { __typename?: 'Secret' }
     & Pick<Secret, 'key' | 'value'>
-  )>, createdBy: Maybe<(
+  )>, createdBy?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name'>
   )> }
 );
 
 export type ApplicationsQueryVariables = {
-  org?: Maybe<Scalars['Int']>
+  org?: Maybe<Scalars['Int']>;
 };
 
 
@@ -401,7 +412,7 @@ export type ApplicationsQuery = (
 );
 
 export type CreateApiKeyMutationVariables = {
-  description: Scalars['String']
+  description: Scalars['String'];
 };
 
 
@@ -411,9 +422,8 @@ export type CreateApiKeyMutation = (
 );
 
 export type CreateApplicationMutationVariables = {
-  org?: Maybe<Scalars['Int']>,
-  name: Scalars['String'],
-  description?: Maybe<Scalars['String']>
+  org?: Maybe<Scalars['Int']>;
+  application: ApplicationInput;
 };
 
 
@@ -429,11 +439,8 @@ export type CreateApplicationMutation = (
 );
 
 export type CreateContainerGroupMutationVariables = {
-  applicationID: Scalars['Int'],
-  label: Scalars['String'],
-  deployment: Scalars['Int'],
-  size: Scalars['Int'],
-  number: Scalars['Int']
+  applicationID: Scalars['Int'];
+  containerGroup: ContainerGroupInput;
 };
 
 
@@ -456,10 +463,8 @@ export type CreateContainerGroupMutation = (
 );
 
 export type CreateDeploymentMutationVariables = {
-  applicationID: Scalars['Int'],
-  image: Scalars['String'],
-  label: Scalars['String'],
-  strategy: DeploymentStrategy
+  applicationID: Scalars['Int'];
+  deployment: DeploymentInput;
 };
 
 
@@ -475,7 +480,7 @@ export type CreateDeploymentMutation = (
 );
 
 export type DeleteApiKeyMutationVariables = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
@@ -488,7 +493,7 @@ export type DeleteApiKeyMutation = (
 );
 
 export type DeleteApplicationMutationVariables = {
-  id: Scalars['Int']
+  id: Scalars['Int'];
 };
 
 
@@ -504,8 +509,8 @@ export type DeleteApplicationMutation = (
 );
 
 export type DeleteContainerGroupMutationVariables = {
-  applicationID: Scalars['Int'],
-  id: Scalars['Int']
+  applicationID: Scalars['Int'];
+  id: Scalars['Int'];
 };
 
 
@@ -521,8 +526,8 @@ export type DeleteContainerGroupMutation = (
 );
 
 export type DeleteDeploymentMutationVariables = {
-  applicationID: Scalars['Int'],
-  id: Scalars['Int']
+  applicationID: Scalars['Int'];
+  id: Scalars['Int'];
 };
 
 
@@ -538,7 +543,7 @@ export type DeleteDeploymentMutation = (
 );
 
 export type DisableTotpMutationVariables = {
-  password: Scalars['String']
+  password: Scalars['String'];
 };
 
 
@@ -551,8 +556,8 @@ export type DisableTotpMutation = (
 );
 
 export type EnableTotpMutationVariables = {
-  secret: Scalars['String'],
-  token: Scalars['String']
+  secret: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -565,7 +570,7 @@ export type EnableTotpMutation = (
 );
 
 export type ExchangeTotpMutationVariables = {
-  token: Scalars['String']
+  token: Scalars['String'];
 };
 
 
@@ -578,7 +583,7 @@ export type ExchangeTotpMutation = (
 );
 
 export type ForgotPasswordMutationVariables = {
-  email: Scalars['String']
+  email: Scalars['String'];
 };
 
 
@@ -591,7 +596,7 @@ export type ForgotPasswordMutation = (
 );
 
 export type GitHubSignInMutationVariables = {
-  code: Scalars['String']
+  code: Scalars['String'];
 };
 
 
@@ -604,7 +609,7 @@ export type GitHubSignInMutation = (
 );
 
 export type GrantApiKeyMutationVariables = {
-  uuid: Scalars['String']
+  uuid: Scalars['String'];
 };
 
 
@@ -677,8 +682,8 @@ export type OnboardTotpQuery = (
 );
 
 export type ResetPasswordMutationVariables = {
-  uuid: Scalars['String'],
-  password: Scalars['String']
+  uuid: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -691,8 +696,8 @@ export type ResetPasswordMutation = (
 );
 
 export type SignInMutationVariables = {
-  email: Scalars['String'],
-  password: Scalars['String']
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -716,9 +721,9 @@ export type SignOutMutation = (
 );
 
 export type SignUpMutationVariables = {
-  name: Scalars['String'],
-  email: Scalars['String'],
-  password: Scalars['String']
+  name: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -731,8 +736,8 @@ export type SignUpMutation = (
 );
 
 export type UpdateAccountMutationVariables = {
-  name: Scalars['String'],
-  email: Scalars['String']
+  name: Scalars['String'];
+  email: Scalars['String'];
 };
 
 
@@ -745,10 +750,8 @@ export type UpdateAccountMutation = (
 );
 
 export type UpdateApplicationMutationVariables = {
-  id: Scalars['Int'],
-  name?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  secret?: Maybe<SecretInput>
+  id: Scalars['Int'];
+  application: ApplicationInput;
 };
 
 
@@ -764,9 +767,9 @@ export type UpdateApplicationMutation = (
 );
 
 export type UpdateContainerGroupMutationVariables = {
-  applicationID: Scalars['Int'],
-  id: Scalars['Int'],
-  number: Scalars['Int']
+  applicationID: Scalars['Int'];
+  id: Scalars['Int'];
+  number: Scalars['Int'];
 };
 
 
@@ -996,9 +999,9 @@ export type CreateApiKeyMutationHookResult = ReturnType<typeof useCreateApiKeyMu
 export type CreateApiKeyMutationResult = ApolloReactCommon.MutationResult<CreateApiKeyMutation>;
 export type CreateApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateApplicationDocument = gql`
-    mutation CreateApplication($org: Int, $name: String!, $description: String) {
+    mutation CreateApplication($org: Int, $application: ApplicationInput!) {
   organization(id: $org) {
-    createApplication(name: $name, description: $description) {
+    createApplication(application: $application) {
       id
     }
   }
@@ -1020,8 +1023,7 @@ export type CreateApplicationMutationFn = ApolloReactCommon.MutationFunction<Cre
  * const [createApplicationMutation, { data, loading, error }] = useCreateApplicationMutation({
  *   variables: {
  *      org: // value for 'org'
- *      name: // value for 'name'
- *      description: // value for 'description'
+ *      application: // value for 'application'
  *   },
  * });
  */
@@ -1032,9 +1034,9 @@ export type CreateApplicationMutationHookResult = ReturnType<typeof useCreateApp
 export type CreateApplicationMutationResult = ApolloReactCommon.MutationResult<CreateApplicationMutation>;
 export type CreateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApplicationMutation, CreateApplicationMutationVariables>;
 export const CreateContainerGroupDocument = gql`
-    mutation CreateContainerGroup($applicationID: Int!, $label: String!, $deployment: Int!, $size: Int!, $number: Int!) {
+    mutation CreateContainerGroup($applicationID: Int!, $containerGroup: ContainerGroupInput!) {
   application(id: $applicationID) {
-    createContainerGroup(label: $label, deployment: $deployment, size: $size, number: $number) {
+    createContainerGroup(containerGroup: $containerGroup) {
       id
       label
       size
@@ -1066,10 +1068,7 @@ export type CreateContainerGroupMutationFn = ApolloReactCommon.MutationFunction<
  * const [createContainerGroupMutation, { data, loading, error }] = useCreateContainerGroupMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
- *      label: // value for 'label'
- *      deployment: // value for 'deployment'
- *      size: // value for 'size'
- *      number: // value for 'number'
+ *      containerGroup: // value for 'containerGroup'
  *   },
  * });
  */
@@ -1080,9 +1079,9 @@ export type CreateContainerGroupMutationHookResult = ReturnType<typeof useCreate
 export type CreateContainerGroupMutationResult = ApolloReactCommon.MutationResult<CreateContainerGroupMutation>;
 export type CreateContainerGroupMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
 export const CreateDeploymentDocument = gql`
-    mutation CreateDeployment($applicationID: Int!, $image: String!, $label: String!, $strategy: DeploymentStrategy!) {
+    mutation CreateDeployment($applicationID: Int!, $deployment: DeploymentInput!) {
   application(id: $applicationID) {
-    createDeployment(image: $image, label: $label, strategy: $strategy) {
+    createDeployment(deployment: $deployment) {
       id
       image
     }
@@ -1105,9 +1104,7 @@ export type CreateDeploymentMutationFn = ApolloReactCommon.MutationFunction<Crea
  * const [createDeploymentMutation, { data, loading, error }] = useCreateDeploymentMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
- *      image: // value for 'image'
- *      label: // value for 'label'
- *      strategy: // value for 'strategy'
+ *      deployment: // value for 'deployment'
  *   },
  * });
  */
@@ -1755,9 +1752,9 @@ export type UpdateAccountMutationHookResult = ReturnType<typeof useUpdateAccount
 export type UpdateAccountMutationResult = ApolloReactCommon.MutationResult<UpdateAccountMutation>;
 export type UpdateAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateAccountMutation, UpdateAccountMutationVariables>;
 export const UpdateApplicationDocument = gql`
-    mutation UpdateApplication($id: Int!, $name: String, $description: String, $secret: SecretInput) {
+    mutation UpdateApplication($id: Int!, $application: ApplicationInput!) {
   application(id: $id) {
-    update(name: $name, description: $description, secret: $secret) {
+    update(application: $application) {
       ...ApplicationFragment
     }
   }
@@ -1779,9 +1776,7 @@ export type UpdateApplicationMutationFn = ApolloReactCommon.MutationFunction<Upd
  * const [updateApplicationMutation, { data, loading, error }] = useUpdateApplicationMutation({
  *   variables: {
  *      id: // value for 'id'
- *      name: // value for 'name'
- *      description: // value for 'description'
- *      secret: // value for 'secret'
+ *      application: // value for 'application'
  *   },
  * });
  */

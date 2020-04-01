@@ -10,5 +10,5 @@ export default function ButtonOrLink({
         return <Link to={to} {...props} />;
     }
 
-    return <button {...props} />;
+    return <button type="button" {...props} />;
 }

@@ -31,7 +31,7 @@ export const ModalFooterContext = React.createContext(false);
 export function ModalFooter({ children }: { children: React.ReactNode }) {
     return (
         <ModalFooterContext.Provider value={true}>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse sticky bottom-0">
                 {children}
             </div>
         </ModalFooterContext.Provider>
@@ -98,7 +98,7 @@ export default function Modal({ open, onClose, children }: Props) {
                                 exit={modalInitial}
                                 transition={{ duration: 0.2, ease: 'easeOut' }}
                                 role="dialog"
-                                className="relative bg-white rounded-lg overflow-hidden shadow-xl sm:max-w-lg sm:w-full z-10"
+                                className="relative bg-white rounded-lg overflow-hidden shadow-xl sm:max-w-lg sm:w-full z-10 overflow-scroll max-h-full"
                             >
                                 {children}
                             </motion.div>
