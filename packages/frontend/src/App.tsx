@@ -17,10 +17,10 @@ export default function App() {
                     <PrivateRoute path="/" exact>
                         <Home />
                     </PrivateRoute>
-                    <PrivateRoute path="/orgs/:id">
+                    <PrivateRoute path="/orgs/:organization">
                         <Home />
                     </PrivateRoute>
-                    <PrivateRoute path="/applications/:id">
+                    <PrivateRoute path="/applications/:application">
                         <Application />
                     </PrivateRoute>
                     <PrivateRoute path="/grant/:uuid">

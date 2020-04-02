@@ -32,7 +32,14 @@ export type Application = {
   organization: Organization;
   containerGroups: Array<ContainerGroup>;
   deployments: Array<Deployment>;
+  environments: Array<Environment>;
+  deployment: Deployment;
   secrets: Array<Secret>;
+};
+
+
+export type ApplicationDeploymentArgs = {
+  id: Scalars['Int'];
 };
 
 export type ApplicationInput = {
@@ -105,6 +112,7 @@ export type ContainerGroup = {
   containerCount: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  environment: Environment;
   deployment: Deployment;
   containers: Array<Container>;
 };
@@ -146,6 +154,15 @@ export enum DeploymentStrategy {
   Replace = 'REPLACE',
   Recreate = 'RECREATE'
 }
+
+export type Environment = {
+   __typename?: 'Environment';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  containerGroups: Array<ContainerGroup>;
+};
 
 export type Mutation = {
    __typename?: 'Mutation';
@@ -538,6 +555,28 @@ export type DeleteDeploymentMutation = (
     & { deleteDeployment: (
       { __typename?: 'Deployment' }
       & Pick<Deployment, 'id'>
+    ) }
+  ) }
+);
+
+export type DeploymentQueryVariables = {
+  app: Scalars['Int'];
+  deployment: Scalars['Int'];
+};
+
+
+export type DeploymentQuery = (
+  { __typename?: 'Query' }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
+    & { deployment: (
+      { __typename?: 'Deployment' }
+      & Pick<Deployment, 'id' | 'label' | 'strategy' | 'image' | 'createdAt' | 'updatedAt'>
+      & { containerGroups: Array<(
+        { __typename?: 'ContainerGroup' }
+        & Pick<ContainerGroup, 'id' | 'label'>
+      )> }
     ) }
   ) }
 );
@@ -1250,6 +1289,52 @@ export function useDeleteDeploymentMutation(baseOptions?: ApolloReactHooks.Mutat
 export type DeleteDeploymentMutationHookResult = ReturnType<typeof useDeleteDeploymentMutation>;
 export type DeleteDeploymentMutationResult = ApolloReactCommon.MutationResult<DeleteDeploymentMutation>;
 export type DeleteDeploymentMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteDeploymentMutation, DeleteDeploymentMutationVariables>;
+export const DeploymentDocument = gql`
+    query Deployment($app: Int!, $deployment: Int!) {
+  application(id: $app) {
+    id
+    deployment(id: $deployment) {
+      id
+      label
+      strategy
+      image
+      createdAt
+      updatedAt
+      containerGroups {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useDeploymentQuery__
+ *
+ * To run a query within a React component, call `useDeploymentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDeploymentQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDeploymentQuery({
+ *   variables: {
+ *      app: // value for 'app'
+ *      deployment: // value for 'deployment'
+ *   },
+ * });
+ */
+export function useDeploymentQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<DeploymentQuery, DeploymentQueryVariables>) {
+        return ApolloReactHooks.useQuery<DeploymentQuery, DeploymentQueryVariables>(DeploymentDocument, baseOptions);
+      }
+export function useDeploymentLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<DeploymentQuery, DeploymentQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<DeploymentQuery, DeploymentQueryVariables>(DeploymentDocument, baseOptions);
+        }
+export type DeploymentQueryHookResult = ReturnType<typeof useDeploymentQuery>;
+export type DeploymentLazyQueryHookResult = ReturnType<typeof useDeploymentLazyQuery>;
+export type DeploymentQueryResult = ApolloReactCommon.QueryResult<DeploymentQuery, DeploymentQueryVariables>;
 export const DisableTotpDocument = gql`
     mutation DisableTOTP($password: String!) {
   disableTotp(password: $password) {

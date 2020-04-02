@@ -11,8 +11,8 @@ import { useParams } from 'react-router-dom';
 export default function Home() {
     // The ID for the organzation.
     // If not present, we will assume the user personal organization
-    const { id } = useParams();
-    const organization = id ? Number(id) : undefined;
+    const params = useParams<{ organization: string }>();
+    const organization = params.organization ? Number(params.organization) : undefined;
 
     const { data, loading } = useApplicationsQuery({
         variables: {

@@ -1,0 +1,17 @@
+query Deployment($app: Int!, $deployment: Int!) {
+    application(id: $app) {
+        id
+        deployment(id: $deployment) {
+            id
+            label
+            strategy
+            image
+            createdAt
+            updatedAt
+            containerGroups {
+                id
+                label
+            }
+        }
+    }
+}

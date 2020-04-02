@@ -10,10 +10,11 @@ import TailwindPageHeader from '../ui/PageHeader';
 import TailwindTabs from '../ui/Tabs';
 import Container from '../ui/Container';
 import Spinner from '../Spinner';
+import Environments from './Environments';
 
 export default function Application() {
-    const params = useParams<{ id: string }>();
-    const id = Number(params.id);
+    const params = useParams<{ application: string }>();
+    const id = Number(params.application);
 
     const { path, url } = useRouteMatch();
     let pageMatch = useRouteMatch<{ page: string }>(`${path}/:page`);
@@ -48,6 +49,11 @@ export default function Application() {
                             to: url
                         },
                         {
+                            label: 'Environments',
+                            value: 'environments',
+                            to: `${url}/environments`
+                        }
+                        {
                             label: 'Deployments',
                             value: 'deployments',
                             to: `${url}/deployments`
@@ -76,6 +82,9 @@ export default function Application() {
                     </Route>
                     <Route path={`${path}/settings`}>
                         <Settings />
+                    </Route>
+                    <Route path={`${path}/environments`}>
+                        <Environments />
                     </Route>
                     <Route path={path} exact>
                         <Overview />

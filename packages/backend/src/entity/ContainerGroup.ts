@@ -12,6 +12,7 @@ import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Length, Min, Max } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
+import { Environment } from './Environment';
 
 export enum ContainerSize {
     S1x1 = 'S1x1', // 1 CPU Share, 128 mb
@@ -71,6 +72,14 @@ export class ContainerGroup extends BaseEntity {
         { lazy: true }
     )
     application!: Lazy<Application>;
+
+    @Field(() => Environment)
+    @ManyToOne(
+        () => Environment,
+        environment => environment.containerGroups,
+        { lazy: true }
+    )
+    environment!: Lazy<Environment>;
 
     @Field(() => Deployment)
     @ManyToOne(

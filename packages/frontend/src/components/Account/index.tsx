@@ -3,7 +3,6 @@ import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 import Security from './Security';
 import EditAccount from './EditAccount';
 import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
-import Card, { CardContent } from '../ui/Card';
 import Container from '../ui/Container';
 import APIKeys from './APIKeys';
 

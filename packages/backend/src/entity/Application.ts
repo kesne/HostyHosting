@@ -16,6 +16,7 @@ import { Length } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
+import { Environment } from './Environment';
 
 @Entity()
 @ObjectType()
@@ -76,6 +77,14 @@ export class Application extends BaseEntity {
         { lazy: true }
     )
     deployments!: Lazy<Deployment[]>;
+
+    @Field(() => [Environment])
+    @OneToMany(
+        () => Environment,
+        environment => environment.application,
+        { lazy: true }
+    )
+    environments!: Lazy<Environment[]>;
 
     /**
      * Verifies that a given user has access to this applciation.

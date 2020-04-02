@@ -20,6 +20,8 @@ type Application {
   organization: Organization!
   containerGroups: [ContainerGroup!]!
   deployments: [Deployment!]!
+  environments: [Environment!]!
+  deployment(id: Int!): Deployment!
   secrets: [Secret!]!
 }
 
@@ -52,6 +54,7 @@ type ContainerGroup {
   containerCount: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
+  environment: Environment!
   deployment: Deployment!
   containers: [Container!]!
 }
@@ -95,6 +98,14 @@ input DeploymentInput {
 enum DeploymentStrategy {
   REPLACE
   RECREATE
+}
+
+type Environment {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  containerGroups: [ContainerGroup!]!
 }
 
 type Mutation {

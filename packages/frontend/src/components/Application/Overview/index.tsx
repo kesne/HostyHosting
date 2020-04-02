@@ -4,10 +4,7 @@ import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import Spinner from '../../Spinner';
 import { EnterContainer, EnterItem } from '../../ui/motion/Enter';
-
-function formatDate(timestamp: string) {
-    return new Date(timestamp).toDateString();
-}
+import formatDate from '../../../utils/formatDate';
 
 export default function Overview() {
     const id = useApplicationID();

@@ -2,6 +2,7 @@ import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int } from 
 import { Application } from '../entity/Application';
 import { Secret } from './types/Secret';
 import { Context } from '../types';
+import { Deployment } from '../entity/Deployment';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
@@ -11,13 +12,23 @@ export class ApplicationResolver {
         const app = await Application.findOneOrFail({
             where: {
                 id,
-            }
+            },
         });
 
         // Verify that the current user has permission to this app:
         app.userHasPermission(user);
 
         return app;
+    }
+
+    @FieldResolver(() => Deployment)
+    async deployment(@Root() application: Application, @Arg('id', () => Int) id: number) {
+        return await Deployment.findOneOrFail({
+            where: {
+                id,
+                application,
+            },
+        });
     }
 
     @FieldResolver(() => [Secret])

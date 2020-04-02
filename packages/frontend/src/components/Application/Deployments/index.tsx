@@ -8,7 +8,7 @@ export default function Deployments() {
 
     return (
         <Switch>
-            <Route path={`${path}/:id`}>
+            <Route path={`${path}/:deployment`}>
                 <Detail />
             </Route>
             <Route>
