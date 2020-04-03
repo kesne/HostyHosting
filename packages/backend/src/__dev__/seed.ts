@@ -8,6 +8,7 @@ import { ContainerGroup } from '../entity/ContainerGroup';
 import { Deployment } from '../entity/Deployment';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { APIKey } from '../entity/APIKey';
+import { Notification } from '../entity/Notification';
 
 // TODO: Make this execute a bunch of GraphQL commands, instead of just being ORM operations.
 async function seed() {
@@ -22,6 +23,13 @@ async function seed() {
     await OrganizationMembership.delete({});
     await User.delete({});
     await Organization.delete({});
+    await Notification.delete({});
+
+    // Create a notification for shits and giggles:
+    const notification = new Notification();
+    notification.title = 'Test Notification';
+    notification.body = 'This is a test notification. It should exist.';
+    await notification.save();
 
     // Create an admin user:
     const user = new User();

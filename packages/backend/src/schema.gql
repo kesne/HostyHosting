@@ -133,6 +133,14 @@ type Mutation {
   signOut: Result!
 }
 
+type Notification {
+  id: Int!
+  title: String!
+  body: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Organization {
   id: Int!
   isPersonal: Boolean!
@@ -149,6 +157,7 @@ type OrganizationMutations {
 type Query {
   getAPIKeyFromRequest(uuid: String!): String
   application(id: Int!): Application!
+  notifications: [Notification!]!
   organization(
     """
     The ID of the organization to load. If empty, we will use the signed-in users personal organization.

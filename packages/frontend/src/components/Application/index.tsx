@@ -52,7 +52,7 @@ export default function Application() {
                             label: 'Environments',
                             value: 'environments',
                             to: `${url}/environments`
-                        }
+                        },
                         {
                             label: 'Deployments',
                             value: 'deployments',

@@ -1,0 +1,9 @@
+query Notifications {
+    notifications {
+        id
+        title
+        body
+        createdAt
+        updatedAt
+    }
+}
