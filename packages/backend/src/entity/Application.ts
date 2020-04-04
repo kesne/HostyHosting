@@ -5,32 +5,30 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    OneToMany,
+    Unique,
 } from 'typeorm';
 import { Organization } from './Organization';
 import { User } from './User';
-import { ContainerGroup } from './ContainerGroup';
-import { Deployment } from './Deployment';
+import { Component } from './Component';
 import { ObjectType, Field, Int } from 'type-graphql';
-import { Length } from 'class-validator';
+import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
-import { Environment } from './Environment';
 
 @Entity()
 @ObjectType()
+@Unique(['name', 'organization'])
 export class Application extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
 
-    // NOTE: We don't enforce casing or spaces or anything else currently. This
-    // might make it hard to work with CLIs, so we might want to consider it in
-    // the future.
     @Field()
     @Column()
     @Length(3, 20)
+    @Matches(/^[a-z0-9_-]+$/)
     name!: string;
 
     @Field()
@@ -57,34 +55,18 @@ export class Application extends BaseEntity {
     @Field(() => Organization)
     @ManyToOne(
         () => Organization,
-        organization => organization.users,
-        { lazy: true }
+        organization => organization.applications,
+        { lazy: true },
     )
     organization!: Lazy<Organization>;
 
-    @Field(() => [ContainerGroup])
+    @Field(() => [Component])
     @OneToMany(
-        () => ContainerGroup,
-        containerGroup => containerGroup.application,
-        { lazy: true }
+        () => Component,
+        component => component.application,
+        { lazy: true },
     )
-    containerGroups!: Lazy<ContainerGroup[]>;
-
-    @Field(() => [Deployment])
-    @OneToMany(
-        () => Deployment,
-        deployment => deployment.application,
-        { lazy: true }
-    )
-    deployments!: Lazy<Deployment[]>;
-
-    @Field(() => [Environment])
-    @OneToMany(
-        () => Environment,
-        environment => environment.application,
-        { lazy: true }
-    )
-    environments!: Lazy<Environment[]>;
+    components!: Lazy<Component[]>;
 
     /**
      * Verifies that a given user has access to this applciation.
@@ -94,8 +76,8 @@ export class Application extends BaseEntity {
         await OrganizationMembership.findOneOrFail({
             where: {
                 user,
-                organization: await this.organization
-            }
+                organization: await this.organization,
+            },
         });
     }
 }

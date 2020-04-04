@@ -5,15 +5,15 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany,
+    ManyToOne,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Network } from './Network';
 import { Lazy } from '../types';
+import { Environment } from './Environment';
 
 @ObjectType()
 @Entity()
-export class Environment extends BaseEntity {
+export class Network extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -22,13 +22,6 @@ export class Environment extends BaseEntity {
     @Column()
     name!: string;
 
-    @OneToMany(
-        () => Network,
-        network => network.environment,
-        { lazy: true },
-    )
-    networks!: Lazy<Network[]>;
-
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
@@ -36,4 +29,11 @@ export class Environment extends BaseEntity {
     @Field()
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
+
+    @ManyToOne(
+        () => Environment,
+        environment => environment.networks,
+        { lazy: true },
+    )
+    environment!: Lazy<Environment>;
 }

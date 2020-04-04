@@ -18,10 +18,8 @@ type Application {
   createdAt: DateTime!
   updatedAt: DateTime!
   organization: Organization!
-  containerGroups: [ContainerGroup!]!
-  deployments: [Deployment!]!
-  environments: [Environment!]!
-  deployment(id: Int!): Deployment!
+  components: [Component!]!
+  component(id: Int!): Component!
   secrets: [Secret!]!
 }
 
@@ -34,12 +32,27 @@ input ApplicationInput {
 type ApplicationMutations {
   delete: Application!
   update(application: ApplicationInput!): Application!
-  createDeployment(deployment: DeploymentInput!): Deployment!
-  updateDeployment(image: String!, id: Int!): Deployment!
-  deleteDeployment(id: Int!): Deployment!
-  createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
-  updateContainerGroup(number: Int, label: String, id: Int!): ContainerGroup!
-  deleteContainerGroup(id: Int!): ContainerGroup!
+  createComponent(component: ComponentInput!): Component!
+  updateComponent(image: String!, id: Int!): Component!
+  deleteComponent(id: Int!): Component!
+}
+
+type Component {
+  id: Int!
+  name: String!
+  deploymentStrategy: DeploymentStrategy!
+  image: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  containerGroup: ContainerGroup!
+}
+
+input ComponentInput {
+  image: String!
+  name: String!
+  deploymentStrategy: DeploymentStrategy!
+  size: ContainerSize!
+  containerCount: Int!
 }
 
 type Container {
@@ -49,13 +62,12 @@ type Container {
 
 type ContainerGroup {
   id: Int!
-  label: String!
   size: ContainerSize!
   containerCount: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
   environment: Environment!
-  deployment: Deployment!
+  component: Component!
   containers: [Container!]!
 }
 
@@ -79,22 +91,6 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
-type Deployment {
-  id: Int!
-  label: String!
-  strategy: DeploymentStrategy!
-  image: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  containerGroups: [ContainerGroup!]!
-}
-
-input DeploymentInput {
-  image: String!
-  label: String!
-  strategy: DeploymentStrategy!
-}
-
 enum DeploymentStrategy {
   REPLACE
   RECREATE
@@ -105,7 +101,6 @@ type Environment {
   name: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  containerGroups: [ContainerGroup!]!
 }
 
 type Mutation {
@@ -133,6 +128,13 @@ type Mutation {
   signOut: Result!
 }
 
+type Network {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Notification {
   id: Int!
   title: String!
@@ -144,6 +146,7 @@ type Notification {
 type Organization {
   id: Int!
   isPersonal: Boolean!
+  username: String!
   name: String!
   createdAt: DateTime!
   updatedAt: DateTime!

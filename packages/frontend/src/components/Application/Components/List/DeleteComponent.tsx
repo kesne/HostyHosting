@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-    useDeleteDeploymentMutation,
-    ApplicationDeploymentsQuery,
-    ApplicationDeploymentsDocument
+    useDeleteComponentMutation,
+    ApplicationComponentsQuery,
+    ApplicationComponentsDocument
 } from '../../../../queries';
 import produce from 'immer';
 import { useApplicationID } from '../../ApplicationContext';
@@ -12,9 +12,9 @@ type Props = {
     id: number;
 };
 
-export default function DeleteDeployment({ id }: Props) {
+export default function DeleteComponent({ id }: Props) {
     const applicationID = useApplicationID();
-    const [deleteDeployment] = useDeleteDeploymentMutation({
+    const [deleteDeployment] = useDeleteComponentMutation({
         variables: {
             applicationID,
             id
@@ -24,26 +24,26 @@ export default function DeleteDeployment({ id }: Props) {
 
             // Read the data from our cache for this query.
             const { application } =
-                cache.readQuery<ApplicationDeploymentsQuery>({
-                    query: ApplicationDeploymentsDocument,
+                cache.readQuery<ApplicationComponentsQuery>({
+                    query: ApplicationComponentsDocument,
                     variables: { id: applicationID }
                 }) ?? {};
 
-            if (!application?.deployments) {
+            if (!application?.components) {
                 return;
             }
 
             const nextAppliction = produce(application, draftState => {
-                draftState.deployments.splice(
-                    draftState.deployments.findIndex(
-                        container => container.id === data.application.deleteDeployment.id
+                draftState.components.splice(
+                    draftState.components.findIndex(
+                        container => container.id === data.application.deleteComponent.id
                     ),
                     1
                 );
             });
 
             cache.writeQuery({
-                query: ApplicationDeploymentsDocument,
+                query: ApplicationComponentsDocument,
                 variables: { id: applicationID },
                 data: { application: nextAppliction }
             });

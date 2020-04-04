@@ -1,8 +1,8 @@
 import React from 'react';
-import Deployment from './Deployment';
-import CreateDeployment from './CreateDeployment';
+import Component from './Component';
+import CreateComponent from './CreateComponent';
 import useBoolean from '../../../../utils/useBoolean';
-import { useApplicationDeploymentsQuery } from '../../../../queries';
+import { useApplicationComponentsQuery } from '../../../../queries';
 import { useApplicationID } from '../../ApplicationContext';
 import Card from '../../../ui/Card';
 import Button from '../../../ui/Button';
@@ -10,9 +10,9 @@ import Spinner from '../../../Spinner';
 import List, { ListItem } from '../../../ui/List';
 import { EnterContainer, EnterItem } from '../../../ui/motion/Enter';
 
-export default function Deployments() {
+export default function Components() {
     const applicationID = useApplicationID();
-    const { data, loading, error } = useApplicationDeploymentsQuery({
+    const { data, loading, error } = useApplicationComponentsQuery({
         variables: {
             id: applicationID,
         },
@@ -27,22 +27,22 @@ export default function Deployments() {
         <EnterContainer>
             <EnterItem>
                 <Card
-                    title="Deployments"
+                    title="Components"
                     actions={
                         <Button variant="primary" onClick={on}>
-                            Create Deployment
+                            Create Component
                         </Button>
                     }
                 >
-                    <CreateDeployment visible={createVisible} onClose={off} />
-                    <List items={data.application.deployments}>
-                        {deployment => (
+                    <CreateComponent visible={createVisible} onClose={off} />
+                    <List items={data.application.components}>
+                        {component => (
                             // TODO: Use route match url isntead of re-creating full URL?
                             <ListItem
-                                key={deployment.id}
-                                to={`/applications/${applicationID}/deployments/${deployment.id}`}
+                                key={component.id}
+                                to={`/applications/${applicationID}/components/${component.id}`}
                             >
-                                <Deployment deployment={deployment} />
+                                <Component component={component} />
                             </ListItem>
                         )}
                     </List>

@@ -5,7 +5,8 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    OneToOne,
+    JoinColumn
 } from 'typeorm';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
@@ -24,9 +25,9 @@ registerEnumType(DeploymentStrategy, {
 
 @Entity()
 @ObjectType()
-export class Deployment extends BaseEntity {
+export class Component extends BaseEntity {
     static findByApplicationAndId(application: Application, id: number) {
-        return Deployment.findOneOrFail({
+        return Component.findOneOrFail({
             where: {
                 id,
                 application
@@ -40,11 +41,11 @@ export class Deployment extends BaseEntity {
 
     @Field()
     @Column()
-    label!: string;
+    name!: string;
 
     @Field(() => DeploymentStrategy)
     @Column({ type: 'enum', enum: DeploymentStrategy, default: DeploymentStrategy.RECREATE })
-    strategy!: DeploymentStrategy;
+    deploymentStrategy!: DeploymentStrategy;
 
     // TODO: When you specify the image, we should attempt to resolve it against our
     // registry so that we can verify that this will be "launchable".
@@ -62,16 +63,17 @@ export class Deployment extends BaseEntity {
 
     @ManyToOne(
         () => Application,
-        application => application.containerGroups,
+        application => application.components,
         { lazy: true }
     )
     application!: Lazy<Application>;
 
-    @Field(() => [ContainerGroup])
-    @OneToMany(
+    @Field(() => ContainerGroup)
+    @OneToOne(
         () => ContainerGroup,
-        containerGroup => containerGroup.deployment,
+        containerGroup => containerGroup.component,
         { lazy: true }
     )
-    containerGroups!: Lazy<ContainerGroup[]>;
+    @JoinColumn()
+    containerGroup!: Lazy<ContainerGroup>;
 }

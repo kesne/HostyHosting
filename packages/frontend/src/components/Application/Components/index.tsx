@@ -3,12 +3,12 @@ import List from './List';
 import Detail from './Detail';
 import { Route, useRouteMatch, Switch } from 'react-router-dom';
 
-export default function Deployments() {
+export default function Components() {
     const { path } = useRouteMatch();
 
     return (
         <Switch>
-            <Route path={`${path}/:deployment`}>
+            <Route path={`${path}/:component`}>
                 <Detail />
             </Route>
             <Route>

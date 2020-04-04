@@ -2,7 +2,7 @@ import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int } from 
 import { Application } from '../entity/Application';
 import { Secret } from './types/Secret';
 import { Context } from '../types';
-import { Deployment } from '../entity/Deployment';
+import { Component } from '../entity/Component';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
@@ -21,9 +21,9 @@ export class ApplicationResolver {
         return app;
     }
 
-    @FieldResolver(() => Deployment)
-    async deployment(@Root() application: Application, @Arg('id', () => Int) id: number) {
-        return await Deployment.findOneOrFail({
+    @FieldResolver(() => Component)
+    async component(@Root() application: Application, @Arg('id', () => Int) id: number) {
+        return await Component.findOneOrFail({
             where: {
                 id,
                 application,

@@ -5,11 +5,11 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToOne,
 } from 'typeorm';
-import { Application } from './Application';
-import { Deployment } from './Deployment';
+import { Component } from './Component';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
-import { Length, Min, Max } from 'class-validator';
+import { Min, Max } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Environment } from './Environment';
@@ -29,23 +29,9 @@ registerEnumType(ContainerSize, {
 @Entity()
 @ObjectType()
 export class ContainerGroup extends BaseEntity {
-    static findByApplicationAndId(application: Application, id: number) {
-        return ContainerGroup.findOneOrFail({
-            where: {
-                id,
-                application
-            }
-        });
-    }
-
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
-
-    @Field()
-    @Column()
-    @Length(3, 20)
-    label!: string;
 
     @Field(() => ContainerSize)
     @Column({ type: 'enum', enum: ContainerSize })
@@ -66,26 +52,18 @@ export class ContainerGroup extends BaseEntity {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
 
-    @ManyToOne(
-        () => Application,
-        application => application.containerGroups,
-        { lazy: true }
-    )
-    application!: Lazy<Application>;
-
     @Field(() => Environment)
     @ManyToOne(
         () => Environment,
-        environment => environment.containerGroups,
         { lazy: true }
     )
     environment!: Lazy<Environment>;
 
-    @Field(() => Deployment)
-    @ManyToOne(
-        () => Deployment,
-        deployment => deployment.containerGroups,
+    @Field(() => Component)
+    @OneToOne(
+        () => Component,
+        component => component.containerGroup,
         { lazy: true }
     )
-    deployment!: Lazy<Deployment>;
+    component!: Lazy<Component>;
 }

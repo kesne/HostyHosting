@@ -1,7 +1,7 @@
-query ApplicationDeployments($id: Int!) {
+query ApplicationComponents($id: Int!) {
     application(id: $id) {
         id
-        deployments {
+        components {
             id
             image
         }

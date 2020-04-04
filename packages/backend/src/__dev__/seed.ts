@@ -5,7 +5,7 @@ import { PasswordReset } from '../entity/PasswordReset';
 import { Application } from '../entity/Application';
 import { Organization } from '../entity/Organization';
 import { ContainerGroup } from '../entity/ContainerGroup';
-import { Deployment } from '../entity/Deployment';
+import { Component } from '../entity/Component';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
@@ -17,7 +17,7 @@ async function seed() {
     // Start by removing the ENTIRE world.
     await APIKey.delete({})
     await ContainerGroup.delete({});
-    await Deployment.delete({});
+    await Component.delete({});
     await Application.delete({});
     await PasswordReset.delete({});
     await OrganizationMembership.delete({});

@@ -3,14 +3,12 @@ import { Redirect, useParams, useRouteMatch, Switch, Route } from 'react-router-
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
-import ContainerGroups from './ContainerGroups';
-import Deployments from './Deployments';
+import Components from './Components';
 import ApplicationContext from './ApplicationContext';
 import TailwindPageHeader from '../ui/PageHeader';
 import TailwindTabs from '../ui/Tabs';
 import Container from '../ui/Container';
 import Spinner from '../Spinner';
-import Environments from './Environments';
 
 export default function Application() {
     const params = useParams<{ application: string }>();
@@ -49,19 +47,9 @@ export default function Application() {
                             to: url
                         },
                         {
-                            label: 'Environments',
-                            value: 'environments',
-                            to: `${url}/environments`
-                        },
-                        {
-                            label: 'Deployments',
-                            value: 'deployments',
-                            to: `${url}/deployments`
-                        },
-                        {
-                            label: 'Container Groups',
-                            value: 'cgs',
-                            to: `${url}/cgs`
+                            label: 'Components',
+                            value: 'components',
+                            to: `${url}/components`
                         },
                         {
                             label: 'Settings',
@@ -74,17 +62,11 @@ export default function Application() {
 
             <Container>
                 <Switch>
-                    <Route path={`${path}/deployments`}>
-                        <Deployments />
-                    </Route>
-                    <Route path={`${path}/cgs`}>
-                        <ContainerGroups />
+                    <Route path={`${path}/components`}>
+                        <Components />
                     </Route>
                     <Route path={`${path}/settings`}>
                         <Settings />
-                    </Route>
-                    <Route path={`${path}/environments`}>
-                        <Environments />
                     </Route>
                     <Route path={path} exact>
                         <Overview />
