@@ -119,7 +119,7 @@ type Mutation {
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
   disableTotp(password: String!): Result!
-  signUp(password: String!, email: String!, name: String!): Result!
+  signUp(password: String!, email: String!, name: String!, username: String!): Result!
   signIn(password: String!, email: String!): SignInResult!
   gitHubSignIn(code: String!): SignInResult!
   updateAccount(email: String, name: String): User!
@@ -198,6 +198,7 @@ type User {
   id: Int!
   githubID: Int
   name: String!
+  username: String!
   email: String!
   createdAt: DateTime!
   updatedAt: DateTime!

@@ -208,6 +208,7 @@ export type MutationSignUpArgs = {
   password: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -332,6 +333,7 @@ export type User = {
   id: Scalars['Int'];
   githubID?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
+  username: Scalars['String'];
   email: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -699,6 +701,7 @@ export type SignOutMutation = (
 );
 
 export type SignUpMutationVariables = {
+  username: Scalars['String'];
   name: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1592,8 +1595,8 @@ export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
 export type SignOutMutationResult = ApolloReactCommon.MutationResult<SignOutMutation>;
 export type SignOutMutationOptions = ApolloReactCommon.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($name: String!, $email: String!, $password: String!) {
-  signUp(name: $name, email: $email, password: $password) {
+    mutation SignUp($username: String!, $name: String!, $email: String!, $password: String!) {
+  signUp(username: $username, name: $name, email: $email, password: $password) {
     ok
   }
 }
@@ -1613,6 +1616,7 @@ export type SignUpMutationFn = ApolloReactCommon.MutationFunction<SignUpMutation
  * @example
  * const [signUpMutation, { data, loading, error }] = useSignUpMutation({
  *   variables: {
+ *      username: // value for 'username'
  *      name: // value for 'name'
  *      email: // value for 'email'
  *      password: // value for 'password'

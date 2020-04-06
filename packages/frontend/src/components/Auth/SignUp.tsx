@@ -15,6 +15,7 @@ export default function SignUp() {
     const onFinish = (values: Record<string, string>) => {
         signUp({
             variables: {
+                username: values.username,
                 name: values.name,
                 email: values.email,
                 password: values.password,
@@ -37,11 +38,17 @@ export default function SignUp() {
         >
             <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
                 <Input
+                    label="Username"
+                    name="username"
+                    errors={errors}
+                    ref={register({ required: true })}
+                    autoFocus
+                />
+                <Input
                     label="Name"
                     name="name"
                     errors={errors}
                     ref={register({ required: true })}
-                    autoFocus
                 />
 
                 <Input

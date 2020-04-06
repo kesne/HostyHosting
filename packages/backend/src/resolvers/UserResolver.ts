@@ -40,11 +40,13 @@ export class UserResolver {
     @Mutation(() => Result)
     async signUp(
         @Ctx() { session, cookies }: Context,
+        @Arg('username') username: string,
         @Arg('name') name: string,
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
         await User.signUp(session, cookies, {
+            username,
             name,
             email,
             password,
@@ -131,7 +133,9 @@ export class UserResolver {
         });
 
         if (!user) {
+            // TODO: What do we do about the username here?
             await User.signUp(session, cookies, {
+                username: viewer.login,
                 githubID: viewer.id,
                 name: viewer.name,
                 email: viewer.email,
@@ -194,8 +198,8 @@ export class UserResolver {
 
         // TODO: This won't work when we have external collaborators.
         return memberships
-            .map(membership => membership.organization)
-            .filter(org => !org.isPersonal);
+            .map((membership) => membership.organization)
+            .filter((org) => !org.isPersonal);
     }
 
     @Mutation(() => Result)

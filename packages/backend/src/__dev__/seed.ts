@@ -35,6 +35,7 @@ async function seed() {
     const user = new User();
     user.email = 'admin@vapejuicejordan.rip';
     user.name = 'Admin (DEV)';
+    user.username = 'admin';
     await user.setPassword('admin');
     await user.save();
 
@@ -42,6 +43,7 @@ async function seed() {
     const personalOrg = new Organization();
     personalOrg.name = 'Personal';
     personalOrg.isPersonal = true;
+    personalOrg.username = 'admin';
     await personalOrg.save();
 
     const membership = new OrganizationMembership();
@@ -56,6 +58,7 @@ async function seed() {
     // Create orgs:
     const netflixOrg = new Organization();
     netflixOrg.name = 'Netflix';
+    netflixOrg.username = 'netflix';
     await netflixOrg.save();
 
     const netflixMembership = new OrganizationMembership();

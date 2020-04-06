@@ -13,7 +13,7 @@ import { compare, hash } from 'bcryptjs';
 import { Session, Cookies, Lazy } from '../types';
 import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
-import { IsEmail, Length } from 'class-validator';
+import { IsEmail, Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
 import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
@@ -88,20 +88,23 @@ export class User extends BaseEntity {
         session: Session,
         cookies: Cookies,
         {
+            username,
             name,
             email,
             password,
             githubID,
-        }: { name: string; email: string; password?: string; githubID?: string },
+        }: { username: string; name: string; email: string; password?: string; githubID?: string },
     ) {
         // First create the users' personal organization:
         const organization = new Organization();
         organization.name = 'Personal';
         organization.isPersonal = true;
+        organization.username = username;
         await organization.save();
 
         // Then create the user themself:
         const user = new User();
+        user.username = username;
         user.name = name;
         user.githubID = githubID;
         user.email = email;
@@ -139,6 +142,12 @@ export class User extends BaseEntity {
     @Column()
     @Length(1, 50)
     name!: string;
+
+    @Field()
+    @Column({ unique: true })
+    @Length(3, 20)
+    @Matches(/^[a-z0-9_-]+$/)
+    username!: string;
 
     @Field()
     @Column('citext', { unique: true })
@@ -213,19 +222,11 @@ export class User extends BaseEntity {
     @JoinColumn()
     personalOrganization!: Lazy<Organization>;
 
-    @OneToMany(
-        () => OrganizationMembership,
-        membership => membership.user,
-        { lazy: true },
-    )
+    @OneToMany(() => OrganizationMembership, (membership) => membership.user, { lazy: true })
     organizationMemberships!: Lazy<OrganizationMembership[]>;
 
     @Field(() => [APIKey])
-    @OneToMany(
-        () => APIKey,
-        apiKey => apiKey.user,
-        { lazy: true },
-    )
+    @OneToMany(() => APIKey, (apiKey) => apiKey.user, { lazy: true })
     apiKeys!: Lazy<APIKey>;
 
     async createAPIKey(description: string) {
