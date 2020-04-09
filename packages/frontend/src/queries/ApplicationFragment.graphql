@@ -2,10 +2,6 @@ fragment ApplicationFragment on Application {
     id
     name
     description
-    secrets {
-        key
-        value
-    }
     createdBy {
         id
         name

@@ -20,7 +20,7 @@ type Application {
   organization: Organization!
   components: [Component!]!
   component(id: Int!): Component!
-  secrets: [Secret!]!
+  environments: [Environment!]!
 }
 
 input ApplicationInput {
@@ -45,6 +45,7 @@ type Component {
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroup: ContainerGroup!
+  secrets: [Secret!]!
 }
 
 input ComponentInput {
@@ -53,6 +54,7 @@ input ComponentInput {
   deploymentStrategy: DeploymentStrategy!
   size: ContainerSize!
   containerCount: Int!
+  environmentID: Int!
 }
 
 type Container {
@@ -99,6 +101,7 @@ enum DeploymentStrategy {
 type Environment {
   id: Int!
   name: String!
+  organization: Organization!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -151,6 +154,7 @@ type Organization {
   createdAt: DateTime!
   updatedAt: DateTime!
   applications: [Application!]!
+  environments: [Environment!]!
 }
 
 type OrganizationMutations {

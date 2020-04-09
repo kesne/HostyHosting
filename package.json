@@ -1,6 +1,6 @@
 {
-    "name": "@daas/monorepo",
-    "repository": "git@github.com:kesne/daas.git",
+    "name": "@hh/monorepo",
+    "repository": "git@github.com:kesne/HostyHosting.git",
     "author": "Jordan Gensler <jordangens@gmail.com>",
     "workspaces": [
         "packages/*"

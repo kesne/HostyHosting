@@ -1,1 +1,1 @@
-export const SESSION_NAME = 'daas:session';
+export const SESSION_NAME = 'hh:session';

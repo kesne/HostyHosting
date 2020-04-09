@@ -1,0 +1,9 @@
+query ApplicationEnvironments($id: Int!) {
+    application(id: $id) {
+        id
+        environments {
+            id
+            name
+        }
+    }
+}

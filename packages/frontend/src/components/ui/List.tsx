@@ -51,8 +51,11 @@ export default function List<T>({
     items,
     children,
 }: {
-    items: T[];
+    items?: T[];
     children: (item: T, i: number) => React.ReactNode;
 }) {
+    // TODO: better UI
+    if (!items) return null;
+
     return <ul>{items.map((item, i) => children(item, i))}</ul>;
 }

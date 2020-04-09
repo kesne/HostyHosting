@@ -3,9 +3,9 @@ import cli from 'cli-ux';
 import config from '../utils/config';
 
 export default class Logout extends Command {
-    static description = 'logout of your DaaS account';
+    static description = 'logout of your HostyHosting account';
 
-    static examples = ['$ daas logout'];
+    static examples = ['$ hh logout'];
 
     async run() {
         const confirm = await cli.confirm(

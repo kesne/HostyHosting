@@ -6,10 +6,12 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
+    ManyToOne,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Network } from './Network';
 import { Lazy } from '../types';
+import { Organization } from './Organization';
 
 @ObjectType()
 @Entity()
@@ -28,6 +30,14 @@ export class Environment extends BaseEntity {
         { lazy: true },
     )
     networks!: Lazy<Network[]>;
+
+    @Field(() => Organization)
+    @ManyToOne(
+        () => Organization,
+        organization => organization.environments,
+        { lazy: true },
+    )
+    organization!: Lazy<Organization>;
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })

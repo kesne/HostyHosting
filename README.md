@@ -1,4 +1,4 @@
-# Docker As A Service (DaaS)
+# HostyHosting
 
 ## [We build this live on Twitch, follow us there!](https://twitch.tv/VapeJuiceJordan)
 

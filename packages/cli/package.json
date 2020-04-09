@@ -1,12 +1,12 @@
 {
-    "name": "@daas/cli",
-    "description": "A CLI for DaaS",
+    "name": "@hh/cli",
+    "description": "A CLI for HostyHosting",
     "version": "0.0.0",
     "author": "HostingHosting, LLC",
     "bin": {
-        "daas": "./bin/run"
+        "hh": "./bin/run"
     },
-    "bugs": "https://github.com/kesne/daas/issues",
+    "bugs": "https://github.com/kesne/HostyHosting/issues",
     "dependencies": {
         "@oclif/command": "^1",
         "@oclif/config": "^1",
@@ -39,7 +39,7 @@
         "/npm-shrinkwrap.json",
         "/oclif.manifest.json"
     ],
-    "homepage": "https://github.com/kesne/daas",
+    "homepage": "https://github.com/kesne/HostyHosting",
     "keywords": [
         "oclif"
     ],
@@ -47,12 +47,12 @@
     "main": "lib/index.js",
     "oclif": {
         "commands": "./lib/commands",
-        "bin": "daas",
+        "bin": "hh",
         "plugins": [
             "@oclif/plugin-help"
         ]
     },
-    "repository": "kesne/daas",
+    "repository": "kesne/HostyHosting",
     "scripts": {
         "codegen": "graphql-codegen",
         "postpack": "rm -f oclif.manifest.json",

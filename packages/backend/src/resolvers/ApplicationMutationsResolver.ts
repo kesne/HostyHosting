@@ -6,7 +6,8 @@ import { OrganizationPermission } from '../entity/OrganizationMembership';
 import { OrganizationAccess } from '../utils/permissions';
 import { ComponentInput } from './types/ComponentInput';
 import { ApplicationInput } from './types/ApplicationInput';
-import { ContainerGroup, ContainerSize } from '../entity/ContainerGroup';
+import { ContainerGroup } from '../entity/ContainerGroup';
+import { Environment } from '../entity/Environment';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -49,13 +50,6 @@ export class ApplicationMutations {
             this.application.description = applicationInput.description;
         }
 
-        if (typeof applicationInput.secret !== 'undefined' && applicationInput.secret !== null) {
-            this.application.secrets = {
-                ...this.application.secrets,
-                [applicationInput.secret.key]: applicationInput.secret.value,
-            };
-        }
-
         return await this.application.save();
     }
 
@@ -66,9 +60,17 @@ export class ApplicationMutations {
     )
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
+        const environment = await Environment.findOneOrFail({
+            where: {
+                id: componentInput.environmentID,
+                organization: await this.application.organization,
+            },
+        });
+
         const containerGroup = new ContainerGroup();
         containerGroup.containerCount = componentInput.containerCount;
         containerGroup.size = componentInput.size;
+        containerGroup.environment = environment;
         await containerGroup.save();
 
         const component = new Component();
@@ -77,6 +79,7 @@ export class ApplicationMutations {
         component.image = componentInput.image;
         component.deploymentStrategy = componentInput.deploymentStrategy;
         component.containerGroup = containerGroup;
+        component.secrets = {};
 
         return await component.save();
     }

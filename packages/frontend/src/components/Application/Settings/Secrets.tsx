@@ -6,7 +6,7 @@ import Button from '../../ui/Button';
 import useBoolean from '../../../utils/useBoolean';
 
 export type Props = {
-    application: Pick<Application, 'id' | 'secrets'>;
+    application: Pick<Application, 'id'>;
 };
 
 export default function Secrets({ application }: Props) {

@@ -44,7 +44,7 @@ export default function CreateAPIKey({ open, onClose }: { open: boolean; onClose
                             directly.
                         </p>
                         <div className="px-2 py-1 border border-gray-200 bg-gray-100 font-mono leading-tight rounded break-all my-4">
-                            <strong>daas login</strong> {data!.createAPIKey}
+                            <strong>hh login</strong> {data!.createAPIKey}
                         </div>
                     </ModalContent>
                     <ModalFooter>

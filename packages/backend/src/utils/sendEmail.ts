@@ -6,7 +6,7 @@ const mailgun = mailgunAPI({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
 
 export default async function sendEmail(to: string, subject: string, text: string) {
     await mailgun.messages().send({
-        from: `DaaS <noreply@${MAILGUN_DOMAIN}>`,
+        from: `HostyHosting <noreply@${MAILGUN_DOMAIN}>`,
         to,
         subject,
         text

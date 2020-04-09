@@ -41,9 +41,6 @@ export class Application extends BaseEntity {
     @ManyToOne(() => User, { lazy: true })
     createdBy!: Lazy<User>;
 
-    @Column('json', { nullable: true })
-    secrets!: Record<string, string>;
-
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;

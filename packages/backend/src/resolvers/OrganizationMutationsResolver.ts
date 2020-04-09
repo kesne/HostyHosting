@@ -34,7 +34,6 @@ class OrganizationMutations {
         app.description = applicationInput.description ?? '';
         app.organization = this.organization;
         app.createdBy = user;
-        app.secrets = {};
         return await app.save();
     }
 }

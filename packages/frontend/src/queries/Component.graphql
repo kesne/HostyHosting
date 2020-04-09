@@ -8,6 +8,13 @@ query Component($app: Int!, $component: Int!) {
             image
             createdAt
             updatedAt
+            containerGroup {
+                containerCount
+                size
+                environment {
+                    name
+                }
+            }
         }
     }
 }

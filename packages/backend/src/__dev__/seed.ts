@@ -9,6 +9,7 @@ import { Component } from '../entity/Component';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
+import { Environment } from '../entity/Environment';
 
 // TODO: Make this execute a bunch of GraphQL commands, instead of just being ORM operations.
 async function seed() {
@@ -22,6 +23,7 @@ async function seed() {
     await PasswordReset.delete({});
     await OrganizationMembership.delete({});
     await User.delete({});
+    await Environment.delete({});
     await Organization.delete({});
     await Notification.delete({});
 
@@ -66,6 +68,9 @@ async function seed() {
     netflixMembership.organization = netflixOrg;
     netflixMembership.permission = OrganizationPermission.ADMIN;
     await netflixMembership.save();
+
+    await netflixOrg.createDefaultEnvironments();
+    await personalOrg.createDefaultEnvironments();
 
     await connection.close();
 }

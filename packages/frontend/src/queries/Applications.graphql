@@ -6,5 +6,9 @@ query Applications($org: Int) {
             name
             description
         }
+        environments {
+            id
+            name
+        }
     }
 }

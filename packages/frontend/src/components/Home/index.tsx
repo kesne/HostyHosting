@@ -4,7 +4,7 @@ import { useApplicationsQuery } from '../../queries';
 import SelectOrganization from './SelectOrganization';
 import PageHeader from '../ui/PageHeader';
 import TailwindDropdown, { DropdownItem } from '../ui/Dropdown';
-import { ListItem } from '../ui/List';
+import List, { ListItem } from '../ui/List';
 import Card from '../ui/Card';
 import { useParams } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ export default function Home() {
 
             <main>
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                    <div className="px-4 py-4 sm:px-0">
+                    <div className="px-4 py-4 sm:px-0 grid grid-cols-1 row-gap-6">
                         <Card
                             header={
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">
@@ -61,6 +61,24 @@ export default function Home() {
                                     </ListItem>
                                 ))}
                             </ul>
+                        </Card>
+
+                        <Card
+                            header={
+                                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    Environments
+                                </h3>
+                            }
+                        >
+                            <List items={data?.organization.environments}>
+                                {environment => (
+                                    <ListItem>
+                                        <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
+                                            {environment.name}
+                                        </div>
+                                    </ListItem>
+                                )}
+                            </List>
                         </Card>
                     </div>
                 </div>

@@ -1,8 +1,8 @@
 import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int } from 'type-graphql';
 import { Application } from '../entity/Application';
-import { Secret } from './types/Secret';
 import { Context } from '../types';
 import { Component } from '../entity/Component';
+import { Environment } from '../entity/Environment';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
@@ -31,12 +31,9 @@ export class ApplicationResolver {
         });
     }
 
-    @FieldResolver(() => [Secret])
-    secrets(@Root() app: Application): Secret[] {
-        if (!app.secrets) {
-            return [];
-        }
-
-        return Object.entries(app.secrets).map(([key, value]) => ({ key, value }));
+    @FieldResolver(() => [Environment])
+    async environments(@Root() application: Application) {
+        const organization = await application.organization;
+        return organization.environments;
     }
 }

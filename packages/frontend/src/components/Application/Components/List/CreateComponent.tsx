@@ -16,6 +16,7 @@ import Select from '../../../ui/Select';
 import Tabs from '../../../ui/Tabs';
 import clsx from 'clsx';
 import Label from '../../../ui/Label';
+import SelectEnvironment from './SelectEnvironment';
 
 const Sizes = [
     { name: ContainerSize.S1x1, label: '1 CPU, 128 mb' },
@@ -33,6 +34,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
     const applicationID = useApplicationID();
     const [deploymentType, setDeploymentType] = useState('docker-registry');
     const [containerSize, setContainerSize] = useState<ContainerSize>(ContainerSize.S1x1);
+    const [environmentID, setEnvironmentID] = useState('');
     const [createComponent, { loading, data }] = useCreateComponentMutation({
         update(cache, { data }) {
             if (!data) return;
@@ -79,6 +81,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                     deploymentStrategy: data.strategy as DeploymentStrategy,
                     containerCount: Number(data.number),
                     size: containerSize,
+                    environmentID: Number(environmentID),
                 },
             },
         });
@@ -168,6 +171,10 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                     Replace (rolling deploy)
                                 </option>
                             </Select>
+                            <SelectEnvironment
+                                value={environmentID}
+                                onChange={e => setEnvironmentID(e.target.value)}
+                            />
                         </div>
                     </ModalContent>
                     <ModalFooter>

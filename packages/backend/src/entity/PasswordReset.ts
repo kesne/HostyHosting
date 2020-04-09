@@ -60,7 +60,7 @@ export class PasswordReset extends BaseEntity {
         sendEmail(
             this.user.email,
             'Password Reset',
-            `You requested a password reset on Docker As A Service. To complete the password reset, click here: https://daas.dev/reset-password/${this.uuid}`
+            `You requested a password reset on Docker As A Service. To complete the password reset, click here: https://hostyhosting.dev/reset-password/${this.uuid}`
         );
     }
 }

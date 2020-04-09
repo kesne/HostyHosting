@@ -18,4 +18,7 @@ export class ComponentInput {
 
     @Field(() => Int)
     containerCount!: number;
+
+    @Field(() => Int)
+    environmentID!: number;
 }

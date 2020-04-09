@@ -5,6 +5,7 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
+    AfterInsert,
 } from 'typeorm';
 import { Application } from './Application';
 import { ObjectType, Field, Int } from 'type-graphql';
@@ -12,6 +13,8 @@ import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
+import { Environment } from './Environment';
+import { Network } from './Network';
 
 @Entity()
 @ObjectType()
@@ -93,4 +96,34 @@ export class Organization extends BaseEntity {
         { lazy: true },
     )
     applications!: Lazy<Application[]>;
+
+    @Field(() => [Environment])
+    @OneToMany(
+        () => Environment,
+        environment => environment.organization,
+        { lazy: true },
+    )
+    environments!: Lazy<Environment[]>;
+
+    async createDefaultEnvironments() {
+        const prodNetwork = new Network();
+        const testNetwork = new Network();
+
+        prodNetwork.name = 'Prod';
+        testNetwork.name = 'Test';
+
+        await Promise.all([prodNetwork.save(), testNetwork.save()]);
+
+        const prodEnv = new Environment();
+        prodEnv.name = 'Prod';
+        prodEnv.networks = [prodNetwork];
+        prodEnv.organization = this;
+
+        const testEnv = new Environment();
+        testEnv.name = 'Test';
+        testEnv.networks = [testNetwork];
+        testEnv.organization = this;
+
+        await Promise.all([prodEnv.save(), testEnv.save()]);
+    }
 }

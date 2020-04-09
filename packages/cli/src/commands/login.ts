@@ -19,9 +19,9 @@ function wait(time: number) {
 }
 
 export default class Login extends Command {
-    static description = 'login to your DaaS account';
+    static description = 'login to your HostyHosting account';
 
-    static examples = ['$ daas login'];
+    static examples = ['$ hh login'];
 
     static flags = {
         force: flags.boolean({

@@ -72,6 +72,10 @@ module.exports = {
             template: './src/index.html',
         }),
     ],
+    watch: !isProd,
+    watchOptions: {
+        poll: true
+    },
     devServer: {
         host: '0.0.0.0',
         port: 3000,

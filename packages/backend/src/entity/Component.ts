@@ -53,6 +53,9 @@ export class Component extends BaseEntity {
     @Column()
     image!: string;
 
+    @Column('json', { nullable: false })
+    secrets!: Record<string, string>;
+
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;

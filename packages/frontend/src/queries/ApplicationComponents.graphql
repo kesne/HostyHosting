@@ -3,6 +3,7 @@ query ApplicationComponents($id: Int!) {
         id
         components {
             id
+            name
             image
         }
     }
