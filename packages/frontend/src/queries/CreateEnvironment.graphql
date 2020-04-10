@@ -1,0 +1,7 @@
+mutation CreateEnvironment($org: Int, $name: String!) {
+    organization(id: $org) {
+        createEnvironment(name: $name) {
+            id
+        }
+    }
+}

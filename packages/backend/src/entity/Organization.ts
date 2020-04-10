@@ -105,25 +105,20 @@ export class Organization extends BaseEntity {
     )
     environments!: Lazy<Environment[]>;
 
+    async createEnviroment(name: string) {
+        const network = new Network();
+        network.name = name;
+        await network.save();
+
+        const env = new Environment();
+        env.name = name;
+        env.networks = [network];
+        env.organization = this;
+        return await env.save();
+    }
+
     async createDefaultEnvironments() {
-        const prodNetwork = new Network();
-        const testNetwork = new Network();
-
-        prodNetwork.name = 'Prod';
-        testNetwork.name = 'Test';
-
-        await Promise.all([prodNetwork.save(), testNetwork.save()]);
-
-        const prodEnv = new Environment();
-        prodEnv.name = 'Prod';
-        prodEnv.networks = [prodNetwork];
-        prodEnv.organization = this;
-
-        const testEnv = new Environment();
-        testEnv.name = 'Test';
-        testEnv.networks = [testNetwork];
-        testEnv.organization = this;
-
-        await Promise.all([prodEnv.save(), testEnv.save()]);
+        await this.createEnviroment('Prod');
+        await this.createEnviroment('Test');
     }
 }

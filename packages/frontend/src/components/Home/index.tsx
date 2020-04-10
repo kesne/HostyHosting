@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CreateApplication from './CreateApplication';
 import { useApplicationsQuery } from '../../queries';
 import SelectOrganization from './SelectOrganization';
 import PageHeader from '../ui/PageHeader';
-import TailwindDropdown, { DropdownItem } from '../ui/Dropdown';
+import Dropdown, { DropdownItem } from '../ui/Dropdown';
 import List, { ListItem } from '../ui/List';
 import Card from '../ui/Card';
 import { useParams } from 'react-router-dom';
+import CreateEnvironment from './CreateEnvironment';
+import useBoolean from '../../utils/useBoolean';
 
 export default function Home() {
-    // The ID for the organzation.
-    // If not present, we will assume the user personal organization
+    // NOTE: If not present, we will assume the user personal organization
     const params = useParams<{ organization: string }>();
     const organization = params.organization ? Number(params.organization) : undefined;
 
@@ -20,8 +21,8 @@ export default function Home() {
         },
     });
 
-    // TODO: Convert to useBoolean
-    const [visible, setVisible] = useState(false);
+    const [applicationVisible, { off: applicationOff, on: applicationOn }] = useBoolean(false);
+    const [environmentVisible, { off: environmentOff, on: environmentOn }] = useBoolean(false);
 
     return (
         <div>
@@ -30,12 +31,11 @@ export default function Home() {
                     <div className="flex-grow">
                         <SelectOrganization organization={organization} />
                     </div>
-                    <TailwindDropdown label="New">
-                        <DropdownItem onClick={() => setVisible(true)}>
-                            New Application
-                        </DropdownItem>
+                    <Dropdown label="New" variant="primary">
+                        <DropdownItem onClick={applicationOn}>New Application</DropdownItem>
+                        <DropdownItem onClick={environmentOn}>New Environment</DropdownItem>
                         <DropdownItem>New Router</DropdownItem>
-                    </TailwindDropdown>
+                    </Dropdown>
                 </div>
             </PageHeader>
 
@@ -63,13 +63,7 @@ export default function Home() {
                             </ul>
                         </Card>
 
-                        <Card
-                            header={
-                                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                    Environments
-                                </h3>
-                            }
-                        >
+                        <Card title="Environments">
                             <List items={data?.organization.environments}>
                                 {environment => (
                                     <ListItem>
@@ -80,14 +74,15 @@ export default function Home() {
                                 )}
                             </List>
                         </Card>
+                        <CreateEnvironment open={environmentVisible} onClose={environmentOff} />
                     </div>
                 </div>
             </main>
 
             <CreateApplication
                 organization={organization}
-                visible={visible}
-                onClose={() => setVisible(false)}
+                visible={applicationVisible}
+                onClose={applicationOff}
             />
         </div>
     );

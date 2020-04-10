@@ -1,5 +1,12 @@
 # TODO list for upcoming streams:
 
+
+- Improve the components page
+    - Introduce some level of heigharchy (remove app-level nav on component pages)
+    - Introduce secrets management
+- Add application audit log
+
+
 - Make loading button state.
-- Add more validation states to forms.
+- Add more client-side validation states to forms.
 - Handle no data / errors / loading in a more elegant way.

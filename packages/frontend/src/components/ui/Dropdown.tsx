@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import OutsideClickHandler from 'react-outside-click-handler';
 import useBoolean from '../../utils/useBoolean';
 import { AnchorHTMLAttributes } from 'react';
+import Button, { Props as ButtonProps } from './Button';
 
 export function DropdownItem({
     children,
@@ -21,11 +22,12 @@ export function DropdownItem({
 
 export default function Dropdown({
     label,
-    children
+    children,
+    ...props
 }: {
     label: string;
     children: React.ReactNode;
-}) {
+} & ButtonProps) {
     const [open, { toggle, off }] = useBoolean(false);
 
     return (
@@ -33,11 +35,7 @@ export default function Dropdown({
             <div className="relative inline-block text-left">
                 <div>
                     <span className="rounded-md shadow-sm">
-                        <button
-                            onClick={toggle}
-                            type="button"
-                            className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150"
-                        >
+                        <Button onClick={toggle} type="button" {...props}>
                             {label}
                             <svg
                                 className="-mr-1 ml-2 h-5 w-5"
@@ -50,7 +48,7 @@ export default function Dropdown({
                                     clipRule="evenodd"
                                 />
                             </svg>
-                        </button>
+                        </Button>
                     </span>
                 </div>
                 <AnimatePresence>

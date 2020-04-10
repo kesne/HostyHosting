@@ -84,6 +84,10 @@ export class User extends BaseEntity {
         return user;
     }
 
+    static removeHasUser(cookies: Cookies) {
+        cookies.set('hasUser', '0', { httpOnly: false, signed: false });
+    }
+
     static async signUp(
         session: Session,
         cookies: Cookies,
@@ -213,7 +217,7 @@ export class User extends BaseEntity {
     }
 
     signOut(cookies: Cookies) {
-        cookies.set('hasUser', '0', { httpOnly: false, signed: false });
+        User.removeHasUser(cookies);
     }
 
     // TODO: Could we instead track personal organizaiton via the membership object?

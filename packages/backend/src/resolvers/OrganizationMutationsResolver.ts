@@ -5,6 +5,7 @@ import { Application } from '../entity/Application';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { OrganizationAccess } from '../utils/permissions';
 import { ApplicationInput } from './types/ApplicationInput';
+import { Environment } from '../entity/Environment';
 
 @ObjectType()
 class OrganizationMutations {
@@ -12,6 +13,18 @@ class OrganizationMutations {
 
     constructor(organization: Organization) {
         this.organization = organization;
+    }
+
+    @OrganizationAccess(
+        () => OrganizationMutations,
+        orgMutations => orgMutations.organization,
+        OrganizationPermission.WRITE,
+    )
+    @Field(() => Environment)
+    async createEnvironment(
+        @Arg('name') name: string
+    ) {
+        return await this.organization.createEnviroment(name);
     }
 
     @OrganizationAccess(

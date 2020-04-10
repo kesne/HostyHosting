@@ -5,8 +5,8 @@ import Settings from './Settings';
 import Overview from './Overview';
 import Components from './Components';
 import ApplicationContext from './ApplicationContext';
-import TailwindPageHeader from '../ui/PageHeader';
-import TailwindTabs from '../ui/Tabs';
+import PageHeader from '../ui/PageHeader';
+import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
 import Spinner from '../Spinner';
 
@@ -19,8 +19,8 @@ export default function Application() {
 
     const { data, loading, error } = useApplicationQuery({
         variables: {
-            id
-        }
+            id,
+        },
     });
 
     if (loading || error || !data) {
@@ -29,14 +29,14 @@ export default function Application() {
 
     return (
         <ApplicationContext.Provider value={id}>
-            <TailwindPageHeader>
+            <PageHeader>
                 <h4 className="text-lg leading-6 font-semibold text-gray-900">
                     {data.application.name}
                 </h4>
-            </TailwindPageHeader>
+            </PageHeader>
 
             <div className="flex justify-center py-4">
-                <TailwindTabs
+                <Tabs
                     pills
                     secondary
                     value={pageMatch ? pageMatch.params.page : 'overview'}
@@ -44,18 +44,18 @@ export default function Application() {
                         {
                             label: 'Overview',
                             value: 'overview',
-                            to: url
+                            to: url,
                         },
                         {
                             label: 'Components',
                             value: 'components',
-                            to: `${url}/components`
+                            to: `${url}/components`,
                         },
                         {
                             label: 'Settings',
                             value: 'settings',
-                            to: `${url}/settings`
-                        }
+                            to: `${url}/settings`,
+                        },
                     ]}
                 />
             </div>

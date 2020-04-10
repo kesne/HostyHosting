@@ -8,7 +8,6 @@ import Card from '../../../ui/Card';
 import Button from '../../../ui/Button';
 import Spinner from '../../../Spinner';
 import List, { ListItem } from '../../../ui/List';
-import { EnterContainer, EnterItem } from '../../../ui/motion/Enter';
 
 export default function Components() {
     const applicationID = useApplicationID();
@@ -24,30 +23,26 @@ export default function Components() {
     }
 
     return (
-        <EnterContainer>
-            <EnterItem>
-                <Card
-                    title="Components"
-                    actions={
-                        <Button variant="primary" onClick={on}>
-                            Create Component
-                        </Button>
-                    }
-                >
-                    <CreateComponent visible={createVisible} onClose={off} />
-                    <List items={data.application.components}>
-                        {component => (
-                            // TODO: Use route match url isntead of re-creating full URL?
-                            <ListItem
-                                key={component.id}
-                                to={`/applications/${applicationID}/components/${component.id}`}
-                            >
-                                <Component component={component} />
-                            </ListItem>
-                        )}
-                    </List>
-                </Card>
-            </EnterItem>
-        </EnterContainer>
+        <Card
+            title="Components"
+            actions={
+                <Button variant="primary" onClick={on}>
+                    Create Component
+                </Button>
+            }
+        >
+            <CreateComponent visible={createVisible} onClose={off} />
+            <List items={data.application.components}>
+                {component => (
+                    // TODO: Use route match url isntead of re-creating full URL?
+                    <ListItem
+                        key={component.id}
+                        to={`/applications/${applicationID}/components/${component.id}`}
+                    >
+                        <Component component={component} />
+                    </ListItem>
+                )}
+            </List>
+        </Card>
     );
 }

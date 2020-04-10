@@ -27,7 +27,9 @@ export function checkCookies() {
     if (next !== current) {
         current = next;
         notify();
+        return true;
     }
+    return false;
 }
 
 // TODO: This should redirect ???

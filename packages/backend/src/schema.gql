@@ -158,6 +158,7 @@ type Organization {
 }
 
 type OrganizationMutations {
+  createEnvironment(name: String!): Environment!
   createApplication(application: ApplicationInput!): Application!
 }
 

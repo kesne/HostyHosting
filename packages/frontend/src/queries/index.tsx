@@ -273,7 +273,13 @@ export type Organization = {
 
 export type OrganizationMutations = {
    __typename?: 'OrganizationMutations',
+  createEnvironment: Environment,
   createApplication: Application,
+};
+
+
+export type OrganizationMutationsCreateEnvironmentArgs = {
+  name: Scalars['String']
 };
 
 
@@ -490,6 +496,23 @@ export type CreateComponentMutation = (
     & { createComponent: (
       { __typename?: 'Component' }
       & Pick<Component, 'id' | 'image'>
+    ) }
+  ) }
+);
+
+export type CreateEnvironmentMutationVariables = {
+  org?: Maybe<Scalars['Int']>,
+  name: Scalars['String']
+};
+
+
+export type CreateEnvironmentMutation = (
+  { __typename?: 'Mutation' }
+  & { organization: (
+    { __typename?: 'OrganizationMutations' }
+    & { createEnvironment: (
+      { __typename?: 'Environment' }
+      & Pick<Environment, 'id'>
     ) }
   ) }
 );
@@ -1097,6 +1120,41 @@ export function useCreateComponentMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateComponentMutationHookResult = ReturnType<typeof useCreateComponentMutation>;
 export type CreateComponentMutationResult = ApolloReactCommon.MutationResult<CreateComponentMutation>;
 export type CreateComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateComponentMutation, CreateComponentMutationVariables>;
+export const CreateEnvironmentDocument = gql`
+    mutation CreateEnvironment($org: Int, $name: String!) {
+  organization(id: $org) {
+    createEnvironment(name: $name) {
+      id
+    }
+  }
+}
+    `;
+export type CreateEnvironmentMutationFn = ApolloReactCommon.MutationFunction<CreateEnvironmentMutation, CreateEnvironmentMutationVariables>;
+
+/**
+ * __useCreateEnvironmentMutation__
+ *
+ * To run a mutation, you first call `useCreateEnvironmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEnvironmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEnvironmentMutation, { data, loading, error }] = useCreateEnvironmentMutation({
+ *   variables: {
+ *      org: // value for 'org'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateEnvironmentMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateEnvironmentMutation, CreateEnvironmentMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateEnvironmentMutation, CreateEnvironmentMutationVariables>(CreateEnvironmentDocument, baseOptions);
+      }
+export type CreateEnvironmentMutationHookResult = ReturnType<typeof useCreateEnvironmentMutation>;
+export type CreateEnvironmentMutationResult = ApolloReactCommon.MutationResult<CreateEnvironmentMutation>;
+export type CreateEnvironmentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateEnvironmentMutation, CreateEnvironmentMutationVariables>;
 export const DeleteApiKeyDocument = gql`
     mutation DeleteAPIKey($id: Int!) {
   deleteAPIKey(id: $id) {

@@ -1,4 +1,3 @@
-import isomorphicFetch from 'isomorphic-fetch';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
@@ -11,10 +10,13 @@ const httpLink = new HttpLink({
     credentials: 'include',
     // TODO: Replace this custom fetch cookie logic with a custom link:
     fetch: (input: RequestInfo, init?: RequestInit) =>
-        isomorphicFetch(input, init).then(res => {
-            checkCookies();
+        fetch(input, init).then(res => {
+            if (checkCookies()) {
+                console.log('resetting store');
+                client.cache.reset();
+            }
             return res;
-        })
+        }),
 });
 
 const client = new ApolloClient({
@@ -23,8 +25,8 @@ const client = new ApolloClient({
             if (graphQLErrors)
                 graphQLErrors.forEach(({ message, locations, path }) =>
                     console.log(
-                        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-                    )
+                        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+                    ),
                 );
             if (networkError) console.log(`[Network error]: ${networkError}`);
 
@@ -41,9 +43,9 @@ const client = new ApolloClient({
                 });
             }
         }),
-        httpLink
+        httpLink,
     ]),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
 });
 
 export default client;

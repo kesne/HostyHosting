@@ -39,7 +39,7 @@ const VARIANTS = {
     }
 };
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: keyof typeof VARIANTS;
     fullWidth?: boolean;
 };

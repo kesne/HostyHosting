@@ -101,6 +101,10 @@ async function main() {
             ctx.user = await User.fromSession(ctx.session);
         }
 
+        if (!ctx.user) {
+            User.removeHasUser(ctx.cookies);
+        }
+
         return next();
     });
 
