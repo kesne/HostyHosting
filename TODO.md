@@ -1,8 +1,6 @@
 # TODO list for upcoming streams:
 
-
 - Improve the components page
-    - Introduce some level of heigharchy (remove app-level nav on component pages)
     - Introduce secrets management
 - Add application audit log
 

@@ -173,7 +173,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                             </Select>
                             <SelectEnvironment
                                 value={environmentID}
-                                onChange={e => setEnvironmentID(e.target.value)}
+                                onChange={value => setEnvironmentID(value)}
                             />
                         </div>
                     </ModalContent>

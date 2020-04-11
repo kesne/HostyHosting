@@ -1,9 +1,11 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useRouteMatch } from 'react-router-dom';
 import { useComponentQuery } from '../../../../queries';
 import Card from '../../../ui/Card';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
+import Link from '../../../ui/Link';
+import { useBreadcrumb } from '../../Breadcrumbs';
 
 export default function Detail() {
     const params = useParams<{ application: string; component: string }>();
@@ -12,6 +14,11 @@ export default function Detail() {
             app: Number(params.application),
             component: Number(params.component),
         },
+    });
+
+    useBreadcrumb({
+        name: data?.application.component.name || '...',
+        url: `/applications/${params.application}/components/${params.component}`,
     });
 
     if (!data) {

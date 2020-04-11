@@ -4,10 +4,16 @@ import Information from './Information';
 import Region from './Region';
 import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
+import { useBreadcrumb } from '../Breadcrumbs';
 
 export default function Settings() {
     const id = useApplicationID();
     const { data } = useApplicationQuery({ variables: { id } });
+
+    useBreadcrumb({
+        name: 'Settings',
+        url: `/applications/${id}/settings`,
+    });
 
     // TODO:
     if (!data) {

@@ -12,7 +12,6 @@ const httpLink = new HttpLink({
     fetch: (input: RequestInfo, init?: RequestInit) =>
         fetch(input, init).then(res => {
             if (checkCookies()) {
-                console.log('resetting store');
                 client.cache.reset();
             }
             return res;
