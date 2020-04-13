@@ -60,14 +60,13 @@ export default function Breadcrumbs() {
         <h4 className="text-lg leading-6 font-normal text-gray-600 flex items-center">
             {breadcrumbs.list.map((crumb, index) => (
                 <React.Fragment key={index}>
-                    <Link
-                        to={crumb.url}
-                        className={
-                            index === 0 ? 'text-lg leading-6 font-semibold text-gray-900' : ''
-                        }
-                    >
-                        {crumb.name}
-                    </Link>
+                    {index === 0 ? (
+                        <div className="text-lg leading-6 font-semibold text-gray-900">
+                            {crumb.name}
+                        </div>
+                    ) : (
+                        <Link to={crumb.url}>{crumb.name}</Link>
+                    )}
                     {index < breadcrumbs.list.length - 1 && (
                         <svg
                             fill="none"

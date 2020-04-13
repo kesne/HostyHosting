@@ -26,7 +26,6 @@ type Application {
 input ApplicationInput {
   name: String
   description: String
-  secret: SecretInput
 }
 
 type ApplicationMutations {
@@ -34,6 +33,7 @@ type ApplicationMutations {
   update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
   updateComponent(image: String!, id: Int!): Component!
+  setSecret(value: String!, key: String!, id: Int!): Secret!
   deleteComponent(id: Int!): Component!
 }
 
@@ -42,10 +42,10 @@ type Component {
   name: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
+  secrets: [Secret!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroup: ContainerGroup!
-  secrets: [Secret!]!
 }
 
 input ComponentInput {
@@ -181,8 +181,11 @@ type Result {
 }
 
 type Secret {
+  id: Int!
   key: String!
   value: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SecretInput {

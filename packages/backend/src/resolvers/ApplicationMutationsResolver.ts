@@ -8,7 +8,10 @@ import { ComponentInput } from './types/ComponentInput';
 import { ApplicationInput } from './types/ApplicationInput';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
+import { Secret } from '../entity/Secret';
 
+// TODO: Literally all of these require write access to the Organization, so we should probably just check this at a higher level,
+// rather than having a decorator on every fucking field.
 @ObjectType()
 export class ApplicationMutations {
     application: Application;
@@ -97,6 +100,36 @@ export class ApplicationMutations {
         deployment.image = image;
 
         return await deployment.save();
+    }
+
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
+    @Field(() => Secret)
+    async setSecret(
+        @Arg('id', () => Int) id: number,
+        @Arg('key') key: string,
+        @Arg('value') value: string,
+    ) {
+        const component = await Component.findByApplicationAndId(this.application, id);
+        let secret = await Secret.findOne({
+            where: {
+                key,
+                component,
+            }
+        });
+
+        if (!secret) {
+            secret = new Secret();
+        }
+
+        secret.key = key;
+        secret.value = value;
+        secret.component = component;
+
+        return await secret.save();
     }
 
     @OrganizationAccess(

@@ -6,13 +6,15 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToOne,
-    JoinColumn
+    JoinColumn,
+    OneToMany
 } from 'typeorm';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
 import { ContainerGroup } from './ContainerGroup';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
+import { Secret } from './Secret';
 
 export enum DeploymentStrategy {
     REPLACE = 'REPLACE', // 1-to-1 replacement (rolling update)
@@ -53,8 +55,9 @@ export class Component extends BaseEntity {
     @Column()
     image!: string;
 
-    @Column('json', { nullable: false })
-    secrets!: Record<string, string>;
+    @Field(() => [Secret])
+    @OneToMany(() => Secret, (secret) => secret.component, { lazy: true })
+    secrets!: Lazy<Secret[]>
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
