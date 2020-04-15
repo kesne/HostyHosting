@@ -33,7 +33,9 @@ type ApplicationMutations {
   update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
   updateComponent(image: String!, id: Int!): Component!
-  setSecret(value: String!, key: String!, id: Int!): Secret!
+  addSecret(value: String!, key: String!, component: Int!): Secret!
+  editSecret(value: String!, key: String!, id: Int!, component: Int!): Secret!
+  deleteSecret(id: Int!, component: Int!): Secret!
   deleteComponent(id: Int!): Component!
 }
 
@@ -46,6 +48,7 @@ type Component {
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroup: ContainerGroup!
+  monthlyPrice: Int!
 }
 
 input ComponentInput {
@@ -165,6 +168,7 @@ type OrganizationMutations {
 type Query {
   getAPIKeyFromRequest(uuid: String!): String
   application(id: Int!): Application!
+  estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(
     """

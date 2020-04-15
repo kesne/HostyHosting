@@ -8,6 +8,7 @@ query Component($app: Int!, $component: Int!) {
             image
             createdAt
             updatedAt
+            monthlyPrice
             containerGroup {
                 containerCount
                 size

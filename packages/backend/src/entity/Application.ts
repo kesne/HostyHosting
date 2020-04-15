@@ -16,6 +16,7 @@ import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
+import { NAME_REGEX } from '../constants';
 
 @Entity()
 @ObjectType()
@@ -28,7 +29,7 @@ export class Application extends BaseEntity {
     @Field()
     @Column()
     @Length(3, 20)
-    @Matches(/^[a-z0-9_-]+$/)
+    @Matches(NAME_REGEX)
     name!: string;
 
     @Field()

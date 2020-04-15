@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useComponentQuery, ContainerSize } from '../../../../queries';
+import { useComponentQuery } from '../../../../queries';
 import Card, { CardContent } from '../../../ui/Card';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
@@ -8,18 +8,7 @@ import { useBreadcrumb } from '../../Breadcrumbs';
 import Secrets from './Secrets';
 import EditOrAddSecret from './EditOrAddSecret';
 import useBoolean from '../../../../utils/useBoolean';
-
-const MULTIPLIER = {
-    [ContainerSize.S1x1]: 1,
-    [ContainerSize.S2x2]: 2,
-    [ContainerSize.S4x4]: 4,
-    [ContainerSize.S8x8]: 8,
-    [ContainerSize.S16x16]: 16,
-};
-
-function calculateMonthlyCost(size: ContainerSize, count: number) {
-    return 2.5 * MULTIPLIER[size] * count;
-}
+import formatCurrency from '../../../../utils/formatCurrency';
 
 export default function Detail() {
     const params = useParams<{ application: string; component: string }>();
@@ -110,11 +99,7 @@ export default function Detail() {
                                 Monthly Cost
                             </dt>
                             <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                $
-                                {calculateMonthlyCost(
-                                    data.application.component.containerGroup.size,
-                                    data.application.component.containerGroup.containerCount,
-                                )}
+                                {formatCurrency(data.application.component.monthlyPrice)}
                             </dd>
                         </dl>
                     </CardContent>

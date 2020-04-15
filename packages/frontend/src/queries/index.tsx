@@ -51,7 +51,9 @@ export type ApplicationMutations = {
   update: Application,
   createComponent: Component,
   updateComponent: Component,
-  setSecret: Secret,
+  addSecret: Secret,
+  editSecret: Secret,
+  deleteSecret: Secret,
   deleteComponent: Component,
 };
 
@@ -72,10 +74,24 @@ export type ApplicationMutationsUpdateComponentArgs = {
 };
 
 
-export type ApplicationMutationsSetSecretArgs = {
+export type ApplicationMutationsAddSecretArgs = {
   value: Scalars['String'],
   key: Scalars['String'],
-  id: Scalars['Int']
+  component: Scalars['Int']
+};
+
+
+export type ApplicationMutationsEditSecretArgs = {
+  value: Scalars['String'],
+  key: Scalars['String'],
+  id: Scalars['Int'],
+  component: Scalars['Int']
+};
+
+
+export type ApplicationMutationsDeleteSecretArgs = {
+  id: Scalars['Int'],
+  component: Scalars['Int']
 };
 
 
@@ -93,6 +109,7 @@ export type Component = {
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   containerGroup: ContainerGroup,
+  monthlyPrice: Scalars['Int'],
 };
 
 export type ComponentInput = {
@@ -298,6 +315,7 @@ export type Query = {
    __typename?: 'Query',
   getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
+  estimateMonthlyPrice: Scalars['Int'],
   notifications: Array<Notification>,
   organization: Organization,
   me: User,
@@ -311,6 +329,12 @@ export type QueryGetApiKeyFromRequestArgs = {
 
 export type QueryApplicationArgs = {
   id: Scalars['Int']
+};
+
+
+export type QueryEstimateMonthlyPriceArgs = {
+  count: Scalars['Int'],
+  size: ContainerSize
 };
 
 
@@ -363,6 +387,25 @@ export type User = {
   onboardTOTP: Scalars['String'],
   organizations: Array<Organization>,
 };
+
+export type AddSecretMutationVariables = {
+  applicationID: Scalars['Int'],
+  componentID: Scalars['Int'],
+  key: Scalars['String'],
+  value: Scalars['String']
+};
+
+
+export type AddSecretMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { addSecret: (
+      { __typename?: 'Secret' }
+      & Pick<Secret, 'id' | 'key' | 'value'>
+    ) }
+  ) }
+);
 
 export type ApplicationQueryVariables = {
   id: Scalars['Int']
@@ -453,7 +496,7 @@ export type ComponentQuery = (
     & Pick<Application, 'id'>
     & { component: (
       { __typename?: 'Component' }
-      & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt'>
+      & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
       & { containerGroup: (
         { __typename?: 'ContainerGroup' }
         & Pick<ContainerGroup, 'containerCount' | 'size'>
@@ -576,6 +619,24 @@ export type DeleteComponentMutation = (
   ) }
 );
 
+export type DeleteSecretMutationVariables = {
+  applicationID: Scalars['Int'],
+  componentID: Scalars['Int'],
+  secretID: Scalars['Int']
+};
+
+
+export type DeleteSecretMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { deleteSecret: (
+      { __typename?: 'Secret' }
+      & Pick<Secret, 'id'>
+    ) }
+  ) }
+);
+
 export type DisableTotpMutationVariables = {
   password: Scalars['String']
 };
@@ -586,6 +647,26 @@ export type DisableTotpMutation = (
   & { disableTotp: (
     { __typename?: 'Result' }
     & Pick<Result, 'ok'>
+  ) }
+);
+
+export type EditSecretMutationVariables = {
+  applicationID: Scalars['Int'],
+  componentID: Scalars['Int'],
+  secretID: Scalars['Int'],
+  key: Scalars['String'],
+  value: Scalars['String']
+};
+
+
+export type EditSecretMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { editSecret: (
+      { __typename?: 'Secret' }
+      & Pick<Secret, 'id' | 'key' | 'value'>
+    ) }
   ) }
 );
 
@@ -740,25 +821,6 @@ export type ResetPasswordMutation = (
   ) }
 );
 
-export type SetSecretMutationVariables = {
-  applicationID: Scalars['Int'],
-  componentID: Scalars['Int'],
-  key: Scalars['String'],
-  value: Scalars['String']
-};
-
-
-export type SetSecretMutation = (
-  { __typename?: 'Mutation' }
-  & { application: (
-    { __typename?: 'ApplicationMutations' }
-    & { setSecret: (
-      { __typename?: 'Secret' }
-      & Pick<Secret, 'id' | 'key' | 'value'>
-    ) }
-  ) }
-);
-
 export type SignInMutationVariables = {
   email: Scalars['String'],
   password: Scalars['String']
@@ -852,6 +914,45 @@ export const MeFragmentFragmentDoc = gql`
   hasTOTP
 }
     `;
+export const AddSecretDocument = gql`
+    mutation AddSecret($applicationID: Int!, $componentID: Int!, $key: String!, $value: String!) {
+  application(id: $applicationID) {
+    addSecret(component: $componentID, key: $key, value: $value) {
+      id
+      key
+      value
+    }
+  }
+}
+    `;
+export type AddSecretMutationFn = ApolloReactCommon.MutationFunction<AddSecretMutation, AddSecretMutationVariables>;
+
+/**
+ * __useAddSecretMutation__
+ *
+ * To run a mutation, you first call `useAddSecretMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddSecretMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addSecretMutation, { data, loading, error }] = useAddSecretMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      componentID: // value for 'componentID'
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useAddSecretMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddSecretMutation, AddSecretMutationVariables>) {
+        return ApolloReactHooks.useMutation<AddSecretMutation, AddSecretMutationVariables>(AddSecretDocument, baseOptions);
+      }
+export type AddSecretMutationHookResult = ReturnType<typeof useAddSecretMutation>;
+export type AddSecretMutationResult = ApolloReactCommon.MutationResult<AddSecretMutation>;
+export type AddSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<AddSecretMutation, AddSecretMutationVariables>;
 export const ApplicationDocument = gql`
     query Application($id: Int!) {
   application(id: $id) {
@@ -1013,6 +1114,7 @@ export const ComponentDocument = gql`
       image
       createdAt
       updatedAt
+      monthlyPrice
       containerGroup {
         containerCount
         size
@@ -1293,6 +1395,42 @@ export function useDeleteComponentMutation(baseOptions?: ApolloReactHooks.Mutati
 export type DeleteComponentMutationHookResult = ReturnType<typeof useDeleteComponentMutation>;
 export type DeleteComponentMutationResult = ApolloReactCommon.MutationResult<DeleteComponentMutation>;
 export type DeleteComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteComponentMutation, DeleteComponentMutationVariables>;
+export const DeleteSecretDocument = gql`
+    mutation DeleteSecret($applicationID: Int!, $componentID: Int!, $secretID: Int!) {
+  application(id: $applicationID) {
+    deleteSecret(component: $componentID, id: $secretID) {
+      id
+    }
+  }
+}
+    `;
+export type DeleteSecretMutationFn = ApolloReactCommon.MutationFunction<DeleteSecretMutation, DeleteSecretMutationVariables>;
+
+/**
+ * __useDeleteSecretMutation__
+ *
+ * To run a mutation, you first call `useDeleteSecretMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSecretMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSecretMutation, { data, loading, error }] = useDeleteSecretMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      componentID: // value for 'componentID'
+ *      secretID: // value for 'secretID'
+ *   },
+ * });
+ */
+export function useDeleteSecretMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteSecretMutation, DeleteSecretMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteSecretMutation, DeleteSecretMutationVariables>(DeleteSecretDocument, baseOptions);
+      }
+export type DeleteSecretMutationHookResult = ReturnType<typeof useDeleteSecretMutation>;
+export type DeleteSecretMutationResult = ApolloReactCommon.MutationResult<DeleteSecretMutation>;
+export type DeleteSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteSecretMutation, DeleteSecretMutationVariables>;
 export const DisableTotpDocument = gql`
     mutation DisableTOTP($password: String!) {
   disableTotp(password: $password) {
@@ -1325,6 +1463,46 @@ export function useDisableTotpMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type DisableTotpMutationHookResult = ReturnType<typeof useDisableTotpMutation>;
 export type DisableTotpMutationResult = ApolloReactCommon.MutationResult<DisableTotpMutation>;
 export type DisableTotpMutationOptions = ApolloReactCommon.BaseMutationOptions<DisableTotpMutation, DisableTotpMutationVariables>;
+export const EditSecretDocument = gql`
+    mutation EditSecret($applicationID: Int!, $componentID: Int!, $secretID: Int!, $key: String!, $value: String!) {
+  application(id: $applicationID) {
+    editSecret(component: $componentID, id: $secretID, key: $key, value: $value) {
+      id
+      key
+      value
+    }
+  }
+}
+    `;
+export type EditSecretMutationFn = ApolloReactCommon.MutationFunction<EditSecretMutation, EditSecretMutationVariables>;
+
+/**
+ * __useEditSecretMutation__
+ *
+ * To run a mutation, you first call `useEditSecretMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditSecretMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editSecretMutation, { data, loading, error }] = useEditSecretMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      componentID: // value for 'componentID'
+ *      secretID: // value for 'secretID'
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useEditSecretMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditSecretMutation, EditSecretMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditSecretMutation, EditSecretMutationVariables>(EditSecretDocument, baseOptions);
+      }
+export type EditSecretMutationHookResult = ReturnType<typeof useEditSecretMutation>;
+export type EditSecretMutationResult = ApolloReactCommon.MutationResult<EditSecretMutation>;
+export type EditSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<EditSecretMutation, EditSecretMutationVariables>;
 export const EnableTotpDocument = gql`
     mutation EnableTotp($secret: String!, $token: String!) {
   enableTotp(secret: $secret, token: $token) {
@@ -1698,45 +1876,6 @@ export function useResetPasswordMutation(baseOptions?: ApolloReactHooks.Mutation
 export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
 export type ResetPasswordMutationResult = ApolloReactCommon.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
-export const SetSecretDocument = gql`
-    mutation SetSecret($applicationID: Int!, $componentID: Int!, $key: String!, $value: String!) {
-  application(id: $applicationID) {
-    setSecret(id: $componentID, key: $key, value: $value) {
-      id
-      key
-      value
-    }
-  }
-}
-    `;
-export type SetSecretMutationFn = ApolloReactCommon.MutationFunction<SetSecretMutation, SetSecretMutationVariables>;
-
-/**
- * __useSetSecretMutation__
- *
- * To run a mutation, you first call `useSetSecretMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetSecretMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setSecretMutation, { data, loading, error }] = useSetSecretMutation({
- *   variables: {
- *      applicationID: // value for 'applicationID'
- *      componentID: // value for 'componentID'
- *      key: // value for 'key'
- *      value: // value for 'value'
- *   },
- * });
- */
-export function useSetSecretMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetSecretMutation, SetSecretMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetSecretMutation, SetSecretMutationVariables>(SetSecretDocument, baseOptions);
-      }
-export type SetSecretMutationHookResult = ReturnType<typeof useSetSecretMutation>;
-export type SetSecretMutationResult = ApolloReactCommon.MutationResult<SetSecretMutation>;
-export type SetSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<SetSecretMutation, SetSecretMutationVariables>;
 export const SignInDocument = gql`
     mutation SignIn($email: String!, $password: String!) {
   signIn(email: $email, password: $password) {

@@ -7,7 +7,7 @@ import {
     UpdateDateColumn,
     OneToOne,
     JoinColumn,
-    OneToMany
+    OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
@@ -15,14 +15,16 @@ import { ContainerGroup } from './ContainerGroup';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Secret } from './Secret';
+import { Matches, Length } from 'class-validator';
+import { NAME_REGEX } from '../constants';
 
 export enum DeploymentStrategy {
     REPLACE = 'REPLACE', // 1-to-1 replacement (rolling update)
-    RECREATE = 'RECREATE' // Other services default (kill all then deploy)
+    RECREATE = 'RECREATE', // Other services default (kill all then deploy)
 }
 
 registerEnumType(DeploymentStrategy, {
-    name: 'DeploymentStrategy'
+    name: 'DeploymentStrategy',
 });
 
 @Entity()
@@ -32,8 +34,8 @@ export class Component extends BaseEntity {
         return Component.findOneOrFail({
             where: {
                 id,
-                application
-            }
+                application,
+            },
         });
     }
 
@@ -43,6 +45,8 @@ export class Component extends BaseEntity {
 
     @Field()
     @Column()
+    @Matches(NAME_REGEX)
+    @Length(3, 20)
     name!: string;
 
     @Field(() => DeploymentStrategy)
@@ -56,8 +60,12 @@ export class Component extends BaseEntity {
     image!: string;
 
     @Field(() => [Secret])
-    @OneToMany(() => Secret, (secret) => secret.component, { lazy: true })
-    secrets!: Lazy<Secret[]>
+    @OneToMany(
+        () => Secret,
+        secret => secret.component,
+        { lazy: true },
+    )
+    secrets!: Lazy<Secret[]>;
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
@@ -70,7 +78,7 @@ export class Component extends BaseEntity {
     @ManyToOne(
         () => Application,
         application => application.components,
-        { lazy: true }
+        { lazy: true },
     )
     application!: Lazy<Application>;
 
@@ -78,7 +86,7 @@ export class Component extends BaseEntity {
     @OneToOne(
         () => ContainerGroup,
         containerGroup => containerGroup.component,
-        { lazy: true }
+        { lazy: true },
     )
     @JoinColumn()
     containerGroup!: Lazy<ContainerGroup>;

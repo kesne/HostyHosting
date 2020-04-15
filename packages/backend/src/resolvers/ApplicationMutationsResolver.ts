@@ -108,28 +108,66 @@ export class ApplicationMutations {
         OrganizationPermission.WRITE,
     )
     @Field(() => Secret)
-    async setSecret(
-        @Arg('id', () => Int) id: number,
+    async addSecret(
+        @Arg('component', () => Int) componentID: number,
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
-        const component = await Component.findByApplicationAndId(this.application, id);
-        let secret = await Secret.findOne({
-            where: {
-                key,
-                component,
-            }
-        });
+        const component = await Component.findByApplicationAndId(this.application, componentID);
 
-        if (!secret) {
-            secret = new Secret();
-        }
+        const secret = new Secret();
 
         secret.key = key;
         secret.value = value;
         secret.component = component;
 
         return await secret.save();
+    }
+
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
+    @Field(() => Secret)
+    async editSecret(
+        @Arg('component', () => Int) componentID: number,
+        @Arg('id', () => Int) id: number,
+        @Arg('key') key: string,
+        @Arg('value') value: string,
+    ) {
+        const component = await Component.findByApplicationAndId(this.application, componentID);
+        const secret = await Secret.findOneOrFail({
+            where: {
+                id,
+                component,
+            },
+        });
+
+        secret.key = key;
+        secret.value = value;
+
+        return await secret.save();
+    }
+
+    @OrganizationAccess(
+        () => ApplicationMutations,
+        applicationMutations => applicationMutations.application.organization,
+        OrganizationPermission.WRITE,
+    )
+    @Field(() => Secret)
+    async deleteSecret(@Arg('component', () => Int) componentID: number, @Arg('id', () => Int) id: number) {
+        const component = await Component.findByApplicationAndId(this.application, componentID);
+        const secret = await Secret.findOneOrFail({
+            where: {
+                id,
+                component,
+            },
+        });
+
+        await Secret.delete(secret.id);
+
+        return secret;
     }
 
     @OrganizationAccess(

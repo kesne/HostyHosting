@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { useUpdateApplicationMutation, Secret } from '../../../../queries';
 import EditOrAddSecret from './EditOrAddSecret';
-import Button, { ButtonGroup } from '../../../ui/Button';
 import List, { ListItem } from '../../../ui/List';
-import useBoolean from '../../../../utils/useBoolean';
+import Secret, { SecretData } from './Secret';
 
 export type Props = {
     id: number;
-    secrets: any[];
+    secrets: SecretData[];
 };
 
 export default function Secrets({ id, secrets }: Props) {
-    const [editing, setEditing] = useState<Secret | null>(null);
+    const [editing, setEditing] = useState<SecretData | null>(null);
 
     return (
         <>
@@ -24,15 +22,11 @@ export default function Secrets({ id, secrets }: Props) {
             <List items={secrets}>
                 {secret => (
                     <ListItem>
-                        <div className="flex text-gray-800" key={secret.key}>
-                            <div className="flex-1 font-mono">{secret.key || 'KEY'}</div>
-                            <div className="flex-1 font-mono">{secret.value || 'VALUE'}</div>
-
-                            <ButtonGroup>
-                                <Button onClick={() => setEditing(secret)}>Edit</Button>
-                                <Button>Delete</Button>
-                            </ButtonGroup>
-                        </div>
+                        <Secret
+                            componentID={id}
+                            secret={secret}
+                            onEdit={data => setEditing(data)}
+                        />
                     </ListItem>
                 )}
             </List>

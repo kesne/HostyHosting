@@ -17,6 +17,7 @@ import { IsEmail, Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
 import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
+import { NAME_REGEX } from '../constants';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -150,7 +151,7 @@ export class User extends BaseEntity {
     @Field()
     @Column({ unique: true })
     @Length(3, 20)
-    @Matches(/^[a-z0-9_-]+$/)
+    @Matches(NAME_REGEX)
     username!: string;
 
     @Field()

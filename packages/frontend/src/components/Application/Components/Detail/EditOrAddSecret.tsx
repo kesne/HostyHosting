@@ -1,12 +1,17 @@
 import React from 'react';
-import { Secret, useSetSecretMutation } from '../../../../queries';
+import {
+    AddSecretDocument,
+    EditSecretDocument,
+} from '../../../../queries';
 import Input from '../../../ui/Input';
 import { useApplicationID } from '../../ApplicationContext';
 import CreateModal from '../../../ui/CreateModal';
+import { useMutation } from '@apollo/react-hooks';
+import { SecretData } from './Secret';
 
 type Props = {
     id: number;
-    secret?: Secret | null;
+    secret?: SecretData | null;
     open: boolean;
     onClose(): void;
     create?: boolean;
@@ -14,13 +19,16 @@ type Props = {
 
 export default function EditOrAddSecret({ id, secret, open, onClose, create }: Props) {
     const applicationID = useApplicationID();
-    const [setSecret, { loading }] = useSetSecretMutation();
+    const [addOrEditSecret, { loading }] = useMutation(
+        create ? AddSecretDocument : EditSecretDocument,
+    );
 
     async function onSubmit(values: Record<string, string>) {
-        await setSecret({
+        await addOrEditSecret({
             variables: {
                 applicationID,
                 componentID: id,
+                secretID: secret?.id,
                 key: values.key,
                 value: values.value,
             },

@@ -15,6 +15,7 @@ import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
 import { Environment } from './Environment';
 import { Network } from './Network';
+import { NAME_REGEX } from '../constants';
 
 @Entity()
 @ObjectType()
@@ -66,7 +67,7 @@ export class Organization extends BaseEntity {
     // Do you every wake up in the morning,
     //    and just stare at the ceiling and think "Fuck man...... Fuck."?
     @Length(3, 20)
-    @Matches(/^[a-z0-9_-]+$/)
+    @Matches(NAME_REGEX)
     username!: string;
 
     @Field()
