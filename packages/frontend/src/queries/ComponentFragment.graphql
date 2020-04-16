@@ -1,0 +1,21 @@
+fragment ComponentFragment on Component {
+    id
+    name
+    deploymentStrategy
+    image
+    createdAt
+    updatedAt
+    monthlyPrice
+    containerGroup {
+        containerCount
+        size
+        environment {
+            name
+        }
+    }
+    secrets {
+        id
+        key
+        value
+    }
+}
