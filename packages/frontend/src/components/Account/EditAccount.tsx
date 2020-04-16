@@ -15,6 +15,7 @@ export default function EditAccount() {
     function handleFinish(values: Record<string, any>) {
         updateAccount({
             variables: {
+                username: values.username,
                 name: values.name,
                 email: values.email,
             },
@@ -29,6 +30,14 @@ export default function EditAccount() {
         <Card>
             <CardContent>
                 <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(handleFinish)}>
+                    <Input
+                        label="Username"
+                        name="username"
+                        disabled={updateAccountState.loading}
+                        defaultValue={data?.me.username}
+                        ref={register({ required: true })}
+                        errors={errors}
+                    />
                     <Input
                         label="Name"
                         name="name"

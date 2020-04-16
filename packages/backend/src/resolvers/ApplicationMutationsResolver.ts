@@ -3,15 +3,12 @@ import { Application } from '../entity/Application';
 import { Component } from '../entity/Component';
 import { Context } from '../types';
 import { OrganizationPermission } from '../entity/OrganizationMembership';
-import { OrganizationAccess } from '../utils/permissions';
 import { ComponentInput } from './types/ComponentInput';
 import { ApplicationInput } from './types/ApplicationInput';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
 
-// TODO: Literally all of these require write access to the Organization, so we should probably just check this at a higher level,
-// rather than having a decorator on every fucking field.
 @ObjectType()
 export class ApplicationMutations {
     application: Application;
@@ -21,11 +18,6 @@ export class ApplicationMutations {
     }
 
     // TODO: This needs to delete all associated resources. (cascasde should solve this)
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Application)
     async delete() {
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
@@ -35,11 +27,6 @@ export class ApplicationMutations {
         return this.application;
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Application)
     async update(@Arg('application', () => ApplicationInput) applicationInput: ApplicationInput) {
         if (typeof applicationInput.name !== 'undefined' && applicationInput.name !== null) {
@@ -56,11 +43,6 @@ export class ApplicationMutations {
         return await this.application.save();
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
         const environment = await Environment.findOneOrFail({
@@ -82,31 +64,42 @@ export class ApplicationMutations {
         component.image = componentInput.image;
         component.deploymentStrategy = componentInput.deploymentStrategy;
         component.containerGroup = containerGroup;
-        component.secrets = {};
 
         return await component.save();
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Component)
-    // TODO: I'm leaving this as-is for now and not using an input type because this probably needs a lot of work anyway:
-    async updateComponent(@Arg('id', () => Int) id: number, @Arg('image') image: string) {
-        const deployment = await Component.findByApplicationAndId(this.application, id);
+    async updateComponent(
+        @Arg('id', () => Int) id: number,
+        @Arg('component', () => ComponentInput) componentInput: ComponentInput,
+    ) {
+        const component = await Component.findByApplicationAndId(this.application, id);
+        const containerGroup = await component.containerGroup;
 
-        deployment.image = image;
+        if ('name' in componentInput) {
+            component.name = componentInput.name;
+        }
 
-        return await deployment.save();
+        if ('image' in componentInput) {
+            component.image = componentInput.image;
+        }
+
+        if ('deploymentStrategy' in componentInput) {
+            component.deploymentStrategy = componentInput.deploymentStrategy;
+        }
+
+        if ('size' in componentInput) {
+            containerGroup.size = componentInput.size;
+        }
+
+        if ('containerCount' in componentInput) {
+            containerGroup.containerCount = componentInput.containerCount;
+        }
+
+        await containerGroup.save();
+        return await component.save();
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Secret)
     async addSecret(
         @Arg('component', () => Int) componentID: number,
@@ -124,11 +117,6 @@ export class ApplicationMutations {
         return await secret.save();
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Secret)
     async editSecret(
         @Arg('component', () => Int) componentID: number,
@@ -150,13 +138,11 @@ export class ApplicationMutations {
         return await secret.save();
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Secret)
-    async deleteSecret(@Arg('component', () => Int) componentID: number, @Arg('id', () => Int) id: number) {
+    async deleteSecret(
+        @Arg('component', () => Int) componentID: number,
+        @Arg('id', () => Int) id: number,
+    ) {
         const component = await Component.findByApplicationAndId(this.application, componentID);
         const secret = await Secret.findOneOrFail({
             where: {
@@ -170,11 +156,6 @@ export class ApplicationMutations {
         return secret;
     }
 
-    @OrganizationAccess(
-        () => ApplicationMutations,
-        applicationMutations => applicationMutations.application.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Component)
     async deleteComponent(@Arg('id', () => Int) id: number) {
         const deployment = await Component.findByApplicationAndId(this.application, id);
@@ -193,8 +174,9 @@ export class ApplicationMutationsResolver {
             },
         });
 
-        // Ensure the current user has permission to this application:
-        await application.userHasPermission(user);
+        // Ensure the current user has permission to this application.
+        // All application mutations require AT LEAST write access to the organization.
+        await application.userHasPermission(user, OrganizationPermission.WRITE);
 
         return new ApplicationMutations(application);
     }

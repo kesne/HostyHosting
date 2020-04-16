@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import Container from './Container';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Redirect } from 'react-router-dom';
 import { useGitHubSignInMutation } from '../../queries';
 
 export default function GitHubCallback() {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const [signIn] = useGitHubSignInMutation({
+    const [signIn, { data }] = useGitHubSignInMutation({
         variables: {
             code: query.get('code')!,
         },
@@ -16,5 +16,9 @@ export default function GitHubCallback() {
         signIn();
     }, []);
 
-    return <Container title="Signing In...">We are completing your github signin...</Container>;
+    if (data) {
+        return <Redirect to="/" />;
+    }
+
+    return <Container title="Signing In...">We are completing your GitHub signin...</Container>;
 }

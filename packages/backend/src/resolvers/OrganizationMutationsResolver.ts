@@ -1,9 +1,22 @@
-import { ObjectType, Arg, Mutation, Int, Ctx, Authorized, Field, Resolver } from 'type-graphql';
+import {
+    ObjectType,
+    Arg,
+    Mutation,
+    Int,
+    Ctx,
+    Authorized,
+    Field,
+    Resolver,
+    ForbiddenError,
+} from 'type-graphql';
 import { Context } from '../types';
 import { Organization } from '../entity/Organization';
 import { Application } from '../entity/Application';
-import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
-import { OrganizationAccess } from '../utils/permissions';
+import {
+    OrganizationMembership,
+    OrganizationPermission,
+    permissionIsAtLeast,
+} from '../entity/OrganizationMembership';
 import { ApplicationInput } from './types/ApplicationInput';
 import { Environment } from '../entity/Environment';
 
@@ -15,27 +28,24 @@ class OrganizationMutations {
         this.organization = organization;
     }
 
-    @OrganizationAccess(
-        () => OrganizationMutations,
-        orgMutations => orgMutations.organization,
-        OrganizationPermission.WRITE,
-    )
+    @Field(() => Organization)
+    async changeUsername(@Arg('username') username: string) {
+        if (this.organization.isPersonal) {
+            throw new Error('Personal organization usernames cannot be changed.');
+        }
+        this.organization.username = username;
+        await this.organization.save();
+    }
+
     @Field(() => Environment)
-    async createEnvironment(
-        @Arg('name') name: string
-    ) {
+    async createEnvironment(@Arg('name') name: string) {
         return await this.organization.createEnviroment(name);
     }
 
-    @OrganizationAccess(
-        () => OrganizationMutations,
-        orgMutations => orgMutations.organization,
-        OrganizationPermission.WRITE,
-    )
     @Field(() => Application)
     async createApplication(
         @Ctx() { user }: Context,
-        @Arg('application') applicationInput: ApplicationInput
+        @Arg('application') applicationInput: ApplicationInput,
     ) {
         const app = new Application();
 
@@ -78,6 +88,11 @@ export class OrganizationMutationsResolver {
             },
             relations: ['organization'],
         });
+
+        // All mutations to an organization require AT LEAST write access.
+        if (!permissionIsAtLeast(OrganizationPermission.WRITE, membership.permission)) {
+            throw new ForbiddenError();
+        }
 
         return new OrganizationMutations(membership.organization);
     }

@@ -11,11 +11,11 @@ import {
 import { Organization } from './Organization';
 import { User } from './User';
 import { Component } from './Component';
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ObjectType, Field, Int, ForbiddenError } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership } from './OrganizationMembership';
+import { OrganizationMembership, OrganizationPermission, permissionIsAtLeast } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
 
 @Entity()
@@ -70,12 +70,16 @@ export class Application extends BaseEntity {
      * Verifies that a given user has access to this applciation.
      * If they do not, it will throw.
      */
-    async userHasPermission(user: User) {
-        await OrganizationMembership.findOneOrFail({
+    async userHasPermission(user: User, permission?: OrganizationPermission) {
+        const membership = await OrganizationMembership.findOneOrFail({
             where: {
                 user,
                 organization: await this.organization,
             },
         });
+
+        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
+            throw new ForbiddenError();
+        }
     }
 }

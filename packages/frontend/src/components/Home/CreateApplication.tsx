@@ -29,9 +29,9 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                 org: organization,
                 application: {
                     name: values.name,
-                    description: values.description
-                }
-            }
+                    description: values.description,
+                },
+            },
         });
     }
 
@@ -50,6 +50,7 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                             ref={register({ required: true })}
                             errors={errors}
                             disabled={loading}
+                            autoComplete="off"
                         />
                         <TextArea
                             name="description"

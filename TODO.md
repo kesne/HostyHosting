@@ -1,8 +1,5 @@
 # TODO list for upcoming streams:
 
-- Improve the components page
-    - Introduce secrets management
-    - Add a cost overview
 - Add application audit log
 
 

@@ -114,7 +114,6 @@ export class User extends BaseEntity {
         user.githubID = githubID;
         user.email = email;
         user.personalOrganization = organization;
-        // TODO: Do we really want this?
         if (password) {
             await user.setPassword(password);
         }
@@ -159,9 +158,13 @@ export class User extends BaseEntity {
     @IsEmail()
     email!: string;
 
-    // TODO: Should this actually be nullable? Are github sign-ups password-less?
     @Column({ nullable: true })
     passwordHash!: string;
+
+    @Field(() => String)
+    get isPasswordless() {
+        return this.githubID && !this.passwordHash;
+    }
 
     // TODO: Need better types here:
     @Field()
@@ -221,17 +224,24 @@ export class User extends BaseEntity {
         User.removeHasUser(cookies);
     }
 
-    // TODO: Could we instead track personal organizaiton via the membership object?
     @Field(() => Organization)
     @OneToOne(() => Organization, { lazy: true })
     @JoinColumn()
     personalOrganization!: Lazy<Organization>;
 
-    @OneToMany(() => OrganizationMembership, (membership) => membership.user, { lazy: true })
+    @OneToMany(
+        () => OrganizationMembership,
+        membership => membership.user,
+        { lazy: true },
+    )
     organizationMemberships!: Lazy<OrganizationMembership[]>;
 
     @Field(() => [APIKey])
-    @OneToMany(() => APIKey, (apiKey) => apiKey.user, { lazy: true })
+    @OneToMany(
+        () => APIKey,
+        apiKey => apiKey.user,
+        { lazy: true },
+    )
     apiKeys!: Lazy<APIKey>;
 
     async createAPIKey(description: string) {

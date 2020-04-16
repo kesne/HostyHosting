@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { Resolver, Query, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
+import {
+    Resolver,
+    Query,
+    Ctx,
+    Mutation,
+    Arg,
+    FieldResolver,
+    Root,
+    Authorized,
+    ForbiddenError,
+} from 'type-graphql';
 import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
@@ -144,6 +154,13 @@ export class UserResolver {
             return new SignInResult(false);
         }
 
+        // If the user is not passwordless, then we need to prevent them from
+        // signing in with just github.
+        if (!user.isPasswordless) {
+            // TODO: Refine the error message:
+            throw new Error('User account is not passwordless.');
+        }
+
         // TODO: Move this into the User itself:
         // Remove any password reset so that it is no longer valid after signing in:
         PasswordReset.removeForUser(user);
@@ -163,9 +180,17 @@ export class UserResolver {
     @Mutation(() => User)
     async updateAccount(
         @Ctx() { user }: Context,
+        @Arg('username', { nullable: true }) username?: string,
         @Arg('name', { nullable: true }) name?: string,
         @Arg('email', { nullable: true }) email?: string,
     ) {
+        if (username) {
+            user.username = username;
+            const personalOrganization = await user.personalOrganization;
+            personalOrganization.username = username;
+            await personalOrganization.save();
+        }
+
         if (name) {
             user.name = name;
         }
@@ -198,8 +223,8 @@ export class UserResolver {
 
         // TODO: This won't work when we have external collaborators.
         return memberships
-            .map((membership) => membership.organization)
-            .filter((org) => !org.isPersonal);
+            .map(membership => membership.organization)
+            .filter(org => !org.isPersonal);
     }
 
     @Mutation(() => Result)

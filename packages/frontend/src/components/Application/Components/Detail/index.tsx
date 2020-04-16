@@ -9,6 +9,7 @@ import Secrets from './Secrets';
 import EditOrAddSecret from './EditOrAddSecret';
 import useBoolean from '../../../../utils/useBoolean';
 import formatCurrency from '../../../../utils/formatCurrency';
+import EditComponent from './EditComponent';
 
 export default function Detail() {
     const params = useParams<{ application: string; component: string }>();
@@ -19,6 +20,7 @@ export default function Detail() {
         },
     });
     const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
+    const [editing, { on: editingOn, off: editingOff }] = useBoolean(false);
 
     useBreadcrumb({
         name: data?.application.component.name || '...',
@@ -87,7 +89,12 @@ export default function Detail() {
                         <Button variant="danger">Delete</Button>
                     </span>
                     <span className="ml-3 relative shadow-sm rounded-md">
-                        <Button>Edit</Button>
+                        <Button onClick={editingOn}>Edit</Button>
+                        <EditComponent
+                            component={data.application.component}
+                            visible={editing}
+                            onClose={editingOff}
+                        />
                     </span>
                 </div>
             </div>

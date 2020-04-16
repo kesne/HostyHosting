@@ -69,7 +69,7 @@ export type ApplicationMutationsCreateComponentArgs = {
 
 
 export type ApplicationMutationsUpdateComponentArgs = {
-  image: Scalars['String'],
+  component: ComponentInput,
   id: Scalars['Int']
 };
 
@@ -113,12 +113,12 @@ export type Component = {
 };
 
 export type ComponentInput = {
-  image: Scalars['String'],
-  name: Scalars['String'],
-  deploymentStrategy: DeploymentStrategy,
-  size: ContainerSize,
-  containerCount: Scalars['Int'],
-  environmentID: Scalars['Int'],
+  image?: Maybe<Scalars['String']>,
+  name?: Maybe<Scalars['String']>,
+  deploymentStrategy?: Maybe<DeploymentStrategy>,
+  size?: Maybe<ContainerSize>,
+  containerCount?: Maybe<Scalars['Int']>,
+  environmentID?: Maybe<Scalars['Int']>,
 };
 
 export type Container = {
@@ -252,7 +252,8 @@ export type MutationGitHubSignInArgs = {
 
 export type MutationUpdateAccountArgs = {
   email?: Maybe<Scalars['String']>,
-  name?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>,
+  username?: Maybe<Scalars['String']>
 };
 
 
@@ -297,8 +298,14 @@ export type Organization = {
 
 export type OrganizationMutations = {
    __typename?: 'OrganizationMutations',
+  changeUsername: Organization,
   createEnvironment: Environment,
   createApplication: Application,
+};
+
+
+export type OrganizationMutationsChangeUsernameArgs = {
+  username: Scalars['String']
 };
 
 
@@ -379,6 +386,7 @@ export type User = {
   name: Scalars['String'],
   username: Scalars['String'],
   email: Scalars['String'],
+  isPasswordless: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
@@ -496,20 +504,25 @@ export type ComponentQuery = (
     & Pick<Application, 'id'>
     & { component: (
       { __typename?: 'Component' }
-      & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
-      & { containerGroup: (
-        { __typename?: 'ContainerGroup' }
-        & Pick<ContainerGroup, 'containerCount' | 'size'>
-        & { environment: (
-          { __typename?: 'Environment' }
-          & Pick<Environment, 'name'>
-        ) }
-      ), secrets: Array<(
-        { __typename?: 'Secret' }
-        & Pick<Secret, 'id' | 'key' | 'value'>
-      )> }
+      & ComponentFragmentFragment
     ) }
   ) }
+);
+
+export type ComponentFragmentFragment = (
+  { __typename?: 'Component' }
+  & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
+  & { containerGroup: (
+    { __typename?: 'ContainerGroup' }
+    & Pick<ContainerGroup, 'containerCount' | 'size'>
+    & { environment: (
+      { __typename?: 'Environment' }
+      & Pick<Environment, 'name'>
+    ) }
+  ), secrets: Array<(
+    { __typename?: 'Secret' }
+    & Pick<Secret, 'id' | 'key' | 'value'>
+  )> }
 );
 
 export type CreateApiKeyMutationVariables = {
@@ -749,7 +762,7 @@ export type MeDaddyQuery = (
 
 export type MeFragmentFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'name' | 'email' | 'hasTOTP'>
+  & Pick<User, 'id' | 'username' | 'name' | 'email' | 'hasTOTP'>
 );
 
 export type MyApiKeysQueryVariables = {};
@@ -863,6 +876,7 @@ export type SignUpMutation = (
 );
 
 export type UpdateAccountMutationVariables = {
+  username: Scalars['String'],
   name: Scalars['String'],
   email: Scalars['String']
 };
@@ -893,6 +907,24 @@ export type UpdateApplicationMutation = (
   ) }
 );
 
+export type UpdateComponentMutationVariables = {
+  applicationID: Scalars['Int'],
+  componentID: Scalars['Int'],
+  component: ComponentInput
+};
+
+
+export type UpdateComponentMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { updateComponent: (
+      { __typename?: 'Component' }
+      & ComponentFragmentFragment
+    ) }
+  ) }
+);
+
 export const ApplicationFragmentFragmentDoc = gql`
     fragment ApplicationFragment on Application {
   id
@@ -906,9 +938,33 @@ export const ApplicationFragmentFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ComponentFragmentFragmentDoc = gql`
+    fragment ComponentFragment on Component {
+  id
+  name
+  deploymentStrategy
+  image
+  createdAt
+  updatedAt
+  monthlyPrice
+  containerGroup {
+    containerCount
+    size
+    environment {
+      name
+    }
+  }
+  secrets {
+    id
+    key
+    value
+  }
+}
+    `;
 export const MeFragmentFragmentDoc = gql`
     fragment MeFragment on User {
   id
+  username
   name
   email
   hasTOTP
@@ -1108,29 +1164,11 @@ export const ComponentDocument = gql`
   application(id: $app) {
     id
     component(id: $component) {
-      id
-      name
-      deploymentStrategy
-      image
-      createdAt
-      updatedAt
-      monthlyPrice
-      containerGroup {
-        containerCount
-        size
-        environment {
-          name
-        }
-      }
-      secrets {
-        id
-        key
-        value
-      }
+      ...ComponentFragment
     }
   }
 }
-    `;
+    ${ComponentFragmentFragmentDoc}`;
 
 /**
  * __useComponentQuery__
@@ -1977,8 +2015,8 @@ export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = ApolloReactCommon.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = ApolloReactCommon.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
 export const UpdateAccountDocument = gql`
-    mutation UpdateAccount($name: String!, $email: String!) {
-  updateAccount(name: $name, email: $email) {
+    mutation UpdateAccount($username: String!, $name: String!, $email: String!) {
+  updateAccount(username: $username, name: $name, email: $email) {
     ...MeFragment
   }
 }
@@ -1998,6 +2036,7 @@ export type UpdateAccountMutationFn = ApolloReactCommon.MutationFunction<UpdateA
  * @example
  * const [updateAccountMutation, { data, loading, error }] = useUpdateAccountMutation({
  *   variables: {
+ *      username: // value for 'username'
  *      name: // value for 'name'
  *      email: // value for 'email'
  *   },
@@ -2044,3 +2083,39 @@ export function useUpdateApplicationMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateApplicationMutationHookResult = ReturnType<typeof useUpdateApplicationMutation>;
 export type UpdateApplicationMutationResult = ApolloReactCommon.MutationResult<UpdateApplicationMutation>;
 export type UpdateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>;
+export const UpdateComponentDocument = gql`
+    mutation UpdateComponent($applicationID: Int!, $componentID: Int!, $component: ComponentInput!) {
+  application(id: $applicationID) {
+    updateComponent(id: $componentID, component: $component) {
+      ...ComponentFragment
+    }
+  }
+}
+    ${ComponentFragmentFragmentDoc}`;
+export type UpdateComponentMutationFn = ApolloReactCommon.MutationFunction<UpdateComponentMutation, UpdateComponentMutationVariables>;
+
+/**
+ * __useUpdateComponentMutation__
+ *
+ * To run a mutation, you first call `useUpdateComponentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateComponentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateComponentMutation, { data, loading, error }] = useUpdateComponentMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      componentID: // value for 'componentID'
+ *      component: // value for 'component'
+ *   },
+ * });
+ */
+export function useUpdateComponentMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateComponentMutation, UpdateComponentMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateComponentMutation, UpdateComponentMutationVariables>(UpdateComponentDocument, baseOptions);
+      }
+export type UpdateComponentMutationHookResult = ReturnType<typeof useUpdateComponentMutation>;
+export type UpdateComponentMutationResult = ApolloReactCommon.MutationResult<UpdateComponentMutation>;
+export type UpdateComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateComponentMutation, UpdateComponentMutationVariables>;

@@ -108,12 +108,14 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 name="name"
                                 ref={register({ required: true })}
                                 errors={errors}
+                                autoComplete="off"
                             />
                             <Input
                                 label="Image Name"
                                 name="image"
                                 ref={register({ required: true })}
                                 errors={errors}
+                                autoComplete="off"
                             />
                             <div>
                                 <Label>Container Size</Label>

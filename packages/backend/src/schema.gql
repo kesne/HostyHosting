@@ -32,7 +32,7 @@ type ApplicationMutations {
   delete: Application!
   update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
-  updateComponent(image: String!, id: Int!): Component!
+  updateComponent(component: ComponentInput!, id: Int!): Component!
   addSecret(value: String!, key: String!, component: Int!): Secret!
   editSecret(value: String!, key: String!, id: Int!, component: Int!): Secret!
   deleteSecret(id: Int!, component: Int!): Secret!
@@ -52,12 +52,12 @@ type Component {
 }
 
 input ComponentInput {
-  image: String!
-  name: String!
-  deploymentStrategy: DeploymentStrategy!
-  size: ContainerSize!
-  containerCount: Int!
-  environmentID: Int!
+  image: String
+  name: String
+  deploymentStrategy: DeploymentStrategy
+  size: ContainerSize
+  containerCount: Int
+  environmentID: Int
 }
 
 type Container {
@@ -128,7 +128,7 @@ type Mutation {
   signUp(password: String!, email: String!, name: String!, username: String!): Result!
   signIn(password: String!, email: String!): SignInResult!
   gitHubSignIn(code: String!): SignInResult!
-  updateAccount(email: String, name: String): User!
+  updateAccount(email: String, name: String, username: String): User!
   forgotPassword(email: String!): Result!
   resetPassword(password: String!, uuid: String!): Result!
   signOut: Result!
@@ -161,6 +161,7 @@ type Organization {
 }
 
 type OrganizationMutations {
+  changeUsername(username: String!): Organization!
   createEnvironment(name: String!): Environment!
   createApplication(application: ApplicationInput!): Application!
 }
@@ -212,6 +213,7 @@ type User {
   name: String!
   username: String!
   email: String!
+  isPasswordless: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   hasTOTP: Boolean!

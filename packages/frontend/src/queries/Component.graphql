@@ -2,25 +2,7 @@ query Component($app: Int!, $component: Int!) {
     application(id: $app) {
         id
         component(id: $component) {
-            id
-            name
-            deploymentStrategy
-            image
-            createdAt
-            updatedAt
-            monthlyPrice
-            containerGroup {
-                containerCount
-                size
-                environment {
-                    name
-                }
-            }
-            secrets {
-                id
-                key
-                value
-            }
+            ...ComponentFragment
         }
     }
 }
