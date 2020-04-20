@@ -17,6 +17,7 @@ import Tabs from '../../../ui/Tabs';
 import clsx from 'clsx';
 import Label from '../../../ui/Label';
 import SelectEnvironment from './SelectEnvironment';
+import { Reference } from '@apollo/client';
 
 const Sizes = [
     { name: ContainerSize.S1x1, label: '1 CPU, 128 mb' },
@@ -39,21 +40,10 @@ export default function CreateComponent({ visible, onClose }: Props) {
         update(cache, { data }) {
             if (!data) return;
 
-            // Read the data from our cache for this query.
-            const { application } =
-                cache.readQuery<ApplicationComponentsQuery>({
-                    query: ApplicationComponentsDocument,
-                    variables: { id: applicationID },
-                }) ?? {};
-
-            const nextApplication = produce(application, draftState => {
-                draftState?.components.push(data.application.createComponent);
-            });
-
-            cache.writeQuery({
-                query: ApplicationComponentsDocument,
-                variables: { id: applicationID },
-                data: { application: nextApplication },
+            cache.modify(`Application:${applicationID}`, {
+                components(components: Reference[], { toReference }) {
+                    return [...components, toReference(data.application.createComponent)];
+                },
             });
         },
     });

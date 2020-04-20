@@ -2,6 +2,7 @@ mutation CreateComponent($applicationID: Int!, $component: ComponentInput!) {
     application(id: $applicationID) {
         createComponent(component: $component) {
             id
+            name
             image
         }
     }

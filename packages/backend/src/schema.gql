@@ -5,6 +5,7 @@
 
 type APIKey {
   id: Int!
+  privateKey: String
   description: String!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -112,7 +113,7 @@ type Environment {
 type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
-  createAPIKey(description: String!): String!
+  createAPIKey(description: String!): APIKey!
   deleteAPIKey(id: Int!): Result!
   application(id: Int!): ApplicationMutations!
   organization(

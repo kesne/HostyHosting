@@ -2,6 +2,7 @@ import React from 'react';
 import { useDeleteSecretMutation } from '../../../../queries';
 import { useApplicationID } from '../../ApplicationContext';
 import Button, { ButtonGroup } from '../../../ui/Button';
+import { Reference } from '@apollo/client';
 
 export type SecretData = {
     id: number;
@@ -22,6 +23,19 @@ export default function Secret({ componentID, secret, onEdit }: Props) {
             applicationID,
             componentID,
             secretID: secret.id,
+        },
+        update(cache, { data }) {
+            if (!data) return;
+
+            cache.modify(`Component:${componentID}`, {
+                secrets(secrets: Reference[], { readField }) {
+                    return secrets.filter(
+                        secret => data.application.deleteSecret.id !== readField('id', secret),
+                    );
+                },
+            });
+
+            cache.evict(`Secret:${secret.id}`);
         },
     });
 

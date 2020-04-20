@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import cookie from 'js-cookie';
 
-const HAS_USER_COOKIE = 'hasUser';
+const USER_COOKIE = 'userID';
 
 function get() {
-    return cookie.get(HAS_USER_COOKIE) === '1';
+    return cookie.get(USER_COOKIE) !== '0';
+}
+
+export function getUserID() {
+    return cookie.get(USER_COOKIE);
 }
 
 type Callback = (value: boolean) => void;
@@ -34,7 +38,7 @@ export function checkCookies() {
 
 // TODO: This should redirect ???
 export function signOut() {
-    cookie.remove(HAS_USER_COOKIE);
+    cookie.remove(USER_COOKIE);
     checkCookies();
 }
 

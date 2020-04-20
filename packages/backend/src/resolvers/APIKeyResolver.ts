@@ -59,10 +59,9 @@ export class APIKeyResolver {
     }
 
     @Authorized(GrantType.SESSION)
-    @Mutation(() => String)
-    async createAPIKey(@Ctx() { user }: Context, @Arg('description') description: string): Promise<String> {
-        const key = await user.createAPIKey(description);
-        return key.key;
+    @Mutation(() => APIKey)
+    async createAPIKey(@Ctx() { user }: Context, @Arg('description') description: string): Promise<APIKey> {
+        return await user.createAPIKey(description);
     }
 
     @Authorized(GrantType.SESSION)

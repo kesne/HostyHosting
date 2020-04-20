@@ -85,8 +85,8 @@ export class User extends BaseEntity {
         return user;
     }
 
-    static removeHasUser(cookies: Cookies) {
-        cookies.set('hasUser', '0', { httpOnly: false, signed: false });
+    static removeUserCookie(cookies: Cookies) {
+        cookies.set('userID', '0', { httpOnly: false, signed: false });
     }
 
     static async signUp(
@@ -216,12 +216,12 @@ export class User extends BaseEntity {
         session.userID = this.id;
         session.type = type;
         if (type === AuthType.FULL) {
-            cookies.set('hasUser', '1', { httpOnly: false, signed: false });
+            cookies.set('userID', String(this.id), { httpOnly: false, signed: false });
         }
     }
 
     signOut(cookies: Cookies) {
-        User.removeHasUser(cookies);
+        User.removeUserCookie(cookies);
     }
 
     @Field(() => Organization)

@@ -10,3 +10,6 @@ generates:
             withHooks: true
             withComponent: false
             withHOC: false
+            apolloReactHooksImportFrom: @apollo/client
+            apolloReactCommonImportFrom: @apollo/client
+            gqlImport: @apollo/client#gql

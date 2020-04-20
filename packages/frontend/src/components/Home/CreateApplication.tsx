@@ -6,6 +6,7 @@ import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
 import Input from '../ui/Input';
 import TextArea from '../ui/TextArea';
+import { Reference } from '@apollo/client';
 
 type Props = {
     organization?: number;
@@ -14,7 +15,17 @@ type Props = {
 };
 
 export default function CreateApplication({ organization, visible, onClose }: Props) {
-    const [createApplication, { data, loading }] = useCreateApplicationMutation();
+    const [createApplication, { data, loading }] = useCreateApplicationMutation({
+        update(cache, { data }) {
+            if (!data) return;
+
+            cache.modify(`Organization:${organization}`, {
+                applications(applications: Reference[], { toReference }) {
+                    return [...applications, toReference(data.organization.createApplication)];
+                },
+            });
+        },
+    });
     const { reset, register, errors, handleSubmit } = useForm();
 
     useEffect(() => {

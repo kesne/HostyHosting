@@ -102,7 +102,7 @@ async function main() {
         }
 
         if (!ctx.user) {
-            User.removeHasUser(ctx.cookies);
+            User.removeUserCookie(ctx.cookies);
         }
 
         return next();

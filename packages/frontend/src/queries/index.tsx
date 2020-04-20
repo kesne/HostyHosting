@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
+import { gql } from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client';
+import * as ApolloReactHooks from '@apollo/client';
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -16,6 +16,7 @@ export type Scalars = {
 export type ApiKey = {
    __typename?: 'APIKey',
   id: Scalars['Int'],
+  privateKey?: Maybe<Scalars['String']>,
   description: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
@@ -173,7 +174,7 @@ export type Mutation = {
    __typename?: 'Mutation',
   createAPIKeyRequest: Scalars['String'],
   grantAPIKey: Result,
-  createAPIKey: Scalars['String'],
+  createAPIKey: ApiKey,
   deleteAPIKey: Result,
   application: ApplicationMutations,
   organization: OrganizationMutations,
@@ -532,7 +533,10 @@ export type CreateApiKeyMutationVariables = {
 
 export type CreateApiKeyMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'createAPIKey'>
+  & { createAPIKey: (
+    { __typename?: 'APIKey' }
+    & Pick<ApiKey, 'id' | 'description' | 'createdAt' | 'privateKey'>
+  ) }
 );
 
 export type CreateApplicationMutationVariables = {
@@ -547,7 +551,7 @@ export type CreateApplicationMutation = (
     { __typename?: 'OrganizationMutations' }
     & { createApplication: (
       { __typename?: 'Application' }
-      & Pick<Application, 'id'>
+      & Pick<Application, 'id' | 'name' | 'description'>
     ) }
   ) }
 );
@@ -564,7 +568,7 @@ export type CreateComponentMutation = (
     { __typename?: 'ApplicationMutations' }
     & { createComponent: (
       { __typename?: 'Component' }
-      & Pick<Component, 'id' | 'image'>
+      & Pick<Component, 'id' | 'name' | 'image'>
     ) }
   ) }
 );
@@ -581,7 +585,7 @@ export type CreateEnvironmentMutation = (
     { __typename?: 'OrganizationMutations' }
     & { createEnvironment: (
       { __typename?: 'Environment' }
-      & Pick<Environment, 'id'>
+      & Pick<Environment, 'id' | 'name'>
     ) }
   ) }
 );
@@ -1198,7 +1202,12 @@ export type ComponentLazyQueryHookResult = ReturnType<typeof useComponentLazyQue
 export type ComponentQueryResult = ApolloReactCommon.QueryResult<ComponentQuery, ComponentQueryVariables>;
 export const CreateApiKeyDocument = gql`
     mutation CreateAPIKey($description: String!) {
-  createAPIKey(description: $description)
+  createAPIKey(description: $description) {
+    id
+    description
+    createdAt
+    privateKey
+  }
 }
     `;
 export type CreateApiKeyMutationFn = ApolloReactCommon.MutationFunction<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
@@ -1231,6 +1240,8 @@ export const CreateApplicationDocument = gql`
   organization(id: $org) {
     createApplication(application: $application) {
       id
+      name
+      description
     }
   }
 }
@@ -1266,6 +1277,7 @@ export const CreateComponentDocument = gql`
   application(id: $applicationID) {
     createComponent(component: $component) {
       id
+      name
       image
     }
   }
@@ -1302,6 +1314,7 @@ export const CreateEnvironmentDocument = gql`
   organization(id: $org) {
     createEnvironment(name: $name) {
       id
+      name
     }
   }
 }

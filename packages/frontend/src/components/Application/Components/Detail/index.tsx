@@ -10,6 +10,7 @@ import EditOrAddSecret from './EditOrAddSecret';
 import useBoolean from '../../../../utils/useBoolean';
 import formatCurrency from '../../../../utils/formatCurrency';
 import EditComponent from './EditComponent';
+import DeleteComponent from './DeleteComponent';
 
 export default function Detail() {
     const params = useParams<{ application: string; component: string }>();
@@ -86,7 +87,7 @@ export default function Detail() {
                 </div>
                 <div className="mt-5 flex lg:mt-0 lg:ml-4">
                     <span className="ml-3 relative shadow-sm rounded-md">
-                        <Button variant="danger">Delete</Button>
+                        <DeleteComponent id={data.application.component.id} />
                     </span>
                     <span className="ml-3 relative shadow-sm rounded-md">
                         <Button onClick={editingOn}>Edit</Button>

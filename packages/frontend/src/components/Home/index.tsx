@@ -74,13 +74,17 @@ export default function Home() {
                                 )}
                             </List>
                         </Card>
-                        <CreateEnvironment open={environmentVisible} onClose={environmentOff} />
+                        <CreateEnvironment
+                            organization={data?.organization.id}
+                            open={environmentVisible}
+                            onClose={environmentOff}
+                        />
                     </div>
                 </div>
             </main>
 
             <CreateApplication
-                organization={organization}
+                organization={data?.organization.id}
                 visible={applicationVisible}
                 onClose={applicationOff}
             />

@@ -5,11 +5,23 @@ import Button, { ButtonGroup } from '../ui/Button';
 import Input from '../ui/Input';
 import { useCreateApiKeyMutation } from '../../queries';
 import useBoolean from '../../utils/useBoolean';
+import { getUserID } from '../../utils/user';
+import { Reference } from '@apollo/client';
 
 export default function CreateAPIKey({ open, onClose }: { open: boolean; onClose(): void }) {
     const [submitted, { on, off }] = useBoolean(false);
     const { register, errors, handleSubmit, reset } = useForm();
-    const [createAPIKey, { data }] = useCreateApiKeyMutation();
+    const [createAPIKey, { data }] = useCreateApiKeyMutation({
+        update(cache, { data }) {
+            if (!data) return;
+
+            cache.modify(`User:${getUserID()}`, {
+                apiKeys(keys: Reference[], { toReference }) {
+                    return [...keys, toReference(data.createAPIKey)];
+                },
+            });
+        },
+    });
 
     async function onSubmit(values: Record<string, string>) {
         await createAPIKey({
@@ -37,14 +49,14 @@ export default function CreateAPIKey({ open, onClose }: { open: boolean; onClose
                             <strong>will not</strong> be able to retrieve it in the future.
                         </p>
                         <div className="px-2 py-1 border border-gray-200 bg-gray-100 font-mono leading-tight rounded break-all my-4">
-                            {data!.createAPIKey}
+                            {data!.createAPIKey.privateKey}
                         </div>
                         <p className="text-gray-800 text-sm font-normal">
                             You can also use this API Key to sign into the HostingHosting CLI
                             directly.
                         </p>
                         <div className="px-2 py-1 border border-gray-200 bg-gray-100 font-mono leading-tight rounded break-all my-4">
-                            <strong>hh login</strong> {data!.createAPIKey}
+                            <strong>hh login</strong> {data!.createAPIKey.privateKey}
                         </div>
                     </ModalContent>
                     <ModalFooter>

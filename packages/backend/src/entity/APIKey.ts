@@ -23,6 +23,12 @@ export class APIKey extends BaseEntity {
     @Column()
     key!: string;
 
+    // NOTE: This is only ever exposed when creating an API Key from a session.
+    // It is only initialized in the BeforeInsert method, so it should never be
+    // initialized to a value when loading from the database.
+    @Field({ nullable: true })
+    privateKey?: string;
+
     @Field()
     @Column()
     description!: String
@@ -41,5 +47,6 @@ export class APIKey extends BaseEntity {
     @BeforeInsert()
     generateKey() {
         this.key = crypto.randomBytes(64).toString('base64');
+        this.privateKey = this.key;
     }
 }

@@ -1,10 +1,12 @@
 import React from 'react';
+import { Reference } from '@apollo/client';
 import List, { ListItem } from '../ui/List';
 import { useMyApiKeysQuery, useDeleteApiKeyMutation } from '../../queries';
 import Card from '../ui/Card';
 import CreateAPIKey from './CreateAPIKey';
 import Button from '../ui/Button';
 import useBoolean from '../../utils/useBoolean';
+import { getUserID } from '../../utils/user';
 
 export default function APIKeys() {
     const [open, { on, off }] = useBoolean(false);
@@ -13,7 +15,18 @@ export default function APIKeys() {
 
     function handleDelete(id: number) {
         return () => {
-            deleteAPIKey({ variables: { id } });
+            deleteAPIKey({
+                variables: { id },
+                update(cache) {
+                    cache.modify(`User:${getUserID()}`, {
+                        apiKeys(keys: Reference[], { readField }) {
+                            return keys.filter(key => id !== readField('id', key));
+                        },
+                    });
+
+                    cache.evict(`APIKey:${id}`);
+                },
+            });
         };
     }
 
