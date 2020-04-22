@@ -291,6 +291,7 @@ export type Organization = {
   isPersonal: Scalars['Boolean'],
   username: Scalars['String'],
   name: Scalars['String'],
+  maxComputeUnits: Scalars['Float'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   applications: Array<Application>,

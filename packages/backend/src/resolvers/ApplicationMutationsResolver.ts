@@ -45,17 +45,20 @@ export class ApplicationMutations {
 
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
+        const organization = await this.application.organization;
+
         const environment = await Environment.findOneOrFail({
             where: {
                 id: componentInput.environmentID,
-                organization: await this.application.organization,
+                organization,
             },
         });
 
         const containerGroup = new ContainerGroup();
-        containerGroup.containerCount = componentInput.containerCount;
-        containerGroup.size = componentInput.size;
         containerGroup.environment = environment;
+        containerGroup.organization = organization;
+        containerGroup.setSize(componentInput.size);
+        containerGroup.setContainerCount(componentInput.containerCount);
         await containerGroup.save();
 
         const component = new Component();
@@ -89,11 +92,11 @@ export class ApplicationMutations {
         }
 
         if ('size' in componentInput) {
-            containerGroup.size = componentInput.size;
+            containerGroup.setSize(componentInput.size);
         }
 
         if ('containerCount' in componentInput) {
-            containerGroup.containerCount = componentInput.containerCount;
+            containerGroup.setContainerCount(componentInput.containerCount);
         }
 
         await containerGroup.save();

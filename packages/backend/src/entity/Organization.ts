@@ -5,21 +5,44 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
-    AfterInsert,
 } from 'typeorm';
 import { Application } from './Application';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership } from './OrganizationMembership';
+import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
 import { Environment } from './Environment';
 import { Network } from './Network';
 import { NAME_REGEX } from '../constants';
+import { User } from './User';
+import { ContainerGroup, containerCountAndSizeToComputeUnits } from './ContainerGroup';
 
 @Entity()
 @ObjectType()
 export class Organization extends BaseEntity {
+    static async createPersonal(user: User) {
+        // Create a basic organization:
+        const organization = new Organization();
+        organization.name = 'Personal';
+        organization.isPersonal = true;
+        organization.username = user.username;
+        await organization.save();
+        // TODO: Maybe this should be somewhere else (maybe afterInsert?):
+        await organization.createDefaultEnvironments();
+
+        // Set the users personal organization:
+        user.personalOrganization = organization;
+        await user.save();
+
+        // Finally, add the user into their own organization:
+        const membership = new OrganizationMembership();
+        membership.user = user;
+        membership.organization = organization;
+        membership.permission = OrganizationPermission.ADMIN;
+        await membership.save();
+    }
+
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -76,6 +99,10 @@ export class Organization extends BaseEntity {
     name!: string;
 
     @Field()
+    @Column({ default: 10 })
+    maxComputeUnits!: number;
+
+    @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 
@@ -119,7 +146,29 @@ export class Organization extends BaseEntity {
     }
 
     async createDefaultEnvironments() {
-        await this.createEnviroment('Prod');
-        await this.createEnviroment('Test');
+        await this.createEnviroment('prod');
+        await this.createEnviroment('test');
+    }
+
+    // TODO: Make this more efficient at some point:
+    // Likely do a sum in SQL itself.
+    // TODO: Does this really belong here, or can we shuffle this over into the ContainerGroup:
+    async getAvailableComputeUnits() {
+        const containerGroups = await ContainerGroup.find({
+            where: {
+                organization: this,
+            },
+        });
+
+        console.log(containerGroups);
+
+        return (
+            this.maxComputeUnits -
+            containerGroups.reduce(
+                (acc, curr) =>
+                    acc + containerCountAndSizeToComputeUnits(curr.containerCount, curr.size),
+                0,
+            )
+        );
     }
 }

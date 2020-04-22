@@ -100,31 +100,18 @@ export class User extends BaseEntity {
             githubID,
         }: { username: string; name: string; email: string; password?: string; githubID?: string },
     ) {
-        // First create the users' personal organization:
-        const organization = new Organization();
-        organization.name = 'Personal';
-        organization.isPersonal = true;
-        organization.username = username;
-        await organization.save();
-
-        // Then create the user themself:
         const user = new User();
         user.username = username;
         user.name = name;
         user.githubID = githubID;
         user.email = email;
-        user.personalOrganization = organization;
         if (password) {
             await user.setPassword(password);
         }
+
         await user.save();
 
-        // Finally, add the user into their own organization:
-        const membership = new OrganizationMembership();
-        membership.user = user;
-        membership.organization = organization;
-        membership.permission = OrganizationPermission.ADMIN;
-        await membership.save();
+        await Organization.createPersonal(user);
 
         user.signIn(session, cookies);
     }
@@ -224,6 +211,10 @@ export class User extends BaseEntity {
         User.removeUserCookie(cookies);
     }
 
+    // TODO: Eventually, we might want this to be done entirely through the OrganizationMembership,
+    // rather than as a field directly. We can still have a virtual field that does the lookup for the
+    // personal organization membership, and loads the organization through that, but we could avoid
+    // some annoying setting up of relations if we model it this way.
     @Field(() => Organization)
     @OneToOne(() => Organization, { lazy: true })
     @JoinColumn()

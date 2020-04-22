@@ -155,6 +155,7 @@ type Organization {
   isPersonal: Boolean!
   username: String!
   name: String!
+  maxComputeUnits: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
   applications: [Application!]!

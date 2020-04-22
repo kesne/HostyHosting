@@ -20,10 +20,10 @@ import SelectEnvironment from './SelectEnvironment';
 import { Reference } from '@apollo/client';
 
 const Sizes = [
-    { name: ContainerSize.S1x1, label: '1 CPU, 128 mb' },
-    { name: ContainerSize.S2x2, label: '2 CPU, 256 mb' },
-    { name: ContainerSize.S4x4, label: '4 CPU, 512 mb' },
-    { name: ContainerSize.S8x8, label: '8 CPU, 1024 mb' },
+    { name: ContainerSize.S1x1, label: '1 Compute Unit, 128 mb' },
+    { name: ContainerSize.S2x2, label: '2 Compute Unit, 256 mb' },
+    { name: ContainerSize.S4x4, label: '4 Compute Unit, 512 mb' },
+    { name: ContainerSize.S8x8, label: '8 Compute Unit, 1024 mb' },
 ];
 
 type Props = {

@@ -41,21 +41,7 @@ async function seed() {
     await user.setPassword('admin');
     await user.save();
 
-    // Create the personal org:
-    const personalOrg = new Organization();
-    personalOrg.name = 'Personal';
-    personalOrg.isPersonal = true;
-    personalOrg.username = 'admin';
-    await personalOrg.save();
-
-    const membership = new OrganizationMembership();
-    membership.user = user;
-    membership.organization = personalOrg;
-    membership.permission = OrganizationPermission.ADMIN;
-    await membership.save();
-
-    user.personalOrganization = personalOrg;
-    await user.save();
+    await Organization.createPersonal(user);
 
     // Create orgs:
     const netflixOrg = new Organization();
@@ -70,7 +56,6 @@ async function seed() {
     await netflixMembership.save();
 
     await netflixOrg.createDefaultEnvironments();
-    await personalOrg.createDefaultEnvironments();
 
     await connection.close();
 }

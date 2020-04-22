@@ -12,6 +12,8 @@ import { Field, Int, ObjectType } from 'type-graphql';
 import { Network } from './Network';
 import { Lazy } from '../types';
 import { Organization } from './Organization';
+import { Matches, Length } from 'class-validator';
+import { NAME_REGEX } from '../constants';
 
 @ObjectType()
 @Entity()
@@ -22,6 +24,8 @@ export class Environment extends BaseEntity {
 
     @Field()
     @Column()
+    @Matches(NAME_REGEX)
+    @Length(3, 20)
     name!: string;
 
     @OneToMany(
