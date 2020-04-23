@@ -1,64 +1,36 @@
 {
-    "name": "@hh/cli",
+    "name": "@hh/cli2",
     "description": "A CLI for HostyHosting",
     "version": "0.0.0",
     "author": "HostingHosting, LLC",
     "bin": {
-        "hh": "./bin/run"
+        "hh": "./bin/hh.js"
     },
     "bugs": "https://github.com/kesne/HostyHosting/issues",
     "dependencies": {
-        "@oclif/command": "^1",
-        "@oclif/config": "^1",
-        "@oclif/plugin-help": "^2",
-        "axios": "^0.19.2",
-        "cli-ux": "^5.4.5",
-        "conf": "^6.2.1",
-        "graphql": "^14.6.0",
-        "graphql-tag": "^2.10.3",
+        "@apollo/client": "^3.0.0-beta.44",
+        "@boost/cli": "^1.1.0",
+        "conf": "^6.2.4",
+        "node-fetch": "^2.6.0",
         "open": "^7.0.3",
-        "tslib": "^1"
+        "react": "^16.13.1"
     },
     "devDependencies": {
         "@graphql-codegen/cli": "1.11.2",
         "@graphql-codegen/typescript": "1.11.2",
-        "@graphql-codegen/typescript-document-nodes": "1.11.2",
         "@graphql-codegen/typescript-operations": "1.11.2",
-        "@oclif/dev-cli": "^1",
+        "@graphql-codegen/typescript-react-apollo": "1.11.2",
         "@types/node": "^10",
-        "globby": "^10",
         "ts-node": "^8",
         "typescript": "^3.3"
     },
     "engines": {
         "node": ">=8.0.0"
     },
-    "files": [
-        "/bin",
-        "/lib",
-        "/npm-shrinkwrap.json",
-        "/oclif.manifest.json"
-    ],
-    "homepage": "https://github.com/kesne/HostyHosting",
-    "keywords": [
-        "oclif"
-    ],
     "license": "SEE LICENSE IN LICENSE.MD",
     "main": "lib/index.js",
-    "oclif": {
-        "commands": "./lib/commands",
-        "bin": "hh",
-        "plugins": [
-            "@oclif/plugin-help"
-        ]
-    },
-    "repository": "kesne/HostyHosting",
     "scripts": {
         "codegen": "graphql-codegen",
-        "postpack": "rm -f oclif.manifest.json",
-        "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-        "test": "echo NO TESTS",
-        "version": "oclif-dev readme && git add README.md"
-    },
-    "types": "lib/index.d.ts"
+        "prepack": "rm -rf lib && tsc -b"
+    }
 }

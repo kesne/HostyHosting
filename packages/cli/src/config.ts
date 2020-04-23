@@ -1,7 +1,7 @@
 import Conf from 'conf';
 
 export const ConfigOptions = {
-    'apiKey': ''
+    apiKey: '',
 };
 
 export default new Conf<typeof ConfigOptions>();

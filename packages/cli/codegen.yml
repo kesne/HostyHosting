@@ -5,6 +5,11 @@ generates:
         plugins:
             - typescript
             - typescript-operations
-            - typescript-document-nodes
+            - typescript-react-apollo
         config:
-            skipTypename: true
+            withHooks: true
+            withComponent: false
+            withHOC: false
+            apolloReactHooksImportFrom: @apollo/client
+            apolloReactCommonImportFrom: @apollo/client
+            gqlImport: @apollo/client#gql

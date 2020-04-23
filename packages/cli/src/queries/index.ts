@@ -1,3 +1,6 @@
+import { gql } from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client';
+import * as ApolloReactHooks from '@apollo/client';
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -11,12 +14,16 @@ export type Scalars = {
 };
 
 export type ApiKey = {
+   __typename?: 'APIKey',
   id: Scalars['Int'],
+  privateKey?: Maybe<Scalars['String']>,
+  description: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
 
 export type Application = {
+   __typename?: 'Application',
   id: Scalars['Int'],
   name: Scalars['String'],
   description: Scalars['String'],
@@ -24,81 +31,120 @@ export type Application = {
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   organization: Organization,
-  containerGroups: Array<ContainerGroup>,
-  deployments: Array<Deployment>,
-  secrets: Array<Secret>,
+  components: Array<Component>,
+  component: Component,
+  environments: Array<Environment>,
+};
+
+
+export type ApplicationComponentArgs = {
+  id: Scalars['Int']
+};
+
+export type ApplicationInput = {
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
 };
 
 export type ApplicationMutations = {
+   __typename?: 'ApplicationMutations',
   delete: Application,
   update: Application,
-  createDeployment: Deployment,
-  updateDeployment: Deployment,
-  deleteDeployment: Deployment,
-  createContainerGroup: ContainerGroup,
-  updateContainerGroup: ContainerGroup,
-  deleteContainerGroup: ContainerGroup,
+  createComponent: Component,
+  updateComponent: Component,
+  addSecret: Secret,
+  editSecret: Secret,
+  deleteSecret: Secret,
+  deleteComponent: Component,
 };
 
 
 export type ApplicationMutationsUpdateArgs = {
-  secret?: Maybe<SecretInput>,
-  description?: Maybe<Scalars['String']>,
-  name?: Maybe<Scalars['String']>
+  application: ApplicationInput
 };
 
 
-export type ApplicationMutationsCreateDeploymentArgs = {
-  strategy: DeploymentStrategy,
-  label: Scalars['String'],
-  image: Scalars['String']
+export type ApplicationMutationsCreateComponentArgs = {
+  component: ComponentInput
 };
 
 
-export type ApplicationMutationsUpdateDeploymentArgs = {
+export type ApplicationMutationsUpdateComponentArgs = {
+  component: ComponentInput,
+  id: Scalars['Int']
+};
+
+
+export type ApplicationMutationsAddSecretArgs = {
+  value: Scalars['String'],
+  key: Scalars['String'],
+  component: Scalars['Int']
+};
+
+
+export type ApplicationMutationsEditSecretArgs = {
+  value: Scalars['String'],
+  key: Scalars['String'],
+  id: Scalars['Int'],
+  component: Scalars['Int']
+};
+
+
+export type ApplicationMutationsDeleteSecretArgs = {
+  id: Scalars['Int'],
+  component: Scalars['Int']
+};
+
+
+export type ApplicationMutationsDeleteComponentArgs = {
+  id: Scalars['Int']
+};
+
+export type Component = {
+   __typename?: 'Component',
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  deploymentStrategy: DeploymentStrategy,
   image: Scalars['String'],
-  id: Scalars['Int']
+  secrets: Array<Secret>,
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
+  containerGroup: ContainerGroup,
+  monthlyPrice: Scalars['Int'],
 };
 
-
-export type ApplicationMutationsDeleteDeploymentArgs = {
-  id: Scalars['Int']
-};
-
-
-export type ApplicationMutationsCreateContainerGroupArgs = {
-  number: Scalars['Int'],
-  size: Scalars['Int'],
-  deployment: Scalars['Int'],
-  label: Scalars['String']
-};
-
-
-export type ApplicationMutationsUpdateContainerGroupArgs = {
-  number?: Maybe<Scalars['Int']>,
-  label?: Maybe<Scalars['String']>,
-  id: Scalars['Int']
-};
-
-
-export type ApplicationMutationsDeleteContainerGroupArgs = {
-  id: Scalars['Int']
+export type ComponentInput = {
+  image?: Maybe<Scalars['String']>,
+  name?: Maybe<Scalars['String']>,
+  deploymentStrategy?: Maybe<DeploymentStrategy>,
+  size?: Maybe<ContainerSize>,
+  containerCount?: Maybe<Scalars['Int']>,
+  environmentID?: Maybe<Scalars['Int']>,
 };
 
 export type Container = {
+   __typename?: 'Container',
   id: Scalars['Int'],
   status: Scalars['String'],
 };
 
 export type ContainerGroup = {
+   __typename?: 'ContainerGroup',
   id: Scalars['Int'],
-  label: Scalars['String'],
   size: ContainerSize,
   containerCount: Scalars['Float'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
-  deployment: Deployment,
+  environment: Environment,
+  component: Component,
   containers: Array<Container>,
+};
+
+export type ContainerGroupInput = {
+  label: Scalars['String'],
+  deploymentID: Scalars['Int'],
+  size: ContainerSize,
+  number: Scalars['Int'],
 };
 
 export enum ContainerSize {
@@ -110,24 +156,26 @@ export enum ContainerSize {
 }
 
 
-export type Deployment = {
-  id: Scalars['Int'],
-  label: Scalars['String'],
-  strategy: DeploymentStrategy,
-  image: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
-  containerGroups: Array<ContainerGroup>,
-};
-
 export enum DeploymentStrategy {
   Replace = 'REPLACE',
   Recreate = 'RECREATE'
 }
 
+export type Environment = {
+   __typename?: 'Environment',
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  organization: Organization,
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
+};
+
 export type Mutation = {
+   __typename?: 'Mutation',
   createAPIKeyRequest: Scalars['String'],
   grantAPIKey: Result,
+  createAPIKey: ApiKey,
+  deleteAPIKey: Result,
   application: ApplicationMutations,
   organization: OrganizationMutations,
   exchangeTOTP: Result,
@@ -135,14 +183,26 @@ export type Mutation = {
   disableTotp: Result,
   signUp: Result,
   signIn: SignInResult,
+  gitHubSignIn: SignInResult,
   updateAccount: User,
   forgotPassword: Result,
   resetPassword: Result,
+  signOut: Result,
 };
 
 
 export type MutationGrantApiKeyArgs = {
   uuid: Scalars['String']
+};
+
+
+export type MutationCreateApiKeyArgs = {
+  description: Scalars['String']
+};
+
+
+export type MutationDeleteApiKeyArgs = {
+  id: Scalars['Int']
 };
 
 
@@ -175,7 +235,8 @@ export type MutationDisableTotpArgs = {
 export type MutationSignUpArgs = {
   password: Scalars['String'],
   email: Scalars['String'],
-  name: Scalars['String']
+  name: Scalars['String'],
+  username: Scalars['String']
 };
 
 
@@ -185,9 +246,15 @@ export type MutationSignInArgs = {
 };
 
 
+export type MutationGitHubSignInArgs = {
+  code: Scalars['String']
+};
+
+
 export type MutationUpdateAccountArgs = {
   email?: Maybe<Scalars['String']>,
-  name?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>,
+  username?: Maybe<Scalars['String']>
 };
 
 
@@ -201,28 +268,64 @@ export type MutationResetPasswordArgs = {
   uuid: Scalars['String']
 };
 
-export type Organization = {
+export type Network = {
+   __typename?: 'Network',
   id: Scalars['Int'],
-  isPersonal: Scalars['Boolean'],
   name: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+};
+
+export type Notification = {
+   __typename?: 'Notification',
+  id: Scalars['Int'],
+  title: Scalars['String'],
+  body: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
+};
+
+export type Organization = {
+   __typename?: 'Organization',
+  id: Scalars['Int'],
+  isPersonal: Scalars['Boolean'],
+  username: Scalars['String'],
+  name: Scalars['String'],
+  maxComputeUnits: Scalars['Float'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   applications: Array<Application>,
+  environments: Array<Environment>,
 };
 
 export type OrganizationMutations = {
+   __typename?: 'OrganizationMutations',
+  changeUsername: Organization,
+  createEnvironment: Environment,
   createApplication: Application,
 };
 
 
-export type OrganizationMutationsCreateApplicationArgs = {
-  description?: Maybe<Scalars['String']>,
+export type OrganizationMutationsChangeUsernameArgs = {
+  username: Scalars['String']
+};
+
+
+export type OrganizationMutationsCreateEnvironmentArgs = {
   name: Scalars['String']
 };
 
+
+export type OrganizationMutationsCreateApplicationArgs = {
+  application: ApplicationInput
+};
+
 export type Query = {
+   __typename?: 'Query',
   getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
+  estimateMonthlyPrice: Scalars['Int'],
+  notifications: Array<Notification>,
   organization: Organization,
   me: User,
 };
@@ -238,18 +341,29 @@ export type QueryApplicationArgs = {
 };
 
 
+export type QueryEstimateMonthlyPriceArgs = {
+  count: Scalars['Int'],
+  size: ContainerSize
+};
+
+
 export type QueryOrganizationArgs = {
   id?: Maybe<Scalars['Int']>
 };
 
 /** Provides a boolean to determine if the action was successful or not. */
 export type Result = {
+   __typename?: 'Result',
   ok: Scalars['Boolean'],
 };
 
 export type Secret = {
+   __typename?: 'Secret',
+  id: Scalars['Int'],
   key: Scalars['String'],
   value: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
 };
 
 export type SecretInput = {
@@ -262,14 +376,19 @@ export type SecretInput = {
  * user requires a TOTP exchange before being fully logged in.
  */
 export type SignInResult = {
+   __typename?: 'SignInResult',
   ok: Scalars['Boolean'],
   requiresTOTP: Scalars['Boolean'],
 };
 
 export type User = {
+   __typename?: 'User',
   id: Scalars['Int'],
+  githubID?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
+  username: Scalars['String'],
   email: Scalars['String'],
+  isPasswordless: Scalars['String'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
@@ -282,24 +401,79 @@ export type User = {
 export type CreateApiKeyRequestMutationVariables = {};
 
 
-export type CreateApiKeyRequestMutation = Pick<Mutation, 'createAPIKeyRequest'>;
+export type CreateApiKeyRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createAPIKeyRequest'>
+);
 
 export type GetApiKeyFromRequestQueryVariables = {
   uuid: Scalars['String']
 };
 
 
-export type GetApiKeyFromRequestQuery = Pick<Query, 'getAPIKeyFromRequest'>;
+export type GetApiKeyFromRequestQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getAPIKeyFromRequest'>
+);
 
-import gql from 'graphql-tag';
 
-export const CreateApiKeyRequest = gql`
+export const CreateApiKeyRequestDocument = gql`
     mutation CreateAPIKeyRequest {
   createAPIKeyRequest
 }
     `;
-export const GetApiKeyFromRequest = gql`
+export type CreateApiKeyRequestMutationFn = ApolloReactCommon.MutationFunction<CreateApiKeyRequestMutation, CreateApiKeyRequestMutationVariables>;
+
+/**
+ * __useCreateApiKeyRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateApiKeyRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApiKeyRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApiKeyRequestMutation, { data, loading, error }] = useCreateApiKeyRequestMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreateApiKeyRequestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateApiKeyRequestMutation, CreateApiKeyRequestMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateApiKeyRequestMutation, CreateApiKeyRequestMutationVariables>(CreateApiKeyRequestDocument, baseOptions);
+      }
+export type CreateApiKeyRequestMutationHookResult = ReturnType<typeof useCreateApiKeyRequestMutation>;
+export type CreateApiKeyRequestMutationResult = ApolloReactCommon.MutationResult<CreateApiKeyRequestMutation>;
+export type CreateApiKeyRequestMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApiKeyRequestMutation, CreateApiKeyRequestMutationVariables>;
+export const GetApiKeyFromRequestDocument = gql`
     query GetAPIKeyFromRequest($uuid: String!) {
   getAPIKeyFromRequest(uuid: $uuid)
 }
     `;
+
+/**
+ * __useGetApiKeyFromRequestQuery__
+ *
+ * To run a query within a React component, call `useGetApiKeyFromRequestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApiKeyFromRequestQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApiKeyFromRequestQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetApiKeyFromRequestQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetApiKeyFromRequestQuery, GetApiKeyFromRequestQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetApiKeyFromRequestQuery, GetApiKeyFromRequestQueryVariables>(GetApiKeyFromRequestDocument, baseOptions);
+      }
+export function useGetApiKeyFromRequestLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetApiKeyFromRequestQuery, GetApiKeyFromRequestQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetApiKeyFromRequestQuery, GetApiKeyFromRequestQueryVariables>(GetApiKeyFromRequestDocument, baseOptions);
+        }
+export type GetApiKeyFromRequestQueryHookResult = ReturnType<typeof useGetApiKeyFromRequestQuery>;
+export type GetApiKeyFromRequestLazyQueryHookResult = ReturnType<typeof useGetApiKeyFromRequestLazyQuery>;
+export type GetApiKeyFromRequestQueryResult = ApolloReactCommon.QueryResult<GetApiKeyFromRequestQuery, GetApiKeyFromRequestQueryVariables>;
