@@ -1,6 +1,7 @@
-import { Resolver, FieldResolver } from 'type-graphql';
+import { Resolver, FieldResolver, Int, Root } from 'type-graphql';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import Container from './types/Container';
+import * as pricing from '../utils/pricing';
 
 @Resolver(() => ContainerGroup)
 export class ContainerGroupResolver {
@@ -10,8 +11,13 @@ export class ContainerGroupResolver {
         return Array.from({ length: 2 }, (_, i) =>
             Object.assign(new Container(), {
                 id: i,
-                status: 'RUNNING'
-            })
+                status: 'RUNNING',
+            }),
         );
+    }
+
+    @FieldResolver(() => Int)
+    async monthlyPrice(@Root() containerGroup: ContainerGroup) {
+        return pricing.calculateMonthlyCost(containerGroup.size, containerGroup.containerCount);
     }
 }

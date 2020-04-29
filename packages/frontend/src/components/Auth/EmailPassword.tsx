@@ -36,7 +36,7 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
     };
 
     return (
-        <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+        <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
             <Input
                 label="Email address"
                 name="email"

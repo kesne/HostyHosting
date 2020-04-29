@@ -3,15 +3,15 @@ import { ContainerSize } from '../../entity/ContainerGroup';
 
 @InputType()
 export class ContainerGroupInput {
-    @Field()
-    label!: string;
+    @Field(() => Int)
+    componentID!: number;
 
     @Field(() => Int)
-    deploymentID!: number;
+    environmentID!: number;
 
     @Field(() => ContainerSize)
     size!: ContainerSize;
 
     @Field(() => Int)
-    number!: number;
+    containerCount!: number;
 }

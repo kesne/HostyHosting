@@ -27,13 +27,16 @@ export default function Secret({ componentID, secret, onEdit }: Props) {
         update(cache, { data }) {
             if (!data) return;
 
-            cache.modify(`Component:${componentID}`, {
-                secrets(secrets: Reference[], { readField }) {
-                    return secrets.filter(
-                        secret => data.application.deleteSecret.id !== readField('id', secret),
-                    );
+            cache.modify(
+                {
+                    secrets(secrets: Reference[], { readField }) {
+                        return secrets.filter(
+                            secret => data.application.deleteSecret.id !== readField('id', secret),
+                        );
+                    },
                 },
-            });
+                `Component:${componentID}`,
+            );
 
             cache.evict(`Secret:${secret.id}`);
         },

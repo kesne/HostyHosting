@@ -28,6 +28,11 @@ export class Environment extends BaseEntity {
     @Length(3, 20)
     name!: string;
 
+    // TODO: Make this non-nullable:
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    label?: string;
+
     @OneToMany(
         () => Network,
         network => network.environment,

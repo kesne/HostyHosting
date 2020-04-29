@@ -15,11 +15,14 @@ export default function CreateEnvironment({ organization, open, onClose }: Props
         update(cache, { data }) {
             if (!data) return;
 
-            cache.modify(`Organization:${organization}`, {
-                environments(envs: Reference[], { toReference }) {
-                    return [...envs, toReference(data.organization.createEnvironment)];
+            cache.modify(
+                {
+                    environments(envs: Reference[], { toReference }) {
+                        return [...envs, toReference(data.organization.createEnvironment)];
+                    },
                 },
-            });
+                `Organization:${organization}`,
+            );
         },
     });
 

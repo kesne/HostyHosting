@@ -11,10 +11,23 @@ import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
 import { Environment } from '../entity/Environment';
 
+async function withConnection(fn: any) {
+    const connection = await createConnection(ormconfig);
+    try {
+        await fn()
+    } finally {
+        connection.close();
+    }
+}
+
+async function test() {
+    const component = await Component.findOne(2);
+
+    console.log(await component?.containerGroups);
+}
+
 // TODO: Make this execute a bunch of GraphQL commands, instead of just being ORM operations.
 async function seed() {
-    const connection = await createConnection(ormconfig);
-
     // Start by removing the ENTIRE world.
     await APIKey.delete({})
     await ContainerGroup.delete({});
@@ -43,6 +56,11 @@ async function seed() {
 
     await Organization.createPersonal(user);
 
+    // Allocate more max compute units to myself for testing:
+    const personalOrg = await user.personalOrganization;
+    personalOrg.maxComputeUnits = 100;
+    await personalOrg.save();
+
     // Create orgs:
     const netflixOrg = new Organization();
     netflixOrg.name = 'Netflix';
@@ -56,8 +74,6 @@ async function seed() {
     await netflixMembership.save();
 
     await netflixOrg.createDefaultEnvironments();
-
-    await connection.close();
 }
 
-seed();
+withConnection(seed);

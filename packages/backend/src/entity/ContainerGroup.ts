@@ -5,9 +5,10 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToOne,
     BeforeInsert,
     BeforeUpdate,
+    OneToMany,
+    Unique,
 } from 'typeorm';
 import { Component } from './Component';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
@@ -16,6 +17,7 @@ import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Environment } from './Environment';
 import { Organization } from './Organization';
+import { Secret } from './Secret';
 
 export enum ContainerSize {
     S1x1 = 'S1x1', // 1 Compute Unit, 128 mb
@@ -44,6 +46,7 @@ export function containerCountAndSizeToComputeUnits(count: number, size: Contain
 // TODO: Store the actual compute unit usage of the container group.
 @Entity()
 @ObjectType()
+@Unique(['component', 'environment'])
 export class ContainerGroup extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -85,12 +88,20 @@ export class ContainerGroup extends BaseEntity {
     environment!: Lazy<Environment>;
 
     @Field(() => Component)
-    @OneToOne(
+    @ManyToOne(
         () => Component,
-        component => component.containerGroup,
+        component => component.containerGroups,
         { lazy: true },
     )
     component!: Lazy<Component>;
+
+    @Field(() => [Secret])
+    @OneToMany(
+        () => Secret,
+        secret => secret.component,
+        { lazy: true },
+    )
+    secrets!: Lazy<Secret[]>;
 
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;

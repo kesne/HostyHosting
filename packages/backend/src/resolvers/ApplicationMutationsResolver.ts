@@ -8,6 +8,7 @@ import { ApplicationInput } from './types/ApplicationInput';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
+import { ContainerGroupInput } from './types/ContainerGroupInput';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -45,11 +46,31 @@ export class ApplicationMutations {
 
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
+        const component = new Component();
+        component.application = this.application;
+        component.name = componentInput.name;
+        component.image = componentInput.image;
+        component.deploymentStrategy = componentInput.deploymentStrategy;
+
+        return await component.save();
+    }
+
+    @Field(() => ContainerGroup)
+    async createContainerGroup(
+        @Arg('containerGroup', () => ContainerGroupInput) containerGroupInput: ContainerGroupInput,
+    ) {
         const organization = await this.application.organization;
+
+        const component = await Component.findOneOrFail({
+            where: {
+                id: containerGroupInput.componentID,
+                application: this.application,
+            },
+        });
 
         const environment = await Environment.findOneOrFail({
             where: {
-                id: componentInput.environmentID,
+                id: containerGroupInput.environmentID,
                 organization,
             },
         });
@@ -57,18 +78,11 @@ export class ApplicationMutations {
         const containerGroup = new ContainerGroup();
         containerGroup.environment = environment;
         containerGroup.organization = organization;
-        containerGroup.setSize(componentInput.size);
-        containerGroup.setContainerCount(componentInput.containerCount);
-        await containerGroup.save();
+        containerGroup.component = component;
+        containerGroup.setSize(containerGroupInput.size);
+        containerGroup.setContainerCount(containerGroupInput.containerCount);
 
-        const component = new Component();
-        component.application = this.application;
-        component.name = componentInput.name;
-        component.image = componentInput.image;
-        component.deploymentStrategy = componentInput.deploymentStrategy;
-        component.containerGroup = containerGroup;
-
-        return await component.save();
+        return await containerGroup.save();
     }
 
     @Field(() => Component)

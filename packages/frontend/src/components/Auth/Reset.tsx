@@ -31,7 +31,7 @@ export default function Reset() {
 
     return (
         <Container title="Finish resetting your password">
-            <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+            <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
                 <p className="text-sm leading-5 text-gray-700">
                     You can set a new password for your account below, which can be used for all
                     future sign-ins.

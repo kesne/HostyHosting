@@ -36,7 +36,7 @@ export default function SignUp() {
                 </span>
             }
         >
-            <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+            <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
                 <Input
                     label="Username"
                     name="username"

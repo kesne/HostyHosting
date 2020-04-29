@@ -5,9 +5,9 @@ import {
     ManyToOne,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToOne,
     JoinColumn,
     OneToMany,
+    Unique,
 } from 'typeorm';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
@@ -29,6 +29,7 @@ registerEnumType(DeploymentStrategy, {
 
 @Entity()
 @ObjectType()
+@Unique(['name', 'application'])
 export class Component extends BaseEntity {
     static findByApplicationAndId(application: Application, id: number) {
         return Component.findOneOrFail({
@@ -49,6 +50,7 @@ export class Component extends BaseEntity {
     @Length(3, 20)
     name!: string;
 
+    // TODO: We will probably want to move this definition down into container groups:
     @Field(() => DeploymentStrategy)
     @Column({ type: 'enum', enum: DeploymentStrategy, default: DeploymentStrategy.RECREATE })
     deploymentStrategy!: DeploymentStrategy;
@@ -59,13 +61,11 @@ export class Component extends BaseEntity {
     @Column()
     image!: string;
 
+    // DEPRECATED: Remove before pushing:
     @Field(() => [Secret])
-    @OneToMany(
-        () => Secret,
-        secret => secret.component,
-        { lazy: true },
-    )
-    secrets!: Lazy<Secret[]>;
+    get secrets() {
+        return [];
+    }
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
@@ -82,12 +82,12 @@ export class Component extends BaseEntity {
     )
     application!: Lazy<Application>;
 
-    @Field(() => ContainerGroup)
-    @OneToOne(
+    @Field(() => [ContainerGroup])
+    @OneToMany(
         () => ContainerGroup,
         containerGroup => containerGroup.component,
         { lazy: true },
     )
     @JoinColumn()
-    containerGroup!: Lazy<ContainerGroup>;
+    containerGroups!: Lazy<ContainerGroup[]>;
 }

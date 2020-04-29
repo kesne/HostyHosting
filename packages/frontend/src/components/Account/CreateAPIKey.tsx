@@ -15,11 +15,14 @@ export default function CreateAPIKey({ open, onClose }: { open: boolean; onClose
         update(cache, { data }) {
             if (!data) return;
 
-            cache.modify(`User:${getUserID()}`, {
-                apiKeys(keys: Reference[], { toReference }) {
-                    return [...keys, toReference(data.createAPIKey)];
+            cache.modify(
+                {
+                    apiKeys(keys: Reference[], { toReference }) {
+                        return [...keys, toReference(data.createAPIKey)];
+                    },
                 },
-            });
+                `User:${getUserID()}`,
+            );
         },
     });
 

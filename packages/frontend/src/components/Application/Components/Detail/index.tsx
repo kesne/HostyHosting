@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useComponentQuery } from '../../../../queries';
 import Card, { CardContent } from '../../../ui/Card';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
 import { useBreadcrumb } from '../../Breadcrumbs';
-import Secrets from './Secrets';
-import EditOrAddSecret from './EditOrAddSecret';
 import useBoolean from '../../../../utils/useBoolean';
 import formatCurrency from '../../../../utils/formatCurrency';
 import EditComponent from './EditComponent';
 import DeleteComponent from './DeleteComponent';
+import Tabs from '../../../ui/Tabs';
+import ContainerGroup from './ContainerGroup';
 
 export default function Detail() {
     const params = useParams<{ application: string; component: string }>();
@@ -20,8 +20,14 @@ export default function Detail() {
             component: Number(params.component),
         },
     });
-    const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
+    const [environment, setEnvironment] = useState('');
     const [editing, { on: editingOn, off: editingOff }] = useBoolean(false);
+
+    useEffect(() => {
+        if (data) {
+            setEnvironment(String(data.application.environments[0].id));
+        }
+    }, [data]);
 
     useBreadcrumb({
         name: data?.application.component.name || '...',
@@ -54,7 +60,7 @@ export default function Detail() {
                             </svg>
                             {data.application.component.deploymentStrategy}
                         </div>
-                        <div className="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
+                        {/* <div className="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
                             <svg
                                 fill="none"
                                 stroke="currentColor"
@@ -67,7 +73,7 @@ export default function Detail() {
                                 <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                             </svg>
                             {data.application.component.containerGroup.environment.name}
-                        </div>
+                        </div> */}
                         <div className="mt-2 flex items-center text-sm leading-5 text-gray-500">
                             <svg
                                 fill="none"
@@ -91,73 +97,28 @@ export default function Detail() {
                     </span>
                     <span className="ml-3 relative shadow-sm rounded-md">
                         <Button onClick={editingOn}>Edit</Button>
-                        <EditComponent
+                        {/* <EditComponent
                             component={data.application.component}
                             visible={editing}
                             onClose={editingOff}
-                        />
+                        /> */}
                     </span>
                 </div>
             </div>
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-                <Card>
-                    <CardContent>
-                        <dl>
-                            <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-                                Monthly Cost
-                            </dt>
-                            <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                {formatCurrency(data.application.component.monthlyPrice)}
-                            </dd>
-                        </dl>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <dl>
-                            <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-                                Instance Size
-                            </dt>
-                            <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                {data.application.component.containerGroup.size}
-                            </dd>
-                        </dl>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <dl>
-                            <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-                                Instance Count
-                            </dt>
-                            <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                {data.application.component.containerGroup.containerCount}
-                            </dd>
-                        </dl>
-                    </CardContent>
-                </Card>
-            </div>
-            <div className="mt-4">
-                <Card
-                    title="Secrets"
-                    actions={
-                        <Button variant="primary" onClick={creatingOn}>
-                            Add
-                        </Button>
-                    }
-                >
-                    <Secrets
-                        id={data.application.component.id}
-                        secrets={data.application.component.secrets}
-                    />
-                </Card>
-                <EditOrAddSecret
-                    id={data.application.component.id}
-                    open={creating}
-                    onClose={creatingOff}
-                    create
+            <Tabs
+                value={environment}
+                onChange={setEnvironment}
+                tabs={data.application.environments.map(({ id, name }) => ({
+                    label: name,
+                    value: String(id),
+                }))}
+            />
+            {environment && (
+                <ContainerGroup
+                    component={data.application.component.id}
+                    environment={Number(environment)}
                 />
-            </div>
+            )}
         </>
     );
 }

@@ -9,6 +9,7 @@ query Applications($org: Int) {
         environments {
             id
             name
+            label
         }
     }
 }

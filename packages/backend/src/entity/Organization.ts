@@ -160,8 +160,6 @@ export class Organization extends BaseEntity {
             },
         });
 
-        console.log(containerGroups);
-
         return (
             this.maxComputeUnits -
             containerGroups.reduce(

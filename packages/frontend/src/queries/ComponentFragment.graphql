@@ -6,13 +6,6 @@ fragment ComponentFragment on Component {
     createdAt
     updatedAt
     monthlyPrice
-    containerGroup {
-        containerCount
-        size
-        environment {
-            name
-        }
-    }
     secrets {
         id
         key

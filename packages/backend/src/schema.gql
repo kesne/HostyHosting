@@ -33,6 +33,7 @@ type ApplicationMutations {
   delete: Application!
   update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
+  createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
   updateComponent(component: ComponentInput!, id: Int!): Component!
   addSecret(value: String!, key: String!, component: Int!): Secret!
   editSecret(value: String!, key: String!, id: Int!, component: Int!): Secret!
@@ -48,17 +49,15 @@ type Component {
   secrets: [Secret!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  containerGroup: ContainerGroup!
+  containerGroups: [ContainerGroup!]!
   monthlyPrice: Int!
+  containerGroup(environment: Int!): ContainerGroup
 }
 
 input ComponentInput {
   image: String
   name: String
   deploymentStrategy: DeploymentStrategy
-  size: ContainerSize
-  containerCount: Int
-  environmentID: Int
 }
 
 type Container {
@@ -74,14 +73,16 @@ type ContainerGroup {
   updatedAt: DateTime!
   environment: Environment!
   component: Component!
+  secrets: [Secret!]!
   containers: [Container!]!
+  monthlyPrice: Int!
 }
 
 input ContainerGroupInput {
-  label: String!
-  deploymentID: Int!
+  componentID: Int!
+  environmentID: Int!
   size: ContainerSize!
-  number: Int!
+  containerCount: Int!
 }
 
 enum ContainerSize {
@@ -105,6 +106,7 @@ enum DeploymentStrategy {
 type Environment {
   id: Int!
   name: String!
+  label: String
   organization: Organization!
   createdAt: DateTime!
   updatedAt: DateTime!

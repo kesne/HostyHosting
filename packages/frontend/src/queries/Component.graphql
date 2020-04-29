@@ -1,6 +1,11 @@
 query Component($app: Int!, $component: Int!) {
     application(id: $app) {
         id
+        environments {
+            id
+            name
+            label
+        }
         component(id: $component) {
             ...ComponentFragment
         }

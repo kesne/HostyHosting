@@ -4,6 +4,7 @@ query ApplicationEnvironments($id: Int!) {
         environments {
             id
             name
+            label
         }
     }
 }

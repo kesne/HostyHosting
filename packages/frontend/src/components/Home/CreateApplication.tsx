@@ -19,11 +19,14 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
         update(cache, { data }) {
             if (!data) return;
 
-            cache.modify(`Organization:${organization}`, {
-                applications(applications: Reference[], { toReference }) {
-                    return [...applications, toReference(data.organization.createApplication)];
+            cache.modify(
+                {
+                    applications(applications: Reference[], { toReference }) {
+                        return [...applications, toReference(data.organization.createApplication)];
+                    },
                 },
-            });
+                `Organization:${organization}`,
+            );
         },
     });
     const { reset, register, errors, handleSubmit } = useForm();
@@ -54,7 +57,7 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
         <Modal open={visible} onClose={onClose}>
             <form onSubmit={handleSubmit(handleFinish)}>
                 <ModalContent title="Create Application">
-                    <div className="grid grid-cols-1 row-gap-6">
+                    <div className="space-y-6">
                         <Input
                             name="name"
                             label="Application Name"

@@ -44,21 +44,21 @@ export default function Modal({ open, onClose, children }: Props) {
     const modalInitial = atLeastSmall
         ? {
               opacity: 0,
-              scale: 0.95
+              scale: 0.95,
           }
         : {
               opacity: 0,
-              y: 25
+              y: 25,
           };
 
     const modalIn = atLeastSmall
         ? {
               opacity: 1,
-              scale: 1
+              scale: 1,
           }
         : {
               opacity: 1,
-              y: 0
+              y: 0,
           };
 
     useEffect(() => {

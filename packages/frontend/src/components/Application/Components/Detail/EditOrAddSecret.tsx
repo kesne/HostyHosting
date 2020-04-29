@@ -22,11 +22,14 @@ export default function EditOrAddSecret({ id, secret, open, onClose, create }: P
             update(cache, { data }) {
                 if (!data || !create) return;
 
-                cache.modify(`Component:${id}`, {
-                    secrets(secrets: Reference[], { toReference }) {
-                        return [...secrets, toReference(data.application.addSecret)]
-                    }
-                });
+                cache.modify(
+                    {
+                        secrets(secrets: Reference[], { toReference }) {
+                            return [...secrets, toReference(data.application.addSecret)];
+                        },
+                    },
+                    `Component:${id}`,
+                );
             },
         },
     );
@@ -53,7 +56,7 @@ export default function EditOrAddSecret({ id, secret, open, onClose, create }: P
             onClose={onClose}
         >
             {({ errors, register }) => (
-                <div className="flex-1 grid grid-cols-1 row-gap-6">
+                <div className="flex-1 space-y-6">
                     <Input
                         label="Key"
                         placeholder="KEY"

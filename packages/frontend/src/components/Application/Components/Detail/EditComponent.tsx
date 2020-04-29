@@ -38,6 +38,7 @@ type Props = {
 };
 
 export default function EditComponent({ component, visible, onClose }: Props) {
+    return null;
     const applicationID = useApplicationID();
     const [deploymentType, setDeploymentType] = useState('docker-registry');
     const [containerSize, setContainerSize] = useState<ContainerSize>(
@@ -79,7 +80,7 @@ export default function EditComponent({ component, visible, onClose }: Props) {
             <Modal open={visible} onClose={onClose}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalContent title="Edit Component">
-                        <div className="grid grid-cols-1 row-gap-6">
+                        <div className="space-y-6">
                             <Tabs
                                 flex
                                 value={deploymentType}

@@ -56,7 +56,7 @@ export default function VerticalNav({
     return (
         <ValueContext.Provider value={value}>
             {small ? (
-                <nav className="grid grid-cols-1 row-gap-1">{children}</nav>
+                <nav className="space-y-6">{children}</nav>
             ) : (
                 <div>
                     <select

@@ -51,6 +51,7 @@ export type ApplicationMutations = {
   delete: Application,
   update: Application,
   createComponent: Component,
+  createContainerGroup: ContainerGroup,
   updateComponent: Component,
   addSecret: Secret,
   editSecret: Secret,
@@ -66,6 +67,11 @@ export type ApplicationMutationsUpdateArgs = {
 
 export type ApplicationMutationsCreateComponentArgs = {
   component: ComponentInput
+};
+
+
+export type ApplicationMutationsCreateContainerGroupArgs = {
+  containerGroup: ContainerGroupInput
 };
 
 
@@ -109,17 +115,20 @@ export type Component = {
   secrets: Array<Secret>,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
-  containerGroup: ContainerGroup,
+  containerGroups: Array<ContainerGroup>,
   monthlyPrice: Scalars['Int'],
+  containerGroup?: Maybe<ContainerGroup>,
+};
+
+
+export type ComponentContainerGroupArgs = {
+  environment: Scalars['Int']
 };
 
 export type ComponentInput = {
   image?: Maybe<Scalars['String']>,
   name?: Maybe<Scalars['String']>,
   deploymentStrategy?: Maybe<DeploymentStrategy>,
-  size?: Maybe<ContainerSize>,
-  containerCount?: Maybe<Scalars['Int']>,
-  environmentID?: Maybe<Scalars['Int']>,
 };
 
 export type Container = {
@@ -137,14 +146,16 @@ export type ContainerGroup = {
   updatedAt: Scalars['DateTime'],
   environment: Environment,
   component: Component,
+  secrets: Array<Secret>,
   containers: Array<Container>,
+  monthlyPrice: Scalars['Int'],
 };
 
 export type ContainerGroupInput = {
-  label: Scalars['String'],
-  deploymentID: Scalars['Int'],
+  componentID: Scalars['Int'],
+  environmentID: Scalars['Int'],
   size: ContainerSize,
-  number: Scalars['Int'],
+  containerCount: Scalars['Int'],
 };
 
 export enum ContainerSize {
@@ -165,6 +176,7 @@ export type Environment = {
    __typename?: 'Environment',
   id: Scalars['Int'],
   name: Scalars['String'],
+  label?: Maybe<Scalars['String']>,
   organization: Organization,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
@@ -459,7 +471,7 @@ export type ApplicationEnvironmentsQuery = (
     & Pick<Application, 'id'>
     & { environments: Array<(
       { __typename?: 'Environment' }
-      & Pick<Environment, 'id' | 'name'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     )> }
   ) }
 );
@@ -488,7 +500,7 @@ export type ApplicationsQuery = (
       & Pick<Application, 'id' | 'name' | 'description'>
     )>, environments: Array<(
       { __typename?: 'Environment' }
-      & Pick<Environment, 'id' | 'name'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     )> }
   ) }
 );
@@ -504,7 +516,10 @@ export type ComponentQuery = (
   & { application: (
     { __typename?: 'Application' }
     & Pick<Application, 'id'>
-    & { component: (
+    & { environments: Array<(
+      { __typename?: 'Environment' }
+      & Pick<Environment, 'id' | 'name' | 'label'>
+    )>, component: (
       { __typename?: 'Component' }
       & ComponentFragmentFragment
     ) }
@@ -514,17 +529,37 @@ export type ComponentQuery = (
 export type ComponentFragmentFragment = (
   { __typename?: 'Component' }
   & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
-  & { containerGroup: (
-    { __typename?: 'ContainerGroup' }
-    & Pick<ContainerGroup, 'containerCount' | 'size'>
-    & { environment: (
-      { __typename?: 'Environment' }
-      & Pick<Environment, 'name'>
-    ) }
-  ), secrets: Array<(
+  & { secrets: Array<(
     { __typename?: 'Secret' }
     & Pick<Secret, 'id' | 'key' | 'value'>
   )> }
+);
+
+export type ContainerGroupQueryVariables = {
+  app: Scalars['Int'],
+  component: Scalars['Int'],
+  environment: Scalars['Int']
+};
+
+
+export type ContainerGroupQuery = (
+  { __typename?: 'Query' }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
+    & { component: (
+      { __typename?: 'Component' }
+      & Pick<Component, 'id'>
+      & { containerGroup: Maybe<(
+        { __typename?: 'ContainerGroup' }
+        & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
+        & { environment: (
+          { __typename?: 'Environment' }
+          & Pick<Environment, 'id' | 'name' | 'label'>
+        ) }
+      )> }
+    ) }
+  ) }
 );
 
 export type CreateApiKeyMutationVariables = {
@@ -570,6 +605,27 @@ export type CreateComponentMutation = (
     & { createComponent: (
       { __typename?: 'Component' }
       & Pick<Component, 'id' | 'name' | 'image'>
+    ) }
+  ) }
+);
+
+export type CreateContainerGroupMutationVariables = {
+  applicationID: Scalars['Int'],
+  containerGroup: ContainerGroupInput
+};
+
+
+export type CreateContainerGroupMutation = (
+  { __typename?: 'Mutation' }
+  & { application: (
+    { __typename?: 'ApplicationMutations' }
+    & { createContainerGroup: (
+      { __typename?: 'ContainerGroup' }
+      & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
+      & { environment: (
+        { __typename?: 'Environment' }
+        & Pick<Environment, 'id' | 'name' | 'label'>
+      ) }
     ) }
   ) }
 );
@@ -952,13 +1008,6 @@ export const ComponentFragmentFragmentDoc = gql`
   createdAt
   updatedAt
   monthlyPrice
-  containerGroup {
-    containerCount
-    size
-    environment {
-      name
-    }
-  }
   secrets {
     id
     key
@@ -1092,6 +1141,7 @@ export const ApplicationEnvironmentsDocument = gql`
     environments {
       id
       name
+      label
     }
   }
 }
@@ -1134,6 +1184,7 @@ export const ApplicationsDocument = gql`
     environments {
       id
       name
+      label
     }
   }
 }
@@ -1168,6 +1219,11 @@ export const ComponentDocument = gql`
     query Component($app: Int!, $component: Int!) {
   application(id: $app) {
     id
+    environments {
+      id
+      name
+      label
+    }
     component(id: $component) {
       ...ComponentFragment
     }
@@ -1201,6 +1257,55 @@ export function useComponentLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHo
 export type ComponentQueryHookResult = ReturnType<typeof useComponentQuery>;
 export type ComponentLazyQueryHookResult = ReturnType<typeof useComponentLazyQuery>;
 export type ComponentQueryResult = ApolloReactCommon.QueryResult<ComponentQuery, ComponentQueryVariables>;
+export const ContainerGroupDocument = gql`
+    query ContainerGroup($app: Int!, $component: Int!, $environment: Int!) {
+  application(id: $app) {
+    id
+    component(id: $component) {
+      id
+      containerGroup(environment: $environment) {
+        id
+        monthlyPrice
+        containerCount
+        size
+        environment {
+          id
+          name
+          label
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useContainerGroupQuery__
+ *
+ * To run a query within a React component, call `useContainerGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useContainerGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useContainerGroupQuery({
+ *   variables: {
+ *      app: // value for 'app'
+ *      component: // value for 'component'
+ *      environment: // value for 'environment'
+ *   },
+ * });
+ */
+export function useContainerGroupQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ContainerGroupQuery, ContainerGroupQueryVariables>) {
+        return ApolloReactHooks.useQuery<ContainerGroupQuery, ContainerGroupQueryVariables>(ContainerGroupDocument, baseOptions);
+      }
+export function useContainerGroupLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ContainerGroupQuery, ContainerGroupQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ContainerGroupQuery, ContainerGroupQueryVariables>(ContainerGroupDocument, baseOptions);
+        }
+export type ContainerGroupQueryHookResult = ReturnType<typeof useContainerGroupQuery>;
+export type ContainerGroupLazyQueryHookResult = ReturnType<typeof useContainerGroupLazyQuery>;
+export type ContainerGroupQueryResult = ApolloReactCommon.QueryResult<ContainerGroupQuery, ContainerGroupQueryVariables>;
 export const CreateApiKeyDocument = gql`
     mutation CreateAPIKey($description: String!) {
   createAPIKey(description: $description) {
@@ -1310,6 +1415,49 @@ export function useCreateComponentMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateComponentMutationHookResult = ReturnType<typeof useCreateComponentMutation>;
 export type CreateComponentMutationResult = ApolloReactCommon.MutationResult<CreateComponentMutation>;
 export type CreateComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateComponentMutation, CreateComponentMutationVariables>;
+export const CreateContainerGroupDocument = gql`
+    mutation CreateContainerGroup($applicationID: Int!, $containerGroup: ContainerGroupInput!) {
+  application(id: $applicationID) {
+    createContainerGroup(containerGroup: $containerGroup) {
+      id
+      monthlyPrice
+      containerCount
+      size
+      environment {
+        id
+        name
+        label
+      }
+    }
+  }
+}
+    `;
+export type CreateContainerGroupMutationFn = ApolloReactCommon.MutationFunction<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
+
+/**
+ * __useCreateContainerGroupMutation__
+ *
+ * To run a mutation, you first call `useCreateContainerGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateContainerGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createContainerGroupMutation, { data, loading, error }] = useCreateContainerGroupMutation({
+ *   variables: {
+ *      applicationID: // value for 'applicationID'
+ *      containerGroup: // value for 'containerGroup'
+ *   },
+ * });
+ */
+export function useCreateContainerGroupMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>(CreateContainerGroupDocument, baseOptions);
+      }
+export type CreateContainerGroupMutationHookResult = ReturnType<typeof useCreateContainerGroupMutation>;
+export type CreateContainerGroupMutationResult = ApolloReactCommon.MutationResult<CreateContainerGroupMutation>;
+export type CreateContainerGroupMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
 export const CreateEnvironmentDocument = gql`
     mutation CreateEnvironment($org: Int, $name: String!) {
   organization(id: $org) {

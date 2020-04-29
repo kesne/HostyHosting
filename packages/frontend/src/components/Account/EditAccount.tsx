@@ -29,7 +29,7 @@ export default function EditAccount() {
     return (
         <Card>
             <CardContent>
-                <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(handleFinish)}>
+                <form className="space-y-6" onSubmit={handleSubmit(handleFinish)}>
                     <Input
                         label="Username"
                         name="username"

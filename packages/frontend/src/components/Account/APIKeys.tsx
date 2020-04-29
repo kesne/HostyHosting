@@ -18,11 +18,14 @@ export default function APIKeys() {
             deleteAPIKey({
                 variables: { id },
                 update(cache) {
-                    cache.modify(`User:${getUserID()}`, {
-                        apiKeys(keys: Reference[], { readField }) {
-                            return keys.filter(key => id !== readField('id', key));
+                    cache.modify(
+                        {
+                            apiKeys(keys: Reference[], { readField }) {
+                                return keys.filter(key => id !== readField('id', key));
+                            },
                         },
-                    });
+                        `User:${getUserID()}`,
+                    );
 
                     cache.evict(`APIKey:${id}`);
                 },

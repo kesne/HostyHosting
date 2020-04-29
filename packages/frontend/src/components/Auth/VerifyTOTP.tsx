@@ -28,7 +28,7 @@ export default function VerifyTOTP({ onSignIn }: Props) {
     }
 
     return (
-        <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(handleFinish)}>
+        <form className="space-y-6" onSubmit={handleSubmit(handleFinish)}>
             <p className="text-sm leading-5 text-gray-700">
                 Two factor auth is enabled on this account. Please enter the token from your
                 authenticator app below:

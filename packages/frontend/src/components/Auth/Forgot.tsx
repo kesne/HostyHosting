@@ -34,7 +34,7 @@ export default function Forgot() {
                     finish resetting your password
                 </p>
             ) : (
-                <form className="grid grid-cols-1 row-gap-6" onSubmit={handleSubmit(onFinish)}>
+                <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
                     <p className="text-sm leading-5 text-gray-700">
                         Enter the email you created your account with, and we will email you a link
                         to reset your password.

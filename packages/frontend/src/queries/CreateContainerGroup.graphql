@@ -1,0 +1,15 @@
+mutation CreateContainerGroup($applicationID: Int!, $containerGroup: ContainerGroupInput!) {
+    application(id: $applicationID) {
+        createContainerGroup(containerGroup: $containerGroup) {
+            id
+            monthlyPrice
+            containerCount
+            size
+            environment {
+                id
+                name
+                label
+            }
+        }
+    }
+}

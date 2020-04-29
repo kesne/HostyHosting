@@ -1,0 +1,19 @@
+query ContainerGroup($app: Int!, $component: Int!, $environment: Int!) {
+    application(id: $app) {
+        id
+        component(id: $component) {
+            id
+            containerGroup(environment: $environment) {
+                id
+                monthlyPrice
+                containerCount
+                size
+                environment {
+                    id
+                    name
+                    label
+                }
+            }
+        }
+    }
+}
