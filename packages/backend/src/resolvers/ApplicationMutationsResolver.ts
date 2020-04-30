@@ -91,7 +91,6 @@ export class ApplicationMutations {
         @Arg('component', () => ComponentInput) componentInput: ComponentInput,
     ) {
         const component = await Component.findByApplicationAndId(this.application, id);
-        const containerGroup = await component.containerGroup;
 
         if ('name' in componentInput) {
             component.name = componentInput.name;
@@ -105,47 +104,41 @@ export class ApplicationMutations {
             component.deploymentStrategy = componentInput.deploymentStrategy;
         }
 
-        if ('size' in componentInput) {
-            containerGroup.setSize(componentInput.size);
-        }
-
-        if ('containerCount' in componentInput) {
-            containerGroup.setContainerCount(componentInput.containerCount);
-        }
-
-        await containerGroup.save();
         return await component.save();
     }
 
     @Field(() => Secret)
     async addSecret(
-        @Arg('component', () => Int) componentID: number,
+        @Arg('containerGroup', () => Int) containerGroupID: number,
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
-        const component = await Component.findByApplicationAndId(this.application, componentID);
+        // TODO: This is not really secure because we don't scope the container group lookup.
+        // Instead, at some point in the future we need to move all of the containerGroup mutations into a ContainerGroupMutationsResolver.
+        const containerGroup = await ContainerGroup.findOneOrFail(containerGroupID);
 
         const secret = new Secret();
 
         secret.key = key;
         secret.value = value;
-        secret.component = component;
+        secret.containerGroup = containerGroup;
 
         return await secret.save();
     }
 
     @Field(() => Secret)
     async editSecret(
-        @Arg('component', () => Int) componentID: number,
+        @Arg('containerGroup', () => Int) containerGroupID: number,
         @Arg('id', () => Int) id: number,
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
-        const component = await Component.findByApplicationAndId(this.application, componentID);
         const secret = await Secret.findOneOrFail({
             where: {
                 id,
-                component,
+                containerGroup: {
+                    id: containerGroupID,
+                },
             },
         });
 
@@ -157,14 +150,15 @@ export class ApplicationMutations {
 
     @Field(() => Secret)
     async deleteSecret(
-        @Arg('component', () => Int) componentID: number,
+        @Arg('containerGroup', () => Int) containerGroupID: number,
         @Arg('id', () => Int) id: number,
     ) {
-        const component = await Component.findByApplicationAndId(this.application, componentID);
         const secret = await Secret.findOneOrFail({
             where: {
                 id,
-                component,
+                containerGroup: {
+                    id: containerGroupID
+                },
             },
         });
 

@@ -38,8 +38,8 @@ class OrganizationMutations {
     }
 
     @Field(() => Environment)
-    async createEnvironment(@Arg('name') name: string) {
-        return await this.organization.createEnviroment(name);
+    async createEnvironment(@Arg('name') name: string, @Arg('label') label: string) {
+        return await this.organization.createEnviroment(name, label);
     }
 
     @Field(() => Application)

@@ -7,6 +7,7 @@ import Button from '../../../ui/Button';
 import Secrets from './Secrets';
 import useBoolean from '../../../../utils/useBoolean';
 import CreateContainerGroup from './CreateContainerGroup';
+import EditOrAddSecret from './EditOrAddSecret';
 
 type Props = {
     component: number;
@@ -23,6 +24,7 @@ export default function ContainerGroup({ component, environment }: Props) {
         },
     });
     const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
+    const [addSecret, { on: addSecretOn, off: addSecretOff }] = useBoolean(false);
 
     if (!data) {
         return <div>I'm not an ass.</div>;
@@ -76,22 +78,22 @@ export default function ContainerGroup({ component, environment }: Props) {
                         <Card
                             title="Secrets"
                             actions={
-                                <Button variant="primary" onClick={creatingOn}>
+                                <Button variant="primary" onClick={addSecretOn}>
                                     Add
                                 </Button>
                             }
                         >
-                            {/* <Secrets
-                        id={data.application.component.id}
-                        secrets={data.application.component.secrets}
-                    /> */}
+                            <Secrets
+                                id={data.application.component.containerGroup.id}
+                                secrets={data.application.component.containerGroup.secrets}
+                            />
                         </Card>
-                        {/* <EditOrAddSecret
-                    id={data.application.component.id}
-                    open={creating}
-                    onClose={creatingOff}
-                    create
-                /> */}
+                        <EditOrAddSecret
+                            id={data.application.component.containerGroup.id}
+                            open={addSecret}
+                            onClose={addSecretOff}
+                            create
+                        />
                     </div>
                 </>
             ) : (

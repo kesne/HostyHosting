@@ -28,7 +28,7 @@ export default function EditOrAddSecret({ id, secret, open, onClose, create }: P
                             return [...secrets, toReference(data.application.addSecret)];
                         },
                     },
-                    `Component:${id}`,
+                    `ContainerGroup:${id}`,
                 );
             },
         },
@@ -38,7 +38,7 @@ export default function EditOrAddSecret({ id, secret, open, onClose, create }: P
         await addOrEditSecret({
             variables: {
                 applicationID,
-                componentID: id,
+                containerGroupID: id,
                 secretID: secret?.id,
                 key: values.key,
                 value: values.value,

@@ -133,21 +133,22 @@ export class Organization extends BaseEntity {
     )
     environments!: Lazy<Environment[]>;
 
-    async createEnviroment(name: string) {
+    async createEnviroment(name: string, label: string) {
         const network = new Network();
         network.name = name;
         await network.save();
 
         const env = new Environment();
         env.name = name;
+        env.label = label;
         env.networks = [network];
         env.organization = this;
         return await env.save();
     }
 
     async createDefaultEnvironments() {
-        await this.createEnviroment('prod');
-        await this.createEnviroment('test');
+        await this.createEnviroment('prod', 'Production');
+        await this.createEnviroment('test', 'Test');
     }
 
     // TODO: Make this more efficient at some point:

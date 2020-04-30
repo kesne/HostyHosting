@@ -68,7 +68,7 @@ export default function Home() {
                                 {environment => (
                                     <ListItem>
                                         <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
-                                            {environment.name}
+                                            {environment.label}
                                         </div>
                                     </ListItem>
                                 )}

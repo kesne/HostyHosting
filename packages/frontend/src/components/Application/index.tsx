@@ -9,7 +9,7 @@ import PageHeader from '../ui/PageHeader';
 import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
 import Spinner from '../Spinner';
-import Breadcrumbs, { useBreadcrumb, Provider as BreadcrumbProvider } from './Breadcrumbs';
+import Breadcrumbs, { Provider as BreadcrumbProvider } from './Breadcrumbs';
 
 export default function Application() {
     const params = useParams<{ application: string }>();
@@ -30,39 +30,42 @@ export default function Application() {
 
     return (
         <BreadcrumbProvider
-            root={{ name: data.application.name, url: `/applications/${params.application}` }}
+            root={[
+                { name: data.application.name, url: `/applications/${params.application}` },
+                {
+                    name: data.application.organization.name,
+                    url: `/orgs/${data.application.organization.id}`,
+                },
+            ]}
         >
             <ApplicationContext.Provider value={id}>
                 <PageHeader>
                     <Breadcrumbs />
                 </PageHeader>
 
-                <div className="flex justify-center py-4">
-                    <Tabs
-                        pills
-                        secondary
-                        value={pageMatch ? pageMatch.params.page : 'overview'}
-                        tabs={[
-                            {
-                                label: 'Overview',
-                                value: 'overview',
-                                to: url,
-                            },
-                            {
-                                label: 'Components',
-                                value: 'components',
-                                to: `${url}/components`,
-                            },
-                            {
-                                label: 'Settings',
-                                value: 'settings',
-                                to: `${url}/settings`,
-                            },
-                        ]}
-                    />
-                </div>
-
                 <Container>
+                    <div className="my-6">
+                        <Tabs
+                            value={pageMatch ? pageMatch.params.page : 'overview'}
+                            tabs={[
+                                {
+                                    label: 'Overview',
+                                    value: 'overview',
+                                    to: url,
+                                },
+                                {
+                                    label: 'Components',
+                                    value: 'components',
+                                    to: `${url}/components`,
+                                },
+                                {
+                                    label: 'Settings',
+                                    value: 'settings',
+                                    to: `${url}/settings`,
+                                },
+                            ]}
+                        />
+                    </div>
                     <Switch>
                         <Route path={`${path}/components`}>
                             <Components />

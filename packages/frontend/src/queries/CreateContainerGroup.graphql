@@ -5,10 +5,10 @@ mutation CreateContainerGroup($applicationID: Int!, $containerGroup: ContainerGr
             monthlyPrice
             containerCount
             size
-            environment {
+            secrets {
                 id
-                name
-                label
+                key
+                value
             }
         }
     }

@@ -84,7 +84,7 @@ export type ApplicationMutationsUpdateComponentArgs = {
 export type ApplicationMutationsAddSecretArgs = {
   value: Scalars['String'],
   key: Scalars['String'],
-  component: Scalars['Int']
+  containerGroup: Scalars['Int']
 };
 
 
@@ -92,13 +92,13 @@ export type ApplicationMutationsEditSecretArgs = {
   value: Scalars['String'],
   key: Scalars['String'],
   id: Scalars['Int'],
-  component: Scalars['Int']
+  containerGroup: Scalars['Int']
 };
 
 
 export type ApplicationMutationsDeleteSecretArgs = {
   id: Scalars['Int'],
-  component: Scalars['Int']
+  containerGroup: Scalars['Int']
 };
 
 
@@ -112,7 +112,6 @@ export type Component = {
   name: Scalars['String'],
   deploymentStrategy: DeploymentStrategy,
   image: Scalars['String'],
-  secrets: Array<Secret>,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
   containerGroups: Array<ContainerGroup>,
@@ -176,7 +175,7 @@ export type Environment = {
    __typename?: 'Environment',
   id: Scalars['Int'],
   name: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
   organization: Organization,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
@@ -324,6 +323,7 @@ export type OrganizationMutationsChangeUsernameArgs = {
 
 
 export type OrganizationMutationsCreateEnvironmentArgs = {
+  label: Scalars['String'],
   name: Scalars['String']
 };
 
@@ -412,7 +412,7 @@ export type User = {
 
 export type AddSecretMutationVariables = {
   applicationID: Scalars['Int'],
-  componentID: Scalars['Int'],
+  containerGroupID: Scalars['Int'],
   key: Scalars['String'],
   value: Scalars['String']
 };
@@ -438,6 +438,10 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
+    & { organization: (
+      { __typename?: 'Organization' }
+      & Pick<Organization, 'id' | 'name'>
+    ) }
     & ApplicationFragmentFragment
   ) }
 );
@@ -529,10 +533,6 @@ export type ComponentQuery = (
 export type ComponentFragmentFragment = (
   { __typename?: 'Component' }
   & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
-  & { secrets: Array<(
-    { __typename?: 'Secret' }
-    & Pick<Secret, 'id' | 'key' | 'value'>
-  )> }
 );
 
 export type ContainerGroupQueryVariables = {
@@ -553,10 +553,10 @@ export type ContainerGroupQuery = (
       & { containerGroup: Maybe<(
         { __typename?: 'ContainerGroup' }
         & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
-        & { environment: (
-          { __typename?: 'Environment' }
-          & Pick<Environment, 'id' | 'name' | 'label'>
-        ) }
+        & { secrets: Array<(
+          { __typename?: 'Secret' }
+          & Pick<Secret, 'id' | 'key' | 'value'>
+        )> }
       )> }
     ) }
   ) }
@@ -622,17 +622,18 @@ export type CreateContainerGroupMutation = (
     & { createContainerGroup: (
       { __typename?: 'ContainerGroup' }
       & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
-      & { environment: (
-        { __typename?: 'Environment' }
-        & Pick<Environment, 'id' | 'name' | 'label'>
-      ) }
+      & { secrets: Array<(
+        { __typename?: 'Secret' }
+        & Pick<Secret, 'id' | 'key' | 'value'>
+      )> }
     ) }
   ) }
 );
 
 export type CreateEnvironmentMutationVariables = {
   org?: Maybe<Scalars['Int']>,
-  name: Scalars['String']
+  name: Scalars['String'],
+  label: Scalars['String']
 };
 
 
@@ -642,7 +643,7 @@ export type CreateEnvironmentMutation = (
     { __typename?: 'OrganizationMutations' }
     & { createEnvironment: (
       { __typename?: 'Environment' }
-      & Pick<Environment, 'id' | 'name'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     ) }
   ) }
 );
@@ -695,7 +696,7 @@ export type DeleteComponentMutation = (
 
 export type DeleteSecretMutationVariables = {
   applicationID: Scalars['Int'],
-  componentID: Scalars['Int'],
+  containerGroupID: Scalars['Int'],
   secretID: Scalars['Int']
 };
 
@@ -726,7 +727,7 @@ export type DisableTotpMutation = (
 
 export type EditSecretMutationVariables = {
   applicationID: Scalars['Int'],
-  componentID: Scalars['Int'],
+  containerGroupID: Scalars['Int'],
   secretID: Scalars['Int'],
   key: Scalars['String'],
   value: Scalars['String']
@@ -1008,11 +1009,6 @@ export const ComponentFragmentFragmentDoc = gql`
   createdAt
   updatedAt
   monthlyPrice
-  secrets {
-    id
-    key
-    value
-  }
 }
     `;
 export const MeFragmentFragmentDoc = gql`
@@ -1025,9 +1021,9 @@ export const MeFragmentFragmentDoc = gql`
 }
     `;
 export const AddSecretDocument = gql`
-    mutation AddSecret($applicationID: Int!, $componentID: Int!, $key: String!, $value: String!) {
+    mutation AddSecret($applicationID: Int!, $containerGroupID: Int!, $key: String!, $value: String!) {
   application(id: $applicationID) {
-    addSecret(component: $componentID, key: $key, value: $value) {
+    addSecret(containerGroup: $containerGroupID, key: $key, value: $value) {
       id
       key
       value
@@ -1051,7 +1047,7 @@ export type AddSecretMutationFn = ApolloReactCommon.MutationFunction<AddSecretMu
  * const [addSecretMutation, { data, loading, error }] = useAddSecretMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
- *      componentID: // value for 'componentID'
+ *      containerGroupID: // value for 'containerGroupID'
  *      key: // value for 'key'
  *      value: // value for 'value'
  *   },
@@ -1067,6 +1063,10 @@ export const ApplicationDocument = gql`
     query Application($id: Int!) {
   application(id: $id) {
     ...ApplicationFragment
+    organization {
+      id
+      name
+    }
   }
 }
     ${ApplicationFragmentFragmentDoc}`;
@@ -1268,10 +1268,10 @@ export const ContainerGroupDocument = gql`
         monthlyPrice
         containerCount
         size
-        environment {
+        secrets {
           id
-          name
-          label
+          key
+          value
         }
       }
     }
@@ -1423,10 +1423,10 @@ export const CreateContainerGroupDocument = gql`
       monthlyPrice
       containerCount
       size
-      environment {
+      secrets {
         id
-        name
-        label
+        key
+        value
       }
     }
   }
@@ -1459,11 +1459,12 @@ export type CreateContainerGroupMutationHookResult = ReturnType<typeof useCreate
 export type CreateContainerGroupMutationResult = ApolloReactCommon.MutationResult<CreateContainerGroupMutation>;
 export type CreateContainerGroupMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
 export const CreateEnvironmentDocument = gql`
-    mutation CreateEnvironment($org: Int, $name: String!) {
+    mutation CreateEnvironment($org: Int, $name: String!, $label: String!) {
   organization(id: $org) {
-    createEnvironment(name: $name) {
+    createEnvironment(name: $name, label: $label) {
       id
       name
+      label
     }
   }
 }
@@ -1485,6 +1486,7 @@ export type CreateEnvironmentMutationFn = ApolloReactCommon.MutationFunction<Cre
  *   variables: {
  *      org: // value for 'org'
  *      name: // value for 'name'
+ *      label: // value for 'label'
  *   },
  * });
  */
@@ -1596,9 +1598,9 @@ export type DeleteComponentMutationHookResult = ReturnType<typeof useDeleteCompo
 export type DeleteComponentMutationResult = ApolloReactCommon.MutationResult<DeleteComponentMutation>;
 export type DeleteComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteComponentMutation, DeleteComponentMutationVariables>;
 export const DeleteSecretDocument = gql`
-    mutation DeleteSecret($applicationID: Int!, $componentID: Int!, $secretID: Int!) {
+    mutation DeleteSecret($applicationID: Int!, $containerGroupID: Int!, $secretID: Int!) {
   application(id: $applicationID) {
-    deleteSecret(component: $componentID, id: $secretID) {
+    deleteSecret(containerGroup: $containerGroupID, id: $secretID) {
       id
     }
   }
@@ -1620,7 +1622,7 @@ export type DeleteSecretMutationFn = ApolloReactCommon.MutationFunction<DeleteSe
  * const [deleteSecretMutation, { data, loading, error }] = useDeleteSecretMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
- *      componentID: // value for 'componentID'
+ *      containerGroupID: // value for 'containerGroupID'
  *      secretID: // value for 'secretID'
  *   },
  * });
@@ -1664,9 +1666,9 @@ export type DisableTotpMutationHookResult = ReturnType<typeof useDisableTotpMuta
 export type DisableTotpMutationResult = ApolloReactCommon.MutationResult<DisableTotpMutation>;
 export type DisableTotpMutationOptions = ApolloReactCommon.BaseMutationOptions<DisableTotpMutation, DisableTotpMutationVariables>;
 export const EditSecretDocument = gql`
-    mutation EditSecret($applicationID: Int!, $componentID: Int!, $secretID: Int!, $key: String!, $value: String!) {
+    mutation EditSecret($applicationID: Int!, $containerGroupID: Int!, $secretID: Int!, $key: String!, $value: String!) {
   application(id: $applicationID) {
-    editSecret(component: $componentID, id: $secretID, key: $key, value: $value) {
+    editSecret(containerGroup: $containerGroupID, id: $secretID, key: $key, value: $value) {
       id
       key
       value
@@ -1690,7 +1692,7 @@ export type EditSecretMutationFn = ApolloReactCommon.MutationFunction<EditSecret
  * const [editSecretMutation, { data, loading, error }] = useEditSecretMutation({
  *   variables: {
  *      applicationID: // value for 'applicationID'
- *      componentID: // value for 'componentID'
+ *      containerGroupID: // value for 'containerGroupID'
  *      secretID: // value for 'secretID'
  *      key: // value for 'key'
  *      value: // value for 'value'

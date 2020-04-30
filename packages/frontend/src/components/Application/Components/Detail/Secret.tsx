@@ -11,17 +11,17 @@ export type SecretData = {
 };
 
 type Props = {
-    componentID: number;
+    containerGroupID: number;
     onEdit(secret: SecretData): void;
     secret: SecretData;
 };
 
-export default function Secret({ componentID, secret, onEdit }: Props) {
+export default function Secret({ containerGroupID, secret, onEdit }: Props) {
     const applicationID = useApplicationID();
     const [deleteSecret] = useDeleteSecretMutation({
         variables: {
             applicationID,
-            componentID,
+            containerGroupID,
             secretID: secret.id,
         },
         update(cache, { data }) {
@@ -35,7 +35,7 @@ export default function Secret({ componentID, secret, onEdit }: Props) {
                         );
                     },
                 },
-                `Component:${componentID}`,
+                `ContainerGroup:${containerGroupID}`,
             );
 
             cache.evict(`Secret:${secret.id}`);

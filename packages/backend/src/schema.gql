@@ -35,9 +35,9 @@ type ApplicationMutations {
   createComponent(component: ComponentInput!): Component!
   createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
   updateComponent(component: ComponentInput!, id: Int!): Component!
-  addSecret(value: String!, key: String!, component: Int!): Secret!
-  editSecret(value: String!, key: String!, id: Int!, component: Int!): Secret!
-  deleteSecret(id: Int!, component: Int!): Secret!
+  addSecret(value: String!, key: String!, containerGroup: Int!): Secret!
+  editSecret(value: String!, key: String!, id: Int!, containerGroup: Int!): Secret!
+  deleteSecret(id: Int!, containerGroup: Int!): Secret!
   deleteComponent(id: Int!): Component!
 }
 
@@ -46,7 +46,6 @@ type Component {
   name: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
-  secrets: [Secret!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   containerGroups: [ContainerGroup!]!
@@ -106,7 +105,7 @@ enum DeploymentStrategy {
 type Environment {
   id: Int!
   name: String!
-  label: String
+  label: String!
   organization: Organization!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -166,7 +165,7 @@ type Organization {
 
 type OrganizationMutations {
   changeUsername(username: String!): Organization!
-  createEnvironment(name: String!): Environment!
+  createEnvironment(label: String!, name: String!): Environment!
   createApplication(application: ApplicationInput!): Application!
 }
 

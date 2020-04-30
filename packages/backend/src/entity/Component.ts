@@ -61,12 +61,6 @@ export class Component extends BaseEntity {
     @Column()
     image!: string;
 
-    // DEPRECATED: Remove before pushing:
-    @Field(() => [Secret])
-    get secrets() {
-        return [];
-    }
-
     @Field()
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;

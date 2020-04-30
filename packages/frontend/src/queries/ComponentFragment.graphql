@@ -6,9 +6,4 @@ fragment ComponentFragment on Component {
     createdAt
     updatedAt
     monthlyPrice
-    secrets {
-        id
-        key
-        value
-    }
 }

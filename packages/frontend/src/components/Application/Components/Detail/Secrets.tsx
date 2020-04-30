@@ -23,7 +23,7 @@ export default function Secrets({ id, secrets }: Props) {
                 {secret => (
                     <ListItem>
                         <Secret
-                            componentID={id}
+                            containerGroupID={id}
                             secret={secret}
                             onEdit={data => setEditing(data)}
                         />

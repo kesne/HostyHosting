@@ -10,11 +10,11 @@ import {
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Lazy } from '../types';
-import { Component } from './Component';
+import { ContainerGroup } from './ContainerGroup';
 
 @ObjectType()
 @Entity()
-@Unique(['key', 'component'])
+@Unique(['key', 'containerGroup'])
 export class Secret extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -37,9 +37,9 @@ export class Secret extends BaseEntity {
     updatedAt!: Date;
 
     @ManyToOne(
-        () => Component,
-        component => component.secrets,
+        () => ContainerGroup,
+        containerGroup => containerGroup.secrets,
         { lazy: true },
     )
-    component!: Lazy<Component>;
+    containerGroup!: Lazy<ContainerGroup>;
 }

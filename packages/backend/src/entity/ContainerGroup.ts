@@ -98,7 +98,7 @@ export class ContainerGroup extends BaseEntity {
     @Field(() => [Secret])
     @OneToMany(
         () => Secret,
-        secret => secret.component,
+        secret => secret.containerGroup,
         { lazy: true },
     )
     secrets!: Lazy<Secret[]>;

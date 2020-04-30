@@ -32,6 +32,25 @@ export default function Detail() {
     useBreadcrumb({
         name: data?.application.component.name || '...',
         url: `/applications/${params.application}/components/${params.component}`,
+        // TODO: I think we really should do this with a component instead of with a hook like this.
+        // This hook means things like conditional rendering are pretty hard, and it also means we need to call it
+        // before any conditional return. So we should just have a <BreadcrumbActions> component
+        // that can deal with the portal nonsense. Also this should probably just be a portal.
+        actions: (
+            <>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <DeleteComponent id={data?.application.component.id} />
+                </span>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <Button onClick={editingOn}>Edit</Button>
+                    {/* <EditComponent
+                            component={data.application.component}
+                            visible={editing}
+                            onClose={editingOff}
+                        /> */}
+                </span>
+            </>
+        ),
     });
 
     if (!data) {
@@ -108,8 +127,8 @@ export default function Detail() {
             <Tabs
                 value={environment}
                 onChange={setEnvironment}
-                tabs={data.application.environments.map(({ id, name }) => ({
-                    label: name,
+                tabs={data.application.environments.map(({ id, label }) => ({
+                    label,
                     value: String(id),
                 }))}
             />
