@@ -4,7 +4,7 @@ import { Application, useDeleteApplicationMutation } from '../../../queries';
 import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
 import Button, { ButtonGroup } from '../../ui/Button';
 import Input from '../../ui/Input';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export type Props = {
     application: Pick<Application, 'id' | 'name'>;
@@ -25,7 +25,7 @@ export default function Delete({ application }: Props) {
     }
 
     if (data) {
-        return <Redirect to="/" />;
+        return <Navigate to="/" />;
     }
 
     return (

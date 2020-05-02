@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import Auth from './components/Auth';
@@ -13,29 +13,17 @@ export default function App() {
     return (
         <Router>
             <Layout>
-                <Switch>
-                    <PrivateRoute path="/" exact>
-                        <Home />
-                    </PrivateRoute>
-                    <PrivateRoute path="/orgs/:organization">
-                        <Home />
-                    </PrivateRoute>
-                    <PrivateRoute path="/applications/:application">
-                        <Application />
-                    </PrivateRoute>
-                    <PrivateRoute path="/grant/:uuid">
-                        <GrantAPIKey />
-                    </PrivateRoute>
-                    <PrivateRoute path="/auth" unauthenticated>
-                        <Auth />
-                    </PrivateRoute>
-                    <PrivateRoute path="/account">
-                        <Account />
-                    </PrivateRoute>
-                    <Route>
+                <Routes>
+                    <PrivateRoute path="/" element={<Home />} />
+                    <PrivateRoute path="/orgs/:organization" element={<Home />} />
+                    <PrivateRoute path="/applications/:application/*" element={<Application />} />
+                    <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
+                    <PrivateRoute path="/auth" unauthenticated element={<Auth />} />
+                    <PrivateRoute path="/account/*" element={<Account />} />
+                    <Route path="*">
                         <FourOhFour />
                     </Route>
-                </Switch>
+                </Routes>
             </Layout>
         </Router>
     );

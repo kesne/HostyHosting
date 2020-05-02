@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Container from './Container';
-import { useLocation, Redirect } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { useGitHubSignInMutation } from '../../queries';
 
 export default function GitHubCallback() {
@@ -17,7 +17,7 @@ export default function GitHubCallback() {
     }, []);
 
     if (data) {
-        return <Redirect to="/" />;
+        return <Navigate to="/" />;
     }
 
     return <Container title="Signing In...">We are completing your GitHub signin...</Container>;

@@ -1,23 +1,20 @@
-import React, { useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate, useMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from './constants';
 
-const ValueContext = React.createContext('');
-
 export function VerticalNavItem({
     to,
     icon,
-    label
+    label,
 }: {
     to: string;
     icon?: React.ReactNode;
     label: string;
 }) {
     const small = useMediaQuery(MEDIA_QUERIES.SMALL);
-    const selectedValue = useContext(ValueContext);
-    const selected = selectedValue === to;
+    const selected = useMatch(to);
 
     if (!small) {
         return <option value={to}>{label}</option>;
@@ -31,7 +28,7 @@ export function VerticalNavItem({
                 !selected &&
                     'text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:text-gray-900 focus:bg-gray-200',
                 selected &&
-                    'text-gray-900 rounded-md bg-gray-200 hover:text-gray-900 focus:outline-none focus:bg-gray-300'
+                    'text-gray-900 rounded-md bg-gray-200 hover:text-gray-900 focus:outline-none focus:bg-gray-300',
             )}
         >
             {icon}
@@ -42,33 +39,29 @@ export function VerticalNavItem({
 
 export default function VerticalNav({
     value,
-    children
+    children,
 }: {
     value: string;
     children: React.ReactNode;
 }) {
-    const history = useHistory();
+    const navigate = useNavigate();
     const small = useMediaQuery(MEDIA_QUERIES.SMALL);
     function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        history.push(e.target.value);
+        navigate(e.target.value);
     }
 
-    return (
-        <ValueContext.Provider value={value}>
-            {small ? (
-                <nav className="space-y-6">{children}</nav>
-            ) : (
-                <div>
-                    <select
-                        aria-label="Selected tab"
-                        className="mt-1 form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 transition ease-in-out duration-150"
-                        onChange={onChange}
-                        value={value}
-                    >
-                        {children}
-                    </select>
-                </div>
-            )}
-        </ValueContext.Provider>
+    return small ? (
+        <nav className="space-y-2">{children}</nav>
+    ) : (
+        <div>
+            <select
+                aria-label="Selected tab"
+                className="mt-1 form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 transition ease-in-out duration-150"
+                onChange={onChange}
+                value={value}
+            >
+                {children}
+            </select>
+        </div>
     );
 }

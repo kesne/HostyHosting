@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useCreateApplicationMutation } from '../../queries';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
@@ -50,7 +50,7 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
     }
 
     if (data) {
-        return <Redirect to={`/applications/${data.organization.createApplication.id}`} />;
+        return <Navigate to={`/applications/${data.organization.createApplication.id}`} />;
     }
 
     return (

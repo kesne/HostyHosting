@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import clsx from 'clsx';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { motion, AnimatePresence } from 'framer-motion';
 import ButtonOrLink from '../ui/util/ButtonOrLink';
 import useBoolean from '../../utils/useBoolean';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from '../ui/constants';
-import { useMeDaddyQuery, useSignOutMutation, useMeDaddyLazyQuery } from '../../queries';
+import { useSignOutMutation, useMeDaddyLazyQuery } from '../../queries';
 import { useHasUser } from '../../utils/user';
 import Notifications from './Notifications';
 
@@ -39,7 +39,7 @@ function HeaderLink({
 }
 
 export default function Header() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const [fetchUserData, { data }] = useMeDaddyLazyQuery();
     const [signOut] = useSignOutMutation();
     const [navOpen, { toggle: navToggle, off: navOff }] = useBoolean(false);
@@ -69,7 +69,7 @@ export default function Header() {
 
     async function handleSignOut() {
         await signOut();
-        history.push('/auth/sign-in');
+        navigate('/auth/sign-in');
     }
 
     return (
@@ -90,7 +90,10 @@ export default function Header() {
                         <div className="hidden md:block">
                             <div className="ml-4 flex items-center md:ml-6">
                                 <div className="relative">
-                                    <button onClick={notificationsToggle} className="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700">
+                                    <button
+                                        onClick={notificationsToggle}
+                                        className="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700"
+                                    >
                                         <svg
                                             className="h-6 w-6"
                                             stroke="currentColor"

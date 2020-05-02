@@ -1,25 +1,25 @@
 import React from 'react';
 import List from './List';
 import Detail from './Detail';
-import { Route, useRouteMatch, Switch } from 'react-router-dom';
+import { Route, useLocation, Routes } from 'react-router-dom';
 import { useBreadcrumb } from '../Breadcrumbs';
 
 export default function Components() {
-    const { path, url } = useRouteMatch();
+    const { pathname } = useLocation();
 
     useBreadcrumb({
         name: 'Components',
-        url: url,
+        url: pathname,
     });
 
     return (
-        <Switch>
-            <Route path={`${path}/:component`}>
+        <Routes>
+            <Route path=":component">
                 <Detail />
             </Route>
-            <Route>
+            <Route path="*">
                 <List />
             </Route>
-        </Switch>
+        </Routes>
     );
 }

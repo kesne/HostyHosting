@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMyOrganizationsQuery } from '../../queries';
 
 const PERSONAL = 'personal';
@@ -10,13 +10,13 @@ type Props = {
 
 export default function SelectOrganization({ organization }: Props) {
     const { data, loading } = useMyOrganizationsQuery();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (event.target.value === PERSONAL) {
-            history.push('/');
+            navigate('/');
         } else {
-            history.push(`/orgs/${event.target.value}`);
+            navigate(`/orgs/${event.target.value}`);
         }
     }
 

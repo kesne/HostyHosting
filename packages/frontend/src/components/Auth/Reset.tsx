@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useResetPasswordMutation } from '../../queries';
 import Container from './Container';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
@@ -26,7 +26,7 @@ export default function Reset() {
     };
 
     if (data) {
-        return <Redirect to="/" />;
+        return <Navigate to="/" />;
     }
 
     return (

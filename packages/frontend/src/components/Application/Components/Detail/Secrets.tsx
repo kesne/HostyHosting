@@ -21,7 +21,7 @@ export default function Secrets({ id, secrets }: Props) {
             />
             <List items={secrets}>
                 {secret => (
-                    <ListItem>
+                    <ListItem key={secret.id}>
                         <Secret
                             containerGroupID={id}
                             secret={secret}

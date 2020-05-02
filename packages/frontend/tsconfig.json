@@ -4,6 +4,7 @@
         "module": "esnext",
         "lib": ["dom", "esnext", "es2017.object"],
         "outDir": "./lib",
+        "typeRoots": ["node_modules/@types", "src/@types"],
         "downlevelIteration": true,
         "strict": true,
         "noUnusedLocals": true,
@@ -23,6 +24,6 @@
         "noEmit": true,
         "jsx": "react"
     },
-    "include": ["src", "pages", "components", "types", "queries"],
+    "include": ["src"],
     "exclude": ["node_modules"]
 }

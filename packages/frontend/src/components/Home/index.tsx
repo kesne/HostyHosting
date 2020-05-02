@@ -66,7 +66,7 @@ export default function Home() {
                         <Card title="Environments">
                             <List items={data?.organization.environments}>
                                 {environment => (
-                                    <ListItem>
+                                    <ListItem key={environment.id}>
                                         <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
                                             {environment.label}
                                         </div>

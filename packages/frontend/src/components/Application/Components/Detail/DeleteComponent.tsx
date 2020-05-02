@@ -2,7 +2,7 @@ import React from 'react';
 import { useDeleteComponentMutation } from '../../../../queries';
 import { useApplicationID } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
     id: number;
@@ -23,10 +23,10 @@ export default function DeleteComponent({ id }: Props) {
     });
 
     // NOTE: doing the redirection at this state (after state has propogated through react)
-    // causes a warning because we've already evicted all of the cached data. It might be
-    // better to imperatively redirect rather than doing it declarively.
+    // causes a warning because we've already evicted all of the cached data.
+    // TODO: It might be better to imperatively redirect rather than doing it declarively.
     if (data) {
-        return <Redirect to={`/applications/${applicationID}/components`} />;
+        return <Navigate to={`/applications/${applicationID}/components`} />;
     }
 
     return (
