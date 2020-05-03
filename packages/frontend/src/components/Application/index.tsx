@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, Routes, Route, Outlet, useMatch } from 'react-router-dom';
+import { useParams, Routes, Route, Outlet, useMatch, Navigate } from 'react-router-dom';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
@@ -33,8 +33,10 @@ function ApplicationLayout() {
     // TODO: This is a _horrible_ way to do this because we're calling a hook in a function (BAD)
     // Instead, we really should make `<Tabs />` with a href location-aware so that we can just
     // have the hooks called in the individual <Tab /> components.
-    const value = LAYOUT_TABS.map(({ value, to }) => ({ match: useMatch(to), value })).find(({ match }) => match)
-        ?.value ?? 'overview';
+    const value =
+        LAYOUT_TABS.map(({ value, to }) => ({ match: useMatch(to), value })).find(
+            ({ match }) => match,
+        )?.value ?? 'overview';
 
     return (
         <>
@@ -97,10 +99,11 @@ export default function Application() {
 
                 <Container>
                     <Routes>
+                        <Route path="/" element={<Navigate to="overview" />} />}
                         <Route path="/" element={<ApplicationLayout />}>
                             {/*
-                                TODO: This is probably a bug with nested routes that we need to
-                                report in the repo, but for now we'll just work around it.
+                                TODO: This is a bug with React Router 6 that requires us to have a path named "overview" here:
+                                https://github.com/ReactTraining/react-router/issues/7239
                             */}
                             <Route path="overview" element={<Overview />} />
                             <Route path="components" element={<Components />} />

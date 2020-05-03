@@ -9,7 +9,7 @@ module.exports = {
     entry: './src/index.tsx',
     output: {
         filename: 'bundle.js',
-        publicPath: '/'
+        publicPath: '/',
     },
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
@@ -76,12 +76,7 @@ module.exports = {
     devServer: {
         host: '0.0.0.0',
         port: 3000,
+        disableHostCheck: true,
         historyApiFallback: true,
-        proxy: {
-            '/api': {
-                target: 'http://backend:1337',
-                changeOrigin: true,
-            },
-        },
     },
 };

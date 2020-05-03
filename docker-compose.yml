@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+    reverse-proxy:
+        image: traefik:v2.2
+        command: --api.insecure=true --providers.docker
+        ports:
+            - '80:80'
+            - '443:443'
+            - '8080:8080'
+        volumes:
+            # So that Traefik can listen to the Docker events
+            - /var/run/docker.sock:/var/run/docker.sock
+
     postgres:
         container_name: 'hh-postgres'
         image: 'postgres:11'
@@ -32,6 +43,8 @@ services:
         depends_on:
             - redis
             - postgres
+        labels:
+            - 'traefik.http.routers.backend.rule=Host(`hostyhosting.localhost`) && PathPrefix(`/api`)'
 
     frontend:
         image: node:12
@@ -44,6 +57,8 @@ services:
         working_dir: /srv/frontend
         depends_on:
             - backend
+        labels:
+            - 'traefik.http.routers.frontend.rule=Host(`hostyhosting.localhost`)'
 
 volumes:
     pgdata: {}

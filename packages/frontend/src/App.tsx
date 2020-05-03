@@ -18,7 +18,7 @@ export default function App() {
                     <PrivateRoute path="/orgs/:organization" element={<Home />} />
                     <PrivateRoute path="/applications/:application/*" element={<Application />} />
                     <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
-                    <PrivateRoute path="/auth" unauthenticated element={<Auth />} />
+                    <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
                     <PrivateRoute path="/account/*" element={<Account />} />
                     <Route path="*">
                         <FourOhFour />
