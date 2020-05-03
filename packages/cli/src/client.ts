@@ -1,10 +1,11 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 import fetch from 'node-fetch';
+import { HOST } from './constants';
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:1337/api/graphql',
-    // @ts-ignore
-    fetch
+    uri: `${HOST}/api/graphql`,
+    // @ts-ignore: The node-fetch types are incompatible with the DOM fetch:
+    fetch,
 
     // NOTE: This is really useful to debug network traffic:
     // fetch(...args) {

@@ -4,8 +4,8 @@ import open from 'open';
 import Provider from './helpers/Provider';
 import { useCreateApiKeyRequestMutation, useGetApiKeyFromRequestQuery } from '../queries';
 import config from '../config';
+import { HOST } from '../constants';
 
-const HOST = 'http://localhost:3000';
 const POLL_INTERVAL = 3000;
 
 function WaitForAPIKey({ uuid }: { uuid: string }) {
