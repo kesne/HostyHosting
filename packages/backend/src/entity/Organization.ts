@@ -14,7 +14,6 @@ import { Lazy } from '../types';
 import { OrganizationMembership } from './OrganizationMembership';
 import { Environment } from './Environment';
 import { NAME_REGEX } from '../constants';
-import { ContainerGroup, containerCountAndSizeToComputeUnits } from './ContainerGroup';
 
 @Entity()
 @ObjectType()
@@ -108,24 +107,4 @@ export class Organization extends BaseEntity {
         { lazy: true },
     )
     environments!: Lazy<Environment[]>;
-
-    // TODO: Make this more efficient at some point:
-    // Likely do a sum in SQL itself.
-    // TODO: Does this really belong here, or can we shuffle this over into the ContainerGroup:
-    async getAvailableComputeUnits() {
-        const containerGroups = await ContainerGroup.find({
-            where: {
-                organization: this,
-            },
-        });
-
-        return (
-            this.maxComputeUnits -
-            containerGroups.reduce(
-                (acc, curr) =>
-                    acc + containerCountAndSizeToComputeUnits(curr.containerCount, curr.size),
-                0,
-            )
-        );
-    }
 }

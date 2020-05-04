@@ -5,11 +5,12 @@ import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Repository } from 'typeorm';
+import { ApplicationRepository } from '../repositories/ApplicationRepository';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
-    @InjectRepository(Application)
-    applicationRepo!: Repository<Application>;
+    @InjectRepository()
+    applicationRepo!: ApplicationRepository;
 
     @InjectRepository(Component)
     componentRepo!: Repository<Component>;
@@ -17,16 +18,7 @@ export class ApplicationResolver {
     @Authorized()
     @Query(() => Application)
     async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
-        const app = await this.applicationRepo.findOneOrFail({
-            where: {
-                id,
-            },
-        });
-
-        // Verify that the current user has permission to this app:
-        app.userHasPermission(user);
-
-        return app;
+        return await this.applicationRepo.findForUser(user, id);
     }
 
     @FieldResolver(() => Component)

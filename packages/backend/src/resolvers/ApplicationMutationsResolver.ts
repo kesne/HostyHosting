@@ -12,6 +12,7 @@ import { ContainerGroupInput } from './types/ContainerGroupInput';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Repository } from 'typeorm';
 import { ComponentRepository } from '../repositories/ComponentRepository';
+import { ApplicationRepository } from '../repositories/ApplicationRepository';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -194,22 +195,18 @@ export class ApplicationMutations {
 }
 
 export class ApplicationMutationsResolver {
-
-    @InjectRepository(Application)
-    applicationRepo!: Repository<Application>;
+    @InjectRepository()
+    applicationRepo!: ApplicationRepository;
 
     @Authorized()
     @Mutation(() => ApplicationMutations)
     async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
-        const application = await this.applicationRepo.findOneOrFail({
-            where: {
-                id,
-            },
-        });
-
-        // Ensure the current user has permission to this application.
         // All application mutations require AT LEAST write access to the organization.
-        await application.userHasPermission(user, OrganizationPermission.WRITE);
+        const application = await this.applicationRepo.findForUser(
+            user,
+            id,
+            OrganizationPermission.WRITE,
+        );
 
         return new ApplicationMutations(application);
     }

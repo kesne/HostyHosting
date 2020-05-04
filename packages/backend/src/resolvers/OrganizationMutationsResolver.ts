@@ -34,7 +34,7 @@ class OrganizationMutations {
     @InjectRepository()
     environmentRepo!: EnvironmentRepository;
 
-    @InjectRepository()
+    @InjectRepository(Application)
     applicationRepo!: Repository<Application>;
 
     constructor(organization: Organization) {
@@ -76,7 +76,7 @@ class OrganizationMutations {
 
 @Resolver()
 export class OrganizationMutationsResolver {
-    @InjectRepository()
+    @InjectRepository(OrganizationMembership)
     organizationMembershipRepo!: Repository<OrganizationMembership>;
 
     @Authorized()
