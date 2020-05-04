@@ -72,17 +72,18 @@ export class UserRepository extends Repository<User> {
             githubID,
         }: { username: string; name: string; email: string; password?: string; githubID?: string },
     ) {
-        const user = new User();
-        user.username = username;
-        user.name = name;
-        user.githubID = githubID;
-        user.email = email;
+        const user = this.create({
+            username,
+            name,
+            githubID,
+            email
+        });
+
         if (password) {
             await user.setPassword(password);
         }
 
         await this.save(user);
-
         await this.organizationRepository.createPersonal(user);
 
         user.signIn(session, cookies);

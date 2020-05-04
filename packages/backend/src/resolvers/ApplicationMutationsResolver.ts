@@ -65,11 +65,12 @@ export class ApplicationMutations {
 
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
-        const component = new Component();
-        component.application = this.application;
-        component.name = componentInput.name;
-        component.image = componentInput.image;
-        component.deploymentStrategy = componentInput.deploymentStrategy;
+        const component = this.componentRepo.create({
+            application: this.application,
+            name: componentInput.name,
+            image: componentInput.image,
+            deploymentStrategy: componentInput.deploymentStrategy,
+        });
 
         return await this.componentRepo.save(component);
     }
@@ -136,11 +137,11 @@ export class ApplicationMutations {
         // Instead, at some point in the future we need to move all of the containerGroup mutations into a ContainerGroupMutationsResolver.
         const containerGroup = await this.containerGroupRepo.findOneOrFail(containerGroupID);
 
-        const secret = new Secret();
-
-        secret.key = key;
-        secret.value = value;
-        secret.containerGroup = containerGroup;
+        const secret = this.secretRepo.create({
+            key,
+            value,
+            containerGroup,
+        });
 
         return await this.secretRepo.save(secret);
     }

@@ -10,15 +10,16 @@ export class EnvironmentRepository extends Repository<Environment> {
     private networkRepository!: Repository<Network>;
 
     async createForOrganization(organization: Organization, name: string, label: string) {
-        const network = new Network();
-        network.name = name;
+        const network = this.networkRepository.create({ name });
         await this.networkRepository.save(network);
 
-        const env = new Environment();
-        env.name = name;
-        env.label = label;
-        env.networks = [network];
-        env.organization = organization;
+        const env = this.create({
+            name,
+            label,
+            networks: [network],
+            organization,
+        });
+
         return await this.save(env);
     }
 

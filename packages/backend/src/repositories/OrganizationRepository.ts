@@ -22,10 +22,11 @@ export class OrganizationRepository extends Repository<Organization> {
 
     async createPersonal(user: User) {
         // Create a basic organization:
-        const organization = new Organization();
-        organization.name = 'Personal';
-        organization.isPersonal = true;
-        organization.username = user.username;
+        const organization = this.create({
+            name: 'Personal',
+            isPersonal: true,
+            username: user.username,
+        });
         await this.save(organization);
 
         // TODO: Maybe this should be somewhere else (maybe afterInsert?):
@@ -36,10 +37,11 @@ export class OrganizationRepository extends Repository<Organization> {
         await this.userRepository.save(user);
 
         // Finally, add the user into their own organization:
-        const membership = new OrganizationMembership();
-        membership.user = user;
-        membership.organization = organization;
-        membership.permission = OrganizationPermission.ADMIN;
+        const membership = this.organizationMembershipRepository.create({
+            user,
+            organization,
+            permission: OrganizationPermission.ADMIN
+        });
         await this.organizationMembershipRepository.save(membership);
     }
 

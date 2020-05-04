@@ -60,16 +60,17 @@ class OrganizationMutations {
         @Ctx() { user }: Context,
         @Arg('application') applicationInput: ApplicationInput,
     ) {
-        const app = new Application();
-
         if (!applicationInput.name) {
             throw new Error('The application name is required when creating an application.');
         }
 
-        app.name = applicationInput.name;
-        app.description = applicationInput.description ?? '';
-        app.organization = this.organization;
-        app.createdBy = user;
+        const app = this.applicationRepo.create({
+            name: applicationInput.name,
+            description: applicationInput.description ?? '',
+            organization: this.organization,
+            createdBy: user,
+        });
+
         return await this.applicationRepo.save(app);
     }
 }

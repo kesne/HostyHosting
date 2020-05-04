@@ -22,9 +22,7 @@ export class PasswordResetRepository extends Repository<PasswordReset> {
             await this.remove(previousReset);
         }
 
-        const passwordReset = new PasswordReset();
-        passwordReset.user = user;
-
+        const passwordReset = this.create({ user });
         await this.save(passwordReset);
     }
 

@@ -5,9 +5,11 @@ import { APIKey } from '../entity/APIKey';
 @EntityRepository(APIKey)
 export class APIKeyRepository extends Repository<APIKey> {
     async createForUser(user: User, description: string) {
-        const apiKey = new APIKey();
-        apiKey.description = description;
-        apiKey.user = user;
+        const apiKey = this.create({
+            description,
+            user
+        });
+
         return await this.save(apiKey);
     }
 }
