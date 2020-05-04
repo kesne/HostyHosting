@@ -11,38 +11,14 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
+import { OrganizationMembership } from './OrganizationMembership';
 import { Environment } from './Environment';
-import { Network } from './Network';
 import { NAME_REGEX } from '../constants';
-import { User } from './User';
 import { ContainerGroup, containerCountAndSizeToComputeUnits } from './ContainerGroup';
 
 @Entity()
 @ObjectType()
 export class Organization extends BaseEntity {
-    static async createPersonal(user: User) {
-        // Create a basic organization:
-        const organization = new Organization();
-        organization.name = 'Personal';
-        organization.isPersonal = true;
-        organization.username = user.username;
-        await organization.save();
-        // TODO: Maybe this should be somewhere else (maybe afterInsert?):
-        await organization.createDefaultEnvironments();
-
-        // Set the users personal organization:
-        user.personalOrganization = organization;
-        await user.save();
-
-        // Finally, add the user into their own organization:
-        const membership = new OrganizationMembership();
-        membership.user = user;
-        membership.organization = organization;
-        membership.permission = OrganizationPermission.ADMIN;
-        await membership.save();
-    }
-
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -132,24 +108,6 @@ export class Organization extends BaseEntity {
         { lazy: true },
     )
     environments!: Lazy<Environment[]>;
-
-    async createEnviroment(name: string, label: string) {
-        const network = new Network();
-        network.name = name;
-        await network.save();
-
-        const env = new Environment();
-        env.name = name;
-        env.label = label;
-        env.networks = [network];
-        env.organization = this;
-        return await env.save();
-    }
-
-    async createDefaultEnvironments() {
-        await this.createEnviroment('prod', 'Production');
-        await this.createEnviroment('test', 'Test');
-    }
 
     // TODO: Make this more efficient at some point:
     // Likely do a sum in SQL itself.

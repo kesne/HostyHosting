@@ -7,40 +7,13 @@ import {
     Generated,
     JoinColumn,
     AfterInsert,
-    BaseEntity
 } from 'typeorm';
 import { User } from './User';
 import sendEmail from '../utils/sendEmail';
+import { BaseEntity } from './BaseEntity';
 
 @Entity()
 export class PasswordReset extends BaseEntity {
-    static async createForEmail(email: string) {
-        const user = await User.findOne({ where: { email } });
-
-        if (!user) {
-            throw new Error('Unknown user for password reset');
-        }
-
-        const previousReset = await PasswordReset.findOne({ where: { user } });
-
-        if (previousReset) {
-            await previousReset.remove();
-        }
-
-        const passwordReset = new PasswordReset();
-        passwordReset.user = user;
-
-        await passwordReset.save();
-    }
-
-    static async removeForUser(user: User) {
-        const previousReset = await PasswordReset.findOne({ where: { user } });
-
-        if (previousReset) {
-            await previousReset.remove();
-        }
-    }
-
     @PrimaryGeneratedColumn()
     id!: number;
 

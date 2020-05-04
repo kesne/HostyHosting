@@ -14,7 +14,6 @@ import { Application } from './Application';
 import { ContainerGroup } from './ContainerGroup';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { Secret } from './Secret';
 import { Matches, Length } from 'class-validator';
 import { NAME_REGEX } from '../constants';
 
@@ -31,15 +30,6 @@ registerEnumType(DeploymentStrategy, {
 @ObjectType()
 @Unique(['name', 'application'])
 export class Component extends BaseEntity {
-    static findByApplicationAndId(application: Application, id: number) {
-        return Component.findOneOrFail({
-            where: {
-                id,
-                application,
-            },
-        });
-    }
-
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;

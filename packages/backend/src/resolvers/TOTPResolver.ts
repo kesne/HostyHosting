@@ -1,16 +1,21 @@
 import { authenticator } from 'otplib';
 import { Resolver, Ctx, Arg, Mutation, Authorized } from 'type-graphql';
 import Result from './types/Result';
-import { User, GrantType } from '../entity/User';
+import { GrantType } from '../entity/User';
 import { Context } from '../types';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { UserRepository } from '../repositories/UserRepository';
 
 @Resolver()
 export class TOTPResolver {
+    @InjectRepository()
+    userRepo!: UserRepository;
+
     // NOTE: This is intentionally unauthorized because we don't yet have a full
     // user session that can be resolved.
     @Mutation(() => Result)
     async exchangeTOTP(@Ctx() { session, cookies }: Context, @Arg('token') token: string) {
-        const user = await User.fromTOTPSession(session, token);
+        const user = await this.userRepo.fromTOTPSession(session, token);
         user.signIn(session, cookies);
         return new Result();
     }
@@ -32,7 +37,7 @@ export class TOTPResolver {
             throw new Error('Invalid TOTP');
         }
         user.totpSecret = secret;
-        await user.save();
+        await this.userRepo.save(user);
         return new Result();
     }
 
@@ -40,6 +45,7 @@ export class TOTPResolver {
     @Mutation(() => Result)
     async disableTotp(@Ctx() { user }: Context, @Arg('password') password: string) {
         await user.disableTOTP(password);
+        await this.userRepo.save(user);
         return new Result();
     }
 }

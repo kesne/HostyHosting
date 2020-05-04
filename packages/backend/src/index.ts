@@ -6,14 +6,16 @@ import bodyParser from 'koa-bodyparser';
 import session from 'koa-session';
 import redisStore from 'koa-redis';
 import { ApolloServer } from 'apollo-server-koa';
-import { createConnection } from 'typeorm';
+import { createConnection, getCustomRepository } from 'typeorm';
 import redis from './redis';
-import { User } from './entity/User';
 import ormconfig from '../ormconfig';
 import { buildSchema, AuthChecker } from 'type-graphql';
+import { Container } from 'typedi';
 import { SESSION_NAME } from './constants';
 import path from 'path';
 import { Context } from './types';
+import { removeUserCookie } from './utils/cookies';
+import { UserRepository } from './repositories/UserRepository';
 
 const app = new Koa();
 const router = new Router();
@@ -67,6 +69,7 @@ async function main() {
         resolvers: [__dirname + '/resolvers/**/*.{ts,js}'],
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
         authChecker: customAuthChecker,
+        container: Container,
     });
 
     const server = new ApolloServer({
@@ -88,6 +91,7 @@ async function main() {
     });
 
     const connection = await createConnection(ormconfig);
+    const userRepo = getCustomRepository(UserRepository);
 
     app.use((ctx, next) => {
         ctx.connection = connection;
@@ -96,13 +100,13 @@ async function main() {
 
     app.use(async (ctx, next) => {
         if (ctx.get('Authentication')) {
-            ctx.user = await User.fromAPIKey(ctx.get('Authentication').slice('Bearer '.length));
+            ctx.user = await userRepo.fromAPIKey(ctx.get('Authentication').slice('Bearer '.length));
         } else {
-            ctx.user = await User.fromSession(ctx.session);
+            ctx.user = await userRepo.fromSession(ctx.session);
         }
 
         if (!ctx.user) {
-            User.removeUserCookie(ctx.cookies);
+            removeUserCookie(ctx.cookies);
         }
 
         return next();

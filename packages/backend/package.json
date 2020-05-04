@@ -33,7 +33,9 @@
         "reflect-metadata": "^0.1.13",
         "subscriptions-transport-ws": "^0.9.16",
         "type-graphql": "^0.17.6",
+        "typedi": "^0.8.0",
         "typeorm": "^0.2.22",
+        "typeorm-typedi-extensions": "^0.2.3",
         "uuid": "^7.0.2"
     },
     "devDependencies": {

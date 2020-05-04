@@ -16,8 +16,9 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
-import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
+import { OrganizationMembership } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
+import { removeUserCookie, setUserCookie } from '../utils/cookies';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -38,84 +39,6 @@ export enum GrantType {
 @Entity()
 @ObjectType()
 export class User extends BaseEntity {
-    static async fromAPIKey(apiKey: string): Promise<User | undefined> {
-        const key = await APIKey.findOne({
-            where: {
-                key: apiKey,
-            },
-            relations: ['user'],
-        });
-
-        if (key?.user) {
-            key.user.grantType = GrantType.API_KEY;
-        }
-
-        return key?.user;
-    }
-
-    static async fromSession(
-        session: Session,
-        allowedType: AuthType = AuthType.FULL,
-    ): Promise<User | undefined> {
-        if (session.userID && session.type === allowedType) {
-            const user = await this.findOne(session.userID);
-            if (user) {
-                user.grantType = GrantType.SESSION;
-            }
-            return user;
-        }
-        return;
-    }
-
-    static async fromTOTPSession(session: Session, token: string): Promise<User> {
-        if (!session.userID || session.type !== AuthType.TOTP) {
-            throw new Error('No TOTP session currently exists.');
-        }
-
-        const user = await this.findOne(session.userID);
-        if (!user || !user.totpSecret) {
-            throw new Error('No user was found in the current session.');
-        }
-
-        const isValid = authenticator.verify({ secret: user.totpSecret, token });
-        if (!isValid) {
-            throw new Error('The TOTP token provided was not valid.');
-        }
-
-        return user;
-    }
-
-    static removeUserCookie(cookies: Cookies) {
-        cookies.set('userID', '0', { httpOnly: false, signed: false });
-    }
-
-    static async signUp(
-        session: Session,
-        cookies: Cookies,
-        {
-            username,
-            name,
-            email,
-            password,
-            githubID,
-        }: { username: string; name: string; email: string; password?: string; githubID?: string },
-    ) {
-        const user = new User();
-        user.username = username;
-        user.name = name;
-        user.githubID = githubID;
-        user.email = email;
-        if (password) {
-            await user.setPassword(password);
-        }
-
-        await user.save();
-
-        await Organization.createPersonal(user);
-
-        user.signIn(session, cookies);
-    }
-
     /**
      * Denotes how the User entity was authenticated.
      */
@@ -187,8 +110,6 @@ export class User extends BaseEntity {
         }
 
         this.totpSecret = null;
-
-        await this.save();
     }
 
     generateTotpSecret() {
@@ -203,12 +124,12 @@ export class User extends BaseEntity {
         session.userID = this.id;
         session.type = type;
         if (type === AuthType.FULL) {
-            cookies.set('userID', String(this.id), { httpOnly: false, signed: false });
+            setUserCookie(cookies, this.id);
         }
     }
 
     signOut(cookies: Cookies) {
-        User.removeUserCookie(cookies);
+        removeUserCookie(cookies);
     }
 
     // TODO: Eventually, we might want this to be done entirely through the OrganizationMembership,
@@ -234,11 +155,4 @@ export class User extends BaseEntity {
         { lazy: true },
     )
     apiKeys!: Lazy<APIKey>;
-
-    async createAPIKey(description: string) {
-        const apiKey = new APIKey();
-        apiKey.description = description;
-        apiKey.user = this;
-        return await apiKey.save();
-    }
 }

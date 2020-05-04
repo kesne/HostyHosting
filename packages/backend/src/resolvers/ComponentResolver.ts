@@ -2,9 +2,14 @@ import { Resolver, FieldResolver, Int, Root, Arg } from 'type-graphql';
 import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Repository } from 'typeorm';
 
 @Resolver(() => Component)
 export class ComponentResolver {
+    @InjectRepository(ContainerGroup)
+    containerGroupRepo!: Repository<ContainerGroup>;
+
     @FieldResolver(() => Int)
     async monthlyPrice(@Root() component: Component) {
         const containerGroups = await component.containerGroups;
@@ -21,7 +26,7 @@ export class ComponentResolver {
         @Root() component: Component,
         @Arg('environment', () => Int) environmentID: number,
     ) {
-        return ContainerGroup.findOne({
+        return this.containerGroupRepo.findOne({
             where: {
                 component,
                 environment: {

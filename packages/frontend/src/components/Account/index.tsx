@@ -28,7 +28,7 @@ export default function Account() {
                         <Route path="apikeys" element={<APIKeys />} />
                         <Route path="security" element={<Security />} />
                         <Route path="/" element={<EditAccount />} />
-                        <Route path="*" element={<Navigate to="." />} />
+                        <Route path="*" element={<Navigate to="." replace />} />
                     </Routes>
                 </div>
             </div>

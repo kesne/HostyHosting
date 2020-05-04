@@ -2,9 +2,14 @@ import { Resolver, Query, Int, Arg, Ctx } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Repository } from 'typeorm';
 
 @Resolver()
 export class OrganizationResolver {
+    @InjectRepository(OrganizationMembership)
+    organizationMembershipRepo!: Repository<OrganizationMembership>;
+
     @Query(() => Organization)
     async organization(
         @Ctx() { user }: Context,
@@ -19,7 +24,8 @@ export class OrganizationResolver {
             return await user.personalOrganization;
         }
 
-        const membership = await OrganizationMembership.findOneOrFail({
+        // TODO: Add a helper method in the repository to make this easier!
+        const membership = await this.organizationMembershipRepo.findOneOrFail({
             where: {
                 user: user,
                 organization: { id: id },

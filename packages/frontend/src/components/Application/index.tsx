@@ -99,7 +99,7 @@ export default function Application() {
 
                 <Container>
                     <Routes>
-                        <Route path="/" element={<Navigate to="overview" />} />}
+                        <Route path="/" element={<Navigate to="overview" replace />} />}
                         <Route path="/" element={<ApplicationLayout />}>
                             {/*
                                 TODO: This is a bug with React Router 6 that requires us to have a path named "overview" here:

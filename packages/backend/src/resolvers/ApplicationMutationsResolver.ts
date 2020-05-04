@@ -9,10 +9,28 @@ import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
 import { ContainerGroupInput } from './types/ContainerGroupInput';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Repository } from 'typeorm';
+import { ComponentRepository } from '../repositories/ComponentRepository';
 
 @ObjectType()
 export class ApplicationMutations {
     application: Application;
+
+    @InjectRepository(Application)
+    applicationRepo!: Repository<Application>;
+
+    @InjectRepository()
+    componentRepo!: ComponentRepository;
+
+    @InjectRepository(Environment)
+    environmentRepo!: Repository<Environment>;
+
+    @InjectRepository(ContainerGroup)
+    containerGroupRepo!: Repository<ContainerGroup>;
+
+    @InjectRepository(Secret)
+    secretRepo!: Repository<Secret>;
 
     constructor(application: Application) {
         this.application = application;
@@ -23,7 +41,7 @@ export class ApplicationMutations {
     async delete() {
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
         // it in a state of deletion, and don't allow modification to the model.
-        await Application.delete(this.application.id);
+        await this.applicationRepo.delete(this.application.id);
 
         return this.application;
     }
@@ -41,7 +59,7 @@ export class ApplicationMutations {
             this.application.description = applicationInput.description;
         }
 
-        return await this.application.save();
+        return await this.applicationRepo.save(this.application);
     }
 
     @Field(() => Component)
@@ -52,7 +70,7 @@ export class ApplicationMutations {
         component.image = componentInput.image;
         component.deploymentStrategy = componentInput.deploymentStrategy;
 
-        return await component.save();
+        return await this.componentRepo.save(component);
     }
 
     @Field(() => ContainerGroup)
@@ -61,14 +79,14 @@ export class ApplicationMutations {
     ) {
         const organization = await this.application.organization;
 
-        const component = await Component.findOneOrFail({
+        const component = await this.componentRepo.findOneOrFail({
             where: {
                 id: containerGroupInput.componentID,
                 application: this.application,
             },
         });
 
-        const environment = await Environment.findOneOrFail({
+        const environment = await this.environmentRepo.findOneOrFail({
             where: {
                 id: containerGroupInput.environmentID,
                 organization,
@@ -82,7 +100,7 @@ export class ApplicationMutations {
         containerGroup.setSize(containerGroupInput.size);
         containerGroup.setContainerCount(containerGroupInput.containerCount);
 
-        return await containerGroup.save();
+        return await this.containerGroupRepo.save(containerGroup);
     }
 
     @Field(() => Component)
@@ -90,7 +108,7 @@ export class ApplicationMutations {
         @Arg('id', () => Int) id: number,
         @Arg('component', () => ComponentInput) componentInput: ComponentInput,
     ) {
-        const component = await Component.findByApplicationAndId(this.application, id);
+        const component = await this.componentRepo.findByApplicationAndId(this.application, id);
 
         if ('name' in componentInput) {
             component.name = componentInput.name;
@@ -104,7 +122,7 @@ export class ApplicationMutations {
             component.deploymentStrategy = componentInput.deploymentStrategy;
         }
 
-        return await component.save();
+        return await this.componentRepo.save(component);
     }
 
     @Field(() => Secret)
@@ -115,7 +133,7 @@ export class ApplicationMutations {
     ) {
         // TODO: This is not really secure because we don't scope the container group lookup.
         // Instead, at some point in the future we need to move all of the containerGroup mutations into a ContainerGroupMutationsResolver.
-        const containerGroup = await ContainerGroup.findOneOrFail(containerGroupID);
+        const containerGroup = await this.containerGroupRepo.findOneOrFail(containerGroupID);
 
         const secret = new Secret();
 
@@ -123,7 +141,7 @@ export class ApplicationMutations {
         secret.value = value;
         secret.containerGroup = containerGroup;
 
-        return await secret.save();
+        return await this.secretRepo.save(secret);
     }
 
     @Field(() => Secret)
@@ -133,7 +151,7 @@ export class ApplicationMutations {
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
-        const secret = await Secret.findOneOrFail({
+        const secret = await this.secretRepo.findOneOrFail({
             where: {
                 id,
                 containerGroup: {
@@ -145,7 +163,7 @@ export class ApplicationMutations {
         secret.key = key;
         secret.value = value;
 
-        return await secret.save();
+        return await this.secretRepo.save(secret);
     }
 
     @Field(() => Secret)
@@ -153,33 +171,37 @@ export class ApplicationMutations {
         @Arg('containerGroup', () => Int) containerGroupID: number,
         @Arg('id', () => Int) id: number,
     ) {
-        const secret = await Secret.findOneOrFail({
+        const secret = await this.secretRepo.findOneOrFail({
             where: {
                 id,
                 containerGroup: {
-                    id: containerGroupID
+                    id: containerGroupID,
                 },
             },
         });
 
-        await Secret.delete(secret.id);
+        await this.secretRepo.delete(secret.id);
 
         return secret;
     }
 
     @Field(() => Component)
     async deleteComponent(@Arg('id', () => Int) id: number) {
-        const deployment = await Component.findByApplicationAndId(this.application, id);
-        await Component.delete(deployment.id);
-        return deployment;
+        const component = await this.componentRepo.findByApplicationAndId(this.application, id);
+        await this.componentRepo.delete(component.id);
+        return component;
     }
 }
 
 export class ApplicationMutationsResolver {
+
+    @InjectRepository(Application)
+    applicationRepo!: Repository<Application>;
+
     @Authorized()
     @Mutation(() => ApplicationMutations)
     async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
-        const application = await Application.findOneOrFail({
+        const application = await this.applicationRepo.findOneOrFail({
             where: {
                 id,
             },

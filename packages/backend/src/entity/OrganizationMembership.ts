@@ -10,7 +10,6 @@ import { User } from './User';
 import { BaseEntity } from './BaseEntity';
 import { Organization } from './Organization';
 import { registerEnumType } from 'type-graphql';
-import { Lazy } from '../types';
 
 export enum OrganizationPermission {
     // Allow reading anything but no mutations

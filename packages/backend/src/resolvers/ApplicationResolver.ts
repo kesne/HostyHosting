@@ -3,13 +3,21 @@ import { Application } from '../entity/Application';
 import { Context } from '../types';
 import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Repository } from 'typeorm';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
+    @InjectRepository(Application)
+    applicationRepo!: Repository<Application>;
+
+    @InjectRepository(Component)
+    componentRepo!: Repository<Component>;
+
     @Authorized()
     @Query(() => Application)
     async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
-        const app = await Application.findOneOrFail({
+        const app = await this.applicationRepo.findOneOrFail({
             where: {
                 id,
             },
@@ -23,7 +31,7 @@ export class ApplicationResolver {
 
     @FieldResolver(() => Component)
     async component(@Root() application: Application, @Arg('id', () => Int) id: number) {
-        return await Component.findOneOrFail({
+        return await this.componentRepo.findOneOrFail({
             where: {
                 id,
                 application,
