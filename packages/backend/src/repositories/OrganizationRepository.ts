@@ -1,5 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+import { EntityRepository, Repository, getRepository, getCustomRepository } from 'typeorm';
 import { Organization } from '../entity/Organization';
 import { User } from '../entity/User';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
@@ -8,19 +7,11 @@ import { ContainerGroup, containerCountAndSizeToComputeUnits } from '../entity/C
 
 @EntityRepository(Organization)
 export class OrganizationRepository extends Repository<Organization> {
-    @InjectRepository(User)
-    private userRepository!: Repository<User>;
-
-    @InjectRepository(OrganizationMembership)
-    private organizationMembershipRepository!: Repository<OrganizationMembership>;
-
-    @InjectRepository()
-    private environmentRepository!: EnvironmentRepository;
-
-    @InjectRepository(ContainerGroup)
-    private containerGroupRepo!: Repository<ContainerGroup>;
-
     async createPersonal(user: User) {
+        const userRepository = getRepository(User);
+        const organizationMembershipRepository = getRepository(OrganizationMembership);
+        const environmentRepository = getCustomRepository(EnvironmentRepository);
+
         // Create a basic organization:
         const organization = this.create({
             name: 'Personal',
@@ -30,23 +21,26 @@ export class OrganizationRepository extends Repository<Organization> {
         await this.save(organization);
 
         // TODO: Maybe this should be somewhere else (maybe afterInsert?):
-        await this.environmentRepository.createDefaultEnvironments(organization);
+        await environmentRepository.createDefaultEnvironments(organization);
 
         // Set the users personal organization:
+        // TODO: Find a way to avoid this:
         user.personalOrganization = organization;
-        await this.userRepository.save(user);
+        await userRepository.save(user);
 
         // Finally, add the user into their own organization:
-        const membership = this.organizationMembershipRepository.create({
+        const membership = organizationMembershipRepository.create({
             user,
             organization,
-            permission: OrganizationPermission.ADMIN
+            permission: OrganizationPermission.ADMIN,
         });
-        await this.organizationMembershipRepository.save(membership);
+        await organizationMembershipRepository.save(membership);
     }
 
     async getAvailableComputeUnits(organization: Organization) {
-        const containerGroups = await this.containerGroupRepo.find({
+        const containerGroupRepo = getRepository(ContainerGroup);
+
+        const containerGroups = await containerGroupRepo.find({
             where: {
                 organization,
             },

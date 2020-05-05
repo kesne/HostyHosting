@@ -1,21 +1,15 @@
 import { authenticator } from 'otplib';
-import { Repository, EntityRepository } from 'typeorm';
+import { Repository, EntityRepository, getRepository, getCustomRepository } from 'typeorm';
 import { User, GrantType, AuthType } from '../entity/User';
 import { APIKey } from '../entity/APIKey';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Session, Cookies } from '../types';
 import { OrganizationRepository } from './OrganizationRepository';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-    @InjectRepository(APIKey)
-    private apiKeyRepository!: Repository<APIKey>;
-
-    @InjectRepository()
-    private organizationRepository!: OrganizationRepository;
-
     async fromAPIKey(apiKey: string): Promise<User | undefined> {
-        const key = await this.apiKeyRepository.findOne({
+        const apiKeyRepository = getRepository(APIKey);
+        const key = await apiKeyRepository.findOne({
             where: {
                 key: apiKey,
             },
@@ -72,11 +66,12 @@ export class UserRepository extends Repository<User> {
             githubID,
         }: { username: string; name: string; email: string; password?: string; githubID?: string },
     ) {
+        const organizationRepository = getCustomRepository(OrganizationRepository);
         const user = this.create({
             username,
             name,
             githubID,
-            email
+            email,
         });
 
         if (password) {
@@ -84,7 +79,7 @@ export class UserRepository extends Repository<User> {
         }
 
         await this.save(user);
-        await this.organizationRepository.createPersonal(user);
+        await organizationRepository.createPersonal(user);
 
         user.signIn(session, cookies);
     }

@@ -9,6 +9,7 @@ import {
     BeforeUpdate,
     OneToMany,
     Unique,
+    getCustomRepository,
 } from 'typeorm';
 import { Component } from './Component';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
@@ -18,8 +19,8 @@ import { Lazy } from '../types';
 import { Environment } from './Environment';
 import { Organization } from './Organization';
 import { Secret } from './Secret';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { OrganizationRepository } from '../repositories/OrganizationRepository';
+// import { OrganizationRepository } from '../repositories/OrganizationRepository';
 
 export enum ContainerSize {
     S1x1 = 'S1x1', // 1 Compute Unit, 128 mb
@@ -108,14 +109,12 @@ export class ContainerGroup extends BaseEntity {
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;
 
-    @InjectRepository()
-    private organizationRepo!: OrganizationRepository;
-
     @BeforeInsert()
     @BeforeUpdate()
     async validateSize() {
+        const organizationRepo = getCustomRepository(OrganizationRepository);
         const organization = await this.organization;
-        const availableUnits = await this.organizationRepo.getAvailableComputeUnits(organization);
+        const availableUnits = await organizationRepo.getAvailableComputeUnits(organization);
         const desiredComputeUnits = containerCountAndSizeToComputeUnits(
             this.containerCount,
             this.size,

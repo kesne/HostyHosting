@@ -6,27 +6,21 @@ import Result from './types/Result';
 import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from '../repositories/UserRepository';
 import { PasswordResetRepository } from '../repositories/PasswordResetRepository';
-import { Repository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
 
 @Resolver(() => User)
 export class UserResolver {
-    @InjectRepository()
-    userRepo!: UserRepository;
-
-    @InjectRepository()
-    passwordResetRepo!: PasswordResetRepository;
-
-    @InjectRepository(Organization)
-    organizationRepo!: Repository<Organization>;
-
-    @InjectRepository(OrganizationMembership)
-    organizationMembershipRepo!: Repository<OrganizationMembership>;
+    constructor(
+        private userRepo = getCustomRepository(UserRepository),
+        private passwordResetRepo = getCustomRepository(PasswordResetRepository),
+        private organizationRepo = getRepository(Organization),
+        private organizationMembershipRepo = getRepository(OrganizationMembership),
+    ) {}
 
     @Authorized()
     @Query(() => User)

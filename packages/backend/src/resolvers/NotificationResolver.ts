@@ -1,12 +1,10 @@
+import { getRepository } from 'typeorm';
 import { Resolver, Authorized, Query } from 'type-graphql';
 import { Notification } from '../entity/Notification';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
 
 @Resolver()
 export class NotificationResolver {
-    @InjectRepository(Notification)
-    notificationRepo!: Repository<Notification>;
+    constructor(private notificationRepo = getRepository(Notification)) {}
 
     @Authorized()
     @Query(() => [Notification])

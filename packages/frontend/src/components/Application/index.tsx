@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, Routes, Route, Outlet, useMatch, Navigate } from 'react-router-dom';
+import { useParams, Routes, Route, Outlet, useMatch } from 'react-router-dom';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
@@ -37,6 +37,9 @@ function ApplicationLayout() {
         LAYOUT_TABS.map(({ value, to }) => ({ match: useMatch(to), value })).find(
             ({ match }) => match,
         )?.value ?? 'overview';
+
+    const currentPage = useMatch(':page');
+    console.log(currentPage);
 
     return (
         <>
@@ -99,13 +102,13 @@ export default function Application() {
 
                 <Container>
                     <Routes>
-                        <Route path="/" element={<Navigate to="overview" replace />} />}
+                        {/* <Route path="/" element={<Navigate to="overview" replace />} />} */}
                         <Route path="/" element={<ApplicationLayout />}>
                             {/*
                                 TODO: This is a bug with React Router 6 that requires us to have a path named "overview" here:
                                 https://github.com/ReactTraining/react-router/issues/7239
                             */}
-                            <Route path="overview" element={<Overview />} />
+                            <Route path="/" element={<Overview />} />
                             <Route path="components" element={<Components />} />
                             <Route path="settings" element={<Settings />} />
                         </Route>

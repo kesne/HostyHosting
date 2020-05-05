@@ -1,17 +1,15 @@
 import { Environment } from '../entity/Environment';
-import { Repository, EntityRepository } from 'typeorm';
+import { Repository, EntityRepository, getRepository } from 'typeorm';
 import { Network } from '../entity/Network';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Organization } from '../entity/Organization';
 
 @EntityRepository(Environment)
 export class EnvironmentRepository extends Repository<Environment> {
-    @InjectRepository(Network)
-    private networkRepository!: Repository<Network>;
-
     async createForOrganization(organization: Organization, name: string, label: string) {
-        const network = this.networkRepository.create({ name });
-        await this.networkRepository.save(network);
+        const networkRepository = getRepository(Network);
+
+        const network = networkRepository.create({ name });
+        await networkRepository.save(network);
 
         const env = this.create({
             name,

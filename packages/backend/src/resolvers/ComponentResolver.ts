@@ -2,13 +2,11 @@ import { Resolver, FieldResolver, Int, Root, Arg } from 'type-graphql';
 import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 @Resolver(() => Component)
 export class ComponentResolver {
-    @InjectRepository(ContainerGroup)
-    containerGroupRepo!: Repository<ContainerGroup>;
+    constructor(private containerGroupRepo = getRepository(ContainerGroup)) {}
 
     @FieldResolver(() => Int)
     async monthlyPrice(@Root() component: Component) {

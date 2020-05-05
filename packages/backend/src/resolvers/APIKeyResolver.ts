@@ -5,8 +5,8 @@ import Result from './types/Result';
 import { Context } from '../types';
 import { APIKey } from '../entity/APIKey';
 import { GrantType } from '../entity/User';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { APIKeyRepository } from '../repositories/APIKeyRepository';
+import { getCustomRepository } from 'typeorm';
 
 const API_KEY_EXPIRATION = 100;
 const REQUEST_VALUE = '@@request';
@@ -17,8 +17,7 @@ function getRedisKeyName(id: string) {
 
 @Resolver()
 export class APIKeyResolver {
-    @InjectRepository()
-    apiKeyRepo!: APIKeyRepository;
+    constructor(private apiKeyRepo = getCustomRepository(APIKeyRepository)) {}
 
     @Mutation(() => String)
     async createAPIKeyRequest(): Promise<string> {

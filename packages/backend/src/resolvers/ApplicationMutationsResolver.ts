@@ -1,4 +1,4 @@
-import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized } from 'type-graphql';
+import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized, Resolver } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { Component } from '../entity/Component';
 import { Context } from '../types';
@@ -9,33 +9,20 @@ import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
 import { ContainerGroupInput } from './types/ContainerGroupInput';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 import { ComponentRepository } from '../repositories/ComponentRepository';
 import { ApplicationRepository } from '../repositories/ApplicationRepository';
 
 @ObjectType()
 export class ApplicationMutations {
-    application: Application;
-
-    @InjectRepository(Application)
-    applicationRepo!: Repository<Application>;
-
-    @InjectRepository()
-    componentRepo!: ComponentRepository;
-
-    @InjectRepository(Environment)
-    environmentRepo!: Repository<Environment>;
-
-    @InjectRepository(ContainerGroup)
-    containerGroupRepo!: Repository<ContainerGroup>;
-
-    @InjectRepository(Secret)
-    secretRepo!: Repository<Secret>;
-
-    constructor(application: Application) {
-        this.application = application;
-    }
+    constructor(
+        private application: Application,
+        private applicationRepo = getRepository(Application),
+        private componentRepo = getCustomRepository(ComponentRepository),
+        private environmentRepo = getRepository(Environment),
+        private containerGroupRepo = getRepository(ContainerGroup),
+        private secretRepo = getRepository(Secret),
+    ) {}
 
     // TODO: This needs to delete all associated resources. (cascasde should solve this)
     @Field(() => Application)
@@ -195,9 +182,9 @@ export class ApplicationMutations {
     }
 }
 
+@Resolver()
 export class ApplicationMutationsResolver {
-    @InjectRepository()
-    applicationRepo!: ApplicationRepository;
+    constructor(private applicationRepo = getCustomRepository(ApplicationRepository)) {}
 
     @Authorized()
     @Mutation(() => ApplicationMutations)

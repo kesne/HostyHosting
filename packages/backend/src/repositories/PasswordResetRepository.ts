@@ -1,16 +1,15 @@
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { UserRepository } from './UserRepository';
 import { PasswordReset } from '../entity/PasswordReset';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, getCustomRepository } from 'typeorm';
 import { User } from '../entity/User';
 
 @EntityRepository(PasswordReset)
 export class PasswordResetRepository extends Repository<PasswordReset> {
-    @InjectRepository()
-    private userRepository!: UserRepository;
-
+    // TODO: Maybe move to createForUser()?
     async createForEmail(email: string) {
-        const user = await this.userRepository.findOne({ where: { email } });
+        const userRepository = getCustomRepository(UserRepository);
+
+        const user = await userRepository.findOne({ where: { email } });
 
         if (!user) {
             throw new Error('Unknown user for password reset');

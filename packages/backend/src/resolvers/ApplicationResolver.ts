@@ -3,21 +3,22 @@ import { Application } from '../entity/Application';
 import { Context } from '../types';
 import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 import { ApplicationRepository } from '../repositories/ApplicationRepository';
 
 @Resolver(() => Application)
 export class ApplicationResolver {
-    @InjectRepository()
-    applicationRepo!: ApplicationRepository;
-
-    @InjectRepository(Component)
-    componentRepo!: Repository<Component>;
+    constructor(
+        private applicationRepo = getCustomRepository(ApplicationRepository),
+        private componentRepo = getRepository(Component),
+    ) {}
 
     @Authorized()
     @Query(() => Application)
-    async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
+    async application(
+        @Ctx() { user }: Context,
+        @Arg('id', () => Int) id: number,
+    ) {
         return await this.applicationRepo.findForUser(user, id);
     }
 

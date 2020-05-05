@@ -10,7 +10,6 @@ import { createConnection, getCustomRepository } from 'typeorm';
 import redis from './redis';
 import ormconfig from '../ormconfig';
 import { buildSchema, AuthChecker } from 'type-graphql';
-import { Container } from 'typedi';
 import { SESSION_NAME } from './constants';
 import path from 'path';
 import { Context } from './types';
@@ -69,10 +68,10 @@ async function main() {
         resolvers: [__dirname + '/resolvers/**/*.{ts,js}'],
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
         authChecker: customAuthChecker,
-        container: Container,
     });
 
     const server = new ApolloServer({
+        debug: true,
         schema,
         context: ({ ctx, connection }) => {
             if (connection?.context) {

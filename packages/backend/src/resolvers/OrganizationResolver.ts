@@ -1,14 +1,12 @@
+import { getRepository } from 'typeorm';
 import { Resolver, Query, Int, Arg, Ctx } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
 
 @Resolver()
 export class OrganizationResolver {
-    @InjectRepository(OrganizationMembership)
-    organizationMembershipRepo!: Repository<OrganizationMembership>;
+    constructor(private organizationMembershipRepo = getRepository(OrganizationMembership)) {}
 
     @Query(() => Organization)
     async organization(

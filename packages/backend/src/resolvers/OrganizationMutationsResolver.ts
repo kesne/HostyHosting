@@ -19,27 +19,18 @@ import {
 } from '../entity/OrganizationMembership';
 import { ApplicationInput } from './types/ApplicationInput';
 import { Environment } from '../entity/Environment';
-import { InjectRepository } from 'typeorm-typedi-extensions';
 import { OrganizationRepository } from '../repositories/OrganizationRepository';
 import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
-import { Repository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 
 @ObjectType()
 class OrganizationMutations {
-    organization: Organization;
-
-    @InjectRepository()
-    organizationRepo!: OrganizationRepository;
-
-    @InjectRepository()
-    environmentRepo!: EnvironmentRepository;
-
-    @InjectRepository(Application)
-    applicationRepo!: Repository<Application>;
-
-    constructor(organization: Organization) {
-        this.organization = organization;
-    }
+    constructor(
+        public organization: Organization,
+        private organizationRepo = getCustomRepository(OrganizationRepository),
+        private environmentRepo = getCustomRepository(EnvironmentRepository),
+        private applicationRepo = getRepository(Application),
+    ) {}
 
     @Field(() => Organization)
     async changeUsername(@Arg('username') username: string) {
@@ -77,8 +68,7 @@ class OrganizationMutations {
 
 @Resolver()
 export class OrganizationMutationsResolver {
-    @InjectRepository(OrganizationMembership)
-    organizationMembershipRepo!: Repository<OrganizationMembership>;
+    constructor(private organizationMembershipRepo = getRepository(OrganizationMembership)) {}
 
     @Authorized()
     @Mutation(() => OrganizationMutations)
