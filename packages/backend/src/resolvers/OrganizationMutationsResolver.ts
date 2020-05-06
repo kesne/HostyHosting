@@ -19,15 +19,14 @@ import {
 } from '../entity/OrganizationMembership';
 import { ApplicationInput } from './types/ApplicationInput';
 import { Environment } from '../entity/Environment';
-import { OrganizationRepository } from '../repositories/OrganizationRepository';
 import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
 import { getCustomRepository, getRepository } from 'typeorm';
 
 @ObjectType()
 class OrganizationMutations {
     constructor(
-        public organization: Organization,
-        private organizationRepo = getCustomRepository(OrganizationRepository),
+        private organization: Organization,
+        private organizationRepo = getRepository(Organization),
         private environmentRepo = getCustomRepository(EnvironmentRepository),
         private applicationRepo = getRepository(Application),
     ) {}
@@ -43,7 +42,9 @@ class OrganizationMutations {
 
     @Field(() => Environment)
     async createEnvironment(@Arg('name') name: string, @Arg('label') label: string) {
-        return await this.environmentRepo.createForOrganization(this.organization, name, label);
+        return await this.environmentRepo.save(
+            Environment.createForOrganization(this.organization, name, label),
+        );
     }
 
     @Field(() => Application)

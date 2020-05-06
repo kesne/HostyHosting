@@ -9,11 +9,11 @@ import { Component } from '../entity/Component';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
-import { OrganizationRepository } from '../repositories/OrganizationRepository';
 import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
+import { UserRepository } from '../repositories/UserRepository';
 
 async function withConnection(fn: any) {
-    const connection = await createConnection(ormconfig);
+    const connection = await createConnection({ ...ormconfig, logging: true });
     try {
         await fn();
     } finally {
@@ -30,9 +30,9 @@ async function seed() {
         Application: getRepository(Application),
         PasswordReset: getRepository(PasswordReset),
         OrganizationMembership: getRepository(OrganizationMembership),
-        User: getRepository(User),
+        User: getCustomRepository(UserRepository),
         Environment: getCustomRepository(EnvironmentRepository),
-        Organization: getCustomRepository(OrganizationRepository),
+        Organization: getRepository(Organization),
         Notification: getRepository(Notification),
     };
 
@@ -62,7 +62,8 @@ async function seed() {
     await user.setPassword('admin');
     await repos.User.save(user);
 
-    await repos.Organization.createPersonal(user);
+    // TODO: Fix
+    // await repos.Organization.createPersonal(user);
 
     // Allocate more max compute units to myself for testing:
     const personalOrg = await user.personalOrganization;

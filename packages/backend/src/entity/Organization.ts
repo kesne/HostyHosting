@@ -11,13 +11,28 @@ import { ObjectType, Field, Int } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { BaseEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership } from './OrganizationMembership';
+import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
 import { Environment } from './Environment';
+import { User } from './User';
 import { NAME_REGEX } from '../constants';
 
-@Entity()
 @ObjectType()
+@Entity()
 export class Organization extends BaseEntity {
+    static createPersonal(user: User) {
+        const organization = new Organization();
+        organization.name = 'Personal';
+        organization.isPersonal = true;
+        organization.username = user.username;
+
+        const membership = new OrganizationMembership();
+        membership.user = user;
+        membership.organization = organization;
+        membership.permission = OrganizationPermission.ADMIN;
+
+        return { organization, membership };
+    }
+
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;

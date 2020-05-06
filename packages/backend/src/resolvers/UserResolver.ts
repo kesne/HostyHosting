@@ -175,6 +175,7 @@ export class UserResolver {
         return new SignInResult(false);
     }
 
+    // TODO: Transaction
     @Authorized(GrantType.SESSION)
     @Mutation(() => User)
     async updateAccount(
@@ -226,6 +227,7 @@ export class UserResolver {
             .filter(org => !org.isPersonal);
     }
 
+    // TODO: Transaction:
     @Mutation(() => Result)
     async resetPassword(
         @Ctx() { session, cookies }: Context,

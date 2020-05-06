@@ -31,7 +31,7 @@ services:
             - 'redisdata:/data'
 
     backend:
-        image: node:12
+        image: node:13
         command: yarn workspace @hh/backend start
         ports:
             - '127.0.0.1:1337:1337'
@@ -47,7 +47,7 @@ services:
             - 'traefik.http.routers.backend.rule=Host(`hostyhosting.localhost`) && PathPrefix(`/api`)'
 
     frontend:
-        image: node:12
+        image: node:13
         command: yarn workspace @hh/frontend dev
         ports:
             - '127.0.0.1:3000:3000'

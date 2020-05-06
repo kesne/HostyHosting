@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -19,10 +20,19 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader',
-                options: {
-                    transpileOnly: true,
-                },
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                '@babel/preset-typescript',
+                                '@babel/preset-env',
+                                '@babel/preset-react',
+                            ],
+                            plugins: [!isProd && 'react-refresh/babel'].filter(Boolean),
+                        },
+                    },
+                ],
             },
             {
                 test: /\.css$/,
@@ -71,9 +81,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.html',
         }),
-    ],
+        !isProd && new ReactRefreshWebpackPlugin({ disableRefreshCheck: true }),
+    ].filter(Boolean),
     watch: !isProd,
     devServer: {
+        hot: true,
         host: '0.0.0.0',
         port: 3000,
         disableHostCheck: true,

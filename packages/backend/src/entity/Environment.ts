@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
     OneToMany,
     ManyToOne,
+    Unique,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Network } from './Network';
@@ -17,7 +18,21 @@ import { NAME_REGEX } from '../constants';
 
 @ObjectType()
 @Entity()
+@Unique(['name', 'organization'])
 export class Environment extends BaseEntity {
+    static createForOrganization(organization: Organization, name: string, label: string) {
+        const network = new Network();
+        network.name = name;
+
+        const environment = new Environment();
+        environment.name = name;
+        environment.label = label;
+        environment.networks = [network];
+        environment.organization = organization;
+
+        return environment;
+    }
+
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
@@ -35,7 +50,7 @@ export class Environment extends BaseEntity {
     @OneToMany(
         () => Network,
         network => network.environment,
-        { lazy: true },
+        { lazy: true, cascade: true },
     )
     networks!: Lazy<Network[]>;
 
