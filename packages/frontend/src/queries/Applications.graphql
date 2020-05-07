@@ -1,5 +1,5 @@
-query Applications($org: Int) {
-    organization(id: $org) {
+query Applications($org: String) {
+    organization(username: $org) {
         id
         applications {
             id

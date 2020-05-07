@@ -1,9 +1,11 @@
-import { Cookies } from '../types';
+import { getCurrentRequest } from './currentRequest';
 
-export function removeUserCookie(cookies: Cookies) {
+export function removeUserCookie() {
+    const { cookies } = getCurrentRequest();
     cookies.set('userID', '0', { httpOnly: false, signed: false });
 }
 
-export function setUserCookie(cookies: Cookies, id: number) {
+export function setUserCookie(id: number) {
+    const { cookies } = getCurrentRequest();
     cookies.set('userID', String(id), { httpOnly: false, signed: false });
 }

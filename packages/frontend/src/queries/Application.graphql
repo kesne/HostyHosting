@@ -1,9 +1,14 @@
-query Application($id: Int!) {
-    application(id: $id) {
-        ...ApplicationFragment
-        organization {
-            id
-            name
+query Application($name: String!) {
+    # Nested:
+    organization(name: "foobar") {
+        application(name: $name) {
+            ...ApplicationFragment
         }
+    }
+
+
+    # Flat:
+    application(organization: "foobar", name: $name) {
+        ...ApplicationFragment
     }
 }

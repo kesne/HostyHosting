@@ -9,8 +9,6 @@ export type Cookies = KoaContext['cookies'];
 
 export type Context = {
     user: User;
-    session: Session;
-    cookies: Cookies;
     destroySession(): void;
 };
 

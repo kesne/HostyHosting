@@ -171,14 +171,14 @@ type OrganizationMutations {
 
 type Query {
   getAPIKeyFromRequest(uuid: String!): String
-  application(id: Int!): Application!
+  application(name: String!): Application!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(
     """
-    The ID of the organization to load. If empty, we will use the signed-in users personal organization.
+    The username of the organization to load. If empty, we will use the signed-in users personal organization.
     """
-    id: Int
+    username: String
   ): Organization!
   me: User!
 }

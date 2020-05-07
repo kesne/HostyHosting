@@ -72,12 +72,11 @@ function ApplicationLayout() {
 }
 
 export default function Application() {
-    const params = useParams<{ application: string }>();
-    const id = Number(params.application);
+    const { application } = useParams();
 
     const { data, loading, error } = useApplicationQuery({
         variables: {
-            id,
+            name: application,
         },
     });
 
@@ -88,14 +87,14 @@ export default function Application() {
     return (
         <BreadcrumbProvider
             root={[
-                { name: data.application.name, url: `/applications/${params.application}` },
+                { name: data.application.name, url: `/applications/${application}` },
                 {
                     name: data.application.organization.name,
-                    url: `/orgs/${data.application.organization.id}`,
+                    url: `/orgs/${data.application.organization.username}`,
                 },
             ]}
         >
-            <ApplicationContext.Provider value={id}>
+            <ApplicationContext.Provider value={application}>
                 <PageHeader>
                     <Breadcrumbs />
                 </PageHeader>

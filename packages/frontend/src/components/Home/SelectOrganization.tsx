@@ -5,7 +5,7 @@ import { useMyOrganizationsQuery } from '../../queries';
 const PERSONAL = 'personal';
 
 type Props = {
-    organization?: number;
+    organization?: string;
 };
 
 export default function SelectOrganization({ organization }: Props) {
@@ -29,7 +29,7 @@ export default function SelectOrganization({ organization }: Props) {
             >
                 <option value={PERSONAL}>Personal</option>
                 {data?.me.organizations.map(org => (
-                    <option key={org.id} value={String(org.id)}>
+                    <option key={org.username} value={org.username}>
                         {org.name}
                     </option>
                 ))}

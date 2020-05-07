@@ -349,7 +349,7 @@ export type QueryGetApiKeyFromRequestArgs = {
 
 
 export type QueryApplicationArgs = {
-  id: Scalars['Int']
+  name: Scalars['String']
 };
 
 
@@ -360,7 +360,7 @@ export type QueryEstimateMonthlyPriceArgs = {
 
 
 export type QueryOrganizationArgs = {
-  id?: Maybe<Scalars['Int']>
+  username?: Maybe<Scalars['String']>
 };
 
 /** Provides a boolean to determine if the action was successful or not. */
@@ -430,7 +430,7 @@ export type AddSecretMutation = (
 );
 
 export type ApplicationQueryVariables = {
-  id: Scalars['Int']
+  name: Scalars['String']
 };
 
 
@@ -440,14 +440,14 @@ export type ApplicationQuery = (
     { __typename?: 'Application' }
     & { organization: (
       { __typename?: 'Organization' }
-      & Pick<Organization, 'id' | 'name'>
+      & Pick<Organization, 'id' | 'name' | 'username'>
     ) }
     & ApplicationFragmentFragment
   ) }
 );
 
 export type ApplicationComponentsQueryVariables = {
-  id: Scalars['Int']
+  name: Scalars['String']
 };
 
 
@@ -464,7 +464,7 @@ export type ApplicationComponentsQuery = (
 );
 
 export type ApplicationEnvironmentsQueryVariables = {
-  id: Scalars['Int']
+  name: Scalars['String']
 };
 
 
@@ -490,7 +490,7 @@ export type ApplicationFragmentFragment = (
 );
 
 export type ApplicationsQueryVariables = {
-  org?: Maybe<Scalars['Int']>
+  org?: Maybe<Scalars['String']>
 };
 
 
@@ -510,7 +510,7 @@ export type ApplicationsQuery = (
 );
 
 export type ComponentQueryVariables = {
-  app: Scalars['Int'],
+  app: Scalars['String'],
   component: Scalars['Int']
 };
 
@@ -536,7 +536,7 @@ export type ComponentFragmentFragment = (
 );
 
 export type ContainerGroupQueryVariables = {
-  app: Scalars['Int'],
+  app: Scalars['String'],
   component: Scalars['Int'],
   environment: Scalars['Int']
 };
@@ -855,7 +855,7 @@ export type MyOrganizationsQuery = (
       & Pick<Organization, 'id'>
     ), organizations: Array<(
       { __typename?: 'Organization' }
-      & Pick<Organization, 'id' | 'name'>
+      & Pick<Organization, 'id' | 'name' | 'username'>
     )> }
   ) }
 );
@@ -1060,12 +1060,13 @@ export type AddSecretMutationHookResult = ReturnType<typeof useAddSecretMutation
 export type AddSecretMutationResult = ApolloReactCommon.MutationResult<AddSecretMutation>;
 export type AddSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<AddSecretMutation, AddSecretMutationVariables>;
 export const ApplicationDocument = gql`
-    query Application($id: Int!) {
-  application(id: $id) {
+    query Application($name: String!) {
+  application(name: $name) {
     ...ApplicationFragment
     organization {
       id
       name
+      username
     }
   }
 }
@@ -1083,7 +1084,7 @@ export const ApplicationDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      name: // value for 'name'
  *   },
  * });
  */
@@ -1097,8 +1098,8 @@ export type ApplicationQueryHookResult = ReturnType<typeof useApplicationQuery>;
 export type ApplicationLazyQueryHookResult = ReturnType<typeof useApplicationLazyQuery>;
 export type ApplicationQueryResult = ApolloReactCommon.QueryResult<ApplicationQuery, ApplicationQueryVariables>;
 export const ApplicationComponentsDocument = gql`
-    query ApplicationComponents($id: Int!) {
-  application(id: $id) {
+    query ApplicationComponents($name: String!) {
+  application(name: $name) {
     id
     components {
       id
@@ -1121,7 +1122,7 @@ export const ApplicationComponentsDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationComponentsQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      name: // value for 'name'
  *   },
  * });
  */
@@ -1135,8 +1136,8 @@ export type ApplicationComponentsQueryHookResult = ReturnType<typeof useApplicat
 export type ApplicationComponentsLazyQueryHookResult = ReturnType<typeof useApplicationComponentsLazyQuery>;
 export type ApplicationComponentsQueryResult = ApolloReactCommon.QueryResult<ApplicationComponentsQuery, ApplicationComponentsQueryVariables>;
 export const ApplicationEnvironmentsDocument = gql`
-    query ApplicationEnvironments($id: Int!) {
-  application(id: $id) {
+    query ApplicationEnvironments($name: String!) {
+  application(name: $name) {
     id
     environments {
       id
@@ -1159,7 +1160,7 @@ export const ApplicationEnvironmentsDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationEnvironmentsQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      name: // value for 'name'
  *   },
  * });
  */
@@ -1173,8 +1174,8 @@ export type ApplicationEnvironmentsQueryHookResult = ReturnType<typeof useApplic
 export type ApplicationEnvironmentsLazyQueryHookResult = ReturnType<typeof useApplicationEnvironmentsLazyQuery>;
 export type ApplicationEnvironmentsQueryResult = ApolloReactCommon.QueryResult<ApplicationEnvironmentsQuery, ApplicationEnvironmentsQueryVariables>;
 export const ApplicationsDocument = gql`
-    query Applications($org: Int) {
-  organization(id: $org) {
+    query Applications($org: String) {
+  organization(username: $org) {
     id
     applications {
       id
@@ -1216,8 +1217,8 @@ export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery
 export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
 export type ApplicationsQueryResult = ApolloReactCommon.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
 export const ComponentDocument = gql`
-    query Component($app: Int!, $component: Int!) {
-  application(id: $app) {
+    query Component($app: String!, $component: Int!) {
+  application(name: $app) {
     id
     environments {
       id
@@ -1258,8 +1259,8 @@ export type ComponentQueryHookResult = ReturnType<typeof useComponentQuery>;
 export type ComponentLazyQueryHookResult = ReturnType<typeof useComponentLazyQuery>;
 export type ComponentQueryResult = ApolloReactCommon.QueryResult<ComponentQuery, ComponentQueryVariables>;
 export const ContainerGroupDocument = gql`
-    query ContainerGroup($app: Int!, $component: Int!, $environment: Int!) {
-  application(id: $app) {
+    query ContainerGroup($app: String!, $component: Int!, $environment: Int!) {
+  application(name: $app) {
     id
     component(id: $component) {
       id
@@ -1946,6 +1947,7 @@ export const MyOrganizationsDocument = gql`
     organizations {
       id
       name
+      username
     }
   }
 }

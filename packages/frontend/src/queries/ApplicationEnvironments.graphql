@@ -1,5 +1,5 @@
-query ApplicationEnvironments($id: Int!) {
-    application(id: $id) {
+query ApplicationEnvironments($name: String!) {
+    application(name: $name) {
         id
         environments {
             id

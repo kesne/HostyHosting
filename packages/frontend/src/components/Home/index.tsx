@@ -12,8 +12,7 @@ import useBoolean from '../../utils/useBoolean';
 
 export default function Home() {
     // NOTE: If not present, we will assume the user personal organization
-    const params = useParams<{ organization: string }>();
-    const organization = params.organization ? Number(params.organization) : undefined;
+    const { organization } = useParams();
 
     const { data, loading } = useApplicationsQuery({
         variables: {
@@ -53,7 +52,7 @@ export default function Home() {
                                 {data?.organization.applications.map(application => (
                                     <ListItem
                                         key={application.id}
-                                        to={`/applications/${application.id}`}
+                                        to={`/applications/${application.name}`}
                                     >
                                         <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
                                             {application.name}

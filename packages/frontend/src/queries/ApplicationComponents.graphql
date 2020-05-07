@@ -1,5 +1,5 @@
-query ApplicationComponents($id: Int!) {
-    application(id: $id) {
+query ApplicationComponents($name: String!) {
+    application(name: $name) {
         id
         components {
             id

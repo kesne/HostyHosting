@@ -1,6 +1,5 @@
 import { createConnection, getRepository, getCustomRepository } from 'typeorm';
 import ormconfig from '../../ormconfig';
-import { User } from '../entity/User';
 import { PasswordReset } from '../entity/PasswordReset';
 import { Application } from '../entity/Application';
 import { Organization } from '../entity/Organization';
@@ -11,11 +10,23 @@ import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
 import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
 import { UserRepository } from '../repositories/UserRepository';
+import { run } from '../utils/currentRequest';
+import { Network } from '../entity/Network';
 
 async function withConnection(fn: any) {
-    const connection = await createConnection({ ...ormconfig, logging: true });
+    const mockContext = {
+        IS_MOCKED_CONTEXT: true,
+        session: {},
+        cookies: {
+            get() {},
+            set() {},
+        },
+    } as any;
+
+    const connection = await createConnection({ ...ormconfig });
+
     try {
-        await fn();
+        await run(mockContext, fn);
     } finally {
         connection.close();
     }
@@ -31,6 +42,7 @@ async function seed() {
         PasswordReset: getRepository(PasswordReset),
         OrganizationMembership: getRepository(OrganizationMembership),
         User: getCustomRepository(UserRepository),
+        Network: getRepository(Network),
         Environment: getCustomRepository(EnvironmentRepository),
         Organization: getRepository(Organization),
         Notification: getRepository(Notification),
@@ -44,6 +56,7 @@ async function seed() {
     await repos.PasswordReset.delete({});
     await repos.OrganizationMembership.delete({});
     await repos.User.delete({});
+    await repos.Network.delete({});
     await repos.Environment.delete({});
     await repos.Organization.delete({});
     await repos.Notification.delete({});
@@ -54,16 +67,12 @@ async function seed() {
     notification.body = 'This is a test notification. It should exist.';
     await repos.Notification.save(notification);
 
-    // Create an admin user:
-    const user = new User();
-    user.email = 'admin@vapejuicejordan.rip';
-    user.name = 'Admin (DEV)';
-    user.username = 'admin';
-    await user.setPassword('admin');
-    await repos.User.save(user);
-
-    // TODO: Fix
-    // await repos.Organization.createPersonal(user);
+    const user = await repos.User.signUp({
+        email: 'admin@vapejuicejordan.rip',
+        name: 'Admin (DEV)',
+        username: 'admin',
+        password: 'admin',
+    });
 
     // Allocate more max compute units to myself for testing:
     const personalOrg = await user.personalOrganization;
@@ -81,7 +90,7 @@ async function seed() {
     netflixMembership.organization = netflixOrg;
     netflixMembership.permission = OrganizationPermission.ADMIN;
     await repos.OrganizationMembership.save(netflixMembership);
-    repos.Environment.createDefaultEnvironments(netflixOrg);
+    await repos.Environment.createDefaultEnvironments(netflixOrg);
 }
 
 withConnection(seed);

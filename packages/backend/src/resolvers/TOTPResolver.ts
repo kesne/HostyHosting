@@ -13,9 +13,9 @@ export class TOTPResolver {
     // NOTE: This is intentionally unauthorized because we don't yet have a full
     // user session that can be resolved.
     @Mutation(() => Result)
-    async exchangeTOTP(@Ctx() { session, cookies }: Context, @Arg('token') token: string) {
-        const user = await this.userRepo.fromTOTPSession(session, token);
-        user.signIn(session, cookies);
+    async exchangeTOTP(@Arg('token') token: string) {
+        const user = await this.userRepo.fromTOTPSession(token);
+        user.signIn();
         return new Result();
     }
 

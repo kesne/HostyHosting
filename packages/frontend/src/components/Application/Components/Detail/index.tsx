@@ -13,10 +13,10 @@ import Tabs from '../../../ui/Tabs';
 import ContainerGroup from './ContainerGroup';
 
 export default function Detail() {
-    const params = useParams<{ application: string; component: string }>();
+    const params = useParams();
     const { data } = useComponentQuery({
         variables: {
-            app: Number(params.application),
+            app: params.application,
             component: Number(params.component),
         },
     });

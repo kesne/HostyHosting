@@ -9,7 +9,7 @@ export default function Overview() {
     const id = useApplicationID();
     const { data } = useApplicationQuery({
         variables: {
-            id,
+            name: id,
         },
     });
 

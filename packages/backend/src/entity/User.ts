@@ -10,7 +10,7 @@ import {
     JoinColumn,
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
-import { Session, Cookies, Lazy } from '../types';
+import { Lazy } from '../types';
 import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length, Matches } from 'class-validator';
@@ -19,6 +19,7 @@ import { APIKey } from './APIKey';
 import { OrganizationMembership } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
 import { removeUserCookie, setUserCookie } from '../utils/cookies';
+import { getCurrentRequest } from '../utils/currentRequest';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -120,16 +121,17 @@ export class User extends BaseEntity {
         return await compare(password, this.passwordHash);
     }
 
-    signIn(session: Session, cookies: Cookies, type: AuthType = AuthType.FULL) {
+    signIn(type: AuthType = AuthType.FULL) {
+        const { session } = getCurrentRequest();
         session.userID = this.id;
         session.type = type;
         if (type === AuthType.FULL) {
-            setUserCookie(cookies, this.id);
+            setUserCookie(this.id);
         }
     }
 
-    signOut(cookies: Cookies) {
-        removeUserCookie(cookies);
+    signOut() {
+        removeUserCookie();
     }
 
     // TODO: Eventually, we might want this to be done entirely through the OrganizationMembership,

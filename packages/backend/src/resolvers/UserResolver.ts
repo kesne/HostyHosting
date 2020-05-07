@@ -48,13 +48,12 @@ export class UserResolver {
 
     @Mutation(() => Result)
     async signUp(
-        @Ctx() { session, cookies }: Context,
         @Arg('username') username: string,
         @Arg('name') name: string,
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
-        await this.userRepo.signUp(session, cookies, {
+        await this.userRepo.signUp({
             username,
             name,
             email,
@@ -66,7 +65,6 @@ export class UserResolver {
 
     @Mutation(() => SignInResult)
     async signIn(
-        @Ctx() { session, cookies }: Context,
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
@@ -87,18 +85,18 @@ export class UserResolver {
         this.passwordResetRepo.removeForUser(user);
 
         if (user.totpSecret) {
-            user.signIn(session, cookies, AuthType.TOTP);
+            user.signIn(AuthType.TOTP);
 
             return new SignInResult(true);
         }
 
-        user.signIn(session, cookies);
+        user.signIn();
 
         return new SignInResult(false);
     }
 
     @Mutation(() => SignInResult)
-    async gitHubSignIn(@Ctx() { session, cookies }: Context, @Arg('code') code: string) {
+    async gitHubSignIn(@Arg('code') code: string) {
         const params = {
             client_id: 'c30bdab49350c27729d7',
             client_secret: 'fa7330d0ae21de0c4c50f33caf954b669f5a69c8',
@@ -143,7 +141,7 @@ export class UserResolver {
 
         if (!user) {
             // TODO: What do we do about the username here?
-            await this.userRepo.signUp(session, cookies, {
+            await this.userRepo.signUp({
                 username: viewer.login,
                 githubID: viewer.id,
                 name: viewer.name,
@@ -165,12 +163,12 @@ export class UserResolver {
         this.passwordResetRepo.removeForUser(user);
 
         if (user.totpSecret) {
-            user.signIn(session, cookies, AuthType.TOTP);
+            user.signIn(AuthType.TOTP);
 
             return new SignInResult(true);
         }
 
-        user.signIn(session, cookies);
+        user.signIn();
 
         return new SignInResult(false);
     }
@@ -229,11 +227,7 @@ export class UserResolver {
 
     // TODO: Transaction:
     @Mutation(() => Result)
-    async resetPassword(
-        @Ctx() { session, cookies }: Context,
-        @Arg('uuid') uuid: string,
-        @Arg('password') password: string,
-    ) {
+    async resetPassword(@Arg('uuid') uuid: string, @Arg('password') password: string) {
         const reset = await this.passwordResetRepo.findOne({
             where: { uuid },
             relations: ['user'],
@@ -245,7 +239,7 @@ export class UserResolver {
         }
 
         if (password) {
-            const user = await this.userRepo.fromSession(session, AuthType.PASSWORD_RESET);
+            const user = await this.userRepo.fromSession(AuthType.PASSWORD_RESET);
 
             if (!user) {
                 throw new Error('Did not find a started password reset.');
@@ -257,19 +251,19 @@ export class UserResolver {
             await user.setPassword(password);
             await this.userRepo.save(user);
 
-            user.signIn(session, cookies);
+            user.signIn();
             return new Result();
         }
 
-        reset.user.signIn(session, cookies, AuthType.PASSWORD_RESET);
+        reset.user.signIn(AuthType.PASSWORD_RESET);
 
         return new Result();
     }
 
     @Authorized(GrantType.SESSION)
     @Mutation(() => Result)
-    signOut(@Ctx() { user, cookies, destroySession }: Context) {
-        user.signOut(cookies);
+    signOut(@Ctx() { user, destroySession }: Context) {
+        user.signOut();
         destroySession();
         return new Result();
     }

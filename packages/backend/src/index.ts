@@ -15,6 +15,7 @@ import path from 'path';
 import { Context } from './types';
 import { removeUserCookie } from './utils/cookies';
 import { UserRepository } from './repositories/UserRepository';
+import { run } from './utils/currentRequest';
 
 const app = new Koa();
 const router = new Router();
@@ -34,6 +35,11 @@ const SESSION_CONFIG = {
         client: redis,
     }),
 };
+
+// Put the current request in our thread local storage:
+app.use(async (ctx, next) => {
+    await run(ctx, next);
+});
 
 app.use(
     cors({
@@ -80,8 +86,6 @@ async function main() {
 
             return {
                 user: ctx.user,
-                session: ctx.session,
-                cookies: ctx.cookies,
                 destroySession() {
                     ctx.session = null;
                 },
@@ -101,11 +105,11 @@ async function main() {
         if (ctx.get('Authentication')) {
             ctx.user = await userRepo.fromAPIKey(ctx.get('Authentication').slice('Bearer '.length));
         } else {
-            ctx.user = await userRepo.fromSession(ctx.session);
+            ctx.user = await userRepo.fromSession();
         }
 
         if (!ctx.user) {
-            removeUserCookie(ctx.cookies);
+            removeUserCookie();
         }
 
         return next();

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-const ApplicationContext = React.createContext<number | null>(null);
+const ApplicationContext = React.createContext<string | null>(null);
 
 export function useApplicationID() {
     const id = useContext(ApplicationContext);

@@ -4,7 +4,7 @@
     "main": "index.js",
     "license": "SEE LICENSE IN LICENSE.MD",
     "scripts": {
-        "seed": "ts-node --transpile-only ./src/__dev__/seed.ts",
+        "seed": "NODE_OPTIONS=\"--trace-warnings\" ts-node --transpile-only ./src/__dev__/seed.ts",
         "start": "ts-node-dev --respawn --transpileOnly ./src/index.ts"
     },
     "dependencies": {

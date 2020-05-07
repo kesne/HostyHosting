@@ -1,14 +1,10 @@
 import { authenticator } from 'otplib';
-import {
-    Repository,
-    EntityRepository,
-    getRepository,
-} from 'typeorm';
+import { Repository, EntityRepository, getRepository } from 'typeorm';
 import { User, GrantType, AuthType } from '../entity/User';
 import { APIKey } from '../entity/APIKey';
-import { Session, Cookies } from '../types';
 import { Organization } from '../entity/Organization';
 import { Environment } from '../entity/Environment';
+import { getCurrentRequest } from '../utils/currentRequest';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -28,10 +24,9 @@ export class UserRepository extends Repository<User> {
         return key?.user;
     }
 
-    async fromSession(
-        session: Session,
-        allowedType: AuthType = AuthType.FULL,
-    ): Promise<User | undefined> {
+    async fromSession(allowedType: AuthType = AuthType.FULL): Promise<User | undefined> {
+        const { session } = getCurrentRequest();
+
         if (session.userID && session.type === allowedType) {
             const user = await this.findOne(session.userID);
             if (user) {
@@ -39,10 +34,13 @@ export class UserRepository extends Repository<User> {
             }
             return user;
         }
+
         return;
     }
 
-    async fromTOTPSession(session: Session, token: string): Promise<User> {
+    async fromTOTPSession(token: string): Promise<User> {
+        const { session } = getCurrentRequest();
+
         if (!session.userID || session.type !== AuthType.TOTP) {
             throw new Error('No TOTP session currently exists.');
         }
@@ -61,8 +59,6 @@ export class UserRepository extends Repository<User> {
     }
 
     async signUp(
-        session: Session,
-        cookies: Cookies,
         {
             username,
             name,
@@ -71,7 +67,7 @@ export class UserRepository extends Repository<User> {
             githubID,
         }: { username: string; name: string; email: string; password?: string; githubID?: string },
     ) {
-        await this.manager.transaction(async manager => {
+        return await this.manager.transaction(async manager => {
             const user = new User();
             user.username = username;
             user.name = name;
@@ -102,7 +98,8 @@ export class UserRepository extends Repository<User> {
             user.personalOrganization = organization;
             await manager.save(user);
 
-            user.signIn(session, cookies);
+            user.signIn();
+            return user;
         });
     }
 }

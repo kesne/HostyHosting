@@ -45,7 +45,7 @@ export class Organization extends BaseEntity {
     isPersonal!: boolean;
 
     @Field()
-    @Column({ unique: true })
+    @Column('citext', { unique: true })
     // u wot m8
     // 13 years ?? ++ ----
     // Jordan

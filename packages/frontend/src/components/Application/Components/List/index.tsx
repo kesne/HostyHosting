@@ -13,7 +13,7 @@ export default function Components() {
     const applicationID = useApplicationID();
     const { data, loading, error } = useApplicationComponentsQuery({
         variables: {
-            id: applicationID,
+            name: applicationID,
         },
     });
     const [createVisible, { on, off }] = useBoolean(false);

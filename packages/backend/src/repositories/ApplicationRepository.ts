@@ -14,13 +14,17 @@ export class ApplicationRepository extends Repository<Application> {
      * Loads an application and verifies that a given user has access
      * to this application. If they do not, it will throw.
      */
-    async findForUser(user: User, id: number, permission?: OrganizationPermission) {
+    async findForUser(user: User, id: number | string, permission?: OrganizationPermission) {
         const organizationMembershipRepo = getRepository(OrganizationMembership);
 
+        const condition = typeof id === 'number' ? {
+            id,
+        } : {
+            name: id
+        };
+
         const application = await this.findOneOrFail({
-            where: {
-                id,
-            },
+            where: condition,
             relations: ['organization'],
         });
 

@@ -17,9 +17,9 @@ export class ApplicationResolver {
     @Query(() => Application)
     async application(
         @Ctx() { user }: Context,
-        @Arg('id', () => Int) id: number,
+        @Arg('name', () => String) name: string,
     ) {
-        return await this.applicationRepo.findForUser(user, id);
+        return await this.applicationRepo.findForUser(user, name);
     }
 
     @FieldResolver(() => Component)

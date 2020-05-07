@@ -1,5 +1,5 @@
-query Component($app: Int!, $component: Int!) {
-    application(id: $app) {
+query Component($app: String!, $component: Int!) {
+    application(name: $app) {
         id
         environments {
             id
