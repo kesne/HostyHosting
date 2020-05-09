@@ -26,10 +26,31 @@ module.exports = {
                         options: {
                             presets: [
                                 '@babel/preset-typescript',
-                                '@babel/preset-env',
+                                [
+                                    '@babel/preset-env',
+                                    {
+                                        // Allow importing core-js in entrypoint and use browserlist to select polyfills
+                                        useBuiltIns: 'entry',
+                                        // Set the corejs version we are using to avoid warnings in console
+                                        corejs: 3,
+                                        // Do not transform modules to CJS
+                                        modules: false,
+                                        // Exclude transforms that make all code slower
+                                        exclude: ['transform-typeof-symbol'],
+                                    },
+                                ],
                                 '@babel/preset-react',
                             ],
-                            plugins: [!isProd && 'react-refresh/babel'].filter(Boolean),
+                            plugins: [
+                                !isProd && 'react-refresh/babel',
+                                [
+                                    '@babel/plugin-transform-runtime',
+                                    {
+                                        corejs: 3,
+                                        useESModules: true,
+                                    },
+                                ],
+                            ].filter(Boolean),
                         },
                     },
                 ],

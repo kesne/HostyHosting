@@ -1,17 +1,27 @@
-query ContainerGroup($app: String!, $component: Int!, $environment: Int!) {
-    application(name: $app) {
-        id
-        component(id: $component) {
-            id
-            containerGroup(environment: $environment) {
-                id
-                monthlyPrice
-                containerCount
-                size
-                secrets {
-                    id
-                    key
-                    value
+query ContainerGroup(
+    $organization: String!
+    $application: String!
+    $component: Int!
+    $environment: Int!
+) {
+    # Look kids, a waterfall!
+    # Is this was callback hell looks like in the future?
+    organization(username: $organization) {
+        uuid
+        application(name: $application) {
+            uuid
+            component(id: $component) {
+                uuid
+                containerGroup(environment: $environment) {
+                    uuid
+                    monthlyPrice
+                    containerCount
+                    size
+                    secrets {
+                        uuid
+                        key
+                        value
+                    }
                 }
             }
         }

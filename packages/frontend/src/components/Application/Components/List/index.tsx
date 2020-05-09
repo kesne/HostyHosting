@@ -3,17 +3,17 @@ import Component from './Component';
 import CreateComponent from './CreateComponent';
 import useBoolean from '../../../../utils/useBoolean';
 import { useApplicationComponentsQuery } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Card from '../../../ui/Card';
 import Button from '../../../ui/Button';
 import Spinner from '../../../Spinner';
 import List, { ListItem } from '../../../ui/List';
 
 export default function Components() {
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const { data, loading, error } = useApplicationComponentsQuery({
         variables: {
-            name: applicationID,
+            ...params,
         },
     });
     const [createVisible, { on, off }] = useBoolean(false);
@@ -21,6 +21,8 @@ export default function Components() {
     if (loading || !data || error) {
         return <Spinner />;
     }
+
+    const { application } = data.organization;
 
     return (
         <Card
@@ -32,13 +34,9 @@ export default function Components() {
             }
         >
             <CreateComponent visible={createVisible} onClose={off} />
-            <List items={data.application.components}>
+            <List items={application.components}>
                 {component => (
-                    // TODO: Use route match url isntead of re-creating full URL?
-                    <ListItem
-                        key={component.id}
-                        to={`/applications/${applicationID}/components/${component.id}`}
-                    >
+                    <ListItem key={component.id} to={`${component.id}`}>
                         <Component component={component} />
                     </ListItem>
                 )}

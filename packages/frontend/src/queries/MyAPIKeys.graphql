@@ -1,8 +1,8 @@
 query MyAPIKeys {
     me {
-        id
+        uuid
         apiKeys {
-            id
+            uuid
             description
             createdAt
         }

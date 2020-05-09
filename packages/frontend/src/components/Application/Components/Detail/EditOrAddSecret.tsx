@@ -1,7 +1,7 @@
 import React from 'react';
 import { AddSecretDocument, EditSecretDocument } from '../../../../queries';
 import Input from '../../../ui/Input';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import CreateModal from '../../../ui/CreateModal';
 import { useMutation, Reference } from '@apollo/client';
 import { SecretData } from './Secret';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function EditOrAddSecret({ id, secret, open, onClose, create }: Props) {
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [addOrEditSecret, { loading }] = useMutation(
         create ? AddSecretDocument : EditSecretDocument,
         {
@@ -37,7 +37,7 @@ export default function EditOrAddSecret({ id, secret, open, onClose, create }: P
     async function onSubmit(values: Record<string, string>) {
         await addOrEditSecret({
             variables: {
-                applicationID,
+                ...params,
                 containerGroupID: id,
                 secretID: secret?.id,
                 key: values.key,

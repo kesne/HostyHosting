@@ -1,12 +1,16 @@
-mutation CreateContainerGroup($applicationID: Int!, $containerGroup: ContainerGroupInput!) {
-    application(id: $applicationID) {
+mutation CreateContainerGroup(
+    $organization: String!
+    $application: String!
+    $containerGroup: ContainerGroupInput!
+) {
+    application(org: $organization, name: $application) {
         createContainerGroup(containerGroup: $containerGroup) {
-            id
+            uuid
             monthlyPrice
             containerCount
             size
             secrets {
-                id
+                uuid
                 key
                 value
             }

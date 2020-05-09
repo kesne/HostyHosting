@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
     Column,
     BeforeInsert,
+    Generated,
 } from 'typeorm';
 import { User } from './User';
 import { BaseEntity } from './BaseEntity';
@@ -18,6 +19,11 @@ export class APIKey extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     // NOTE: Never expose this column externally via GraphQL.
     @Column()
@@ -31,7 +37,7 @@ export class APIKey extends BaseEntity {
 
     @Field()
     @Column()
-    description!: String
+    description!: String;
 
     @ManyToOne(() => User)
     user!: User;

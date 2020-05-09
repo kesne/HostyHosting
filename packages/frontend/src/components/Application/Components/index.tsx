@@ -1,24 +1,23 @@
 import React from 'react';
 import List from './List';
 import Detail from './Detail';
-import { Route, useLocation, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useBreadcrumb } from '../Breadcrumbs';
 
-export default function Components() {
-    const { pathname } = useLocation();
-
+export default function Components({ list }: { list?: boolean }) {
     useBreadcrumb({
         name: 'Components',
-        url: pathname,
+        url: 'components',
     });
+
+    if (list) {
+        return <List />;
+    }
 
     return (
         <Routes>
             <Route path=":component">
                 <Detail />
-            </Route>
-            <Route path="*">
-                <List />
             </Route>
         </Routes>
     );

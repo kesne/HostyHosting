@@ -12,6 +12,7 @@ import { ContainerGroupInput } from './types/ContainerGroupInput';
 import { getCustomRepository, getRepository } from 'typeorm';
 import { ComponentRepository } from '../repositories/ComponentRepository';
 import { ApplicationRepository } from '../repositories/ApplicationRepository';
+import { OrganizationRepository } from '../repositories/OrganizationRepository';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -186,13 +187,23 @@ export class ApplicationMutations {
 export class ApplicationMutationsResolver {
     constructor(private applicationRepo = getCustomRepository(ApplicationRepository)) {}
 
+    // TODO: Move this under OrganizaitonMutations instead of having a top-level resolved field here:
     @Authorized()
     @Mutation(() => ApplicationMutations)
-    async application(@Ctx() { user }: Context, @Arg('id', () => Int) id: number) {
+    async application(
+        @Ctx() { user }: Context,
+        @Arg('id', () => Int, { nullable: true }) _id: number,
+        @Arg('org', { nullable: true }) org: string,
+        @Arg('name', { nullable: true }) name: string,
+    ) {
+        const organizationRepo = getCustomRepository(OrganizationRepository);
+        const organization = await organizationRepo.findForUser(user, org);
+
         // All application mutations require AT LEAST write access to the organization.
-        const application = await this.applicationRepo.findForUser(
+        const application = await this.applicationRepo.findForUserAndOrganization(
             user,
-            id,
+            organization,
+            name,
             OrganizationPermission.WRITE,
         );
 

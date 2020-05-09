@@ -2,7 +2,7 @@ import React from 'react';
 import Card, { CardContent } from '../../../ui/Card';
 import formatCurrency from '../../../../utils/formatCurrency';
 import { useContainerGroupQuery } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
 import Secrets from './Secrets';
 import useBoolean from '../../../../utils/useBoolean';
@@ -15,10 +15,10 @@ type Props = {
 };
 
 export default function ContainerGroup({ component, environment }: Props) {
-    const app = useApplicationID();
+    const params = useApplicationParams();
     const { data } = useContainerGroupQuery({
         variables: {
-            app,
+            ...params,
             component,
             environment,
         },
@@ -30,9 +30,11 @@ export default function ContainerGroup({ component, environment }: Props) {
         return <div>I'm not an ass.</div>;
     }
 
+    const { containerGroup } = data.organization.application.component;
+
     return (
         <>
-            {data.application.component.containerGroup ? (
+            {containerGroup ? (
                 <>
                     <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
                         <Card>
@@ -43,7 +45,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                                     </dt>
                                     <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
                                         {formatCurrency(
-                                            data.application.component.containerGroup.monthlyPrice,
+                                            containerGroup.monthlyPrice,
                                         )}
                                     </dd>
                                 </dl>
@@ -56,7 +58,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                                         Instance Size
                                     </dt>
                                     <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                        {data.application.component.containerGroup.size}
+                                        {containerGroup.size}
                                     </dd>
                                 </dl>
                             </CardContent>
@@ -68,7 +70,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                                         Instance Count
                                     </dt>
                                     <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                        {data.application.component.containerGroup.containerCount}
+                                        {containerGroup.containerCount}
                                     </dd>
                                 </dl>
                             </CardContent>
@@ -84,12 +86,12 @@ export default function ContainerGroup({ component, environment }: Props) {
                             }
                         >
                             <Secrets
-                                id={data.application.component.containerGroup.id}
-                                secrets={data.application.component.containerGroup.secrets}
+                                id={containerGroup.id}
+                                secrets={containerGroup.secrets}
                             />
                         </Card>
                         <EditOrAddSecret
-                            id={data.application.component.containerGroup.id}
+                            id={containerGroup.id}
                             open={addSecret}
                             onClose={addSecretOff}
                             create

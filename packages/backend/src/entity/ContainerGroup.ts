@@ -10,6 +10,7 @@ import {
     OneToMany,
     Unique,
     getRepository,
+    Generated,
 } from 'typeorm';
 import { Component } from './Component';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
@@ -52,6 +53,11 @@ export class ContainerGroup extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field(() => ContainerSize)
     @Column({ type: 'enum', enum: ContainerSize })

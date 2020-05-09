@@ -1,6 +1,6 @@
 mutation CreateAPIKey($description: String!) {
     createAPIKey(description: $description) {
-        id
+        uuid
         description
         createdAt
         privateKey

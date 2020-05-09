@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
     OneToMany,
     Unique,
+    Generated,
 } from 'typeorm';
 import { Organization } from './Organization';
 import { User } from './User';
@@ -24,6 +25,11 @@ export class Application extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field()
     @Column()

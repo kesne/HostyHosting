@@ -1,4 +1,5 @@
 import 'typeface-inter';
+import 'core-js';
 import './css/styles.css';
 import React from 'react';
 import ReactDOM from 'react-dom';

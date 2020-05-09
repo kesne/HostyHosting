@@ -4,7 +4,7 @@ import Label from '../../../ui/Label';
 import { ContainerSize, useCreateContainerGroupMutation } from '../../../../queries';
 import Input from '../../../ui/Input';
 import CreateModal from '../../../ui/CreateModal';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import { Reference } from '@apollo/client';
 
 const Sizes = [
@@ -23,7 +23,7 @@ type Props = {
 
 export default function CreateContainerGroup({ component, environment, open, onClose }: Props) {
     // TODO: CreateModal should support custom values:
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [containerSize, setContainerSize] = useState<ContainerSize>(ContainerSize.S1x1);
     const [createContainerGroup, { data, loading }] = useCreateContainerGroupMutation({
         update(cache, { data }) {
@@ -62,7 +62,7 @@ export default function CreateContainerGroup({ component, environment, open, onC
     function handleSubmit(values: Record<string, string>) {
         createContainerGroup({
             variables: {
-                applicationID,
+                ...params,
                 containerGroup: {
                     componentID: component,
                     size: containerSize,

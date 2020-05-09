@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
     ManyToOne,
     Unique,
+    Generated,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Lazy } from '../types';
@@ -19,6 +20,11 @@ export class Secret extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field()
     @Column()

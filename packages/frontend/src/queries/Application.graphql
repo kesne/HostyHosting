@@ -1,14 +1,10 @@
-query Application($name: String!) {
-    # Nested:
-    organization(name: "foobar") {
-        application(name: $name) {
+query Application($organization: String!, $application: String!) {
+    organization(username: $organization) {
+        uuid
+        username
+        name
+        application(name: $application) {
             ...ApplicationFragment
         }
-    }
-
-
-    # Flat:
-    application(organization: "foobar", name: $name) {
-        ...ApplicationFragment
     }
 }

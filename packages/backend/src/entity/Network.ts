@@ -6,6 +6,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    Generated,
 } from 'typeorm';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Lazy } from '../types';
@@ -17,6 +18,11 @@ export class Network extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field()
     @Column()

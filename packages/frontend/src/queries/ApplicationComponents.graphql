@@ -1,10 +1,13 @@
-query ApplicationComponents($name: String!) {
-    application(name: $name) {
-        id
-        components {
-            id
-            name
-            image
+query ApplicationComponents($organization: String!, $application: String!) {
+    organization(username: $organization) {
+        uuid
+        application(name: $application) {
+            uuid
+            components {
+                uuid
+                name
+                image
+            }
         }
     }
 }

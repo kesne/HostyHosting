@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Reference } from '@apollo/client';
 import { useCreateComponentMutation, DeploymentStrategy } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
 import Input from '../../../ui/Input';
 import Button, { ButtonGroup } from '../../../ui/Button';
 import Select from '../../../ui/Select';
 import Tabs from '../../../ui/Tabs';
-import { Reference } from '@apollo/client';
 
 type Props = {
     visible: boolean;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function CreateComponent({ visible, onClose }: Props) {
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [deploymentType, setDeploymentType] = useState('docker-registry');
     const [createComponent, { loading, data }] = useCreateComponentMutation({
         update(cache, { data }) {
@@ -27,7 +27,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                         return [...components, toReference(data.application.createComponent)];
                     },
                 },
-                `Application:${applicationID}`,
+                `Application:${params.application}`,
             );
         },
     });
@@ -48,7 +48,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
     async function onSubmit(data: Record<string, string>) {
         await createComponent({
             variables: {
-                applicationID,
+                ...params,
                 component: {
                     image: data.image,
                     name: data.name,

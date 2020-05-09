@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDeleteSecretMutation } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Button, { ButtonGroup } from '../../../ui/Button';
 import { Reference } from '@apollo/client';
 
@@ -17,10 +17,10 @@ type Props = {
 };
 
 export default function Secret({ containerGroupID, secret, onEdit }: Props) {
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [deleteSecret] = useDeleteSecretMutation({
         variables: {
-            applicationID,
+            ...params,
             containerGroupID,
             secretID: secret.id,
         },

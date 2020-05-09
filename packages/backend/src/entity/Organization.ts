@@ -5,6 +5,7 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
+    Generated,
 } from 'typeorm';
 import { Application } from './Application';
 import { ObjectType, Field, Int } from 'type-graphql';
@@ -36,6 +37,11 @@ export class Organization extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     /**
      * Denotes if a organization is a "Personal" organization.

@@ -2,17 +2,17 @@ import React from 'react';
 import Delete from './Delete';
 import Information from './Information';
 import Region from './Region';
-import { useApplicationID } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import { useBreadcrumb } from '../Breadcrumbs';
+import { useApplicationParams } from '../ApplicationContext';
 
 export default function Settings() {
-    const id = useApplicationID();
-    const { data } = useApplicationQuery({ variables: { id } });
+    const params = useApplicationParams();
+    const { data } = useApplicationQuery({ variables: { ...params } });
 
     useBreadcrumb({
         name: 'Settings',
-        url: `/applications/${id}/settings`,
+        url: 'settings',
     });
 
     // TODO:
@@ -20,14 +20,16 @@ export default function Settings() {
         return null;
     }
 
+    const { application } = data.organization;
+
     return (
-        <>
-            <Region title="Information" first>
-                <Information application={data.application} />
+        <div className="space-y-6">
+            <Region title="Information">
+                <Information application={application} />
             </Region>
             <Region title="App Management">
-                <Delete application={data.application} />
+                <Delete application={application} />
             </Region>
-        </>
+        </div>
     );
 }

@@ -10,7 +10,10 @@ import { useParams } from 'react-router-dom';
 import CreateEnvironment from './CreateEnvironment';
 import useBoolean from '../../utils/useBoolean';
 
+// TODO: Don't make the default route go here, instead use a redirect to route into
+// the personal organization `/orgs/:username`.
 export default function Home() {
+    // TODO: Don't do this:
     // NOTE: If not present, we will assume the user personal organization
     const { organization } = useParams();
 
@@ -52,7 +55,7 @@ export default function Home() {
                                 {data?.organization.applications.map(application => (
                                     <ListItem
                                         key={application.id}
-                                        to={`/applications/${application.name}`}
+                                        to={`/orgs/${data.organization.username}/apps/${application.name}`}
                                     >
                                         <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
                                             {application.name}

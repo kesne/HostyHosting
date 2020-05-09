@@ -1,9 +1,9 @@
 fragment ApplicationFragment on Application {
-    id
+    uuid
     name
     description
     createdBy {
-        id
+        uuid
         name
     }
     createdAt

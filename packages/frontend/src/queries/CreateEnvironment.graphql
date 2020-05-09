@@ -1,7 +1,7 @@
 mutation CreateEnvironment($org: Int, $name: String!, $label: String!) {
     organization(id: $org) {
         createEnvironment(name: $name, label: $label) {
-            id
+            uuid
             name
             label
         }

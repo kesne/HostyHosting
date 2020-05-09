@@ -1,17 +1,22 @@
 import React, { useContext } from 'react';
 
-const ApplicationContext = React.createContext<string | null>(null);
+type AppAndOrg = {
+    organization: string;
+    application: string;
+};
 
-export function useApplicationID() {
-    const id = useContext(ApplicationContext);
+const ApplicationContext = React.createContext<AppAndOrg | null>(null);
 
-    if (!id) {
+export function useApplicationParams() {
+    const data = useContext(ApplicationContext);
+
+    if (!data) {
         throw new Error(
-            'No application ID was found. Please render this component under an ApplicationContext.Provider.'
+            'No application was found. Please render this component under an ApplicationContext.Provider.'
         );
     }
 
-    return id;
+    return data;
 }
 
 export default ApplicationContext;

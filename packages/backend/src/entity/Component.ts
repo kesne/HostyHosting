@@ -8,6 +8,7 @@ import {
     JoinColumn,
     OneToMany,
     Unique,
+    Generated,
 } from 'typeorm';
 import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
@@ -33,6 +34,11 @@ export class Component extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field()
     @Column()

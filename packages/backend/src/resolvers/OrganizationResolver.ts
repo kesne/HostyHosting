@@ -1,12 +1,17 @@
 import { getCustomRepository } from 'typeorm';
-import { Resolver, Query, Arg, Ctx } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, FieldResolver, Root } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { OrganizationRepository } from '../repositories/OrganizationRepository';
+import { ApplicationRepository } from '../repositories/ApplicationRepository';
+import { Application } from '../entity/Application';
 
-@Resolver()
+@Resolver(() => Organization)
 export class OrganizationResolver {
-    constructor(private organizationRepo = getCustomRepository(OrganizationRepository)) {}
+    constructor(
+        private organizationRepo = getCustomRepository(OrganizationRepository),
+        private applicationRepo = getCustomRepository(ApplicationRepository),
+    ) {}
 
     @Query(() => Organization)
     async organization(
@@ -23,5 +28,14 @@ export class OrganizationResolver {
         }
 
         return this.organizationRepo.findForUser(user, username);
+    }
+
+    @FieldResolver(() => Application)
+    async application(
+        @Ctx() { user }: Context,
+        @Root() organization: Organization,
+        @Arg('name') name: string,
+    ) {
+        return await this.applicationRepo.findForUserAndOrganization(user, organization, name);
     }
 }

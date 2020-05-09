@@ -1,7 +1,7 @@
 mutation CreateApplication($org: Int, $application: ApplicationInput!) {
     organization(id: $org) {
         createApplication(application: $application) {
-            id
+            uuid
             name
             description
         }

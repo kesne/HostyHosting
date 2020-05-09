@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDeleteComponentMutation } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
 import { Navigate } from 'react-router-dom';
 
@@ -9,10 +9,10 @@ type Props = {
 };
 
 export default function DeleteComponent({ id }: Props) {
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [deleteComponent, { data }] = useDeleteComponentMutation({
         variables: {
-            applicationID,
+            ...params,
             id,
         },
         update(cache, { data }) {

@@ -8,6 +8,7 @@ import {
     OneToMany,
     OneToOne,
     JoinColumn,
+    Generated,
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Lazy } from '../types';
@@ -48,6 +49,11 @@ export class User extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field(() => Int, { nullable: true })
     @Column({ nullable: true })

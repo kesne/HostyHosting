@@ -1,5 +1,13 @@
 import React from 'react';
-import { useParams, Routes, Route, Outlet, useMatch } from 'react-router-dom';
+import {
+    useParams,
+    Routes,
+    Route,
+    Outlet,
+    useMatch,
+    useResolvedLocation,
+    useLocation,
+} from 'react-router-dom';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
@@ -30,28 +38,19 @@ const LAYOUT_TABS = [
 ];
 
 function ApplicationLayout() {
-    // TODO: This is a _horrible_ way to do this because we're calling a hook in a function (BAD)
-    // Instead, we really should make `<Tabs />` with a href location-aware so that we can just
-    // have the hooks called in the individual <Tab /> components.
-    const value =
-        LAYOUT_TABS.map(({ value, to }) => ({ match: useMatch(to), value })).find(
-            ({ match }) => match,
-        )?.value ?? 'overview';
-
-    const currentPage = useMatch(':page');
-    console.log(currentPage);
+    const { pathname } = useResolvedLocation('.');
+    const pageMatch = useMatch(`${pathname}/:page`);
 
     return (
         <>
             <div className="my-6">
                 <Tabs
-                    // TODO: This value needs to be dynamic:
-                    value={value}
+                    value={pageMatch ? pageMatch.params.page : 'overview'}
                     tabs={[
                         {
                             label: 'Overview',
                             value: 'overview',
-                            to: 'overview',
+                            to: '.',
                         },
                         {
                             label: 'Components',
@@ -72,11 +71,12 @@ function ApplicationLayout() {
 }
 
 export default function Application() {
-    const { application } = useParams();
+    const params = useParams();
 
     const { data, loading, error } = useApplicationQuery({
         variables: {
-            name: application,
+            organization: params.organization,
+            application: params.application,
         },
     });
 
@@ -84,31 +84,37 @@ export default function Application() {
         return <Spinner />;
     }
 
+    const { organization } = data;
+    const { application } = organization;
+
     return (
         <BreadcrumbProvider
             root={[
-                { name: data.application.name, url: `/applications/${application}` },
                 {
-                    name: data.application.organization.name,
-                    url: `/orgs/${data.application.organization.username}`,
+                    name: application.name,
+                    url: `.`,
+                },
+                {
+                    name: organization.name,
+                    url: `../..`,
                 },
             ]}
         >
-            <ApplicationContext.Provider value={application}>
+            <ApplicationContext.Provider
+                value={{
+                    organization: params.organization,
+                    application: params.application,
+                }}
+            >
                 <PageHeader>
                     <Breadcrumbs />
                 </PageHeader>
 
                 <Container>
                     <Routes>
-                        {/* <Route path="/" element={<Navigate to="overview" replace />} />} */}
                         <Route path="/" element={<ApplicationLayout />}>
-                            {/*
-                                TODO: This is a bug with React Router 6 that requires us to have a path named "overview" here:
-                                https://github.com/ReactTraining/react-router/issues/7239
-                            */}
                             <Route path="/" element={<Overview />} />
-                            <Route path="components" element={<Components />} />
+                            <Route path="components" element={<Components list />} />
                             <Route path="settings" element={<Settings />} />
                         </Route>
                         <Route path="components/*" element={<Components />} />

@@ -5,6 +5,7 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    Generated,
 } from 'typeorm';
 import { Field, Int, ObjectType, registerEnumType } from 'type-graphql';
 
@@ -24,6 +25,11 @@ export class Notification extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Field()
+    @Column()
+    @Generated('uuid')
+    uuid!: string;
 
     @Field()
     @Column()

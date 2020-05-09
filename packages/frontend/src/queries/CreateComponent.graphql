@@ -1,7 +1,11 @@
-mutation CreateComponent($applicationID: Int!, $component: ComponentInput!) {
-    application(id: $applicationID) {
+mutation CreateComponent(
+    $organization: String!
+    $application: String!
+    $component: ComponentInput!
+) {
+    application(name: $application, org: $organization) {
         createComponent(component: $component) {
-            id
+            uuid
             name
             image
         }

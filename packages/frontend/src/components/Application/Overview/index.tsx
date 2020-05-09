@@ -1,21 +1,23 @@
 import React from 'react';
 import Card from '../../ui/Card';
-import { useApplicationID } from '../ApplicationContext';
+import { useApplicationParams } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import Spinner from '../../Spinner';
 import formatDate from '../../../utils/formatDate';
 
 export default function Overview() {
-    const id = useApplicationID();
+    const params = useApplicationParams();
     const { data } = useApplicationQuery({
         variables: {
-            name: id,
+            ...params,
         },
     });
 
     if (!data) {
         return <Spinner />;
     }
+
+    const { application } = data.organization;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -27,7 +29,7 @@ export default function Overview() {
                                 Created By
                             </dt>
                             <dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-                                <a>{data.application.createdBy?.name}</a>
+                                <a>{application.createdBy?.name}</a>
                             </dd>
                         </div>
                         <div className="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
@@ -35,7 +37,7 @@ export default function Overview() {
                                 Created At
                             </dt>
                             <dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-                                {formatDate(data.application.createdAt)}
+                                {formatDate(application.createdAt)}
                             </dd>
                         </div>
                         <div className="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
@@ -43,7 +45,7 @@ export default function Overview() {
                                 Last Updated
                             </dt>
                             <dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-                                {formatDate(data.application.updatedAt)}
+                                {formatDate(application.updatedAt)}
                             </dd>
                         </div>
                         <div className="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
@@ -51,7 +53,7 @@ export default function Overview() {
                                 Description
                             </dt>
                             <dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-                                {data.application.description}
+                                {application.description}
                             </dd>
                         </div>
                     </dl>

@@ -1,11 +1,11 @@
 query MyOrganizations {
     me {
-        id
+        uuid
         personalOrganization {
-            id
+            uuid
         }
         organizations {
-            id
+            uuid
             name
             username
         }

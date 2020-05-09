@@ -5,7 +5,7 @@ import {
     ContainerSize,
     useUpdateComponentMutation,
 } from '../../../../queries';
-import { useApplicationID } from '../../ApplicationContext';
+import { useApplicationParams } from '../../ApplicationContext';
 import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
 import Input from '../../../ui/Input';
 import Button, { ButtonGroup } from '../../../ui/Button';
@@ -39,7 +39,7 @@ type Props = {
 
 export default function EditComponent({ component, visible, onClose }: Props) {
     return null;
-    const applicationID = useApplicationID();
+    const params = useApplicationParams();
     const [deploymentType, setDeploymentType] = useState('docker-registry');
     const [containerSize, setContainerSize] = useState<ContainerSize>(
         component.containerGroup.size,
