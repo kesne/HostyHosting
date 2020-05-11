@@ -430,7 +430,7 @@ export type User = {
 };
 
 export type AddSecretMutationVariables = {
-  applicationID: Scalars['ID'],
+  application: Scalars['ID'],
   containerGroupID: Scalars['ID'],
   key: Scalars['String'],
   value: Scalars['String']
@@ -1036,8 +1036,8 @@ export const MeFragmentFragmentDoc = gql`
 }
     `;
 export const AddSecretDocument = gql`
-    mutation AddSecret($applicationID: ID!, $containerGroupID: ID!, $key: String!, $value: String!) {
-  application(id: $applicationID) {
+    mutation AddSecret($application: ID!, $containerGroupID: ID!, $key: String!, $value: String!) {
+  application(id: $application) {
     addSecret(containerGroup: $containerGroupID, key: $key, value: $value) {
       id
       key
@@ -1061,7 +1061,7 @@ export type AddSecretMutationFn = ApolloReactCommon.MutationFunction<AddSecretMu
  * @example
  * const [addSecretMutation, { data, loading, error }] = useAddSecretMutation({
  *   variables: {
- *      applicationID: // value for 'applicationID'
+ *      application: // value for 'application'
  *      containerGroupID: // value for 'containerGroupID'
  *      key: // value for 'key'
  *      value: // value for 'value'

@@ -12,7 +12,6 @@ import { ContainerGroupInput } from './types/ContainerGroupInput';
 import { getCustomRepository, getRepository } from 'typeorm';
 import { ComponentRepository } from '../repositories/ComponentRepository';
 import { ApplicationRepository } from '../repositories/ApplicationRepository';
-import { OrganizationRepository } from '../repositories/OrganizationRepository';
 
 @ObjectType()
 export class ApplicationMutations {
@@ -30,7 +29,7 @@ export class ApplicationMutations {
     async delete() {
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
         // it in a state of deletion, and don't allow modification to the model.
-        await this.applicationRepo.delete(this.application.id);
+        await this.applicationRepo.delete(this.application.pk);
 
         return this.application;
     }
@@ -123,7 +122,11 @@ export class ApplicationMutations {
     ) {
         // TODO: This is not really secure because we don't scope the container group lookup.
         // Instead, at some point in the future we need to move all of the containerGroup mutations into a ContainerGroupMutationsResolver.
-        const containerGroup = await this.containerGroupRepo.findOneOrFail(containerGroupID);
+        const containerGroup = await this.containerGroupRepo.findOneOrFail({
+            where: {
+                id: containerGroupID,
+            },
+        });
 
         const secret = this.secretRepo.create({
             key,
@@ -141,12 +144,16 @@ export class ApplicationMutations {
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
+        const containerGroup = await this.containerGroupRepo.findOneOrFail({
+            where: {
+                id: containerGroupID,
+            },
+        });
+
         const secret = await this.secretRepo.findOneOrFail({
             where: {
                 id,
-                containerGroup: {
-                    id: containerGroupID,
-                },
+                containerGroup,
             },
         });
 
@@ -161,16 +168,20 @@ export class ApplicationMutations {
         @Arg('containerGroup', () => ID) containerGroupID: string,
         @Arg('id', () => ID) id: string,
     ) {
-        const secret = await this.secretRepo.findOneOrFail({
+        const containerGroup = await this.containerGroupRepo.findOneOrFail({
             where: {
-                id,
-                containerGroup: {
-                    id: containerGroupID,
-                },
+                id: containerGroupID,
             },
         });
 
-        await this.secretRepo.delete(secret.id);
+        const secret = await this.secretRepo.findOneOrFail({
+            where: {
+                id,
+                containerGroup,
+            },
+        });
+
+        await this.secretRepo.delete(secret.pk);
 
         return secret;
     }
@@ -178,7 +189,7 @@ export class ApplicationMutations {
     @Field(() => Component)
     async deleteComponent(@Arg('id', () => ID) id: string) {
         const component = await this.componentRepo.findByApplicationAndId(this.application, id);
-        await this.componentRepo.delete(component.id);
+        await this.componentRepo.delete(component.pk);
         return component;
     }
 }

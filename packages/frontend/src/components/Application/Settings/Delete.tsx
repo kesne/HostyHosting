@@ -15,8 +15,8 @@ export default function Delete({ application }: Props) {
     const [visible, { on, off }] = useBoolean(false);
     const [deleteApplication, { loading, data }] = useDeleteApplicationMutation({
         variables: {
-            id: application.id
-        }
+            id: application.id,
+        },
     });
 
     function handleDelete(e: React.FormEvent) {
@@ -48,20 +48,13 @@ export default function Delete({ application }: Props) {
                             <b>Application Name</b> below.
                         </p>
 
-                        <div className="flex items-center">
-                            <div className="flex-1">
-                                <Input
-                                    label="Application Name"
-                                    name="name"
-                                    placeholder={application.name}
-                                    value={name}
-                                    onChange={e => setName(e.target.value)}
-                                />
-                            </div>
-                            <div className="ml-6">
-                                <img src="/static/images/destroy.png" width={100} />
-                            </div>
-                        </div>
+                        <Input
+                            label="Application Name"
+                            name="name"
+                            placeholder={application.name}
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>

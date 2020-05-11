@@ -3,12 +3,14 @@ import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { getRepository } from 'typeorm';
+import { Environment } from '../entity/Environment';
 
 @Resolver(() => Component)
 export class ComponentResolver {
     constructor(
         private componentRepo = getRepository(Component),
         private containerGroupRepo = getRepository(ContainerGroup),
+        private environmentRepo = getRepository(Environment),
     ) {}
 
     @Query(() => Component)
@@ -29,16 +31,21 @@ export class ComponentResolver {
     }
 
     @FieldResolver(() => ContainerGroup, { nullable: true })
-    containerGroup(
+    async containerGroup(
         @Root() component: Component,
         @Arg('environment', () => ID) environmentID: string,
     ) {
+        // TODO: Does this need a guard to make sure the environment is owned by the org?
+        const environment = await this.environmentRepo.findOneOrFail({
+            where: {
+                id: environmentID,
+            },
+        });
+
         return this.containerGroupRepo.findOne({
             where: {
                 component,
-                environment: {
-                    id: environmentID,
-                },
+                environment,
             },
         });
     }

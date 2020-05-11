@@ -17,9 +17,11 @@ export default function Information({ application }: Props) {
         updateApplication({
             variables: {
                 id: application.id,
-                name,
-                description
-            }
+                application: {
+                    name,
+                    description,
+                },
+            },
         });
     }
 
