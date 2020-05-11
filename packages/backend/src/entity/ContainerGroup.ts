@@ -1,21 +1,17 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-    CreateDateColumn,
-    UpdateDateColumn,
     BeforeInsert,
     BeforeUpdate,
     OneToMany,
     Unique,
     getRepository,
-    Generated,
 } from 'typeorm';
 import { Component } from './Component';
-import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
+import { ObjectType, Field, registerEnumType } from 'type-graphql';
 import { Min } from 'class-validator';
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Environment } from './Environment';
 import { Organization } from './Organization';
@@ -49,16 +45,7 @@ export function containerCountAndSizeToComputeUnits(count: number, size: Contain
 @Entity()
 @ObjectType()
 @Unique(['component', 'environment'])
-export class ContainerGroup extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class ContainerGroup extends ExternalEntity {
     @Field(() => ContainerSize)
     @Column({ type: 'enum', enum: ContainerSize })
     readonly size!: ContainerSize;
@@ -81,14 +68,6 @@ export class ContainerGroup extends BaseEntity {
         // @ts-ignore: This is intentionally writing into a readonly field:
         this.containerCount = count;
     }
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     @Field(() => Environment)
     @ManyToOne(() => Environment, { lazy: true })
@@ -126,14 +105,13 @@ export class ContainerGroup extends BaseEntity {
             },
         });
 
-        const availableUnits = (
+        const availableUnits =
             organization.maxComputeUnits -
             containerGroups.reduce(
                 (acc, curr) =>
                     acc + containerCountAndSizeToComputeUnits(curr.containerCount, curr.size),
                 0,
-            )
-        );
+            );
 
         const desiredComputeUnits = containerCountAndSizeToComputeUnits(
             this.containerCount,

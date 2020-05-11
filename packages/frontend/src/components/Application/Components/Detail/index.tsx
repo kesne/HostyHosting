@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useComponentQuery } from '../../../../queries';
-import Card, { CardContent } from '../../../ui/Card';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
 import { useBreadcrumb } from '../../Breadcrumbs';
 import useBoolean from '../../../../utils/useBoolean';
-import formatCurrency from '../../../../utils/formatCurrency';
-import EditComponent from './EditComponent';
-import DeleteComponent from './DeleteComponent';
 import Tabs from '../../../ui/Tabs';
 import ContainerGroup from './ContainerGroup';
+import { useApplicationParams } from '../../ApplicationContext';
 
 export default function Detail() {
     const params = useParams();
+    const applicationParams = useApplicationParams();
     const { data } = useComponentQuery({
         variables: {
-            organization: params.organization,
-            application: params.application,
-            component: Number(params.component),
+            ...applicationParams,
+            component: params.component,
         },
     });
     const [environment, setEnvironment] = useState('');
@@ -31,7 +28,7 @@ export default function Detail() {
     }, [data]);
 
     useBreadcrumb({
-        name: data?.organization.application.component.name || '...',
+        name: data?.application.component.name || '...',
         url: params.component,
         // TODO: I think we really should do this with a component instead of with a hook like this.
         // This hook means things like conditional rendering are pretty hard, and it also means we need to call it
@@ -58,8 +55,8 @@ export default function Detail() {
         return <div>Hol' up.</div>;
     }
 
-    const { application } = data.organization;
-    const { component } = data.organization.application;
+    const { application } = data;
+    const { component } = application;
 
     return (
         <>
@@ -91,8 +88,8 @@ export default function Detail() {
                         >
                             <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
-                        Created on {formatDate(component.createdAt)}, last
-                        updated {formatDate(component.updatedAt)}
+                        Created on {formatDate(component.createdAt)}, last updated{' '}
+                        {formatDate(component.updatedAt)}
                     </div>
                 </div>
             </div>
@@ -104,12 +101,7 @@ export default function Detail() {
                     value: String(id),
                 }))}
             />
-            {environment && (
-                <ContainerGroup
-                    component={component.id}
-                    environment={Number(environment)}
-                />
-            )}
+            {environment && <ContainerGroup component={component.id} environment={environment} />}
         </>
     );
 }

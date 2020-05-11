@@ -1,4 +1,4 @@
-import { Resolver, FieldResolver, Int, Root, Arg } from 'type-graphql';
+import { Resolver, FieldResolver, Int, Root, Arg, Query, ID } from 'type-graphql';
 import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
@@ -6,7 +6,16 @@ import { getRepository } from 'typeorm';
 
 @Resolver(() => Component)
 export class ComponentResolver {
-    constructor(private containerGroupRepo = getRepository(ContainerGroup)) {}
+    constructor(
+        private componentRepo = getRepository(Component),
+        private containerGroupRepo = getRepository(ContainerGroup),
+    ) {}
+
+    @Query(() => Component)
+    component(@Arg('id', () => ID) id: string) {
+        // TODO: pls pls pls implement auth here:
+        return this.componentRepo.findOneOrFail({ where: { id } });
+    }
 
     @FieldResolver(() => Int)
     async monthlyPrice(@Root() component: Component) {
@@ -22,7 +31,7 @@ export class ComponentResolver {
     @FieldResolver(() => ContainerGroup, { nullable: true })
     containerGroup(
         @Root() component: Component,
-        @Arg('environment', () => Int) environmentID: number,
+        @Arg('environment', () => ID) environmentID: string,
     ) {
         return this.containerGroupRepo.findOne({
             where: {

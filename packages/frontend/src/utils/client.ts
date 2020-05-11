@@ -18,17 +18,7 @@ const client = new ApolloClient({
     link: httpLink,
     cache: new InMemoryCache({
         typePolicies: {
-            APIKey: { keyFields: ['uuid'] },
-            Application: { keyFields: ['uuid'] },
-            ContainerGroup: { keyFields: ['uuid'] },
-            Environment: { keyFields: ['uuid'] },
-            Network: { keyFields: ['uuid'] },
-            Organization: { keyFields: ['uuid'] },
-            Secret: { keyFields: ['uuid'] },
-            User: { keyFields: ['uuid'] },
-
             Component: {
-                keyFields: ['uuid'],
                 fields: {
                     containerGroup: {
                         // keyArgs: [],

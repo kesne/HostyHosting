@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useCreateApplicationMutation } from '../../queries';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
@@ -9,12 +9,13 @@ import TextArea from '../ui/TextArea';
 import { Reference } from '@apollo/client';
 
 type Props = {
-    organization?: number;
+    organization?: string;
     visible: boolean;
     onClose(): void;
 };
 
 export default function CreateApplication({ organization, visible, onClose }: Props) {
+    const navigate = useNavigate();
     const [createApplication, { data, loading }] = useCreateApplicationMutation({
         update(cache, { data }) {
             if (!data) return;
@@ -37,8 +38,8 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
         }
     }, [visible]);
 
-    function handleFinish(values: Record<string, string>) {
-        createApplication({
+    async function handleFinish(values: Record<string, string>) {
+        await createApplication({
             variables: {
                 org: organization,
                 application: {
@@ -47,10 +48,9 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                 },
             },
         });
-    }
 
-    if (data) {
-        return <Navigate to={`/applications/${data.organization.createApplication.id}`} />;
+        // TODO: Navigate pls:
+        // navigate(`/applications/${data.organization.createApplication.id}`);
     }
 
     return (

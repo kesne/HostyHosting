@@ -1,4 +1,4 @@
-mutation UpdateComponent($applicationID: Int!, $componentID: Int!, $component: ComponentInput!) {
+mutation UpdateComponent($applicationID: ID!, $componentID: ID!, $component: ComponentInput!) {
     application(id: $applicationID) {
         updateComponent(id: $componentID, component: $component) {
             ...ComponentFragment

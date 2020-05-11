@@ -1,13 +1,13 @@
-import { InputType, Field, Int } from 'type-graphql';
+import { InputType, Field, Int, ID } from 'type-graphql';
 import { ContainerSize } from '../../entity/ContainerGroup';
 
 @InputType()
 export class ContainerGroupInput {
-    @Field(() => Int)
-    componentID!: number;
+    @Field(() => ID)
+    componentID!: string;
 
-    @Field(() => Int)
-    environmentID!: number;
+    @Field(() => ID)
+    environmentID!: string;
 
     @Field(() => ContainerSize)
     size!: ContainerSize;

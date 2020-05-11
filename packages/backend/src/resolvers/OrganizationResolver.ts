@@ -27,7 +27,7 @@ export class OrganizationResolver {
             return await user.personalOrganization;
         }
 
-        return this.organizationRepo.findForUser(user, username);
+        return this.organizationRepo.findForUser(user, { username });
     }
 
     @FieldResolver(() => Application)

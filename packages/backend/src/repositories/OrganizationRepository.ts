@@ -10,10 +10,15 @@ import { ForbiddenError } from 'type-graphql';
 
 @EntityRepository(Organization)
 export class OrganizationRepository extends Repository<Organization> {
-    async findForUser(user: User, username: string, permission?: OrganizationPermission) {
+    async findForUser(
+        user: User,
+        condition: { id: string } | { username: string },
+        permission?: OrganizationPermission,
+    ) {
         const organizationMembershipRepo = getRepository(OrganizationMembership);
 
-        const organization = await this.findOneOrFail({ where: { username } });
+        const where = 'id' in condition ? { id: condition.id } : { username: condition.username };
+        const organization = await this.findOneOrFail({ where });
 
         const membership = await organizationMembershipRepo.findOneOrFail({
             where: {

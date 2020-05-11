@@ -1,4 +1,4 @@
-mutation UpdateApplication($id: Int!, $application: ApplicationInput!) {
+mutation UpdateApplication($id: ID!, $application: ApplicationInput!) {
     application(id: $id) {
         update(application: $application) {
             ...ApplicationFragment

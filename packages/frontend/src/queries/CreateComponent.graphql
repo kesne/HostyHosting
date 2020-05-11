@@ -1,11 +1,10 @@
 mutation CreateComponent(
-    $organization: String!
-    $application: String!
+    $application: ID!
     $component: ComponentInput!
 ) {
-    application(name: $application, org: $organization) {
+    application(id: $application) {
         createComponent(component: $component) {
-            uuid
+            id
             name
             image
         }

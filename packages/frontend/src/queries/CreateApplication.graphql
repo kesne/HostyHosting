@@ -1,7 +1,7 @@
-mutation CreateApplication($org: Int, $application: ApplicationInput!) {
+mutation CreateApplication($org: ID, $application: ApplicationInput!) {
     organization(id: $org) {
         createApplication(application: $application) {
-            uuid
+            id
             name
             description
         }

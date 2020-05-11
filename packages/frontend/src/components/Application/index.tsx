@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     useParams,
     Routes,
@@ -80,6 +80,13 @@ export default function Application() {
         },
     });
 
+    const applicationContext = useMemo(
+        () => ({
+            application: data?.organization.application.id ?? '',
+        }),
+        [data?.organization.application.id],
+    );
+
     if (loading || error || !data) {
         return <Spinner />;
     }
@@ -92,20 +99,15 @@ export default function Application() {
             root={[
                 {
                     name: application.name,
-                    url: `.`,
+                    url: '.',
                 },
                 {
                     name: organization.name,
-                    url: `../..`,
+                    url: '../..',
                 },
             ]}
         >
-            <ApplicationContext.Provider
-                value={{
-                    organization: params.organization,
-                    application: params.application,
-                }}
-            >
+            <ApplicationContext.Provider value={applicationContext}>
                 <PageHeader>
                     <Breadcrumbs />
                 </PageHeader>

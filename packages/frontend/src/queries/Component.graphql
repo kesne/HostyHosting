@@ -1,15 +1,13 @@
-query Component($organization: String!, $application: String!, $component: Int!) {
-    organization(username: $organization) {
-        application(name: $application) {
-            uuid
-            environments {
-                uuid
-                name
-                label
-            }
-            component(id: $component) {
-                ...ComponentFragment
-            }
+query Component($application: ID!, $component: ID!) {
+    application(id: $application) {
+        id
+        environments {
+            id
+            name
+            label
+        }
+        component(id: $component) {
+            ...ComponentFragment
         }
     }
 }

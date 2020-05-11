@@ -1,16 +1,12 @@
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
     OneToMany,
     ManyToOne,
     Unique,
-    Generated,
 } from 'typeorm';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 import { Network } from './Network';
 import { Lazy } from '../types';
 import { Organization } from './Organization';
@@ -20,7 +16,7 @@ import { NAME_REGEX } from '../constants';
 @ObjectType()
 @Entity()
 @Unique(['name', 'organization'])
-export class Environment extends BaseEntity {
+export class Environment extends ExternalEntity {
     static createForOrganization(organization: Organization, name: string, label: string) {
         const network = new Network();
         network.name = name;
@@ -33,15 +29,6 @@ export class Environment extends BaseEntity {
 
         return environment;
     }
-
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
 
     @Field()
     @Column()
@@ -67,12 +54,4 @@ export class Environment extends BaseEntity {
         { lazy: true },
     )
     organization!: Lazy<Organization>;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 }

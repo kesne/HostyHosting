@@ -1,6 +1,6 @@
 query Application($organization: String!, $application: String!) {
     organization(username: $organization) {
-        uuid
+        id
         username
         name
         application(name: $application) {

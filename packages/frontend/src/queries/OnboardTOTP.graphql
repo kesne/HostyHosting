@@ -1,6 +1,6 @@
 query OnboardTOTP {
     me {
-        uuid
+        id
         name
         onboardTOTP
     }

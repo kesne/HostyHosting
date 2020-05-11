@@ -4,25 +4,23 @@
 # -----------------------------------------------
 
 type APIKey {
-  id: Int!
-  uuid: String!
-  privateKey: String
-  description: String!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  privateKey: String
+  description: String!
 }
 
 type Application {
-  id: Int!
-  uuid: String!
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   description: String!
   createdBy: User
-  createdAt: DateTime!
-  updatedAt: DateTime!
   organization: Organization!
   components: [Component!]!
-  component(id: Int!): Component!
+  component(id: ID!): Component!
   environments: [Environment!]!
 }
 
@@ -36,24 +34,23 @@ type ApplicationMutations {
   update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
   createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
-  updateComponent(component: ComponentInput!, id: Int!): Component!
-  addSecret(value: String!, key: String!, containerGroup: Int!): Secret!
-  editSecret(value: String!, key: String!, id: Int!, containerGroup: Int!): Secret!
-  deleteSecret(id: Int!, containerGroup: Int!): Secret!
-  deleteComponent(id: Int!): Component!
+  updateComponent(component: ComponentInput!, id: ID!): Component!
+  addSecret(value: String!, key: String!, containerGroup: ID!): Secret!
+  editSecret(value: String!, key: String!, id: ID!, containerGroup: ID!): Secret!
+  deleteSecret(id: ID!, containerGroup: ID!): Secret!
+  deleteComponent(id: ID!): Component!
 }
 
 type Component {
-  id: Int!
-  uuid: String!
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   containerGroups: [ContainerGroup!]!
   monthlyPrice: Int!
-  containerGroup(environment: Int!): ContainerGroup
+  containerGroup(environment: ID!): ContainerGroup
 }
 
 input ComponentInput {
@@ -63,17 +60,16 @@ input ComponentInput {
 }
 
 type Container {
-  id: Int!
+  id: ID!
   status: String!
 }
 
 type ContainerGroup {
-  id: Int!
-  uuid: String!
-  size: ContainerSize!
-  containerCount: Float!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  size: ContainerSize!
+  containerCount: Float!
   environment: Environment!
   component: Component!
   secrets: [Secret!]!
@@ -82,8 +78,8 @@ type ContainerGroup {
 }
 
 input ContainerGroupInput {
-  componentID: Int!
-  environmentID: Int!
+  componentID: ID!
+  environmentID: ID!
   size: ContainerSize!
   containerCount: Int!
 }
@@ -107,11 +103,16 @@ enum DeploymentStrategy {
 }
 
 type Environment {
-  id: Int!
-  uuid: String!
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   label: String!
   organization: Organization!
+}
+
+type ExternalEntity {
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -120,14 +121,14 @@ type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
   createAPIKey(description: String!): APIKey!
-  deleteAPIKey(id: Int!): Result!
-  application(name: String, org: String, id: Int): ApplicationMutations!
+  deleteAPIKey(id: ID!): Result!
+  application(id: ID!): ApplicationMutations!
   organization(
     """
     The ID of the organization that you will be performing mutations on. If
     empty, we will use the signed-in users personal organization.
     """
-    id: Int
+    id: ID
   ): OrganizationMutations!
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
@@ -142,31 +143,28 @@ type Mutation {
 }
 
 type Network {
-  id: Int!
-  uuid: String!
-  name: String!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  name: String!
 }
 
 type Notification {
-  id: Int!
-  uuid: String!
-  title: String!
-  body: String!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  title: String!
+  body: String!
 }
 
 type Organization {
-  id: Int!
-  uuid: String!
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   isPersonal: Boolean!
   username: String!
   name: String!
   maxComputeUnits: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   applications: [Application!]!
   environments: [Environment!]!
   application(name: String!): Application!
@@ -180,7 +178,8 @@ type OrganizationMutations {
 
 type Query {
   getAPIKeyFromRequest(uuid: String!): String
-  application(name: String!): Application!
+  application(id: ID!): Application!
+  component(id: ID!): Component!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(
@@ -198,12 +197,11 @@ type Result {
 }
 
 type Secret {
-  id: Int!
-  uuid: String!
-  key: String!
-  value: String!
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  key: String!
+  value: String!
 }
 
 input SecretInput {
@@ -221,15 +219,14 @@ type SignInResult {
 }
 
 type User {
-  id: Int!
-  uuid: String!
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   githubID: Int
   name: String!
   username: String!
   email: String!
   isPasswordless: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   hasTOTP: Boolean!
   personalOrganization: Organization!
   apiKeys: [APIKey!]!

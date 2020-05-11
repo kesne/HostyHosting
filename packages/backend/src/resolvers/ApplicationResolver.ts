@@ -1,4 +1,4 @@
-import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int } from 'type-graphql';
+import { Resolver, FieldResolver, Root, Authorized, Query, Ctx, Arg, Int, ID } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { Context } from '../types';
 import { Component } from '../entity/Component';
@@ -15,15 +15,12 @@ export class ApplicationResolver {
 
     @Authorized()
     @Query(() => Application)
-    async application(
-        @Ctx() { user }: Context,
-        @Arg('name', () => String) name: string,
-    ) {
-        return await this.applicationRepo.findForUser(user, name);
+    async application(@Ctx() { user }: Context, @Arg('id', () => ID) id: string) {
+        return await this.applicationRepo.findForUserByID(user, id);
     }
 
     @FieldResolver(() => Component)
-    async component(@Root() application: Application, @Arg('id', () => Int) id: number) {
+    async component(@Root() application: Application, @Arg('id', () => ID) id: string) {
         return await this.componentRepo.findOneOrFail({
             where: {
                 id,

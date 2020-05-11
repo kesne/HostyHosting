@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int } from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int, ID } from 'type-graphql';
 import { v4 as uuidv4 } from 'uuid';
 import redis from '../redis';
 import Result from './types/Result';
@@ -75,7 +75,7 @@ export class APIKeyResolver {
     @Mutation(() => Result)
     async deleteAPIKey(
         @Ctx() { user }: Context,
-        @Arg('id', () => Int) id: number,
+        @Arg('id', () => ID) id: string,
     ): Promise<Result> {
         const apiKey = await this.apiKeyRepo.findOneOrFail({
             where: {

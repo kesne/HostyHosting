@@ -1,4 +1,4 @@
-import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized, Resolver } from 'type-graphql';
+import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized, Resolver, ID } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { Component } from '../entity/Component';
 import { Context } from '../types';
@@ -95,7 +95,7 @@ export class ApplicationMutations {
 
     @Field(() => Component)
     async updateComponent(
-        @Arg('id', () => Int) id: number,
+        @Arg('id', () => ID) id: string,
         @Arg('component', () => ComponentInput) componentInput: ComponentInput,
     ) {
         const component = await this.componentRepo.findByApplicationAndId(this.application, id);
@@ -117,7 +117,7 @@ export class ApplicationMutations {
 
     @Field(() => Secret)
     async addSecret(
-        @Arg('containerGroup', () => Int) containerGroupID: number,
+        @Arg('containerGroup', () => ID) containerGroupID: string,
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
@@ -136,8 +136,8 @@ export class ApplicationMutations {
 
     @Field(() => Secret)
     async editSecret(
-        @Arg('containerGroup', () => Int) containerGroupID: number,
-        @Arg('id', () => Int) id: number,
+        @Arg('containerGroup', () => ID) containerGroupID: string,
+        @Arg('id', () => ID) id: string,
         @Arg('key') key: string,
         @Arg('value') value: string,
     ) {
@@ -158,8 +158,8 @@ export class ApplicationMutations {
 
     @Field(() => Secret)
     async deleteSecret(
-        @Arg('containerGroup', () => Int) containerGroupID: number,
-        @Arg('id', () => Int) id: number,
+        @Arg('containerGroup', () => ID) containerGroupID: string,
+        @Arg('id', () => ID) id: string,
     ) {
         const secret = await this.secretRepo.findOneOrFail({
             where: {
@@ -176,7 +176,7 @@ export class ApplicationMutations {
     }
 
     @Field(() => Component)
-    async deleteComponent(@Arg('id', () => Int) id: number) {
+    async deleteComponent(@Arg('id', () => ID) id: string) {
         const component = await this.componentRepo.findByApplicationAndId(this.application, id);
         await this.componentRepo.delete(component.id);
         return component;
@@ -187,23 +187,13 @@ export class ApplicationMutations {
 export class ApplicationMutationsResolver {
     constructor(private applicationRepo = getCustomRepository(ApplicationRepository)) {}
 
-    // TODO: Move this under OrganizaitonMutations instead of having a top-level resolved field here:
     @Authorized()
     @Mutation(() => ApplicationMutations)
-    async application(
-        @Ctx() { user }: Context,
-        @Arg('id', () => Int, { nullable: true }) _id: number,
-        @Arg('org', { nullable: true }) org: string,
-        @Arg('name', { nullable: true }) name: string,
-    ) {
-        const organizationRepo = getCustomRepository(OrganizationRepository);
-        const organization = await organizationRepo.findForUser(user, org);
-
-        // All application mutations require AT LEAST write access to the organization.
-        const application = await this.applicationRepo.findForUserAndOrganization(
+    async application(@Ctx() { user }: Context, @Arg('id', () => ID) id: string) {
+        const application = await this.applicationRepo.findForUserByID(
             user,
-            organization,
-            name,
+            id,
+            // All application mutations require AT LEAST write access to the organization.
             OrganizationPermission.WRITE,
         );
 

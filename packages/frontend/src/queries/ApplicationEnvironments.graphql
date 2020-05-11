@@ -1,8 +1,8 @@
-query ApplicationEnvironments($name: String!) {
-    application(name: $name) {
-        uuid
+query ApplicationEnvironments($application: ID!) {
+    application(id: $application) {
+        id
         environments {
-            uuid
+            id
             name
             label
         }

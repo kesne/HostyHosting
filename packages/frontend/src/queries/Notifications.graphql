@@ -1,6 +1,6 @@
 query Notifications {
     notifications {
-        uuid
+        id
         title
         body
         createdAt

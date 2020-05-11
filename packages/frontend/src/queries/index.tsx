@@ -15,23 +15,21 @@ export type Scalars = {
 
 export type ApiKey = {
    __typename?: 'APIKey',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
-  privateKey?: Maybe<Scalars['String']>,
-  description: Scalars['String'],
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  privateKey?: Maybe<Scalars['String']>,
+  description: Scalars['String'],
 };
 
 export type Application = {
    __typename?: 'Application',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
+  id: Scalars['ID'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   name: Scalars['String'],
   description: Scalars['String'],
   createdBy?: Maybe<User>,
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
   organization: Organization,
   components: Array<Component>,
   component: Component,
@@ -40,7 +38,7 @@ export type Application = {
 
 
 export type ApplicationComponentArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 export type ApplicationInput = {
@@ -79,44 +77,43 @@ export type ApplicationMutationsCreateContainerGroupArgs = {
 
 export type ApplicationMutationsUpdateComponentArgs = {
   component: ComponentInput,
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
 export type ApplicationMutationsAddSecretArgs = {
   value: Scalars['String'],
   key: Scalars['String'],
-  containerGroup: Scalars['Int']
+  containerGroup: Scalars['ID']
 };
 
 
 export type ApplicationMutationsEditSecretArgs = {
   value: Scalars['String'],
   key: Scalars['String'],
-  id: Scalars['Int'],
-  containerGroup: Scalars['Int']
+  id: Scalars['ID'],
+  containerGroup: Scalars['ID']
 };
 
 
 export type ApplicationMutationsDeleteSecretArgs = {
-  id: Scalars['Int'],
-  containerGroup: Scalars['Int']
+  id: Scalars['ID'],
+  containerGroup: Scalars['ID']
 };
 
 
 export type ApplicationMutationsDeleteComponentArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 export type Component = {
    __typename?: 'Component',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
+  id: Scalars['ID'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   name: Scalars['String'],
   deploymentStrategy: DeploymentStrategy,
   image: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
   containerGroups: Array<ContainerGroup>,
   monthlyPrice: Scalars['Int'],
   containerGroup?: Maybe<ContainerGroup>,
@@ -124,7 +121,7 @@ export type Component = {
 
 
 export type ComponentContainerGroupArgs = {
-  environment: Scalars['Int']
+  environment: Scalars['ID']
 };
 
 export type ComponentInput = {
@@ -135,18 +132,17 @@ export type ComponentInput = {
 
 export type Container = {
    __typename?: 'Container',
-  id: Scalars['Int'],
+  id: Scalars['ID'],
   status: Scalars['String'],
 };
 
 export type ContainerGroup = {
    __typename?: 'ContainerGroup',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
-  size: ContainerSize,
-  containerCount: Scalars['Float'],
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  size: ContainerSize,
+  containerCount: Scalars['Float'],
   environment: Environment,
   component: Component,
   secrets: Array<Secret>,
@@ -155,8 +151,8 @@ export type ContainerGroup = {
 };
 
 export type ContainerGroupInput = {
-  componentID: Scalars['Int'],
-  environmentID: Scalars['Int'],
+  componentID: Scalars['ID'],
+  environmentID: Scalars['ID'],
   size: ContainerSize,
   containerCount: Scalars['Int'],
 };
@@ -177,11 +173,17 @@ export enum DeploymentStrategy {
 
 export type Environment = {
    __typename?: 'Environment',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
+  id: Scalars['ID'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   name: Scalars['String'],
   label: Scalars['String'],
   organization: Organization,
+};
+
+export type ExternalEntity = {
+   __typename?: 'ExternalEntity',
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
 };
@@ -218,19 +220,17 @@ export type MutationCreateApiKeyArgs = {
 
 
 export type MutationDeleteApiKeyArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
 export type MutationApplicationArgs = {
-  name?: Maybe<Scalars['String']>,
-  org?: Maybe<Scalars['String']>,
-  id?: Maybe<Scalars['Int']>
+  id: Scalars['ID']
 };
 
 
 export type MutationOrganizationArgs = {
-  id?: Maybe<Scalars['Int']>
+  id?: Maybe<Scalars['ID']>
 };
 
 
@@ -288,33 +288,30 @@ export type MutationResetPasswordArgs = {
 
 export type Network = {
    __typename?: 'Network',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
-  name: Scalars['String'],
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  name: Scalars['String'],
 };
 
 export type Notification = {
    __typename?: 'Notification',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
-  title: Scalars['String'],
-  body: Scalars['String'],
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  title: Scalars['String'],
+  body: Scalars['String'],
 };
 
 export type Organization = {
    __typename?: 'Organization',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
+  id: Scalars['ID'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   isPersonal: Scalars['Boolean'],
   username: Scalars['String'],
   name: Scalars['String'],
   maxComputeUnits: Scalars['Float'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
   applications: Array<Application>,
   environments: Array<Environment>,
   application: Application,
@@ -352,6 +349,7 @@ export type Query = {
    __typename?: 'Query',
   getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
+  component: Component,
   estimateMonthlyPrice: Scalars['Int'],
   notifications: Array<Notification>,
   organization: Organization,
@@ -365,7 +363,12 @@ export type QueryGetApiKeyFromRequestArgs = {
 
 
 export type QueryApplicationArgs = {
-  name: Scalars['String']
+  id: Scalars['ID']
+};
+
+
+export type QueryComponentArgs = {
+  id: Scalars['ID']
 };
 
 
@@ -387,12 +390,11 @@ export type Result = {
 
 export type Secret = {
    __typename?: 'Secret',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
-  key: Scalars['String'],
-  value: Scalars['String'],
+  id: Scalars['ID'],
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],
+  key: Scalars['String'],
+  value: Scalars['String'],
 };
 
 export type SecretInput = {
@@ -412,15 +414,14 @@ export type SignInResult = {
 
 export type User = {
    __typename?: 'User',
-  id: Scalars['Int'],
-  uuid: Scalars['String'],
+  id: Scalars['ID'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   githubID?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
   username: Scalars['String'],
   email: Scalars['String'],
   isPasswordless: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  updatedAt: Scalars['DateTime'],
   hasTOTP: Scalars['Boolean'],
   personalOrganization: Organization,
   apiKeys: Array<ApiKey>,
@@ -429,8 +430,8 @@ export type User = {
 };
 
 export type AddSecretMutationVariables = {
-  applicationID: Scalars['Int'],
-  containerGroupID: Scalars['Int'],
+  applicationID: Scalars['ID'],
+  containerGroupID: Scalars['ID'],
   key: Scalars['String'],
   value: Scalars['String']
 };
@@ -442,7 +443,7 @@ export type AddSecretMutation = (
     { __typename?: 'ApplicationMutations' }
     & { addSecret: (
       { __typename?: 'Secret' }
-      & Pick<Secret, 'uuid' | 'key' | 'value'>
+      & Pick<Secret, 'id' | 'key' | 'value'>
     ) }
   ) }
 );
@@ -457,7 +458,7 @@ export type ApplicationQuery = (
   { __typename?: 'Query' }
   & { organization: (
     { __typename?: 'Organization' }
-    & Pick<Organization, 'uuid' | 'username' | 'name'>
+    & Pick<Organization, 'id' | 'username' | 'name'>
     & { application: (
       { __typename?: 'Application' }
       & ApplicationFragmentFragment
@@ -466,29 +467,24 @@ export type ApplicationQuery = (
 );
 
 export type ApplicationComponentsQueryVariables = {
-  organization: Scalars['String'],
-  application: Scalars['String']
+  application: Scalars['ID']
 };
 
 
 export type ApplicationComponentsQuery = (
   { __typename?: 'Query' }
-  & { organization: (
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'uuid'>
-    & { application: (
-      { __typename?: 'Application' }
-      & Pick<Application, 'uuid'>
-      & { components: Array<(
-        { __typename?: 'Component' }
-        & Pick<Component, 'uuid' | 'name' | 'image'>
-      )> }
-    ) }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
+    & { components: Array<(
+      { __typename?: 'Component' }
+      & Pick<Component, 'id' | 'name' | 'image'>
+    )> }
   ) }
 );
 
 export type ApplicationEnvironmentsQueryVariables = {
-  name: Scalars['String']
+  application: Scalars['ID']
 };
 
 
@@ -496,20 +492,20 @@ export type ApplicationEnvironmentsQuery = (
   { __typename?: 'Query' }
   & { application: (
     { __typename?: 'Application' }
-    & Pick<Application, 'uuid'>
+    & Pick<Application, 'id'>
     & { environments: Array<(
       { __typename?: 'Environment' }
-      & Pick<Environment, 'uuid' | 'name' | 'label'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     )> }
   ) }
 );
 
 export type ApplicationFragmentFragment = (
   { __typename?: 'Application' }
-  & Pick<Application, 'uuid' | 'name' | 'description' | 'createdAt' | 'updatedAt'>
+  & Pick<Application, 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'>
   & { createdBy: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'uuid' | 'name'>
+    & Pick<User, 'id' | 'name'>
   )> }
 );
 
@@ -522,76 +518,62 @@ export type ApplicationsQuery = (
   { __typename?: 'Query' }
   & { organization: (
     { __typename?: 'Organization' }
-    & Pick<Organization, 'uuid' | 'username'>
+    & Pick<Organization, 'id' | 'username'>
     & { applications: Array<(
       { __typename?: 'Application' }
-      & Pick<Application, 'uuid' | 'name' | 'description'>
+      & Pick<Application, 'id' | 'name' | 'description'>
     )>, environments: Array<(
       { __typename?: 'Environment' }
-      & Pick<Environment, 'uuid' | 'name' | 'label'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     )> }
   ) }
 );
 
 export type ComponentQueryVariables = {
-  organization: Scalars['String'],
-  application: Scalars['String'],
-  component: Scalars['Int']
+  application: Scalars['ID'],
+  component: Scalars['ID']
 };
 
 
 export type ComponentQuery = (
   { __typename?: 'Query' }
-  & { organization: (
-    { __typename?: 'Organization' }
-    & { application: (
-      { __typename?: 'Application' }
-      & Pick<Application, 'uuid'>
-      & { environments: Array<(
-        { __typename?: 'Environment' }
-        & Pick<Environment, 'uuid' | 'name' | 'label'>
-      )>, component: (
-        { __typename?: 'Component' }
-        & ComponentFragmentFragment
-      ) }
+  & { application: (
+    { __typename?: 'Application' }
+    & Pick<Application, 'id'>
+    & { environments: Array<(
+      { __typename?: 'Environment' }
+      & Pick<Environment, 'id' | 'name' | 'label'>
+    )>, component: (
+      { __typename?: 'Component' }
+      & ComponentFragmentFragment
     ) }
   ) }
 );
 
 export type ComponentFragmentFragment = (
   { __typename?: 'Component' }
-  & Pick<Component, 'uuid' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
+  & Pick<Component, 'id' | 'name' | 'deploymentStrategy' | 'image' | 'createdAt' | 'updatedAt' | 'monthlyPrice'>
 );
 
 export type ContainerGroupQueryVariables = {
-  organization: Scalars['String'],
-  application: Scalars['String'],
-  component: Scalars['Int'],
-  environment: Scalars['Int']
+  component: Scalars['ID'],
+  environment: Scalars['ID']
 };
 
 
 export type ContainerGroupQuery = (
   { __typename?: 'Query' }
-  & { organization: (
-    { __typename?: 'Organization' }
-    & Pick<Organization, 'uuid'>
-    & { application: (
-      { __typename?: 'Application' }
-      & Pick<Application, 'uuid'>
-      & { component: (
-        { __typename?: 'Component' }
-        & Pick<Component, 'uuid'>
-        & { containerGroup: Maybe<(
-          { __typename?: 'ContainerGroup' }
-          & Pick<ContainerGroup, 'uuid' | 'monthlyPrice' | 'containerCount' | 'size'>
-          & { secrets: Array<(
-            { __typename?: 'Secret' }
-            & Pick<Secret, 'uuid' | 'key' | 'value'>
-          )> }
-        )> }
-      ) }
-    ) }
+  & { component: (
+    { __typename?: 'Component' }
+    & Pick<Component, 'id'>
+    & { containerGroup: Maybe<(
+      { __typename?: 'ContainerGroup' }
+      & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
+      & { secrets: Array<(
+        { __typename?: 'Secret' }
+        & Pick<Secret, 'id' | 'key' | 'value'>
+      )> }
+    )> }
   ) }
 );
 
@@ -604,12 +586,12 @@ export type CreateApiKeyMutation = (
   { __typename?: 'Mutation' }
   & { createAPIKey: (
     { __typename?: 'APIKey' }
-    & Pick<ApiKey, 'uuid' | 'description' | 'createdAt' | 'privateKey'>
+    & Pick<ApiKey, 'id' | 'description' | 'createdAt' | 'privateKey'>
   ) }
 );
 
 export type CreateApplicationMutationVariables = {
-  org?: Maybe<Scalars['Int']>,
+  org?: Maybe<Scalars['ID']>,
   application: ApplicationInput
 };
 
@@ -620,14 +602,13 @@ export type CreateApplicationMutation = (
     { __typename?: 'OrganizationMutations' }
     & { createApplication: (
       { __typename?: 'Application' }
-      & Pick<Application, 'uuid' | 'name' | 'description'>
+      & Pick<Application, 'id' | 'name' | 'description'>
     ) }
   ) }
 );
 
 export type CreateComponentMutationVariables = {
-  organization: Scalars['String'],
-  application: Scalars['String'],
+  application: Scalars['ID'],
   component: ComponentInput
 };
 
@@ -638,14 +619,13 @@ export type CreateComponentMutation = (
     { __typename?: 'ApplicationMutations' }
     & { createComponent: (
       { __typename?: 'Component' }
-      & Pick<Component, 'uuid' | 'name' | 'image'>
+      & Pick<Component, 'id' | 'name' | 'image'>
     ) }
   ) }
 );
 
 export type CreateContainerGroupMutationVariables = {
-  organization: Scalars['String'],
-  application: Scalars['String'],
+  application: Scalars['ID'],
   containerGroup: ContainerGroupInput
 };
 
@@ -656,17 +636,17 @@ export type CreateContainerGroupMutation = (
     { __typename?: 'ApplicationMutations' }
     & { createContainerGroup: (
       { __typename?: 'ContainerGroup' }
-      & Pick<ContainerGroup, 'uuid' | 'monthlyPrice' | 'containerCount' | 'size'>
+      & Pick<ContainerGroup, 'id' | 'monthlyPrice' | 'containerCount' | 'size'>
       & { secrets: Array<(
         { __typename?: 'Secret' }
-        & Pick<Secret, 'uuid' | 'key' | 'value'>
+        & Pick<Secret, 'id' | 'key' | 'value'>
       )> }
     ) }
   ) }
 );
 
 export type CreateEnvironmentMutationVariables = {
-  org?: Maybe<Scalars['Int']>,
+  org?: Maybe<Scalars['ID']>,
   name: Scalars['String'],
   label: Scalars['String']
 };
@@ -678,13 +658,13 @@ export type CreateEnvironmentMutation = (
     { __typename?: 'OrganizationMutations' }
     & { createEnvironment: (
       { __typename?: 'Environment' }
-      & Pick<Environment, 'uuid' | 'name' | 'label'>
+      & Pick<Environment, 'id' | 'name' | 'label'>
     ) }
   ) }
 );
 
 export type DeleteApiKeyMutationVariables = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
@@ -697,7 +677,7 @@ export type DeleteApiKeyMutation = (
 );
 
 export type DeleteApplicationMutationVariables = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
@@ -707,14 +687,14 @@ export type DeleteApplicationMutation = (
     { __typename?: 'ApplicationMutations' }
     & { delete: (
       { __typename?: 'Application' }
-      & Pick<Application, 'uuid'>
+      & Pick<Application, 'id'>
     ) }
   ) }
 );
 
 export type DeleteComponentMutationVariables = {
-  applicationID: Scalars['Int'],
-  id: Scalars['Int']
+  application: Scalars['ID'],
+  id: Scalars['ID']
 };
 
 
@@ -724,15 +704,15 @@ export type DeleteComponentMutation = (
     { __typename?: 'ApplicationMutations' }
     & { deleteComponent: (
       { __typename?: 'Component' }
-      & Pick<Component, 'uuid'>
+      & Pick<Component, 'id'>
     ) }
   ) }
 );
 
 export type DeleteSecretMutationVariables = {
-  applicationID: Scalars['Int'],
-  containerGroupID: Scalars['Int'],
-  secretID: Scalars['Int']
+  application: Scalars['ID'],
+  containerGroupID: Scalars['ID'],
+  secretID: Scalars['ID']
 };
 
 
@@ -742,7 +722,7 @@ export type DeleteSecretMutation = (
     { __typename?: 'ApplicationMutations' }
     & { deleteSecret: (
       { __typename?: 'Secret' }
-      & Pick<Secret, 'uuid'>
+      & Pick<Secret, 'id'>
     ) }
   ) }
 );
@@ -761,9 +741,9 @@ export type DisableTotpMutation = (
 );
 
 export type EditSecretMutationVariables = {
-  applicationID: Scalars['Int'],
-  containerGroupID: Scalars['Int'],
-  secretID: Scalars['Int'],
+  application: Scalars['ID'],
+  containerGroupID: Scalars['ID'],
+  secretID: Scalars['ID'],
   key: Scalars['String'],
   value: Scalars['String']
 };
@@ -775,7 +755,7 @@ export type EditSecretMutation = (
     { __typename?: 'ApplicationMutations' }
     & { editSecret: (
       { __typename?: 'Secret' }
-      & Pick<Secret, 'uuid' | 'key' | 'value'>
+      & Pick<Secret, 'id' | 'key' | 'value'>
     ) }
   ) }
 );
@@ -859,7 +839,7 @@ export type MeDaddyQuery = (
 
 export type MeFragmentFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'uuid' | 'username' | 'name' | 'email' | 'hasTOTP'>
+  & Pick<User, 'id' | 'username' | 'name' | 'email' | 'hasTOTP'>
 );
 
 export type MyApiKeysQueryVariables = {};
@@ -869,10 +849,10 @@ export type MyApiKeysQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'uuid'>
+    & Pick<User, 'id'>
     & { apiKeys: Array<(
       { __typename?: 'APIKey' }
-      & Pick<ApiKey, 'uuid' | 'description' | 'createdAt'>
+      & Pick<ApiKey, 'id' | 'description' | 'createdAt'>
     )> }
   ) }
 );
@@ -884,13 +864,13 @@ export type MyOrganizationsQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'uuid'>
+    & Pick<User, 'id'>
     & { personalOrganization: (
       { __typename?: 'Organization' }
-      & Pick<Organization, 'uuid'>
+      & Pick<Organization, 'id'>
     ), organizations: Array<(
       { __typename?: 'Organization' }
-      & Pick<Organization, 'uuid' | 'name' | 'username'>
+      & Pick<Organization, 'id' | 'name' | 'username'>
     )> }
   ) }
 );
@@ -902,7 +882,7 @@ export type NotificationsQuery = (
   { __typename?: 'Query' }
   & { notifications: Array<(
     { __typename?: 'Notification' }
-    & Pick<Notification, 'uuid' | 'title' | 'body' | 'createdAt' | 'updatedAt'>
+    & Pick<Notification, 'id' | 'title' | 'body' | 'createdAt' | 'updatedAt'>
   )> }
 );
 
@@ -913,7 +893,7 @@ export type OnboardTotpQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'uuid' | 'name' | 'onboardTOTP'>
+    & Pick<User, 'id' | 'name' | 'onboardTOTP'>
   ) }
 );
 
@@ -988,7 +968,7 @@ export type UpdateAccountMutation = (
 );
 
 export type UpdateApplicationMutationVariables = {
-  id: Scalars['Int'],
+  id: Scalars['ID'],
   application: ApplicationInput
 };
 
@@ -1005,8 +985,8 @@ export type UpdateApplicationMutation = (
 );
 
 export type UpdateComponentMutationVariables = {
-  applicationID: Scalars['Int'],
-  componentID: Scalars['Int'],
+  applicationID: Scalars['ID'],
+  componentID: Scalars['ID'],
   component: ComponentInput
 };
 
@@ -1024,11 +1004,11 @@ export type UpdateComponentMutation = (
 
 export const ApplicationFragmentFragmentDoc = gql`
     fragment ApplicationFragment on Application {
-  uuid
+  id
   name
   description
   createdBy {
-    uuid
+    id
     name
   }
   createdAt
@@ -1037,7 +1017,7 @@ export const ApplicationFragmentFragmentDoc = gql`
     `;
 export const ComponentFragmentFragmentDoc = gql`
     fragment ComponentFragment on Component {
-  uuid
+  id
   name
   deploymentStrategy
   image
@@ -1048,7 +1028,7 @@ export const ComponentFragmentFragmentDoc = gql`
     `;
 export const MeFragmentFragmentDoc = gql`
     fragment MeFragment on User {
-  uuid
+  id
   username
   name
   email
@@ -1056,10 +1036,10 @@ export const MeFragmentFragmentDoc = gql`
 }
     `;
 export const AddSecretDocument = gql`
-    mutation AddSecret($applicationID: Int!, $containerGroupID: Int!, $key: String!, $value: String!) {
+    mutation AddSecret($applicationID: ID!, $containerGroupID: ID!, $key: String!, $value: String!) {
   application(id: $applicationID) {
     addSecret(containerGroup: $containerGroupID, key: $key, value: $value) {
-      uuid
+      id
       key
       value
     }
@@ -1097,7 +1077,7 @@ export type AddSecretMutationOptions = ApolloReactCommon.BaseMutationOptions<Add
 export const ApplicationDocument = gql`
     query Application($organization: String!, $application: String!) {
   organization(username: $organization) {
-    uuid
+    id
     username
     name
     application(name: $application) {
@@ -1134,16 +1114,13 @@ export type ApplicationQueryHookResult = ReturnType<typeof useApplicationQuery>;
 export type ApplicationLazyQueryHookResult = ReturnType<typeof useApplicationLazyQuery>;
 export type ApplicationQueryResult = ApolloReactCommon.QueryResult<ApplicationQuery, ApplicationQueryVariables>;
 export const ApplicationComponentsDocument = gql`
-    query ApplicationComponents($organization: String!, $application: String!) {
-  organization(username: $organization) {
-    uuid
-    application(name: $application) {
-      uuid
-      components {
-        uuid
-        name
-        image
-      }
+    query ApplicationComponents($application: ID!) {
+  application(id: $application) {
+    id
+    components {
+      id
+      name
+      image
     }
   }
 }
@@ -1161,7 +1138,6 @@ export const ApplicationComponentsDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationComponentsQuery({
  *   variables: {
- *      organization: // value for 'organization'
  *      application: // value for 'application'
  *   },
  * });
@@ -1176,11 +1152,11 @@ export type ApplicationComponentsQueryHookResult = ReturnType<typeof useApplicat
 export type ApplicationComponentsLazyQueryHookResult = ReturnType<typeof useApplicationComponentsLazyQuery>;
 export type ApplicationComponentsQueryResult = ApolloReactCommon.QueryResult<ApplicationComponentsQuery, ApplicationComponentsQueryVariables>;
 export const ApplicationEnvironmentsDocument = gql`
-    query ApplicationEnvironments($name: String!) {
-  application(name: $name) {
-    uuid
+    query ApplicationEnvironments($application: ID!) {
+  application(id: $application) {
+    id
     environments {
-      uuid
+      id
       name
       label
     }
@@ -1200,7 +1176,7 @@ export const ApplicationEnvironmentsDocument = gql`
  * @example
  * const { data, loading, error } = useApplicationEnvironmentsQuery({
  *   variables: {
- *      name: // value for 'name'
+ *      application: // value for 'application'
  *   },
  * });
  */
@@ -1216,15 +1192,15 @@ export type ApplicationEnvironmentsQueryResult = ApolloReactCommon.QueryResult<A
 export const ApplicationsDocument = gql`
     query Applications($org: String) {
   organization(username: $org) {
-    uuid
+    id
     username
     applications {
-      uuid
+      id
       name
       description
     }
     environments {
-      uuid
+      id
       name
       label
     }
@@ -1258,18 +1234,16 @@ export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery
 export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
 export type ApplicationsQueryResult = ApolloReactCommon.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
 export const ComponentDocument = gql`
-    query Component($organization: String!, $application: String!, $component: Int!) {
-  organization(username: $organization) {
-    application(name: $application) {
-      uuid
-      environments {
-        uuid
-        name
-        label
-      }
-      component(id: $component) {
-        ...ComponentFragment
-      }
+    query Component($application: ID!, $component: ID!) {
+  application(id: $application) {
+    id
+    environments {
+      id
+      name
+      label
+    }
+    component(id: $component) {
+      ...ComponentFragment
     }
   }
 }
@@ -1287,7 +1261,6 @@ export const ComponentDocument = gql`
  * @example
  * const { data, loading, error } = useComponentQuery({
  *   variables: {
- *      organization: // value for 'organization'
  *      application: // value for 'application'
  *      component: // value for 'component'
  *   },
@@ -1303,24 +1276,18 @@ export type ComponentQueryHookResult = ReturnType<typeof useComponentQuery>;
 export type ComponentLazyQueryHookResult = ReturnType<typeof useComponentLazyQuery>;
 export type ComponentQueryResult = ApolloReactCommon.QueryResult<ComponentQuery, ComponentQueryVariables>;
 export const ContainerGroupDocument = gql`
-    query ContainerGroup($organization: String!, $application: String!, $component: Int!, $environment: Int!) {
-  organization(username: $organization) {
-    uuid
-    application(name: $application) {
-      uuid
-      component(id: $component) {
-        uuid
-        containerGroup(environment: $environment) {
-          uuid
-          monthlyPrice
-          containerCount
-          size
-          secrets {
-            uuid
-            key
-            value
-          }
-        }
+    query ContainerGroup($component: ID!, $environment: ID!) {
+  component(id: $component) {
+    id
+    containerGroup(environment: $environment) {
+      id
+      monthlyPrice
+      containerCount
+      size
+      secrets {
+        id
+        key
+        value
       }
     }
   }
@@ -1339,8 +1306,6 @@ export const ContainerGroupDocument = gql`
  * @example
  * const { data, loading, error } = useContainerGroupQuery({
  *   variables: {
- *      organization: // value for 'organization'
- *      application: // value for 'application'
  *      component: // value for 'component'
  *      environment: // value for 'environment'
  *   },
@@ -1358,7 +1323,7 @@ export type ContainerGroupQueryResult = ApolloReactCommon.QueryResult<ContainerG
 export const CreateApiKeyDocument = gql`
     mutation CreateAPIKey($description: String!) {
   createAPIKey(description: $description) {
-    uuid
+    id
     description
     createdAt
     privateKey
@@ -1391,10 +1356,10 @@ export type CreateApiKeyMutationHookResult = ReturnType<typeof useCreateApiKeyMu
 export type CreateApiKeyMutationResult = ApolloReactCommon.MutationResult<CreateApiKeyMutation>;
 export type CreateApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateApplicationDocument = gql`
-    mutation CreateApplication($org: Int, $application: ApplicationInput!) {
+    mutation CreateApplication($org: ID, $application: ApplicationInput!) {
   organization(id: $org) {
     createApplication(application: $application) {
-      uuid
+      id
       name
       description
     }
@@ -1428,10 +1393,10 @@ export type CreateApplicationMutationHookResult = ReturnType<typeof useCreateApp
 export type CreateApplicationMutationResult = ApolloReactCommon.MutationResult<CreateApplicationMutation>;
 export type CreateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateApplicationMutation, CreateApplicationMutationVariables>;
 export const CreateComponentDocument = gql`
-    mutation CreateComponent($organization: String!, $application: String!, $component: ComponentInput!) {
-  application(name: $application, org: $organization) {
+    mutation CreateComponent($application: ID!, $component: ComponentInput!) {
+  application(id: $application) {
     createComponent(component: $component) {
-      uuid
+      id
       name
       image
     }
@@ -1453,7 +1418,6 @@ export type CreateComponentMutationFn = ApolloReactCommon.MutationFunction<Creat
  * @example
  * const [createComponentMutation, { data, loading, error }] = useCreateComponentMutation({
  *   variables: {
- *      organization: // value for 'organization'
  *      application: // value for 'application'
  *      component: // value for 'component'
  *   },
@@ -1466,15 +1430,15 @@ export type CreateComponentMutationHookResult = ReturnType<typeof useCreateCompo
 export type CreateComponentMutationResult = ApolloReactCommon.MutationResult<CreateComponentMutation>;
 export type CreateComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateComponentMutation, CreateComponentMutationVariables>;
 export const CreateContainerGroupDocument = gql`
-    mutation CreateContainerGroup($organization: String!, $application: String!, $containerGroup: ContainerGroupInput!) {
-  application(org: $organization, name: $application) {
+    mutation CreateContainerGroup($application: ID!, $containerGroup: ContainerGroupInput!) {
+  application(id: $application) {
     createContainerGroup(containerGroup: $containerGroup) {
-      uuid
+      id
       monthlyPrice
       containerCount
       size
       secrets {
-        uuid
+        id
         key
         value
       }
@@ -1497,7 +1461,6 @@ export type CreateContainerGroupMutationFn = ApolloReactCommon.MutationFunction<
  * @example
  * const [createContainerGroupMutation, { data, loading, error }] = useCreateContainerGroupMutation({
  *   variables: {
- *      organization: // value for 'organization'
  *      application: // value for 'application'
  *      containerGroup: // value for 'containerGroup'
  *   },
@@ -1510,10 +1473,10 @@ export type CreateContainerGroupMutationHookResult = ReturnType<typeof useCreate
 export type CreateContainerGroupMutationResult = ApolloReactCommon.MutationResult<CreateContainerGroupMutation>;
 export type CreateContainerGroupMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateContainerGroupMutation, CreateContainerGroupMutationVariables>;
 export const CreateEnvironmentDocument = gql`
-    mutation CreateEnvironment($org: Int, $name: String!, $label: String!) {
+    mutation CreateEnvironment($org: ID, $name: String!, $label: String!) {
   organization(id: $org) {
     createEnvironment(name: $name, label: $label) {
-      uuid
+      id
       name
       label
     }
@@ -1548,7 +1511,7 @@ export type CreateEnvironmentMutationHookResult = ReturnType<typeof useCreateEnv
 export type CreateEnvironmentMutationResult = ApolloReactCommon.MutationResult<CreateEnvironmentMutation>;
 export type CreateEnvironmentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateEnvironmentMutation, CreateEnvironmentMutationVariables>;
 export const DeleteApiKeyDocument = gql`
-    mutation DeleteAPIKey($id: Int!) {
+    mutation DeleteAPIKey($id: ID!) {
   deleteAPIKey(id: $id) {
     ok
   }
@@ -1580,10 +1543,10 @@ export type DeleteApiKeyMutationHookResult = ReturnType<typeof useDeleteApiKeyMu
 export type DeleteApiKeyMutationResult = ApolloReactCommon.MutationResult<DeleteApiKeyMutation>;
 export type DeleteApiKeyMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>;
 export const DeleteApplicationDocument = gql`
-    mutation DeleteApplication($id: Int!) {
+    mutation DeleteApplication($id: ID!) {
   application(id: $id) {
     delete {
-      uuid
+      id
     }
   }
 }
@@ -1614,10 +1577,10 @@ export type DeleteApplicationMutationHookResult = ReturnType<typeof useDeleteApp
 export type DeleteApplicationMutationResult = ApolloReactCommon.MutationResult<DeleteApplicationMutation>;
 export type DeleteApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteApplicationMutation, DeleteApplicationMutationVariables>;
 export const DeleteComponentDocument = gql`
-    mutation DeleteComponent($applicationID: Int!, $id: Int!) {
-  application(id: $applicationID) {
+    mutation DeleteComponent($application: ID!, $id: ID!) {
+  application(id: $application) {
     deleteComponent(id: $id) {
-      uuid
+      id
     }
   }
 }
@@ -1637,7 +1600,7 @@ export type DeleteComponentMutationFn = ApolloReactCommon.MutationFunction<Delet
  * @example
  * const [deleteComponentMutation, { data, loading, error }] = useDeleteComponentMutation({
  *   variables: {
- *      applicationID: // value for 'applicationID'
+ *      application: // value for 'application'
  *      id: // value for 'id'
  *   },
  * });
@@ -1649,10 +1612,10 @@ export type DeleteComponentMutationHookResult = ReturnType<typeof useDeleteCompo
 export type DeleteComponentMutationResult = ApolloReactCommon.MutationResult<DeleteComponentMutation>;
 export type DeleteComponentMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteComponentMutation, DeleteComponentMutationVariables>;
 export const DeleteSecretDocument = gql`
-    mutation DeleteSecret($applicationID: Int!, $containerGroupID: Int!, $secretID: Int!) {
-  application(id: $applicationID) {
+    mutation DeleteSecret($application: ID!, $containerGroupID: ID!, $secretID: ID!) {
+  application(id: $application) {
     deleteSecret(containerGroup: $containerGroupID, id: $secretID) {
-      uuid
+      id
     }
   }
 }
@@ -1672,7 +1635,7 @@ export type DeleteSecretMutationFn = ApolloReactCommon.MutationFunction<DeleteSe
  * @example
  * const [deleteSecretMutation, { data, loading, error }] = useDeleteSecretMutation({
  *   variables: {
- *      applicationID: // value for 'applicationID'
+ *      application: // value for 'application'
  *      containerGroupID: // value for 'containerGroupID'
  *      secretID: // value for 'secretID'
  *   },
@@ -1717,10 +1680,10 @@ export type DisableTotpMutationHookResult = ReturnType<typeof useDisableTotpMuta
 export type DisableTotpMutationResult = ApolloReactCommon.MutationResult<DisableTotpMutation>;
 export type DisableTotpMutationOptions = ApolloReactCommon.BaseMutationOptions<DisableTotpMutation, DisableTotpMutationVariables>;
 export const EditSecretDocument = gql`
-    mutation EditSecret($applicationID: Int!, $containerGroupID: Int!, $secretID: Int!, $key: String!, $value: String!) {
-  application(id: $applicationID) {
+    mutation EditSecret($application: ID!, $containerGroupID: ID!, $secretID: ID!, $key: String!, $value: String!) {
+  application(id: $application) {
     editSecret(containerGroup: $containerGroupID, id: $secretID, key: $key, value: $value) {
-      uuid
+      id
       key
       value
     }
@@ -1742,7 +1705,7 @@ export type EditSecretMutationFn = ApolloReactCommon.MutationFunction<EditSecret
  * @example
  * const [editSecretMutation, { data, loading, error }] = useEditSecretMutation({
  *   variables: {
- *      applicationID: // value for 'applicationID'
+ *      application: // value for 'application'
  *      containerGroupID: // value for 'containerGroupID'
  *      secretID: // value for 'secretID'
  *      key: // value for 'key'
@@ -1953,9 +1916,9 @@ export type MeDaddyQueryResult = ApolloReactCommon.QueryResult<MeDaddyQuery, MeD
 export const MyApiKeysDocument = gql`
     query MyAPIKeys {
   me {
-    uuid
+    id
     apiKeys {
-      uuid
+      id
       description
       createdAt
     }
@@ -1990,12 +1953,12 @@ export type MyApiKeysQueryResult = ApolloReactCommon.QueryResult<MyApiKeysQuery,
 export const MyOrganizationsDocument = gql`
     query MyOrganizations {
   me {
-    uuid
+    id
     personalOrganization {
-      uuid
+      id
     }
     organizations {
-      uuid
+      id
       name
       username
     }
@@ -2030,7 +1993,7 @@ export type MyOrganizationsQueryResult = ApolloReactCommon.QueryResult<MyOrganiz
 export const NotificationsDocument = gql`
     query Notifications {
   notifications {
-    uuid
+    id
     title
     body
     createdAt
@@ -2066,7 +2029,7 @@ export type NotificationsQueryResult = ApolloReactCommon.QueryResult<Notificatio
 export const OnboardTotpDocument = gql`
     query OnboardTOTP {
   me {
-    uuid
+    id
     name
     onboardTOTP
   }
@@ -2265,7 +2228,7 @@ export type UpdateAccountMutationHookResult = ReturnType<typeof useUpdateAccount
 export type UpdateAccountMutationResult = ApolloReactCommon.MutationResult<UpdateAccountMutation>;
 export type UpdateAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateAccountMutation, UpdateAccountMutationVariables>;
 export const UpdateApplicationDocument = gql`
-    mutation UpdateApplication($id: Int!, $application: ApplicationInput!) {
+    mutation UpdateApplication($id: ID!, $application: ApplicationInput!) {
   application(id: $id) {
     update(application: $application) {
       ...ApplicationFragment
@@ -2300,7 +2263,7 @@ export type UpdateApplicationMutationHookResult = ReturnType<typeof useUpdateApp
 export type UpdateApplicationMutationResult = ApolloReactCommon.MutationResult<UpdateApplicationMutation>;
 export type UpdateApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>;
 export const UpdateComponentDocument = gql`
-    mutation UpdateComponent($applicationID: Int!, $componentID: Int!, $component: ComponentInput!) {
+    mutation UpdateComponent($applicationID: ID!, $componentID: ID!, $component: ComponentInput!) {
   application(id: $applicationID) {
     updateComponent(id: $componentID, component: $component) {
       ...ComponentFragment

@@ -1,7 +1,7 @@
-mutation DeleteComponent($applicationID: Int!, $id: Int!) {
-    application(id: $applicationID) {
+mutation DeleteComponent($application: ID!, $id: ID!) {
+    application(id: $application) {
         deleteComponent(id: $id) {
-            uuid
+            id
         }
     }
 }

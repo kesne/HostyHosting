@@ -1,19 +1,15 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-    CreateDateColumn,
-    UpdateDateColumn,
     JoinColumn,
     OneToMany,
     Unique,
-    Generated,
 } from 'typeorm';
-import { ObjectType, Field, Int, registerEnumType } from 'type-graphql';
+import { ObjectType, Field, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
 import { ContainerGroup } from './ContainerGroup';
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Matches, Length } from 'class-validator';
 import { NAME_REGEX } from '../constants';
@@ -30,16 +26,7 @@ registerEnumType(DeploymentStrategy, {
 @Entity()
 @ObjectType()
 @Unique(['name', 'application'])
-export class Component extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class Component extends ExternalEntity {
     @Field()
     @Column()
     @Matches(NAME_REGEX)
@@ -56,14 +43,6 @@ export class Component extends BaseEntity {
     @Field()
     @Column()
     image!: string;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     @ManyToOne(
         () => Application,

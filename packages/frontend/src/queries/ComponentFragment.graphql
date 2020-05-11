@@ -1,5 +1,5 @@
 fragment ComponentFragment on Component {
-    uuid
+    id
     name
     deploymentStrategy
     image

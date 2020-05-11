@@ -1,9 +1,9 @@
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ObjectType, Field, ID } from 'type-graphql';
 
 @ObjectType()
 export default class Container {
-    @Field(() => Int)
-    id!: number;
+    @Field(() => ID)
+    id!: string;
 
     @Field()
     status!: string;

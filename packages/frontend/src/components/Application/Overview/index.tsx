@@ -1,15 +1,16 @@
 import React from 'react';
 import Card from '../../ui/Card';
-import { useApplicationParams } from '../ApplicationContext';
 import { useApplicationQuery } from '../../../queries';
 import Spinner from '../../Spinner';
 import formatDate from '../../../utils/formatDate';
+import { useParams } from 'react-router-dom';
 
 export default function Overview() {
-    const params = useApplicationParams();
+    const params = useParams();
     const { data } = useApplicationQuery({
         variables: {
-            ...params,
+            organization: params.organization,
+            application: params.application
         },
     });
 

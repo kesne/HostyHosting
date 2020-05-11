@@ -1,14 +1,14 @@
 query Applications($org: String) {
     organization(username: $org) {
-        uuid
+        id
         username
         applications {
-            uuid
+            id
             name
             description
         }
         environments {
-            uuid
+            id
             name
             label
         }

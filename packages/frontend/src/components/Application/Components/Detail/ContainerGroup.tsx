@@ -10,8 +10,8 @@ import CreateContainerGroup from './CreateContainerGroup';
 import EditOrAddSecret from './EditOrAddSecret';
 
 type Props = {
-    component: number;
-    environment: number;
+    component: string;
+    environment: string;
 };
 
 export default function ContainerGroup({ component, environment }: Props) {
@@ -30,7 +30,7 @@ export default function ContainerGroup({ component, environment }: Props) {
         return <div>I'm not an ass.</div>;
     }
 
-    const { containerGroup } = data.organization.application.component;
+    const { containerGroup } = data.component;
 
     return (
         <>

@@ -22,7 +22,7 @@ export default function Components() {
         return <Spinner />;
     }
 
-    const { application } = data.organization;
+    const { application } = data;
 
     return (
         <Card

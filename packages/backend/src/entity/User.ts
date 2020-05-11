@@ -1,21 +1,17 @@
 import { authenticator } from 'otplib';
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
     OneToMany,
     OneToOne,
     JoinColumn,
-    Generated,
 } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Lazy } from '../types';
 import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { IsEmail, Length, Matches } from 'class-validator';
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { APIKey } from './APIKey';
 import { OrganizationMembership } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
@@ -40,20 +36,11 @@ export enum GrantType {
 
 @Entity()
 @ObjectType()
-export class User extends BaseEntity {
+export class User extends ExternalEntity {
     /**
      * Denotes how the User entity was authenticated.
      */
     grantType: GrantType = GrantType.NONE;
-
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
 
     @Field(() => Int, { nullable: true })
     @Column({ nullable: true })
@@ -82,15 +69,6 @@ export class User extends BaseEntity {
     get isPasswordless() {
         return this.githubID && !this.passwordHash;
     }
-
-    // TODO: Need better types here:
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     async setPassword(newPassword: string) {
         this.passwordHash = await hash(newPassword, SALT_ROUNDS);
@@ -129,10 +107,10 @@ export class User extends BaseEntity {
 
     signIn(type: AuthType = AuthType.FULL) {
         const { session } = getCurrentRequest();
-        session.userID = this.id;
+        session.userID = this.pk;
         session.type = type;
         if (type === AuthType.FULL) {
-            setUserCookie(this.id);
+            setUserCookie(this.pk);
         }
     }
 

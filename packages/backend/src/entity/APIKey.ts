@@ -1,30 +1,17 @@
 import crypto from 'crypto';
 import {
     Entity,
-    PrimaryGeneratedColumn,
     ManyToOne,
-    CreateDateColumn,
-    UpdateDateColumn,
     Column,
     BeforeInsert,
-    Generated,
 } from 'typeorm';
 import { User } from './User';
-import { BaseEntity } from './BaseEntity';
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ExternalEntity } from './BaseEntity';
+import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
 @Entity()
-export class APIKey extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class APIKey extends ExternalEntity {
     // NOTE: Never expose this column externally via GraphQL.
     @Column()
     key!: string;
@@ -41,14 +28,6 @@ export class APIKey extends BaseEntity {
 
     @ManyToOne(() => User)
     user!: User;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     @BeforeInsert()
     generateKey() {

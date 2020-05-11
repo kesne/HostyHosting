@@ -1,16 +1,8 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    OneToMany,
-    CreateDateColumn,
-    UpdateDateColumn,
-    Generated,
-} from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { Application } from './Application';
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ObjectType, Field } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
 import { Environment } from './Environment';
@@ -19,7 +11,7 @@ import { NAME_REGEX } from '../constants';
 
 @ObjectType()
 @Entity()
-export class Organization extends BaseEntity {
+export class Organization extends ExternalEntity {
     static createPersonal(user: User) {
         const organization = new Organization();
         organization.name = 'Personal';
@@ -33,15 +25,6 @@ export class Organization extends BaseEntity {
 
         return { organization, membership };
     }
-
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
 
     /**
      * Denotes if a organization is a "Personal" organization.
@@ -97,14 +80,6 @@ export class Organization extends BaseEntity {
     @Field()
     @Column({ default: 10 })
     maxComputeUnits!: number;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     @OneToMany(
         () => OrganizationMembership,

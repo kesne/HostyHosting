@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 
 type AppAndOrg = {
-    organization: string;
     application: string;
 };
 
 const ApplicationContext = React.createContext<AppAndOrg | null>(null);
 
+// TODO: This really needs a better name at some point:
 export function useApplicationParams() {
     const data = useContext(ApplicationContext);
 

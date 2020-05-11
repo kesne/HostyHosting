@@ -1,36 +1,23 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-    CreateDateColumn,
-    UpdateDateColumn,
     OneToMany,
     Unique,
-    Generated,
 } from 'typeorm';
 import { Organization } from './Organization';
 import { User } from './User';
 import { Component } from './Component';
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ObjectType, Field } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { NAME_REGEX } from '../constants';
 
 @Entity()
 @ObjectType()
 @Unique(['name', 'organization'])
-export class Application extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class Application extends ExternalEntity {
     @Field()
     @Column()
     @Length(3, 20)
@@ -46,14 +33,6 @@ export class Application extends BaseEntity {
     @Field(() => User, { nullable: true })
     @ManyToOne(() => User, { lazy: true })
     createdBy!: Lazy<User>;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 
     @Field(() => Organization)
     @ManyToOne(

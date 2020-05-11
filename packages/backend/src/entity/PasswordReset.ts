@@ -1,26 +1,16 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     OneToOne,
     CreateDateColumn,
-    Column,
-    Generated,
     JoinColumn,
     AfterInsert,
 } from 'typeorm';
 import { User } from './User';
 import sendEmail from '../utils/sendEmail';
-import { BaseEntity } from './BaseEntity';
+import { InternalEntity } from './BaseEntity';
 
 @Entity()
-export class PasswordReset extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class PasswordReset extends InternalEntity {
     @OneToOne(() => User)
     @JoinColumn()
     user!: User;

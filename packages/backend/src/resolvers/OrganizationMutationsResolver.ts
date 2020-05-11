@@ -2,12 +2,12 @@ import {
     ObjectType,
     Arg,
     Mutation,
-    Int,
     Ctx,
     Authorized,
     Field,
     Resolver,
     ForbiddenError,
+    ID,
 } from 'type-graphql';
 import { Context } from '../types';
 import { Organization } from '../entity/Organization';
@@ -21,6 +21,7 @@ import { ApplicationInput } from './types/ApplicationInput';
 import { Environment } from '../entity/Environment';
 import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
 import { getCustomRepository, getRepository } from 'typeorm';
+import { OrganizationRepository } from '../repositories/OrganizationRepository';
 
 @ObjectType()
 class OrganizationMutations {
@@ -69,33 +70,35 @@ class OrganizationMutations {
 
 @Resolver()
 export class OrganizationMutationsResolver {
-    constructor(private organizationMembershipRepo = getRepository(OrganizationMembership)) {}
+    constructor(
+        private organizationMembershipRepo = getRepository(OrganizationMembership),
+        private organizationRepo = getCustomRepository(OrganizationRepository),
+    ) {}
 
     @Authorized()
     @Mutation(() => OrganizationMutations)
     async organization(
         @Ctx() { user }: Context,
-        @Arg('id', () => Int, {
+        @Arg('id', () => ID, {
             nullable: true,
             description:
                 'The ID of the organization that you will be performing mutations on. If empty, we will use the signed-in users personal organization.',
         })
-        id?: number,
+        id?: string,
     ) {
         if (!id) {
             const organization = await user.personalOrganization;
             return new OrganizationMutations(organization);
         }
 
+        const organization = await this.organizationRepo.findForUser(user, { id });
+
         // TODO: please please generalize this into the repo:
         const membership = await this.organizationMembershipRepo.findOneOrFail({
             where: {
                 user,
-                organization: {
-                    id,
-                },
+                organization,
             },
-            relations: ['organization'],
         });
 
         // All mutations to an organization require AT LEAST write access.
@@ -103,6 +106,6 @@ export class OrganizationMutationsResolver {
             throw new ForbiddenError();
         }
 
-        return new OrganizationMutations(membership.organization);
+        return new OrganizationMutations(organization);
     }
 }

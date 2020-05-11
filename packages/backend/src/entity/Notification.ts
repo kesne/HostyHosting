@@ -1,13 +1,9 @@
-import { BaseEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-    Generated,
 } from 'typeorm';
-import { Field, Int, ObjectType, registerEnumType } from 'type-graphql';
+import { Field, ObjectType, registerEnumType } from 'type-graphql';
 
 export enum NotificationType {
     INFO = 'INFO',
@@ -21,16 +17,7 @@ registerEnumType(NotificationType, {
 
 @ObjectType()
 @Entity()
-export class Notification extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Field()
-    @Column()
-    @Generated('uuid')
-    uuid!: string;
-
+export class Notification extends ExternalEntity {
     @Field()
     @Column()
     title!: string;
@@ -38,12 +25,4 @@ export class Notification extends BaseEntity {
     @Field()
     @Column()
     body!: string;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @Field()
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 }

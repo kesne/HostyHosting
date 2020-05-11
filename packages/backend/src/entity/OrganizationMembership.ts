@@ -1,13 +1,10 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     ManyToOne,
-    CreateDateColumn,
-    UpdateDateColumn,
     Column,
 } from 'typeorm';
 import { User } from './User';
-import { BaseEntity } from './BaseEntity';
+import { InternalEntity } from './BaseEntity';
 import { Organization } from './Organization';
 import { registerEnumType } from 'type-graphql';
 
@@ -38,10 +35,7 @@ registerEnumType(OrganizationPermission, {
 });
 
 @Entity()
-export class OrganizationMembership extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id!: number;
-
+export class OrganizationMembership extends InternalEntity {
     @Column({ type: 'enum', enum: OrganizationPermission, default: OrganizationPermission.READ })
     permission!: OrganizationPermission;
 
@@ -56,10 +50,4 @@ export class OrganizationMembership extends BaseEntity {
         user => user.organizationMemberships,
     )
     user!: User;
-
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date;
-
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 }

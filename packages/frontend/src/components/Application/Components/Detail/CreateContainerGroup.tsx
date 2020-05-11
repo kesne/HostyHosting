@@ -15,8 +15,8 @@ const Sizes = [
 ];
 
 type Props = {
-    component: number;
-    environment: number;
+    component: string;
+    environment: string;
     open: boolean;
     onClose(): void;
 };

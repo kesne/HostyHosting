@@ -5,13 +5,13 @@ import Button, { ButtonGroup } from '../../../ui/Button';
 import { Reference } from '@apollo/client';
 
 export type SecretData = {
-    id: number;
+    id: string;
     key: string;
     value: string;
 };
 
 type Props = {
-    containerGroupID: number;
+    containerGroupID: string;
     onEdit(secret: SecretData): void;
     secret: SecretData;
 };

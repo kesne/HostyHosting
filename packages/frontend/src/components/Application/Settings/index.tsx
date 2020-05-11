@@ -4,11 +4,16 @@ import Information from './Information';
 import Region from './Region';
 import { useApplicationQuery } from '../../../queries';
 import { useBreadcrumb } from '../Breadcrumbs';
-import { useApplicationParams } from '../ApplicationContext';
+import { useParams } from 'react-router';
 
 export default function Settings() {
-    const params = useApplicationParams();
-    const { data } = useApplicationQuery({ variables: { ...params } });
+    const params = useParams();
+    const { data } = useApplicationQuery({
+        variables: {
+            organization: params.organization,
+            application: params.application,
+        },
+    });
 
     useBreadcrumb({
         name: 'Settings',

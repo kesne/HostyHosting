@@ -11,6 +11,27 @@ import { Organization } from '../entity/Organization';
 
 @EntityRepository(Application)
 export class ApplicationRepository extends Repository<Application> {
+    async findForUserByID(user: User, id: string, permission?: OrganizationPermission) {
+        const organizationMembershipRepo = getRepository(OrganizationMembership);
+
+        const application = await this.findOneOrFail({
+            where: { id },
+        });
+
+        const membership = await organizationMembershipRepo.findOneOrFail({
+            where: {
+                user,
+                organization: await application.organization,
+            },
+        });
+
+        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
+            throw new ForbiddenError();
+        }
+
+        return application;
+    }
+
     /**
      * Loads an application and verifies that a given user has access
      * to this application. If they do not, it will throw.
