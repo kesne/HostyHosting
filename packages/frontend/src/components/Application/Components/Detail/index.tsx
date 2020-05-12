@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useComponentQuery } from '../../../../queries';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
-import { useBreadcrumb } from '../../Breadcrumbs';
+import { Breadcrumb } from '../../Breadcrumbs';
 import useBoolean from '../../../../utils/useBoolean';
 import Tabs from '../../../ui/Tabs';
 import ContainerGroup from './ContainerGroup';
@@ -27,30 +27,6 @@ export default function Detail() {
         }
     }, [data]);
 
-    useBreadcrumb({
-        name: data?.application.component.name || '...',
-        url: params.component,
-        // TODO: I think we really should do this with a component instead of with a hook like this.
-        // This hook means things like conditional rendering are pretty hard, and it also means we need to call it
-        // before any conditional return. So we should just have a <BreadcrumbActions> component
-        // that can deal with the portal nonsense. Also this should probably just be a portal.
-        actions: (
-            <>
-                <span className="ml-3 relative shadow-sm rounded-md">
-                    {/* <DeleteComponent id={data?.application.component.id} /> */}
-                </span>
-                <span className="ml-3 relative shadow-sm rounded-md">
-                    <Button onClick={editingOn}>Edit</Button>
-                    {/* <EditComponent
-                            component={component}
-                            visible={editing}
-                            onClose={editingOff}
-                        /> */}
-                </span>
-            </>
-        ),
-    });
-
     if (!data) {
         return <div>Hol' up.</div>;
     }
@@ -59,7 +35,25 @@ export default function Detail() {
     const { component } = application;
 
     return (
-        <>
+        <Breadcrumb
+            name={data.application.component.name}
+            url={params.component}
+            actions={
+                <>
+                    <span className="ml-3 relative shadow-sm rounded-md">
+                        {/* <DeleteComponent id={data?.application.component.id} /> */}
+                    </span>
+                    <span className="ml-3 relative shadow-sm rounded-md">
+                        <Button onClick={editingOn}>Edit</Button>
+                        {/* <EditComponent
+                                    component={component}
+                                    visible={editing}
+                                    onClose={editingOff}
+                                /> */}
+                    </span>
+                </>
+            }
+        >
             <div className="mb-4">
                 <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
                     <div className="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
@@ -102,6 +96,6 @@ export default function Detail() {
                 }))}
             />
             {environment && <ContainerGroup component={component.id} environment={environment} />}
-        </>
+        </Breadcrumb>
     );
 }

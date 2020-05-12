@@ -37,7 +37,8 @@
         "react-router": "^6.0.0-alpha.4",
         "react-router-dom": "^6.0.0-alpha.4",
         "tailwindcss": "^1.2.0",
-        "typeface-inter": "^3.12.0"
+        "typeface-inter": "^3.12.0",
+        "zustand": "^2.2.3"
     },
     "scripts": {
         "codegen": "graphql-codegen",

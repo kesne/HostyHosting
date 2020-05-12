@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import cookie from 'js-cookie';
+import create from 'zustand';
 
 const USER_COOKIE = 'userID';
 
@@ -7,49 +7,30 @@ function get() {
     return cookie.get(USER_COOKIE) !== '0';
 }
 
+// TODO: When we refactor away having nested entities under "me", we can get rid of this.
 export function getUserID() {
     return cookie.get(USER_COOKIE);
 }
 
-type Callback = (value: boolean) => void;
-
-let current = get();
-const watchers = new Set<Callback>();
-function subscribe(callback: Callback) {
-    watchers.add(callback);
-    return () => {
-        watchers.delete(callback);
-    };
-}
-
-function notify() {
-    watchers.forEach(cb => cb(current));
-}
+const [useUserStore, api] = create<{ hasUser: boolean }>(() => ({
+    hasUser: get(),
+}));
 
 export function checkCookies() {
-    let next = get();
-    if (next !== current) {
-        current = next;
-        notify();
-        return true;
-    }
-    return false;
+    return api.setState({ hasUser: get() });
 }
 
-// TODO: This should redirect ???
+// TODO: Should this redirect, or is that a concern of the consumer?
+// If this needs to redirect, it would need to be a hook.
 export function signOut() {
     cookie.remove(USER_COOKIE);
     checkCookies();
 }
 
 export function getHasUser() {
-    return current;
+    return api.getState().hasUser;
 }
 
 export function useHasUser() {
-    const [hasUser, setHasUser] = useState(current);
-
-    useEffect(() => subscribe(value => setHasUser(value)), []);
-
-    return hasUser;
-}
+    return useUserStore(state => state.hasUser);
+};

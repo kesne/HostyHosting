@@ -6,7 +6,6 @@ import {
     Outlet,
     useMatch,
     useResolvedLocation,
-    useLocation,
 } from 'react-router-dom';
 import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
@@ -17,25 +16,7 @@ import PageHeader from '../ui/PageHeader';
 import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
 import Spinner from '../Spinner';
-import Breadcrumbs, { Provider as BreadcrumbProvider } from './Breadcrumbs';
-
-const LAYOUT_TABS = [
-    {
-        label: 'Overview',
-        value: 'overview',
-        to: 'overview',
-    },
-    {
-        label: 'Components',
-        value: 'components',
-        to: `components`,
-    },
-    {
-        label: 'Settings',
-        value: 'settings',
-        to: `settings`,
-    },
-];
+import { BreadcrumbsHeader } from './Breadcrumbs';
 
 function ApplicationLayout() {
     const { pathname } = useResolvedLocation('.');
@@ -95,34 +76,32 @@ export default function Application() {
     const { application } = organization;
 
     return (
-        <BreadcrumbProvider
-            root={[
-                {
-                    name: application.name,
-                    url: '.',
-                },
-                {
-                    name: organization.name,
-                    url: '../..',
-                },
-            ]}
-        >
-            <ApplicationContext.Provider value={applicationContext}>
-                <PageHeader>
-                    <Breadcrumbs />
-                </PageHeader>
+        <ApplicationContext.Provider value={applicationContext}>
+            <PageHeader>
+                <BreadcrumbsHeader
+                    root={[
+                        {
+                            name: application.name,
+                            url: '.',
+                        },
+                        {
+                            name: organization.name,
+                            url: '../..',
+                        },
+                    ]}
+                />
+            </PageHeader>
 
-                <Container>
-                    <Routes>
-                        <Route path="/" element={<ApplicationLayout />}>
-                            <Route path="/" element={<Overview />} />
-                            <Route path="components" element={<Components list />} />
-                            <Route path="settings" element={<Settings />} />
-                        </Route>
-                        <Route path="components/*" element={<Components />} />
-                    </Routes>
-                </Container>
-            </ApplicationContext.Provider>
-        </BreadcrumbProvider>
+            <Container>
+                <Routes>
+                    <Route path="/" element={<ApplicationLayout />}>
+                        <Route path="/" element={<Overview />} />
+                        <Route path="components" element={<Components list />} />
+                        <Route path="settings" element={<Settings />} />
+                    </Route>
+                    <Route path="components/*" element={<Components />} />
+                </Routes>
+            </Container>
+        </ApplicationContext.Provider>
     );
 }

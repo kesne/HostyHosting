@@ -2,23 +2,24 @@ import React from 'react';
 import List from './List';
 import Detail from './Detail';
 import { Route, Routes } from 'react-router-dom';
-import { useBreadcrumb } from '../Breadcrumbs';
+import { Breadcrumb } from '../Breadcrumbs';
 
 export default function Components({ list }: { list?: boolean }) {
-    useBreadcrumb({
-        name: 'Components',
-        url: 'components',
-    });
-
     if (list) {
-        return <List />;
+        return (
+            <Breadcrumb name="Components" url="components">
+                <List />
+            </Breadcrumb>
+        );
     }
 
     return (
-        <Routes>
-            <Route path=":component">
-                <Detail />
-            </Route>
-        </Routes>
+        <Breadcrumb name="Components" url="components">
+            <Routes>
+                <Route path=":component">
+                    <Detail />
+                </Route>
+            </Routes>
+        </Breadcrumb>
     );
 }

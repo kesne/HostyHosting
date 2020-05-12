@@ -1,63 +1,74 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect } from 'react';
+import create from 'zustand';
 import { Link } from 'react-router-dom';
 
 type Breadcrumb = {
     name: string;
     url: string;
-    actions?: React.ReactElement;
+    actions?: React.ReactElement | null;
 };
 
-export const BreadcrumbContext = React.createContext<{
-    list: Breadcrumb[];
+type StoreState = {
+    breadcrumbs: (Breadcrumb & { id: string })[];
     add(breadcrumb: Breadcrumb): string;
+    update(id: string, breadcrumb: Breadcrumb): void;
     remove(id: string): void;
-} | null>(null);
+};
 
-export function Provider({ root, children }: { root: Breadcrumb[]; children: React.ReactNode }) {
-    const [list, setList] = useState<(Breadcrumb & { id?: string })[]>(root);
+let nextBreadcrumbId = 0;
+const [useStore] = create<StoreState>(set => ({
+    breadcrumbs: [],
+    add(breadcrumb: Breadcrumb) {
+        const id = `crumb-${++nextBreadcrumbId}`;
+        set(state => ({ breadcrumbs: [{ ...breadcrumb, id }, ...state.breadcrumbs] }));
+        return id;
+    },
+    update(id: string, breadcrumb: Breadcrumb) {
+        set(state => ({
+            breadcrumbs: state.breadcrumbs.map(item => {
+                if (id === item.id) {
+                    return { ...breadcrumb, id };
+                }
+                return item;
+            }),
+        }));
+    },
+    remove(id: string) {
+        set(state => ({
+            breadcrumbs: state.breadcrumbs.filter(item => item.id !== id),
+        }));
+    },
+}));
 
-    const breadcrumbs = useMemo(
-        () => ({
-            list,
-            add(breadcrumb: Breadcrumb) {
-                // TODO: Make this better:
-                const id = String(Math.round(Math.random() * 10000));
-                setList(list => [{ ...breadcrumb, id }, ...list]);
-                return id;
-            },
-            remove(id: string) {
-                setList(list => list.filter(item => item.id !== id));
-            },
-        }),
-        [list, setList],
-    );
+export function Breadcrumb({
+    children,
+    ...breadcrumb
+}: Breadcrumb & { children: React.ReactNode }) {
+    const currentCrumb = useRef<string>();
+    const add = useStore(state => state.add);
+    const update = useStore(state => state.update);
+    const remove = useStore(state => state.remove);
 
-    return <BreadcrumbContext.Provider value={breadcrumbs}>{children}</BreadcrumbContext.Provider>;
-}
-
-export function useBreadcrumb(breadcrumb: Breadcrumb) {
-    const breadcrumbs = useContext(BreadcrumbContext);
-
-    if (!breadcrumbs) {
-        throw new Error('This hook must be used in a breadcrumb provider.');
+    if (!currentCrumb.current) {
+        currentCrumb.current = add(breadcrumb);
     }
 
     useEffect(() => {
-        const id = breadcrumbs.add(breadcrumb);
+        update(currentCrumb.current!, breadcrumb);
+    }, [breadcrumb.name, breadcrumb.url, breadcrumb.actions]);
+
+    useEffect(() => {
         return () => {
-            breadcrumbs.remove(id);
+            remove(currentCrumb.current!);
         };
-    }, [breadcrumb.name, breadcrumb.url]);
+    }, []);
+
+    return <>{children}</>;
 }
 
-export default function Breadcrumbs() {
-    const breadcrumbs = useContext(BreadcrumbContext);
-
-    if (!breadcrumbs) {
-        throw new Error('This hook must be used in a breadcrumb provider.');
-    }
-
-    const [current, ...rest] = breadcrumbs.list;
+export function BreadcrumbsHeader({ root }: any) {
+    const breadcrumbs = useStore(state => state.breadcrumbs);
+    const [current, ...rest] = [...breadcrumbs, ...root];
 
     return (
         <div>
