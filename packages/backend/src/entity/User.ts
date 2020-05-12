@@ -140,5 +140,5 @@ export class User extends ExternalEntity {
         apiKey => apiKey.user,
         { lazy: true },
     )
-    apiKeys!: Lazy<APIKey>;
+    apiKeys!: Lazy<APIKey[]>;
 }

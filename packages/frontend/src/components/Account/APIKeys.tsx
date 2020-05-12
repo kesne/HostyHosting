@@ -7,6 +7,7 @@ import useBoolean from '../../utils/useBoolean';
 import { useLazyLoadQuery, graphql, useMutation } from 'react-relay/hooks';
 import { APIKeysQuery } from './__generated__/APIKeysQuery.graphql';
 import { APIKeysDeleteMutation } from './__generated__/APIKeysDeleteMutation.graphql';
+import { ConnectionHandler } from 'relay-runtime';
 
 export default function APIKeys() {
     const [open, { on, off }] = useBoolean(false);
@@ -14,7 +15,7 @@ export default function APIKeys() {
     const [commit] = useMutation<APIKeysDeleteMutation>(graphql`
         mutation APIKeysDeleteMutation($id: ID!) {
             deleteAPIKey(id: $id) {
-                ok
+                id
             }
         }
     `);
@@ -22,10 +23,14 @@ export default function APIKeys() {
     const data = useLazyLoadQuery<APIKeysQuery>(
         graphql`
             query APIKeysQuery {
-                apiKeys {
-                    id
-                    description
-                    createdAt
+                apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
+                    edges {
+                        node {
+                            id
+                            description
+                            createdAt
+                        }
+                    }
                 }
             }
         `,
@@ -34,22 +39,33 @@ export default function APIKeys() {
 
     function handleDelete(id: string) {
         return () => {
-            commit({ variables: { id } });
-            // deleteAPIKey({
-            //     variables: { id },
-            //     update(cache) {
-            //         cache.modify(
-            //             {
-            //                 apiKeys(keys: Reference[], { readField }) {
-            //                     return keys.filter(key => id !== readField('id', key));
-            //                 },
-            //             },
-            //             `User:${getUserID()}`,
-            //         );
+            commit({
+                variables: { id },
+                configs: [
+                    {
+                        type: 'RANGE_DELETE',
+                        parentID: 'client:root',
+                        connectionKeys: [
+                            {
+                                key: 'APIKeys_apiKeys',
+                            },
+                        ],
+                        pathToConnection: ['client:root', 'apiKeys'],
+                        deletedIDFieldName: 'id',
+                    },
+                ],
+                // updater: store => {
+                //     const apiKey = store.get('apiKeys');
 
-            //         cache.evict(`APIKey:${id}`);
-            //     },
-            // });
+                //     console.log(apiKey);
+
+                //     if (!apiKey) return;
+
+                //     const conn = ConnectionHandler.getConnection(apiKey, 'APIKeys_apiKeys');
+
+                //     console.log({ conn });
+                // },
+            });
         };
     }
 
@@ -57,8 +73,8 @@ export default function APIKeys() {
     return (
         <>
             <Card title="Manage API Keys" actions={<Button onClick={on}>Create API Key</Button>}>
-                <List items={data.apiKeys}>
-                    {apiKey => (
+                <List items={data.apiKeys.edges}>
+                    {({ node: apiKey }) => (
                         <ListItem key={apiKey.id}>
                             <div className="flex justify-between">
                                 <div>{apiKey.description}</div>

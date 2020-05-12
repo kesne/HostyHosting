@@ -16,9 +16,13 @@ function fetchQuery(operation, variables) {
     });
 }
 
+const store = new Store(new RecordSource());
+
 const environment = new Environment({
     network: Network.create(fetchQuery),
-    store: new Store(new RecordSource()),
+    store,
 });
+
+global.store = store;
 
 export default environment;

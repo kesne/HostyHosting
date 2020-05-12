@@ -11,6 +11,18 @@ type APIKey {
   description: String!
 }
 
+type APIKeyConnection {
+  pageInfo: PageInfo!
+  edges: [APIKeyEdge!]!
+}
+
+type APIKeyEdge {
+  node: APIKey!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
+}
+
 type Application {
   id: ID!
   createdAt: DateTime!
@@ -121,7 +133,7 @@ type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
   createAPIKey(description: String!): APIKey!
-  deleteAPIKey(id: ID!): Result!
+  deleteAPIKey(id: ID!): APIKey!
   application(id: ID!): ApplicationMutations!
   organization(
     """
@@ -176,8 +188,27 @@ type OrganizationMutations {
   createApplication(application: ApplicationInput!): Application!
 }
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: ID
+  endCursor: ID
+}
+
 type Query {
-  apiKeys: [APIKey!]!
+  apiKeys(
+    """Paginate before opaque cursor"""
+    before: ID
+
+    """Paginate after opaque cursor"""
+    after: ID
+
+    """Paginate first"""
+    first: Int
+
+    """Paginate last"""
+    last: Int
+  ): APIKeyConnection!
   getAPIKeyFromRequest(uuid: String!): String
   application(id: ID!): Application!
   component(id: ID!): Component!

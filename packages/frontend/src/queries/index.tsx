@@ -22,6 +22,19 @@ export type ApiKey = {
   description: Scalars['String'],
 };
 
+export type ApiKeyConnection = {
+   __typename?: 'APIKeyConnection',
+  pageInfo: PageInfo,
+  edges: Array<ApiKeyEdge>,
+};
+
+export type ApiKeyEdge = {
+   __typename?: 'APIKeyEdge',
+  node: ApiKey,
+  /** Used in `before` and `after` args */
+  cursor: Scalars['ID'],
+};
+
 export type Application = {
    __typename?: 'Application',
   id: Scalars['ID'],
@@ -193,7 +206,7 @@ export type Mutation = {
   createAPIKeyRequest: Scalars['String'],
   grantAPIKey: Result,
   createAPIKey: ApiKey,
-  deleteAPIKey: Result,
+  deleteAPIKey: ApiKey,
   application: ApplicationMutations,
   organization: OrganizationMutations,
   exchangeTOTP: Result,
@@ -345,9 +358,17 @@ export type OrganizationMutationsCreateApplicationArgs = {
   application: ApplicationInput
 };
 
+export type PageInfo = {
+   __typename?: 'PageInfo',
+  hasNextPage: Scalars['Boolean'],
+  hasPreviousPage: Scalars['Boolean'],
+  startCursor?: Maybe<Scalars['ID']>,
+  endCursor?: Maybe<Scalars['ID']>,
+};
+
 export type Query = {
    __typename?: 'Query',
-  apiKeys: Array<ApiKey>,
+  apiKeys: ApiKeyConnection,
   getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
   component: Component,
@@ -355,6 +376,14 @@ export type Query = {
   notifications: Array<Notification>,
   organization: Organization,
   me: User,
+};
+
+
+export type QueryApiKeysArgs = {
+  before?: Maybe<Scalars['ID']>,
+  after?: Maybe<Scalars['ID']>,
+  first?: Maybe<Scalars['Int']>,
+  last?: Maybe<Scalars['Int']>
 };
 
 
@@ -672,8 +701,8 @@ export type DeleteApiKeyMutationVariables = {
 export type DeleteApiKeyMutation = (
   { __typename?: 'Mutation' }
   & { deleteAPIKey: (
-    { __typename?: 'Result' }
-    & Pick<Result, 'ok'>
+    { __typename?: 'APIKey' }
+    & Pick<ApiKey, 'id'>
   ) }
 );
 
@@ -1514,7 +1543,7 @@ export type CreateEnvironmentMutationOptions = ApolloReactCommon.BaseMutationOpt
 export const DeleteApiKeyDocument = gql`
     mutation DeleteAPIKey($id: ID!) {
   deleteAPIKey(id: $id) {
-    ok
+    id
   }
 }
     `;

@@ -7,7 +7,7 @@ export type APIKeysDeleteMutationVariables = {
 };
 export type APIKeysDeleteMutationResponse = {
     readonly deleteAPIKey: {
-        readonly ok: boolean;
+        readonly id: string;
     };
 };
 export type APIKeysDeleteMutation = {
@@ -22,7 +22,7 @@ mutation APIKeysDeleteMutation(
   $id: ID!
 ) {
   deleteAPIKey(id: $id) {
-    ok
+    id
   }
 }
 */
@@ -46,7 +46,7 @@ v1 = [
         "variableName": "id"
       }
     ],
-    "concreteType": "Result",
+    "concreteType": "APIKey",
     "kind": "LinkedField",
     "name": "deleteAPIKey",
     "plural": false,
@@ -55,7 +55,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -83,9 +83,9 @@ return {
     "metadata": {},
     "name": "APIKeysDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation APIKeysDeleteMutation(\n  $id: ID!\n) {\n  deleteAPIKey(id: $id) {\n    ok\n  }\n}\n"
+    "text": "mutation APIKeysDeleteMutation(\n  $id: ID!\n) {\n  deleteAPIKey(id: $id) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'e6c6cd7571ff802261ba1cbdea67257a';
+(node as any).hash = '7ad0520cf5640e96c7817f6811804355';
 export default node;
