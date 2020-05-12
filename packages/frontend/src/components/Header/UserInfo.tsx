@@ -1,28 +1,36 @@
 import React from 'react';
-import { graphql, useLazyLoadQuery } from 'react-relay/hooks';
-import { UserNavQuery } from './__generated__/UserNavQuery.graphql';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay/hooks';
 import useBoolean from '../../utils/useBoolean';
 import { AnimatePresence, motion } from 'framer-motion';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSignOutMutation } from '../../queries';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from '../ui/constants';
 import HeaderLink from './HeaderLink';
+import { UserInfoSignOutMutation } from './__generated__/UserInfoSignOutMutation.graphql';
+import { UserInfoQuery } from './__generated__/UserInfoQuery.graphql';
 
 export default function UserInfo() {
     const navigate = useNavigate();
-    const [signOut] = useSignOutMutation();
     const [dropdownOpen, { toggle: dropdownToggle, off: dropdownOff }] = useBoolean(false);
     const mediumOrBigger = useMediaQuery(MEDIA_QUERIES.MEDIUM);
 
-    const data = useLazyLoadQuery<UserNavQuery>(
+    const [commit] = useMutation<UserInfoSignOutMutation>(graphql`
+        mutation UserInfoSignOutMutation {
+            signOut {
+                ok
+            }
+        }
+    `);
+
+    const data = useLazyLoadQuery<UserInfoQuery>(
         graphql`
-            query UserNavQuery {
+            query UserInfoQuery {
                 me {
                     id
                     username
                     name
+                    email
                 }
             }
         `,
@@ -30,8 +38,12 @@ export default function UserInfo() {
     );
 
     async function handleSignOut() {
-        await signOut();
-        navigate('/auth/sign-in');
+        commit({
+            variables: {},
+            onCompleted() {
+                navigate('/auth/sign-in');
+            },
+        });
     }
 
     if (!mediumOrBigger) {
