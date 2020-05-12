@@ -17,7 +17,12 @@ const [useUserStore, api] = create<{ hasUser: boolean }>(() => ({
 }));
 
 export function checkCookies() {
-    return api.setState({ hasUser: get() });
+    const hasUser = get();
+    if (api.getState().hasUser !== hasUser) {
+        api.setState({ hasUser: get() });
+        return true;
+    }
+    return false;
 }
 
 // TODO: Should this redirect, or is that a concern of the consumer?

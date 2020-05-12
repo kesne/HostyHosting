@@ -7,6 +7,7 @@ const httpLink = new HttpLink({
     // TODO: Replace this custom fetch cookie logic with a custom link:
     fetch: (input: RequestInfo, init?: RequestInit) =>
         fetch(input, init).then(res => {
+            // If the user state has changed, then we need to reset the apollo cache:
             if (checkCookies()) {
                 client.cache.reset();
             }
