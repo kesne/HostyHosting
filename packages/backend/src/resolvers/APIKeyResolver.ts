@@ -19,6 +19,11 @@ function getRedisKeyName(id: string) {
 export class APIKeyResolver {
     constructor(private apiKeyRepo = getCustomRepository(APIKeyRepository)) {}
 
+    @Query(() => [APIKey])
+    apiKeys(@Ctx() { user }: Context) {
+        return user.apiKeys;
+    }
+
     @Mutation(() => String)
     async createAPIKeyRequest(): Promise<string> {
         const uuid = uuidv4();
@@ -73,10 +78,7 @@ export class APIKeyResolver {
 
     @Authorized(GrantType.SESSION)
     @Mutation(() => Result)
-    async deleteAPIKey(
-        @Ctx() { user }: Context,
-        @Arg('id', () => ID) id: string,
-    ): Promise<Result> {
+    async deleteAPIKey(@Ctx() { user }: Context, @Arg('id', () => ID) id: string): Promise<Result> {
         const apiKey = await this.apiKeyRepo.findOneOrFail({
             where: {
                 id,
@@ -84,7 +86,7 @@ export class APIKeyResolver {
             },
         });
 
-        await this.apiKeyRepo.delete(apiKey.id);
+        await this.apiKeyRepo.delete(apiKey.pk);
 
         return new Result();
     }

@@ -15,7 +15,8 @@
         "codegen": "graphql-codegen",
         "relay": "relay-compiler",
         "build": "NODE_ENV=production webpack",
-        "dev": "concurrently -n codegen,webpack 'yarn run dev:codegen' 'yarn run dev:server'",
+        "dev": "concurrently -n codegen,relay,webpack 'yarn run dev:codegen' 'yarn run dev:relay' 'yarn run dev:server'",
+        "dev:relay": "relay-compiler --watch",
         "dev:codegen": "graphql-codegen --watch",
         "dev:server": "NODE_ENV=development webpack-dev-server"
     },

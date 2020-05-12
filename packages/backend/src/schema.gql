@@ -177,6 +177,7 @@ type OrganizationMutations {
 }
 
 type Query {
+  apiKeys: [APIKey!]!
   getAPIKeyFromRequest(uuid: String!): String
   application(id: ID!): Application!
   component(id: ID!): Component!

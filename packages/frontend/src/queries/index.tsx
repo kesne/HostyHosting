@@ -347,6 +347,7 @@ export type OrganizationMutationsCreateApplicationArgs = {
 
 export type Query = {
    __typename?: 'Query',
+  apiKeys: Array<ApiKey>,
   getAPIKeyFromRequest?: Maybe<Scalars['String']>,
   application: Application,
   component: Component,

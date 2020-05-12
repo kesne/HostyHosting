@@ -47,7 +47,8 @@ services:
             - 'traefik.http.routers.backend.rule=Host(`hostyhosting.localhost`) && PathPrefix(`/api`)'
 
     frontend:
-        image: node:13
+        # image: node:13
+        build: ./packages/frontend
         command: yarn workspace @hh/frontend dev
         ports:
             - '127.0.0.1:3000:3000'

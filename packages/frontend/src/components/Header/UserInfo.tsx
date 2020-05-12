@@ -34,7 +34,7 @@ export default function UserInfo() {
                 }
             }
         `,
-        { id: '4' },
+        {},
     );
 
     async function handleSignOut() {
