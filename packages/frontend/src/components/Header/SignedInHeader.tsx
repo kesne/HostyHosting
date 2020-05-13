@@ -58,7 +58,9 @@ export default function SignedInHeader() {
                                         />
                                     </svg>
                                 </button>
-                                {notificationsOpen && <Notifications />}
+                                <Suspense fallback={null}>
+                                    {notificationsOpen && <Notifications />}
+                                </Suspense>
                             </div>
                             <div className="ml-3 relative">
                                 <Suspense fallback={null}>

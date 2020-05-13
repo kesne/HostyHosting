@@ -874,17 +874,6 @@ export type MyOrganizationsQuery = (
   ) }
 );
 
-export type NotificationsQueryVariables = {};
-
-
-export type NotificationsQuery = (
-  { __typename?: 'Query' }
-  & { notifications: Array<(
-    { __typename?: 'Notification' }
-    & Pick<Notification, 'id' | 'title' | 'body' | 'createdAt' | 'updatedAt'>
-  )> }
-);
-
 export type OnboardTotpQueryVariables = {};
 
 
@@ -1885,42 +1874,6 @@ export function useMyOrganizationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQ
 export type MyOrganizationsQueryHookResult = ReturnType<typeof useMyOrganizationsQuery>;
 export type MyOrganizationsLazyQueryHookResult = ReturnType<typeof useMyOrganizationsLazyQuery>;
 export type MyOrganizationsQueryResult = ApolloReactCommon.QueryResult<MyOrganizationsQuery, MyOrganizationsQueryVariables>;
-export const NotificationsDocument = gql`
-    query Notifications {
-  notifications {
-    id
-    title
-    body
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useNotificationsQuery__
- *
- * To run a query within a React component, call `useNotificationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNotificationsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useNotificationsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
-        return ApolloReactHooks.useQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, baseOptions);
-      }
-export function useNotificationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, baseOptions);
-        }
-export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQuery>;
-export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
-export type NotificationsQueryResult = ApolloReactCommon.QueryResult<NotificationsQuery, NotificationsQueryVariables>;
 export const OnboardTotpDocument = gql`
     query OnboardTOTP {
   me {
