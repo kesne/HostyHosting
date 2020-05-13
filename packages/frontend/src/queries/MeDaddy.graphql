@@ -1,5 +1,0 @@
-query MeDaddy {
-    me {
-        ...MeFragment
-    }
-}

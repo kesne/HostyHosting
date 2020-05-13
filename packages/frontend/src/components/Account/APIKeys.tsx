@@ -7,7 +7,6 @@ import useBoolean from '../../utils/useBoolean';
 import { useLazyLoadQuery, graphql, useMutation } from 'react-relay/hooks';
 import { APIKeysQuery } from './__generated__/APIKeysQuery.graphql';
 import { APIKeysDeleteMutation } from './__generated__/APIKeysDeleteMutation.graphql';
-import { ConnectionHandler } from 'relay-runtime';
 
 export default function APIKeys() {
     const [open, { on, off }] = useBoolean(false);
