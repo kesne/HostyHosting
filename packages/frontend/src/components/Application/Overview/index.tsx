@@ -1,24 +1,30 @@
 import React from 'react';
 import Card from '../../ui/Card';
-import { useApplicationQuery } from '../../../queries';
-import Spinner from '../../Spinner';
 import formatDate from '../../../utils/formatDate';
-import { useParams } from 'react-router-dom';
+import { useApplicationParams } from '../ApplicationContext';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { OverviewQuery } from './__generated__/OverviewQuery.graphql';
 
 export default function Overview() {
-    const params = useParams();
-    const { data } = useApplicationQuery({
-        variables: {
-            organization: params.organization,
-            application: params.application
-        },
+    const params = useApplicationParams();
+
+    const data = useLazyLoadQuery<OverviewQuery>(graphql`
+        query OverviewQuery($application: ID!) {
+            application(id: $application) {
+                id
+                description
+                updatedAt
+                createdAt
+                createdBy {
+                    name
+                }
+            }
+        }
+    `, {
+        application: params.application
     });
 
-    if (!data) {
-        return <Spinner />;
-    }
-
-    const { application } = data.organization;
+    const { application } = data;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
