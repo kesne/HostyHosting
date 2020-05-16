@@ -1,36 +1,45 @@
 import React from 'react';
-import { useDeleteComponentMutation } from '../../../../queries';
+import { useNavigate } from 'react-router';
+import { useMutation, graphql } from 'react-relay/hooks';
 import { useApplicationParams } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
-import { Navigate } from 'react-router-dom';
+import { DeleteComponentMutation } from './__generated__/DeleteComponentMutation.graphql';
 
 type Props = {
-    id: number;
+    id: string;
 };
 
 export default function DeleteComponent({ id }: Props) {
     const params = useApplicationParams();
-    const [deleteComponent, { data }] = useDeleteComponentMutation({
-        variables: {
-            ...params,
-            id,
-        },
-        update(cache, { data }) {
-            if (!data) return;
+    const navigate = useNavigate();
 
-            cache.evict(`Component:${id}`);
-        },
-    });
+    const [commit, isInFlight] = useMutation<DeleteComponentMutation>(graphql`
+        mutation DeleteComponentMutation($application: ID!, $id: ID!) {
+            application(id: $application) {
+                deleteComponent(id: $id) {
+                    id
+                }
+            }
+        }
+    `);
 
-    // NOTE: doing the redirection at this state (after state has propogated through react)
-    // causes a warning because we've already evicted all of the cached data.
-    // TODO: It might be better to imperatively redirect rather than doing it declarively.
-    if (data) {
-        return <Navigate to={`/applications/${applicationID}/components`} />;
+    function handleDelete() {
+        commit({
+            variables: {
+                application: params.application,
+                id,
+            },
+            onCompleted() {
+                // TODO: Because these elements are teleported in context, we need to define
+                // these routes relative to the root. Ideally, we would use a portal
+                // rather than this teleportation to ensure that context works correctly.
+                navigate('components', { replace: true });
+            },
+        });
     }
 
     return (
-        <Button variant="danger" onClick={() => deleteComponent()}>
+        <Button variant="danger" onClick={handleDelete} disabled={isInFlight}>
             Delete
         </Button>
     );

@@ -1,13 +1,12 @@
 import React from 'react';
 import Card, { CardContent } from '../../../ui/Card';
 import formatCurrency from '../../../../utils/formatCurrency';
-import { useContainerGroupQuery } from '../../../../queries';
-import { useApplicationParams } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
 import Secrets from './Secrets';
 import useBoolean from '../../../../utils/useBoolean';
 import CreateContainerGroup from './CreateContainerGroup';
-import EditOrAddSecret from './EditOrAddSecret';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { ContainerGroupQuery } from './__generated__/ContainerGroupQuery.graphql';
 
 type Props = {
     component: string;
@@ -15,20 +14,28 @@ type Props = {
 };
 
 export default function ContainerGroup({ component, environment }: Props) {
-    const params = useApplicationParams();
-    const { data } = useContainerGroupQuery({
-        variables: {
-            ...params,
+    const data = useLazyLoadQuery<ContainerGroupQuery>(
+        graphql`
+            query ContainerGroupQuery($component: ID!, $environment: ID!) {
+                component(id: $component) {
+                    id
+                    containerGroup(environment: $environment) {
+                        id
+                        monthlyPrice
+                        containerCount
+                        size
+                        ...Secrets_containerGroup
+                    }
+                }
+            }
+        `,
+        {
             component,
             environment,
         },
-    });
-    const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
-    const [addSecret, { on: addSecretOn, off: addSecretOff }] = useBoolean(false);
+    );
 
-    if (!data) {
-        return <div>I'm not an ass.</div>;
-    }
+    const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
 
     const { containerGroup } = data.component;
 
@@ -44,9 +51,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                                         Monthly Cost
                                     </dt>
                                     <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                        {formatCurrency(
-                                            containerGroup.monthlyPrice,
-                                        )}
+                                        {formatCurrency(containerGroup.monthlyPrice)}
                                     </dd>
                                 </dl>
                             </CardContent>
@@ -77,25 +82,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                         </Card>
                     </div>
                     <div className="mt-4">
-                        <Card
-                            title="Secrets"
-                            actions={
-                                <Button variant="primary" onClick={addSecretOn}>
-                                    Add
-                                </Button>
-                            }
-                        >
-                            <Secrets
-                                id={containerGroup.id}
-                                secrets={containerGroup.secrets}
-                            />
-                        </Card>
-                        <EditOrAddSecret
-                            id={containerGroup.id}
-                            open={addSecret}
-                            onClose={addSecretOff}
-                            create
-                        />
+                        <Secrets id={containerGroup.id} containerGroup={containerGroup} />
                     </div>
                 </>
             ) : (

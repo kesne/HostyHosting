@@ -1,5 +1,0 @@
-mutation ExchangeTOTP($token: String!) {
-    exchangeTOTP(token: $token) {
-        ok
-    }
-}

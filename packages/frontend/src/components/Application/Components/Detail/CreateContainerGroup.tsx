@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation, graphql } from 'react-relay/hooks';
 import clsx from 'clsx';
 import Label from '../../../ui/Label';
-import { ContainerSize, useCreateContainerGroupMutation } from '../../../../queries';
 import Input from '../../../ui/Input';
 import CreateModal from '../../../ui/CreateModal';
 import { useApplicationParams } from '../../ApplicationContext';
-import { Reference } from '@apollo/client';
+import {
+    CreateContainerGroupMutation,
+    ContainerSize,
+} from './__generated__/CreateContainerGroupMutation.graphql';
 
 const Sizes = [
-    { name: ContainerSize.S1x1, label: '1 Compute Unit, 128 mb' },
-    { name: ContainerSize.S2x2, label: '2 Compute Unit, 256 mb' },
-    { name: ContainerSize.S4x4, label: '4 Compute Unit, 512 mb' },
-    { name: ContainerSize.S8x8, label: '8 Compute Unit, 1024 mb' },
-];
+    { name: 'S1x1', label: '1 Compute Unit, 128 mb' },
+    { name: 'S2x2', label: '2 Compute Unit, 256 mb' },
+    { name: 'S4x4', label: '4 Compute Unit, 512 mb' },
+    { name: 'S8x8', label: '8 Compute Unit, 1024 mb' },
+] as const;
 
 type Props = {
     component: string;
@@ -24,43 +27,39 @@ type Props = {
 export default function CreateContainerGroup({ component, environment, open, onClose }: Props) {
     // TODO: CreateModal should support custom values:
     const params = useApplicationParams();
-    const [containerSize, setContainerSize] = useState<ContainerSize>(ContainerSize.S1x1);
-    const [createContainerGroup, { data, loading }] = useCreateContainerGroupMutation({
-        update(cache, { data }) {
-            if (!data) return;
+    const [containerSize, setContainerSize] = useState<ContainerSize>('S1x1');
 
-            cache.modify(
-                {
-                    containerGroup(existing: Reference, { toReference, storeFieldName }) {
-                        // TODO: I hate this, and honestly it might be easier to just refetch the parent query than try to do this correctly.
-                        if (
-                            storeFieldName === `containerGroup:${JSON.stringify({ environment })}`
-                        ) {
-                            return toReference(data.application.createContainerGroup);
-                        }
+    const [commit] = useMutation<CreateContainerGroupMutation>(graphql`
+        mutation CreateContainerGroupMutation(
+            $application: ID!
+            $containerGroup: ContainerGroupInput!
+        ) {
+            application(id: $application) {
+                createContainerGroup(containerGroup: $containerGroup) {
+                    id
+                    monthlyPrice
+                    containerCount
+                    size
+                    secrets {
+                        id
+                        key
+                        value
+                    }
+                }
+            }
+        }
+    `);
 
-                        return existing;
-                    },
-                },
-                `Component:${component}`,
-            );
-        },
-    });
-
+    // NOTE: This is needed because this state isn't managed in the react hook form.
+    // This ensures the form state is reset between subsequent opens of the modal.
     useEffect(() => {
         if (open) {
-            setContainerSize(ContainerSize.S1x1);
+            setContainerSize('S1x1');
         }
     }, [open]);
 
-    useEffect(() => {
-        if (data) {
-            onClose();
-        }
-    }, [data]);
-
     function handleSubmit(values: Record<string, string>) {
-        createContainerGroup({
+        commit({
             variables: {
                 ...params,
                 containerGroup: {
@@ -69,6 +68,9 @@ export default function CreateContainerGroup({ component, environment, open, onC
                     containerCount: Number(values.containerCount),
                     environmentID: environment,
                 },
+            },
+            onCompleted() {
+                onClose();
             },
         });
     }

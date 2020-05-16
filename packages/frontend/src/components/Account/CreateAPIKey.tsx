@@ -26,7 +26,7 @@ export default function CreateAPIKey({
                     id
                     description
                     createdAt
-                    privateKeys
+                    privateKey
                 }
             }
         }

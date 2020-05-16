@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useParams, Routes, Route, Outlet, useMatch, useResolvedLocation } from 'react-router-dom';
-import { useApplicationQuery } from '../../queries';
 import Settings from './Settings';
 import Overview from './Overview';
 import Components from './Components';
@@ -8,7 +7,6 @@ import ApplicationContext from './ApplicationContext';
 import PageHeader from '../ui/PageHeader';
 import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
-import Spinner from '../Spinner';
 import { BreadcrumbsHeader } from './Breadcrumbs';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ApplicationQuery } from './__generated__/ApplicationQuery.graphql';

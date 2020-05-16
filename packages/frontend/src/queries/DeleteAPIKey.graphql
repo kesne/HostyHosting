@@ -1,5 +1,0 @@
-mutation DeleteAPIKey($id: ID!) {
-    deleteAPIKey(id: $id) {
-        id
-    }
-}
