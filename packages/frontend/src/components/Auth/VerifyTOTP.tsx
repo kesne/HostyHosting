@@ -1,29 +1,34 @@
-import React, { useEffect } from 'react';
-import { useExchangeTotpMutation } from '../../queries';
+import React from 'react';
 import tokenInputRules from '../../utils/tokenInputRules';
 import { useForm } from 'react-hook-form';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import { useMutation, graphql } from 'react-relay/hooks';
+import { VerifyTOTPMutation } from './__generated__/VerifyTOTPMutation.graphql';
 
 type Props = {
     onSignIn(): void;
 };
 
 export default function VerifyTOTP({ onSignIn }: Props) {
-    const [exchangeTotp, { data, loading }] = useExchangeTotpMutation();
     const { register, errors, handleSubmit } = useForm();
 
-    useEffect(() => {
-        if (data) {
-            onSignIn();
+    const [commit, isInFlight] = useMutation<VerifyTOTPMutation>(graphql`
+        mutation VerifyTOTPMutation($token: String!) {
+            exchangeTOTP(token: $token) {
+                ok
+            }
         }
-    }, [data, onSignIn]);
+    `);
 
     function handleFinish(values: Record<string, any>) {
-        exchangeTotp({
+        commit({
             variables: {
-                token: values.token
-            }
+                token: values.token,
+            },
+            onCompleted() {
+                onSignIn();
+            },
         });
     }
 
@@ -39,10 +44,11 @@ export default function VerifyTOTP({ onSignIn }: Props) {
                 name="token"
                 ref={register(tokenInputRules)}
                 errors={errors}
+                disabled={isInFlight}
                 autoFocus
             />
 
-            <Button variant="primary" type="submit" disabled={loading} fullWidth>
+            <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
                 Verify Two Factor Auth
             </Button>
         </form>

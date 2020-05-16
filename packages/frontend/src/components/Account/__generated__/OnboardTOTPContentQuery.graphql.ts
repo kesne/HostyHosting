@@ -2,29 +2,27 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type UserInfoQueryVariables = {};
-export type UserInfoQueryResponse = {
+export type OnboardTOTPContentQueryVariables = {};
+export type OnboardTOTPContentQueryResponse = {
     readonly me: {
         readonly id: string;
-        readonly username: string;
         readonly name: string;
-        readonly email: string;
+        readonly onboardTOTP: string;
     };
 };
-export type UserInfoQuery = {
-    readonly response: UserInfoQueryResponse;
-    readonly variables: UserInfoQueryVariables;
+export type OnboardTOTPContentQuery = {
+    readonly response: OnboardTOTPContentQueryResponse;
+    readonly variables: OnboardTOTPContentQueryVariables;
 };
 
 
 
 /*
-query UserInfoQuery {
+query OnboardTOTPContentQuery {
   me {
     id
-    username
     name
-    email
+    onboardTOTP
   }
 }
 */
@@ -50,13 +48,6 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "username",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "name",
         "storageKey": null
       },
@@ -64,7 +55,7 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "email",
+        "name": "onboardTOTP",
         "storageKey": null
       }
     ],
@@ -76,7 +67,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserInfoQuery",
+    "name": "OnboardTOTPContentQuery",
     "selections": (v0/*: any*/),
     "type": "Query"
   },
@@ -84,17 +75,17 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "UserInfoQuery",
+    "name": "OnboardTOTPContentQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
     "id": null,
     "metadata": {},
-    "name": "UserInfoQuery",
+    "name": "OnboardTOTPContentQuery",
     "operationKind": "query",
-    "text": "query UserInfoQuery {\n  me {\n    id\n    username\n    name\n    email\n  }\n}\n"
+    "text": "query OnboardTOTPContentQuery {\n  me {\n    id\n    name\n    onboardTOTP\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '95fc268ed7574396f0525bf5f2d6c9af';
+(node as any).hash = '64347fe4ce234d195bda5c4d4397bf50';
 export default node;

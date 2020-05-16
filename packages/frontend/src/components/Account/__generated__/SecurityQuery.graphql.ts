@@ -30,7 +30,7 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "User",
+    "concreteType": "CurrentUser",
     "kind": "LinkedField",
     "name": "me",
     "plural": false,

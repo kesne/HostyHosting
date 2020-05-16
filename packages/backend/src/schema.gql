@@ -104,6 +104,32 @@ enum ContainerSize {
   S16x16
 }
 
+type CurrentUser {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  username: String!
+  email: String!
+  personalOrganization: Organization!
+  onboardTOTP: String!
+  organizations: [Organization!]!
+  hasTOTP: Boolean!
+  apiKeys(
+    """Paginate before opaque cursor"""
+    before: ID
+
+    """Paginate after opaque cursor"""
+    after: ID
+
+    """Paginate first"""
+    first: Int
+
+    """Paginate last"""
+    last: Int
+  ): APIKeyConnection!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -132,7 +158,7 @@ type ExternalEntity {
 type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
-  createAPIKey(description: String!): APIKey!
+  createAPIKey(description: String!): APIKeyEdge!
   deleteAPIKey(id: ID!): APIKey!
   application(id: ID!): ApplicationMutations!
   organization(
@@ -196,22 +222,10 @@ type PageInfo {
 }
 
 type Query {
-  apiKeys(
-    """Paginate before opaque cursor"""
-    before: ID
-
-    """Paginate after opaque cursor"""
-    after: ID
-
-    """Paginate first"""
-    first: Int
-
-    """Paginate last"""
-    last: Int
-  ): APIKeyConnection!
   getAPIKeyFromRequest(uuid: String!): String
   application(id: ID!): Application!
   component(id: ID!): Component!
+  me: CurrentUser!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(
@@ -220,7 +234,6 @@ type Query {
     """
     username: String
   ): Organization!
-  me: User!
 }
 
 """Provides a boolean to determine if the action was successful or not."""
@@ -254,14 +267,10 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  githubID: Int
   name: String!
   username: String!
   email: String!
-  isPasswordless: String!
-  hasTOTP: Boolean!
   personalOrganization: Organization!
-  apiKeys: [APIKey!]!
   onboardTOTP: String!
   organizations: [Organization!]!
 }

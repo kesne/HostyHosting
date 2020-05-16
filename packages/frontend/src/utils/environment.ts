@@ -6,6 +6,7 @@ import {
     Variables,
     RequestParameters,
 } from 'relay-runtime';
+import { checkCookies } from './user';
 
 async function fetchQuery(request: RequestParameters, variables: Variables) {
     const response = await fetch('/api/graphql', {
@@ -20,6 +21,11 @@ async function fetchQuery(request: RequestParameters, variables: Variables) {
             operationName: request.name,
         }),
     });
+
+    // If the user state has changed, then we need to reset the apollo cache:
+    if (checkCookies()) {
+        // TODO: Reset relay store here.
+    }
 
     return await response.json();
 }

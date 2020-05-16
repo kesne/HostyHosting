@@ -1,33 +1,37 @@
-import React, { useEffect } from 'react';
-import { useResetPasswordMutation } from '../../queries';
+import React from 'react';
 import Container from './Container';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { useMutation, graphql } from 'react-relay/hooks';
+import { ResetPasswordMutation } from './__generated__/ResetPasswordMutation.graphql';
 
 export default function Reset() {
-    const { uuid } = useParams<{ uuid: string }>();
-    const [resetPassword, { data, loading }] = useResetPasswordMutation();
+    const navigate = useNavigate();
+    const params = useParams();
+
+    const [commit, isInFlight] = useMutation<ResetPasswordMutation>(graphql`
+        mutation ResetPasswordMutation($uuid: String!, $password: String!) {
+            resetPassword(uuid: $uuid, password: $password) {
+                ok
+            }
+        }
+    `);
 
     const { register, errors, handleSubmit } = useForm();
 
-    useEffect(() => {
-        resetPassword();
-    }, [resetPassword]);
-
     const onFinish = (values: Record<string, string>) => {
-        resetPassword({
+        commit({
             variables: {
-                uuid,
-                password: values.password
-            }
+                uuid: params.uuid,
+                password: values.password,
+            },
+            onCompleted() {
+                navigate('/');
+            },
         });
     };
-
-    if (data) {
-        return <Navigate to="/" />;
-    }
 
     return (
         <Container title="Finish resetting your password">
@@ -43,10 +47,11 @@ export default function Reset() {
                     type="password"
                     ref={register({ required: true })}
                     errors={errors}
+                    disabled={isInFlight}
                     autoFocus
                 />
 
-                <Button variant="primary" type="submit" disabled={loading} fullWidth>
+                <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
                     Reset Password
                 </Button>
             </form>

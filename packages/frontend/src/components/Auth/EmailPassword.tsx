@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useSignInMutation } from '../../queries';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
 import Link from '../ui/Link';
 import GithubButton from './GithubButton';
+import { useMutation, graphql } from 'react-relay/hooks';
+import { EmailPasswordMutation } from './__generated__/EmailPasswordMutation.graphql';
 
 type Props = {
     onSignIn(): void;
@@ -14,23 +15,28 @@ type Props = {
 
 export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
     const { register, errors, handleSubmit } = useForm();
-    const [signIn, { data, loading }] = useSignInMutation();
 
-    useEffect(() => {
-        if (data) {
-            if (data.signIn.requiresTOTP) {
-                onRequiresTOTP();
-            } else {
-                onSignIn();
+    const [commit, isInFlight] = useMutation<EmailPasswordMutation>(graphql`
+        mutation EmailPasswordMutation($email: String!, $password: String!) {
+            signIn(email: $email, password: $password) {
+                ok
+                requiresTOTP
             }
         }
-    }, [data, onSignIn, onRequiresTOTP]);
+    `);
 
     const onFinish = (values: Record<string, string>) => {
-        signIn({
+        commit({
             variables: {
                 email: values.email,
                 password: values.password,
+            },
+            onCompleted(data) {
+                if (data.signIn.requiresTOTP) {
+                    onRequiresTOTP();
+                } else {
+                    onSignIn();
+                }
             },
         });
     };
@@ -41,13 +47,17 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
                 label="Email address"
                 name="email"
                 ref={register({ required: true })}
+                errors={errors}
+                disabled={isInFlight}
                 autoFocus
             />
             <Input
                 label="Password"
                 name="password"
                 type="password"
+                errors={errors}
                 ref={register({ required: true })}
+                disabled={isInFlight}
             />
             <div className="flex items-center justify-between">
                 <Checkbox />
@@ -55,7 +65,7 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
                     <Link to="/auth/forgot">Forgot your password?</Link>
                 </span>
             </div>
-            <Button type="submit" variant="primary" disabled={loading} fullWidth>
+            <Button type="submit" variant="primary" disabled={isInFlight} fullWidth>
                 Sign In
             </Button>
             <GithubButton />

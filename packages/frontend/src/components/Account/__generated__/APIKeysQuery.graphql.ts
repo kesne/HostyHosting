@@ -4,14 +4,17 @@
 import { ConcreteRequest } from "relay-runtime";
 export type APIKeysQueryVariables = {};
 export type APIKeysQueryResponse = {
-    readonly apiKeys: {
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly id: string;
-                readonly description: string;
-                readonly createdAt: unknown;
-            };
-        }>;
+    readonly me: {
+        readonly id: string;
+        readonly apiKeys: {
+            readonly edges: ReadonlyArray<{
+                readonly node: {
+                    readonly id: string;
+                    readonly description: string;
+                    readonly createdAt: unknown;
+                };
+            }>;
+        };
     };
 };
 export type APIKeysQuery = {
@@ -23,26 +26,36 @@ export type APIKeysQuery = {
 
 /*
 query APIKeysQuery {
-  apiKeys(first: 10) {
-    edges {
-      node {
-        id
-        description
-        createdAt
-        __typename
+  me {
+    id
+    apiKeys(first: 10) {
+      edges {
+        node {
+          id
+          description
+          createdAt
+          __typename
+        }
+        cursor
       }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 }
 */
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = [
   {
     "alias": null,
     "args": null,
@@ -59,13 +72,7 @@ var v0 = [
         "name": "node",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -126,7 +133,7 @@ var v0 = [
     "storageKey": null
   }
 ],
-v1 = [
+v2 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -141,13 +148,25 @@ return {
     "name": "APIKeysQuery",
     "selections": [
       {
-        "alias": "apiKeys",
+        "alias": null,
         "args": null,
-        "concreteType": "APIKeyConnection",
+        "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "__APIKeys_apiKeys_connection",
+        "name": "me",
         "plural": false,
-        "selections": (v0/*: any*/),
+        "selections": [
+          (v0/*: any*/),
+          {
+            "alias": "apiKeys",
+            "args": null,
+            "concreteType": "APIKeyConnection",
+            "kind": "LinkedField",
+            "name": "__APIKeys_apiKeys_connection",
+            "plural": false,
+            "selections": (v1/*: any*/),
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -161,22 +180,34 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "APIKeyConnection",
+        "args": null,
+        "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "apiKeys",
+        "name": "me",
         "plural": false,
-        "selections": (v0/*: any*/),
-        "storageKey": "apiKeys(first:10)"
-      },
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "filters": null,
-        "handle": "connection",
-        "key": "APIKeys_apiKeys",
-        "kind": "LinkedHandle",
-        "name": "apiKeys"
+        "selections": [
+          (v0/*: any*/),
+          {
+            "alias": null,
+            "args": (v2/*: any*/),
+            "concreteType": "APIKeyConnection",
+            "kind": "LinkedField",
+            "name": "apiKeys",
+            "plural": false,
+            "selections": (v1/*: any*/),
+            "storageKey": "apiKeys(first:10)"
+          },
+          {
+            "alias": null,
+            "args": (v2/*: any*/),
+            "filters": null,
+            "handle": "connection",
+            "key": "APIKeys_apiKeys",
+            "kind": "LinkedHandle",
+            "name": "apiKeys"
+          }
+        ],
+        "storageKey": null
       }
     ]
   },
@@ -189,6 +220,7 @@ return {
           "cursor": null,
           "direction": "forward",
           "path": [
+            "me",
             "apiKeys"
           ]
         }
@@ -196,9 +228,9 @@ return {
     },
     "name": "APIKeysQuery",
     "operationKind": "query",
-    "text": "query APIKeysQuery {\n  apiKeys(first: 10) {\n    edges {\n      node {\n        id\n        description\n        createdAt\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query APIKeysQuery {\n  me {\n    id\n    apiKeys(first: 10) {\n      edges {\n        node {\n          id\n          description\n          createdAt\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '20c38d2b48b7c17301cf5e58e4d33eb9';
+(node as any).hash = 'a20bd2fd1b4bf53246ad1fce556560c8';
 export default node;

@@ -46,5 +46,5 @@ export function createConnection<T extends ClassType>(nodeType: T) {
         edges!: Edge[];
     }
 
-    return Connection;
+    return [Connection, Edge] as const;
 }

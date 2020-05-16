@@ -16,27 +16,11 @@ function getRedisKeyName(id: string) {
     return `api-key-request:${id}`;
 }
 
-const APIKeyConnection = createConnection(APIKey);
+export const [APIKeyConnection, APIKeyEdge] = createConnection(APIKey);
 
 @Resolver()
 export class APIKeyResolver {
     constructor(private apiKeyRepo = getCustomRepository(APIKeyRepository)) {}
-
-    @Query(() => APIKeyConnection)
-    async apiKeys(@Ctx() { user }: Context, @Args() _args: ConnectionArgs) {
-        console.log(_args);
-        return {
-            edges: (await user.apiKeys).map(key => ({ node: key, cursor: key.id })),
-            pageInfo: { hasNextPage: false, hasPreviousPage: false },
-        };
-        // return this.apiKeyRepo.findAndCount({
-        //     where: {
-        //         user,
-        //     },
-        //     take: limit,
-        //     skip: offset,
-        // });
-    }
 
     @Mutation(() => String)
     async createAPIKeyRequest(): Promise<string> {
@@ -82,12 +66,16 @@ export class APIKeyResolver {
     }
 
     @Authorized(GrantType.SESSION)
-    @Mutation(() => APIKey)
+    @Mutation(() => APIKeyEdge)
     async createAPIKey(
         @Ctx() { user }: Context,
         @Arg('description') description: string,
-    ): Promise<APIKey> {
-        return await this.apiKeyRepo.createForUser(user, description);
+    ): Promise<InstanceType<typeof APIKeyEdge>> {
+        const key = await this.apiKeyRepo.createForUser(user, description);
+        return {
+            cursor: key.id,
+            node: key,
+        };
     }
 
     @Authorized(GrantType.SESSION)
@@ -100,7 +88,7 @@ export class APIKeyResolver {
             },
         });
 
-        // await this.apiKeyRepo.delete(apiKey.pk);
+        await this.apiKeyRepo.delete(apiKey.pk);
 
         return apiKey;
     }

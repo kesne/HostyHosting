@@ -22,12 +22,15 @@ export default function APIKeys() {
     const data = useLazyLoadQuery<APIKeysQuery>(
         graphql`
             query APIKeysQuery {
-                apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
-                    edges {
-                        node {
-                            id
-                            description
-                            createdAt
+                me {
+                    id
+                    apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
+                        edges {
+                            node {
+                                id
+                                description
+                                createdAt
+                            }
                         }
                     }
                 }
@@ -43,27 +46,16 @@ export default function APIKeys() {
                 configs: [
                     {
                         type: 'RANGE_DELETE',
-                        parentID: 'client:root',
+                        parentID: data.me.id,
                         connectionKeys: [
                             {
                                 key: 'APIKeys_apiKeys',
                             },
                         ],
-                        pathToConnection: ['client:root', 'apiKeys'],
+                        pathToConnection: [data.me.id, 'apiKeys'],
                         deletedIDFieldName: 'id',
                     },
                 ],
-                // updater: store => {
-                //     const apiKey = store.get('apiKeys');
-
-                //     console.log(apiKey);
-
-                //     if (!apiKey) return;
-
-                //     const conn = ConnectionHandler.getConnection(apiKey, 'APIKeys_apiKeys');
-
-                //     console.log({ conn });
-                // },
             });
         };
     }
@@ -72,7 +64,7 @@ export default function APIKeys() {
     return (
         <>
             <Card title="Manage API Keys" actions={<Button onClick={on}>Create API Key</Button>}>
-                <List items={data.apiKeys.edges}>
+                <List items={data.me.apiKeys.edges}>
                     {({ node: apiKey }) => (
                         <ListItem key={apiKey.id}>
                             <div className="flex justify-between">
@@ -88,7 +80,7 @@ export default function APIKeys() {
                     )}
                 </List>
             </Card>
-            <CreateAPIKey open={open} onClose={off} />
+            <CreateAPIKey id={data.me.id} open={open} onClose={off} />
         </>
     );
 }

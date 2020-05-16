@@ -42,7 +42,6 @@ export class User extends ExternalEntity {
      */
     grantType: GrantType = GrantType.NONE;
 
-    @Field(() => Int, { nullable: true })
     @Column({ nullable: true })
     githubID?: string;
 
@@ -65,11 +64,6 @@ export class User extends ExternalEntity {
     @Column({ nullable: true })
     passwordHash!: string;
 
-    @Field(() => String)
-    get isPasswordless() {
-        return this.githubID && !this.passwordHash;
-    }
-
     async setPassword(newPassword: string) {
         this.passwordHash = await hash(newPassword, SALT_ROUNDS);
     }
@@ -77,11 +71,6 @@ export class User extends ExternalEntity {
     // TODO: Encrypt this somehow.
     @Column('varchar', { nullable: true })
     totpSecret?: string | null;
-
-    @Field()
-    get hasTOTP(): boolean {
-        return !!this.totpSecret;
-    }
 
     async disableTOTP(password: string) {
         if (!this.totpSecret) {
@@ -134,7 +123,6 @@ export class User extends ExternalEntity {
     )
     organizationMemberships!: Lazy<OrganizationMembership[]>;
 
-    @Field(() => [APIKey])
     @OneToMany(
         () => APIKey,
         apiKey => apiKey.user,

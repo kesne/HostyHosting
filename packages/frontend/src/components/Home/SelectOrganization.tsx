@@ -13,7 +13,7 @@ export default function SelectOrganization({ organization }: Props) {
     const navigate = useNavigate();
 
     const data = useFragment(graphql`
-        fragment SelectOrganization_me on User {
+        fragment SelectOrganization_me on CurrentUser {
             id
             personalOrganization {
                 id
