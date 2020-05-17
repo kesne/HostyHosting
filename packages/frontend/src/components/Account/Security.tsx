@@ -1,11 +1,11 @@
 import React from 'react';
-import { useMeDaddyQuery } from '../../queries';
 import OnboardTOTP from './OnboardTOTP';
 import DisableTOTP from './DisableTOTP';
 import useBoolean from '../../utils/useBoolean';
 import Button from '../ui/Button';
-import Spinner from '../Spinner';
 import Card, { CardContent } from '../ui/Card';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { SecurityQuery } from './__generated__/SecurityQuery.graphql';
 
 function TOTPModal({
     visible,
@@ -24,15 +24,22 @@ function TOTPModal({
 
 export default function Security() {
     const [totpModalVisible, { off, on }] = useBoolean(false);
-    const { data, loading, refetch } = useMeDaddyQuery();
-
-    if (loading || !data) {
-        return <Spinner />;
-    }
+    const data = useLazyLoadQuery<SecurityQuery>(
+        graphql`
+            query SecurityQuery {
+                me {
+                    id
+                    hasTOTP
+                }
+            }
+        `,
+        {},
+    );
 
     function onClose() {
         off();
-        refetch();
+        // TODO: Either refetch or make the onboarding / disabling modify the store.
+        // refetch();
     }
 
     return (

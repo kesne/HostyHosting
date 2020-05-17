@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useDisableTotpMutation } from '../../queries';
+import { useForm } from 'react-hook-form';
+import { useMutation, graphql } from 'react-relay/hooks';
 import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
 import Input from '../ui/Input';
-import { useForm } from 'react-hook-form';
+import { DisableTOTPMutation } from './__generated__/DisableTOTPMutation.graphql';
 
 type Props = {
     visible: boolean;
@@ -11,14 +12,15 @@ type Props = {
 };
 
 export default function DisableTOTP({ visible, onClose }: Props) {
-    const [disableTOTP, { data, loading }] = useDisableTotpMutation();
     const { register, errors, reset, handleSubmit } = useForm();
 
-    useEffect(() => {
-        if (data) {
-            onClose();
+    const [commit, isInFlight] = useMutation<DisableTOTPMutation>(graphql`
+        mutation DisableTOTPMutation($password: String!) {
+            disableTotp(password: $password) {
+                ok
+            }
         }
-    }, [data, onClose]);
+    `);
 
     useEffect(() => {
         if (visible) {
@@ -26,11 +28,14 @@ export default function DisableTOTP({ visible, onClose }: Props) {
         }
     }, [visible]);
 
-    async function handleOk(values: Record<string, string>) {
-        await disableTOTP({
+    function handleOk(values: Record<string, string>) {
+        commit({
             variables: {
-                password: values.password
-            }
+                password: values.password,
+            },
+            onCompleted() {
+                onClose();
+            },
         });
     }
 
@@ -49,13 +54,13 @@ export default function DisableTOTP({ visible, onClose }: Props) {
                         placeholder="Password..."
                         ref={register({ required: true })}
                         errors={errors}
-                        required
+                        disabled={isInFlight}
                         autoFocus
                     />
                 </ModalContent>
                 <ModalFooter>
                     <ButtonGroup>
-                        <Button type="submit" variant="primary">
+                        <Button type="submit" variant="primary" disabled={isInFlight}>
                             Disable
                         </Button>
                         <Button onClick={onClose}>Cancel</Button>

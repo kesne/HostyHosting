@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Reference } from '@apollo/client';
-import { useCreateComponentMutation, DeploymentStrategy } from '../../../../queries';
 import { useApplicationParams } from '../../ApplicationContext';
 import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
 import Input from '../../../ui/Input';
 import Button, { ButtonGroup } from '../../../ui/Button';
 import Select from '../../../ui/Select';
 import Tabs from '../../../ui/Tabs';
+import { useMutation, graphql } from 'react-relay/hooks';
+import { useNavigate } from 'react-router';
+import { CreateComponentMutation, DeploymentStrategy } from './__generated__/CreateComponentMutation.graphql';
 
 type Props = {
     visible: boolean;
@@ -15,22 +16,22 @@ type Props = {
 };
 
 export default function CreateComponent({ visible, onClose }: Props) {
+    const navigate = useNavigate();
     const params = useApplicationParams();
     const [deploymentType, setDeploymentType] = useState('docker-registry');
-    const [createComponent, { loading, data }] = useCreateComponentMutation({
-        update(cache, { data }) {
-            if (!data) return;
 
-            cache.modify(
-                {
-                    components(components: Reference[], { toReference }) {
-                        return [...components, toReference(data.application.createComponent)];
-                    },
-                },
-                `Application:${params.application}`,
-            );
-        },
-    });
+    const [commit, isInFlight] = useMutation<CreateComponentMutation>(graphql`
+        mutation CreateComponentMutation($application: ID!, $component: ComponentInput!) {
+            application(id: $application) {
+                createComponent(component: $component) {
+                    id
+                    name
+                    image
+                }
+            }
+        }
+    `);
+
     const { register, handleSubmit, errors, reset } = useForm();
 
     useEffect(() => {
@@ -39,21 +40,18 @@ export default function CreateComponent({ visible, onClose }: Props) {
         }
     }, [visible]);
 
-    useEffect(() => {
-        if (data) {
-            onClose();
-        }
-    }, [data]);
-
-    async function onSubmit(data: Record<string, string>) {
-        await createComponent({
+    function onSubmit(data: Record<string, string>) {
+        commit({
             variables: {
-                ...params,
+                application: params.application,
                 component: {
                     image: data.image,
                     name: data.name,
                     deploymentStrategy: data.strategy as DeploymentStrategy,
                 },
+            },
+            onCompleted(data) {
+                navigate(data.application.createComponent.id);
             },
         });
     }
@@ -80,6 +78,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 ref={register({ required: true })}
                                 errors={errors}
                                 autoComplete="off"
+                                disabled={isInFlight}
                             />
                             <Input
                                 label="Image Name"
@@ -87,6 +86,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 ref={register({ required: true })}
                                 errors={errors}
                                 autoComplete="off"
+                                disabled={isInFlight}
                             />
                             {/* TODO: Make this a two-up big button UI. */}
                             <Select
@@ -94,17 +94,16 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 name="strategy"
                                 ref={register({ required: true })}
                                 errors={errors}
+                                disabled={isInFlight}
                             >
-                                <option value={DeploymentStrategy.Recreate}>Re-create</option>
-                                <option value={DeploymentStrategy.Replace}>
-                                    Replace (rolling deploy)
-                                </option>
+                                <option value="RECREATE">Re-create</option>
+                                <option value="REPLACE">Replace (rolling deploy)</option>
                             </Select>
                         </div>
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button type="submit" variant="primary">
+                            <Button type="submit" variant="primary" disabled={isInFlight}>
                                 Create
                             </Button>
                             <Button onClick={onClose}>Cancel</Button>

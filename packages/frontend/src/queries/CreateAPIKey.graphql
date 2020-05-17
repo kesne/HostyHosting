@@ -1,8 +1,0 @@
-mutation CreateAPIKey($description: String!) {
-    createAPIKey(description: $description) {
-        id
-        description
-        createdAt
-        privateKey
-    }
-}

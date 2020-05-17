@@ -22,12 +22,6 @@ export class UserResolver {
         private organizationMembershipRepo = getRepository(OrganizationMembership),
     ) {}
 
-    @Authorized()
-    @Query(() => User)
-    async me(@Ctx() { user }: Context): Promise<User> {
-        return user;
-    }
-
     // TODO: The fact that this field exists on all users is a red flag to me.
     // We probably want to move this outside of the user object.
     @Authorized(GrantType.SESSION)

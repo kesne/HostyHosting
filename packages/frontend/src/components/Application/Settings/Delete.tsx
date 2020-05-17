@@ -1,31 +1,53 @@
 import React, { useState } from 'react';
 import useBoolean from '../../../utils/useBoolean';
-import { Application, useDeleteApplicationMutation } from '../../../queries';
 import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
 import Button, { ButtonGroup } from '../../ui/Button';
 import Input from '../../ui/Input';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useFragment, graphql, useMutation } from 'react-relay/hooks';
+import { Delete_application$key } from './__generated__/Delete_application.graphql';
+import { DeleteApplicationMutation } from './__generated__/DeleteApplicationMutation.graphql';
 
 export type Props = {
-    application: Pick<Application, 'id' | 'name'>;
+    application: Delete_application$key;
 };
 
 export default function Delete({ application }: Props) {
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [visible, { on, off }] = useBoolean(false);
-    const [deleteApplication, { loading, data }] = useDeleteApplicationMutation({
-        variables: {
-            id: application.id,
-        },
-    });
+
+    const data = useFragment(
+        graphql`
+            fragment Delete_application on Application {
+                id
+                name
+            }
+        `,
+        application,
+    );
+
+    const [commit, isInFlight] = useMutation<DeleteApplicationMutation>(graphql`
+        mutation DeleteApplicationMutation($application: ID!) {
+            application(id: $application) {
+                delete {
+                    id
+                }
+            }
+        }
+    `);
 
     function handleDelete(e: React.FormEvent) {
         e.preventDefault();
-        deleteApplication();
-    }
-
-    if (data) {
-        return <Navigate to="/" />;
+        commit({
+            variables: {
+                application: data.id,
+            },
+            onCompleted() {
+                // TODO: Find a better place to go to:
+                navigate('/', { replace: true });
+            },
+        });
     }
 
     return (
@@ -51,7 +73,7 @@ export default function Delete({ application }: Props) {
                         <Input
                             label="Application Name"
                             name="name"
-                            placeholder={application.name}
+                            placeholder={data.name}
                             value={name}
                             onChange={e => setName(e.target.value)}
                         />
@@ -61,7 +83,7 @@ export default function Delete({ application }: Props) {
                             <Button
                                 type="submit"
                                 variant="danger"
-                                disabled={loading || name !== application.name}
+                                disabled={isInFlight || name !== data.name}
                             >
                                 Delete
                             </Button>

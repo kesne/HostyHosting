@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import ButtonOrLink from './util/ButtonOrLink';
+import { useNavigate } from 'react-router-dom';
 
 type OnChange = (value: string) => void;
 
@@ -82,13 +83,28 @@ export default function Tabs({
     value: string;
     onChange?: OnChange;
 }) {
+    const navigate = useNavigate();
+
+    function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        if (onChange) {
+            onChange(e.target.value);
+        } else {
+            const tab = tabs.find(({ value }) => value === e.target.value);
+            if (tab && tab.to) {
+                navigate(tab.to);
+            } else {
+                console.warn('Tabs had no clear action to takeUnknown action to take.', tab);
+            }
+        }
+    }
+
     return (
         <>
             <div className="sm:hidden">
                 <select
                     aria-label="Selected tab"
                     className="mt-1 form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 transition ease-in-out duration-150"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={value}
                 >
                     {tabs.map(tab => (

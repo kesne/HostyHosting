@@ -9,7 +9,7 @@ import Link from '../ui/Link';
 export default function SignIn() {
     const [requiresTOTP, { on }] = useBoolean(false);
     const navigate = useNavigate();
-    const location = useLocation<{ from?: string }>();
+    const location = useLocation();
 
     const onSignIn = useCallback(() => {
         navigate(location.state?.from ?? '/');

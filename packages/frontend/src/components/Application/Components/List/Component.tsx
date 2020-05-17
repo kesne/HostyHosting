@@ -1,14 +1,25 @@
 import React from 'react';
-import { Component as ComponentData } from '../../../../queries';
+import { useFragment, graphql } from 'react-relay/hooks';
+import { ListItem } from '../../../ui/List';
+import { Component_component$key } from './__generated__/Component_component.graphql';
 
 type Props = {
-    component: Pick<ComponentData, 'id' | 'name'>;
+    component: Component_component$key;
 };
 
 export default function Component({ component }: Props) {
+    const data = useFragment(graphql`
+        fragment Component_component on Component {
+            id
+            name
+        }
+    `, component);
+
     return (
-        <div>
-            <p>{component.name}</p>
-        </div>
+        <ListItem key={data.id} to={data.id}>
+            <div>
+                <p>{data.name}</p>
+            </div>
+        </ListItem>
     );
 }

@@ -1,7 +1,0 @@
-mutation DeleteComponent($application: ID!, $id: ID!) {
-    application(id: $application) {
-        deleteComponent(id: $id) {
-            id
-        }
-    }
-}

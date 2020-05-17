@@ -29,7 +29,7 @@ export class ApplicationMutations {
     async delete() {
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
         // it in a state of deletion, and don't allow modification to the model.
-        await this.applicationRepo.delete(this.application.pk);
+        await this.applicationRepo.delete(this.application.id);
 
         return this.application;
     }
@@ -181,7 +181,7 @@ export class ApplicationMutations {
             },
         });
 
-        await this.secretRepo.delete(secret.pk);
+        await this.secretRepo.delete(secret.id);
 
         return secret;
     }
@@ -189,7 +189,7 @@ export class ApplicationMutations {
     @Field(() => Component)
     async deleteComponent(@Arg('id', () => ID) id: string) {
         const component = await this.componentRepo.findByApplicationAndId(this.application, id);
-        await this.componentRepo.delete(component.pk);
+        await this.componentRepo.delete(component.id);
         return component;
     }
 }

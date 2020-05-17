@@ -1,6 +1,0 @@
-mutation SignIn($email: String!, $password: String!) {
-    signIn(email: $email, password: $password) {
-        ok
-        requiresTOTP
-    }
-}

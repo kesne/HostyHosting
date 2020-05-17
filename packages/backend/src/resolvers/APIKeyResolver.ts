@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int, ID } from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int, ID, Args } from 'type-graphql';
 import { v4 as uuidv4 } from 'uuid';
 import redis from '../redis';
 import Result from './types/Result';
@@ -7,6 +7,7 @@ import { APIKey } from '../entity/APIKey';
 import { GrantType } from '../entity/User';
 import { APIKeyRepository } from '../repositories/APIKeyRepository';
 import { getCustomRepository } from 'typeorm';
+import { createConnection, ConnectionArgs } from './types/Pagination';
 
 const API_KEY_EXPIRATION = 100;
 const REQUEST_VALUE = '@@request';
@@ -14,6 +15,8 @@ const REQUEST_VALUE = '@@request';
 function getRedisKeyName(id: string) {
     return `api-key-request:${id}`;
 }
+
+export const [APIKeyConnection, APIKeyEdge] = createConnection(APIKey);
 
 @Resolver()
 export class APIKeyResolver {
@@ -63,20 +66,21 @@ export class APIKeyResolver {
     }
 
     @Authorized(GrantType.SESSION)
-    @Mutation(() => APIKey)
+    @Mutation(() => APIKeyEdge)
     async createAPIKey(
         @Ctx() { user }: Context,
         @Arg('description') description: string,
-    ): Promise<APIKey> {
-        return await this.apiKeyRepo.createForUser(user, description);
+    ): Promise<InstanceType<typeof APIKeyEdge>> {
+        const key = await this.apiKeyRepo.createForUser(user, description);
+        return {
+            cursor: key.id,
+            node: key,
+        };
     }
 
     @Authorized(GrantType.SESSION)
-    @Mutation(() => Result)
-    async deleteAPIKey(
-        @Ctx() { user }: Context,
-        @Arg('id', () => ID) id: string,
-    ): Promise<Result> {
+    @Mutation(() => APIKey)
+    async deleteAPIKey(@Ctx() { user }: Context, @Arg('id', () => ID) id: string): Promise<APIKey> {
         const apiKey = await this.apiKeyRepo.findOneOrFail({
             where: {
                 id,
@@ -86,6 +90,6 @@ export class APIKeyResolver {
 
         await this.apiKeyRepo.delete(apiKey.id);
 
-        return new Result();
+        return apiKey;
     }
 }

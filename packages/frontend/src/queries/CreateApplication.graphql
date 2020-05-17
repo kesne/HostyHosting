@@ -1,9 +1,0 @@
-mutation CreateApplication($org: ID, $application: ApplicationInput!) {
-    organization(id: $org) {
-        createApplication(application: $application) {
-            id
-            name
-            description
-        }
-    }
-}

@@ -50,7 +50,7 @@ export default function List<T>({
     items,
     children,
 }: {
-    items?: T[];
+    items?: readonly T[];
     children: (item: T, i: number) => React.ReactNode;
 }) {
     // TODO: better UI

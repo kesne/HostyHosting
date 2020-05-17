@@ -1,24 +1,32 @@
 import React, { useEffect } from 'react';
 import Container from './Container';
-import { useLocation, Navigate } from 'react-router-dom';
-import { useGitHubSignInMutation } from '../../queries';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutation, graphql } from 'react-relay/hooks';
 
 export default function GitHubCallback() {
+    const navigate = useNavigate();
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const [signIn, { data }] = useGitHubSignInMutation({
-        variables: {
-            code: query.get('code')!,
-        },
-    });
+
+    const [commit] = useMutation(graphql`
+        mutation GitHubCallbackMutation($code: String!) {
+            gitHubSignIn(code: $code) {
+                ok
+                requiresTOTP
+            }
+        }
+    `);
 
     useEffect(() => {
-        signIn();
+        commit({
+            variables: {
+                code: query.get('code')!,
+            },
+            onCompleted() {
+                navigate('/');
+            },
+        });
     }, []);
-
-    if (data) {
-        return <Navigate to="/" />;
-    }
 
     return <Container title="Signing In...">We are completing your GitHub signin...</Container>;
 }

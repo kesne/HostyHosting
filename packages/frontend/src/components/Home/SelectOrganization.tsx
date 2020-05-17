@@ -1,16 +1,30 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMyOrganizationsQuery } from '../../queries';
+import { useFragment, graphql } from 'react-relay/hooks';
+import { SelectOrganization_me$key } from './__generated__/SelectOrganization_me.graphql';
 
 const PERSONAL = 'personal';
 
 type Props = {
-    organization?: string;
+    organization: SelectOrganization_me$key;
 };
 
 export default function SelectOrganization({ organization }: Props) {
-    const { data, loading } = useMyOrganizationsQuery();
     const navigate = useNavigate();
+
+    const data = useFragment(graphql`
+        fragment SelectOrganization_me on CurrentUser {
+            id
+            personalOrganization {
+                id
+            }
+            organizations {
+                id
+                name
+                username
+            }
+        }
+    `, organization);
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (event.target.value === PERSONAL) {
@@ -28,7 +42,7 @@ export default function SelectOrganization({ organization }: Props) {
                 className="text-lg leading-6 font-semibold text-gray-900 block form-select w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
             >
                 <option value={PERSONAL}>Personal</option>
-                {data?.me.organizations.map(org => (
+                {data.organizations.map(org => (
                     <option key={org.username} value={org.username}>
                         {org.name}
                     </option>

@@ -1,7 +1,0 @@
-fragment MeFragment on User {
-    id
-    username
-    name
-    email
-    hasTOTP
-}

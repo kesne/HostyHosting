@@ -1,7 +1,0 @@
-query OnboardTOTP {
-    me {
-        id
-        name
-        onboardTOTP
-    }
-}

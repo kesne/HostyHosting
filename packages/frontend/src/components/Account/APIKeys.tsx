@@ -1,34 +1,61 @@
 import React from 'react';
-import { Reference } from '@apollo/client';
 import List, { ListItem } from '../ui/List';
-import { useMyApiKeysQuery, useDeleteApiKeyMutation } from '../../queries';
 import Card from '../ui/Card';
 import CreateAPIKey from './CreateAPIKey';
 import Button from '../ui/Button';
 import useBoolean from '../../utils/useBoolean';
-import { getUserID } from '../../utils/user';
+import { useLazyLoadQuery, graphql, useMutation } from 'react-relay/hooks';
+import { APIKeysQuery } from './__generated__/APIKeysQuery.graphql';
+import { APIKeysDeleteMutation } from './__generated__/APIKeysDeleteMutation.graphql';
 
 export default function APIKeys() {
     const [open, { on, off }] = useBoolean(false);
-    const { data } = useMyApiKeysQuery();
-    const [deleteAPIKey] = useDeleteApiKeyMutation();
 
-    function handleDelete(id: number) {
+    const [commit] = useMutation<APIKeysDeleteMutation>(graphql`
+        mutation APIKeysDeleteMutation($id: ID!) {
+            deleteAPIKey(id: $id) {
+                id
+            }
+        }
+    `);
+
+    const data = useLazyLoadQuery<APIKeysQuery>(
+        graphql`
+            query APIKeysQuery {
+                me {
+                    id
+                    apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
+                        edges {
+                            node {
+                                id
+                                description
+                                createdAt
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        {},
+    );
+
+    function handleDelete(id: string) {
         return () => {
-            deleteAPIKey({
+            commit({
                 variables: { id },
-                update(cache) {
-                    cache.modify(
-                        {
-                            apiKeys(keys: Reference[], { readField }) {
-                                return keys.filter(key => id !== readField('id', key));
+                configs: [
+                    {
+                        type: 'RANGE_DELETE',
+                        parentID: data.me.id,
+                        connectionKeys: [
+                            {
+                                key: 'APIKeys_apiKeys',
                             },
-                        },
-                        `User:${getUserID()}`,
-                    );
-
-                    cache.evict(`APIKey:${id}`);
-                },
+                        ],
+                        pathToConnection: [data.me.id, 'apiKeys'],
+                        deletedIDFieldName: 'id',
+                    },
+                ],
             });
         };
     }
@@ -37,8 +64,8 @@ export default function APIKeys() {
     return (
         <>
             <Card title="Manage API Keys" actions={<Button onClick={on}>Create API Key</Button>}>
-                <List items={data?.me.apiKeys ?? []}>
-                    {apiKey => (
+                <List items={data.me.apiKeys.edges}>
+                    {({ node: apiKey }) => (
                         <ListItem key={apiKey.id}>
                             <div className="flex justify-between">
                                 <div>{apiKey.description}</div>
@@ -53,7 +80,7 @@ export default function APIKeys() {
                     )}
                 </List>
             </Card>
-            <CreateAPIKey open={open} onClose={off} />
+            <CreateAPIKey id={data.me.id} open={open} onClose={off} />
         </>
     );
 }

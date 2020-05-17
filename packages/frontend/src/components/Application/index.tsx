@@ -1,13 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-    useParams,
-    Routes,
-    Route,
-    Outlet,
-    useMatch,
-    useResolvedLocation,
-} from 'react-router-dom';
-import { useApplicationQuery } from '../../queries';
+import { useParams, Routes, Route, Outlet, useMatch, useResolvedLocation } from 'react-router-dom';
 import Settings from './Settings';
 import Overview from './Overview';
 import Components from './Components';
@@ -15,8 +7,9 @@ import ApplicationContext from './ApplicationContext';
 import PageHeader from '../ui/PageHeader';
 import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
-import Spinner from '../Spinner';
 import { BreadcrumbsHeader } from './Breadcrumbs';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { ApplicationQuery } from './__generated__/ApplicationQuery.graphql';
 
 function ApplicationLayout() {
     const { pathname } = useResolvedLocation('.');
@@ -54,23 +47,31 @@ function ApplicationLayout() {
 export default function Application() {
     const params = useParams();
 
-    const { data, loading, error } = useApplicationQuery({
-        variables: {
+    const data = useLazyLoadQuery<ApplicationQuery>(
+        graphql`
+            query ApplicationQuery($organization: String!, $application: String!) {
+                organization(username: $organization) {
+                    id
+                    name
+                    application(name: $application) {
+                        id
+                        name
+                    }
+                }
+            }
+        `,
+        {
             organization: params.organization,
             application: params.application,
         },
-    });
+    );
 
     const applicationContext = useMemo(
         () => ({
-            application: data?.organization.application.id ?? '',
+            application: data.organization.application.id,
         }),
-        [data?.organization.application.id],
+        [data.organization.application.id],
     );
-
-    if (loading || error || !data) {
-        return <Spinner />;
-    }
 
     const { organization } = data;
     const { application } = organization;

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useComponentQuery } from '../../../../queries';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
 import { Breadcrumb } from '../../Breadcrumbs';
@@ -8,40 +7,53 @@ import useBoolean from '../../../../utils/useBoolean';
 import Tabs from '../../../ui/Tabs';
 import ContainerGroup from './ContainerGroup';
 import { useApplicationParams } from '../../ApplicationContext';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { DetailComponentQuery } from './__generated__/DetailComponentQuery.graphql';
+import DeleteComponent from './DeleteComponent';
 
 export default function Detail() {
     const params = useParams();
     const applicationParams = useApplicationParams();
-    const { data } = useComponentQuery({
-        variables: {
-            ...applicationParams,
+    const data = useLazyLoadQuery<DetailComponentQuery>(
+        graphql`
+            query DetailComponentQuery($application: ID!, $component: ID!) {
+                application(id: $application) {
+                    id
+                    environments {
+                        id
+                        name
+                        label
+                    }
+                    component(id: $component) {
+                        id
+                        name
+                        createdAt
+                        updatedAt
+                        deploymentStrategy
+                    }
+                }
+            }
+        `,
+        {
+            application: applicationParams.application,
             component: params.component,
         },
-    });
-    const [environment, setEnvironment] = useState('');
+    );
+
+    const [environment, setEnvironment] = useState(data.application.environments[0].id);
     const [editing, { on: editingOn, off: editingOff }] = useBoolean(false);
-
-    useEffect(() => {
-        if (data) {
-            setEnvironment(String(application.environments[0].id));
-        }
-    }, [data]);
-
-    if (!data) {
-        return <div>Hol' up.</div>;
-    }
 
     const { application } = data;
     const { component } = application;
 
     return (
         <Breadcrumb
-            name={data.application.component.name}
+            name={component.name}
             url={params.component}
             actions={
                 <>
                     <span className="ml-3 relative shadow-sm rounded-md">
-                        {/* <DeleteComponent id={data?.application.component.id} /> */}
+                        <DeleteComponent id={data.application.component.id} />
                     </span>
                     <span className="ml-3 relative shadow-sm rounded-md">
                         <Button onClick={editingOn}>Edit</Button>
