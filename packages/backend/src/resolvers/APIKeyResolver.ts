@@ -88,7 +88,7 @@ export class APIKeyResolver {
             },
         });
 
-        await this.apiKeyRepo.delete(apiKey.pk);
+        await this.apiKeyRepo.delete(apiKey.id);
 
         return apiKey;
     }

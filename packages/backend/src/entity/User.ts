@@ -96,10 +96,10 @@ export class User extends ExternalEntity {
 
     signIn(type: AuthType = AuthType.FULL) {
         const { session } = getCurrentRequest();
-        session.userID = this.pk;
+        session.userID = this.id;
         session.type = type;
         if (type === AuthType.FULL) {
-            setUserCookie(this.pk);
+            setUserCookie(this.id);
         }
     }
 

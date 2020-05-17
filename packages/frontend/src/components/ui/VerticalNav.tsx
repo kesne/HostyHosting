@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate, useMatch } from 'react-router-dom';
+import { Link, useNavigate, useMatch, useResolvedLocation, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from './constants';
@@ -14,7 +14,10 @@ export function VerticalNavItem({
     label: string;
 }) {
     const small = useMediaQuery(MEDIA_QUERIES.SMALL);
-    const selected = useMatch(to);
+    const location = useLocation();
+    const toLocation = useResolvedLocation(to);
+
+    const selected = location.pathname === toLocation.pathname;
 
     if (!small) {
         return <option value={to}>{label}</option>;

@@ -50,7 +50,17 @@ export function Breadcrumb({
     const remove = useStore(state => state.remove);
 
     if (!currentCrumb.current) {
-        currentCrumb.current = add(breadcrumb);
+        // TODO: This is used to work around an issue with triggering a setState
+        // while rendering a separate component.
+        // We can't do this in a useEffect hook because then the ordering is incorrect.
+
+        // Instead of doing this, we should just use nested context providers, where
+        // we provide a new context at each Breadcrumb level and aggregate them into the root.
+        // This would give use the natural heigharchy we want, and leverages tree heigharchy to
+        // provide the ordering, as opposed to function call order, which is somewhat flaky.
+        Promise.resolve().then(() => {
+            currentCrumb.current = add(breadcrumb);
+        });
     }
 
     useEffect(() => {
