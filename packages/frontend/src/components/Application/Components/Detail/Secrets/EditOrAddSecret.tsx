@@ -26,36 +26,21 @@ export default function EditOrAddSecret({ id, secret, open, onClose }: Props) {
     const params = useApplicationParams();
 
     const [commitEdit, editIsInFlight] = useMutation<EditOrAddSecretEditMutation>(graphql`
-        mutation EditOrAddSecretEditMutation(
-            $application: ID!
-            $containerGroup: ID!
-            $secret: ID!
-            $key: String!
-            $value: String!
-        ) {
-            application(id: $application) {
-                editSecret(containerGroup: $containerGroup, id: $secret, key: $key, value: $value) {
-                    id
-                    key
-                    value
-                }
+        mutation EditOrAddSecretEditMutation($input: EditSecretInput!) {
+            editSecret(input: $input) {
+                id
+                key
+                value
             }
         }
     `);
 
-    const [commitAdd, addIsInFlight] = useMutation<EditOrAddSecretAddMutation>(graphql`
-        mutation EditOrAddSecretAddMutation(
-            $application: ID!
-            $containerGroup: ID!
-            $key: String!
-            $value: String!
-        ) {
-            application(id: $application) {
-                addSecret(containerGroup: $containerGroup, key: $key, value: $value) {
-                    id
-                    key
-                    value
-                }
+    const [commitCreate, addIsInFlight] = useMutation<EditOrAddSecretAddMutation>(graphql`
+        mutation EditOrAddSecretAddMutation($input: CreateSecretInput!) {
+            createSecret(input: $input) {
+                id
+                key
+                value
             }
         }
     `);
@@ -64,23 +49,19 @@ export default function EditOrAddSecret({ id, secret, open, onClose }: Props) {
 
     function onSubmit(values: Record<string, string>) {
         if (!secret) {
-            commitAdd({
+            commitCreate({
                 variables: {
-                    application: params.application,
-                    containerGroup: id,
-                    key: values.key,
-                    value: values.value,
+                    input: {
+                        containerGroupID: id,
+                        key: values.key,
+                        value: values.value,
+                    },
                 },
                 onCompleted() {
                     onClose();
                 },
                 updater(store) {
-                    const payload = store.getRootField('application');
-                    const newNode = payload!.getLinkedRecord('addSecret', {
-                        containerGroup: id,
-                        key: values.key,
-                        value: values.value,
-                    });
+                    const newNode = store.getRootField('createSecret');
 
                     const containerGroup = store.get(id)!;
                     const newNodes = [...containerGroup!.getLinkedRecords('secrets'), newNode];
@@ -90,11 +71,11 @@ export default function EditOrAddSecret({ id, secret, open, onClose }: Props) {
         } else {
             commitEdit({
                 variables: {
-                    application: params.application,
-                    containerGroup: id,
-                    secret: secret.id,
-                    key: values.key,
-                    value: values.value,
+                    input: {
+                        secretID: secret.id,
+                        key: values.key,
+                        value: values.value,
+                    },
                 },
                 onCompleted() {
                     onClose();

@@ -1,10 +1,10 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Application } from './Application';
-import { ObjectType, Field } from 'type-graphql';
+import { ObjectType, Field, ForbiddenError } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership, OrganizationPermission } from './OrganizationMembership';
+import { OrganizationMembership, OrganizationPermission, permissionIsAtLeast } from './OrganizationMembership';
 import { Environment } from './Environment';
 import { User } from './User';
 import { NAME_REGEX } from '../constants';
@@ -12,6 +12,28 @@ import { NAME_REGEX } from '../constants';
 @ObjectType()
 @Entity()
 export class Organization extends ExternalEntity {
+    static async findForUser(
+        user: User,
+        condition: { id: string } | { username: string },
+        permission?: OrganizationPermission,
+    ) {
+        const where = 'id' in condition ? { id: condition.id } : { username: condition.username };
+        const organization = await this.findOneOrFail({ where });
+
+        const membership = await OrganizationMembership.findOneOrFail({
+            where: {
+                user: user,
+                organization: organization,
+            },
+        });
+
+        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
+            throw new ForbiddenError();
+        }
+
+        return organization;
+    }
+
     static createPersonal(user: User) {
         const organization = new Organization();
         organization.name = 'Personal';

@@ -1,11 +1,5 @@
 import { authenticator } from 'otplib';
-import {
-    Entity,
-    Column,
-    OneToMany,
-    OneToOne,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Lazy } from '../types';
 import { Organization } from './Organization';
@@ -17,6 +11,7 @@ import { OrganizationMembership } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
 import { removeUserCookie, setUserCookie } from '../utils/cookies';
 import { getCurrentRequest } from '../utils/currentRequest';
+import { Environment } from './Environment';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -37,6 +32,98 @@ export enum GrantType {
 @Entity()
 @ObjectType()
 export class User extends ExternalEntity {
+    static async fromAPIKey(apiKey: string): Promise<User | undefined> {
+        const key = await APIKey.findOne({
+            where: {
+                key: apiKey,
+            },
+            relations: ['user'],
+        });
+
+        if (key?.user) {
+            key.user.grantType = GrantType.API_KEY;
+        }
+
+        return key?.user;
+    }
+
+    static async fromSession(allowedType: AuthType = AuthType.FULL): Promise<User | undefined> {
+        const { session } = getCurrentRequest();
+
+        if (session.userID && session.type === allowedType) {
+            const user = await this.findOne(session.userID);
+            if (user) {
+                user.grantType = GrantType.SESSION;
+            }
+            return user;
+        }
+
+        return;
+    }
+
+    static async fromTOTPSession(token: string): Promise<User> {
+        const { session } = getCurrentRequest();
+
+        if (!session.userID || session.type !== AuthType.TOTP) {
+            throw new Error('No TOTP session currently exists.');
+        }
+
+        const user = await this.findOne(session.userID);
+        if (!user || !user.totpSecret) {
+            throw new Error('No user was found in the current session.');
+        }
+
+        const isValid = authenticator.verify({ secret: user.totpSecret, token });
+        if (!isValid) {
+            throw new Error('The TOTP token provided was not valid.');
+        }
+
+        return user;
+    }
+
+    static async signUp({
+        username,
+        name,
+        email,
+        password,
+        githubID,
+    }: {
+        username: string;
+        name: string;
+        email: string;
+        password?: string;
+        githubID?: string;
+    }) {
+        const user = new User();
+        user.username = username;
+        user.name = name;
+        user.githubID = githubID;
+        user.email = email;
+
+        if (password) {
+            await user.setPassword(password);
+        }
+
+        user.save();
+
+        // Create a basic organization:
+        const { organization, membership } = Organization.createPersonal(user);
+
+        await organization.save();
+        await membership.save();
+
+        // Create the default environments:
+        await Environment.createDefaultEnvironments(organization);
+
+        // Set the users personal organization:
+        // TODO: Find a way to avoid this:
+        user.personalOrganization = organization;
+        await user.save();
+
+        user.signIn();
+        return user;
+    }
+
     /**
      * Denotes how the User entity was authenticated.
      */
@@ -66,6 +153,10 @@ export class User extends ExternalEntity {
 
     async setPassword(newPassword: string) {
         this.passwordHash = await hash(newPassword, SALT_ROUNDS);
+    }
+
+    get isPasswordless() {
+        return !!this.passwordHash && this.githubID;
     }
 
     // TODO: Encrypt this somehow.

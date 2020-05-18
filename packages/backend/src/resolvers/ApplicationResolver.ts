@@ -15,11 +15,8 @@ import { Application } from '../entity/Application';
 import { Context } from '../types';
 import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
-import { getCustomRepository, getRepository } from 'typeorm';
-import { ApplicationRepository } from '../repositories/ApplicationRepository';
-import { OrganizationRepository } from '../repositories/OrganizationRepository';
 import { OrganizationPermission } from '../entity/OrganizationMembership';
-
+import { Organization } from '../entity/Organization';
 
 @InputType()
 class CreateApplicationInput {
@@ -53,21 +50,15 @@ class UpdateApplicationInput {
 
 @Resolver(() => Application)
 export class ApplicationResolver {
-    constructor(
-        private applicationRepo = getCustomRepository(ApplicationRepository),
-        private componentRepo = getRepository(Component),
-        private organizationRepo = getCustomRepository(OrganizationRepository)
-    ) {}
-
     @Authorized()
     @Query(() => Application)
     async application(@Ctx() { user }: Context, @Arg('id', () => ID) id: string) {
-        return await this.applicationRepo.findForUserByID(user, id);
+        return await Application.findForUserByID(user, id);
     }
 
     @FieldResolver(() => Component)
     async component(@Root() application: Application, @Arg('id', () => ID) id: string) {
-        return await this.componentRepo.findOneOrFail({
+        return await Component.findOneOrFail({
             where: {
                 id,
                 application,
@@ -82,36 +73,37 @@ export class ApplicationResolver {
     }
 
     @Mutation(() => Application)
-    async createApplication(
-        @Ctx() { user }: Context,
-        @Arg('input') input: CreateApplicationInput,
-    ) {
-        const organization = await this.organizationRepo.findForUser(user, { id: input.organizationID }, OrganizationPermission.WRITE);
+    async createApplication(@Ctx() { user }: Context, @Arg('input') input: CreateApplicationInput) {
+        const organization = await Organization.findForUser(
+            user,
+            { id: input.organizationID },
+            OrganizationPermission.WRITE,
+        );
 
-        const app = this.applicationRepo.create({
+        const app = Application.create({
             name: input.name,
             description: input.description ?? '',
             organization: organization,
             createdBy: user,
         });
 
-        return await this.applicationRepo.save(app);
+        return await app.save();
     }
 
     // TODO: This needs to delete all associated resources. (cascasde should solve this)
     @Mutation(() => Application)
     async deleteApplication(@Ctx() { user }: Context, @Arg('input') input: DeleteApplicationInput) {
-        const application = await this.applicationRepo.findForUserByID(user, input.applicationID);
+        const application = await Application.findForUserByID(user, input.applicationID);
         // TODO: Spin down all resources, and instead of immedietly deleting, mark
         // it in a state of deletion, and don't allow modification to the model.
-        await this.applicationRepo.delete(application.id);
+        await Application.delete(application.id);
 
         return application;
     }
 
     @Mutation(() => Application)
     async updateApplication(@Ctx() { user }: Context, @Arg('input') input: UpdateApplicationInput) {
-        const application = await this.applicationRepo.findForUserByID(user, input.applicationID);
+        const application = await Application.findForUserByID(user, input.applicationID);
         if (typeof input.name !== 'undefined' && input.name !== null) {
             application.name = input.name;
         }
@@ -120,6 +112,6 @@ export class ApplicationResolver {
             application.description = input.description;
         }
 
-        return await this.applicationRepo.save(application);
+        return await application.save();
     }
 }

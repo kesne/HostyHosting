@@ -1,4 +1,4 @@
-import { createConnection, getRepository, getCustomRepository } from 'typeorm';
+import { createConnection } from 'typeorm';
 import ormconfig from '../../ormconfig';
 import { PasswordReset } from '../entity/PasswordReset';
 import { Application } from '../entity/Application';
@@ -8,10 +8,10 @@ import { Component } from '../entity/Component';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { APIKey } from '../entity/APIKey';
 import { Notification } from '../entity/Notification';
-import { EnvironmentRepository } from '../repositories/EnvironmentRepository';
-import { UserRepository } from '../repositories/UserRepository';
 import { run } from '../utils/currentRequest';
 import { Network } from '../entity/Network';
+import { User } from '../entity/User';
+import { Environment } from '../entity/Environment';
 
 async function withConnection(fn: any) {
     const mockContext = {
@@ -34,40 +34,26 @@ async function withConnection(fn: any) {
 
 // TODO: Make this execute a bunch of GraphQL commands, instead of just being ORM operations.
 async function seed() {
-    const repos = {
-        APIKey: getRepository(APIKey),
-        ContainerGroup: getRepository(ContainerGroup),
-        Component: getRepository(Component),
-        Application: getRepository(Application),
-        PasswordReset: getRepository(PasswordReset),
-        OrganizationMembership: getRepository(OrganizationMembership),
-        User: getCustomRepository(UserRepository),
-        Network: getRepository(Network),
-        Environment: getCustomRepository(EnvironmentRepository),
-        Organization: getRepository(Organization),
-        Notification: getRepository(Notification),
-    };
-
     // Start by removing the ENTIRE world.
-    await repos.APIKey.delete({});
-    await repos.ContainerGroup.delete({});
-    await repos.Component.delete({});
-    await repos.Application.delete({});
-    await repos.PasswordReset.delete({});
-    await repos.OrganizationMembership.delete({});
-    await repos.User.delete({});
-    await repos.Network.delete({});
-    await repos.Environment.delete({});
-    await repos.Organization.delete({});
-    await repos.Notification.delete({});
+    await APIKey.delete({});
+    await ContainerGroup.delete({});
+    await Component.delete({});
+    await Application.delete({});
+    await PasswordReset.delete({});
+    await OrganizationMembership.delete({});
+    await User.delete({});
+    await Network.delete({});
+    await Environment.delete({});
+    await Organization.delete({});
+    await Notification.delete({});
 
     // Create a notification for shits and giggles:
     const notification = new Notification();
     notification.title = 'Test Notification';
     notification.body = 'This is a test notification. It should exist.';
-    await repos.Notification.save(notification);
+    await notification.save();
 
-    const user = await repos.User.signUp({
+    const user = await User.signUp({
         email: 'admin@vapejuicejordan.rip',
         name: 'Admin (DEV)',
         username: 'admin',
@@ -77,20 +63,20 @@ async function seed() {
     // Allocate more max compute units to myself for testing:
     const personalOrg = await user.personalOrganization;
     personalOrg.maxComputeUnits = 100;
-    await repos.Organization.save(personalOrg);
+    await personalOrg.save();
 
     // Create orgs:
     const netflixOrg = new Organization();
     netflixOrg.name = 'Netflix';
     netflixOrg.username = 'netflix';
-    await repos.Organization.save(netflixOrg);
+    await netflixOrg.save();
 
     const netflixMembership = new OrganizationMembership();
     netflixMembership.user = user;
     netflixMembership.organization = netflixOrg;
     netflixMembership.permission = OrganizationPermission.ADMIN;
-    await repos.OrganizationMembership.save(netflixMembership);
-    await repos.Environment.createDefaultEnvironments(netflixOrg);
+    await netflixMembership.save();
+    await Environment.createDefaultEnvironments(netflixOrg);
 }
 
 withConnection(seed);

@@ -1,4 +1,4 @@
-import { ObjectType, Field, Arg, Mutation, Int, Ctx, Authorized, Resolver, ID } from 'type-graphql';
+import { ObjectType, Field, Arg, Mutation, Ctx, Authorized, Resolver, ID } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { Component } from '../entity/Component';
 import { Context } from '../types';
@@ -6,33 +6,22 @@ import { OrganizationPermission } from '../entity/OrganizationMembership';
 import { ComponentInput } from './types/ComponentInput';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
-import { Secret } from '../entity/Secret';
 import { ContainerGroupInput } from './types/ContainerGroupInput';
-import { getCustomRepository, getRepository } from 'typeorm';
-import { ComponentRepository } from '../repositories/ComponentRepository';
-import { ApplicationRepository } from '../repositories/ApplicationRepository';
 
 @ObjectType()
 export class ApplicationMutations {
-    constructor(
-        private application: Application,
-        private applicationRepo = getRepository(Application),
-        private componentRepo = getCustomRepository(ComponentRepository),
-        private environmentRepo = getRepository(Environment),
-        private containerGroupRepo = getRepository(ContainerGroup),
-        private secretRepo = getRepository(Secret),
-    ) {}
+    constructor(private application: Application) {}
 
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
-        const component = this.componentRepo.create({
+        const component = Component.create({
             application: this.application,
             name: componentInput.name,
             image: componentInput.image,
             deploymentStrategy: componentInput.deploymentStrategy,
         });
 
-        return await this.componentRepo.save(component);
+        return await component.save();
     }
 
     @Field(() => ContainerGroup)
@@ -41,14 +30,14 @@ export class ApplicationMutations {
     ) {
         const organization = await this.application.organization;
 
-        const component = await this.componentRepo.findOneOrFail({
+        const component = await Component.findOneOrFail({
             where: {
                 id: containerGroupInput.componentID,
                 application: this.application,
             },
         });
 
-        const environment = await this.environmentRepo.findOneOrFail({
+        const environment = await Environment.findOneOrFail({
             where: {
                 id: containerGroupInput.environmentID,
                 organization,
@@ -62,7 +51,7 @@ export class ApplicationMutations {
         containerGroup.setSize(containerGroupInput.size);
         containerGroup.setContainerCount(containerGroupInput.containerCount);
 
-        return await this.containerGroupRepo.save(containerGroup);
+        return await containerGroup.save();
     }
 
     @Field(() => Component)
@@ -70,7 +59,7 @@ export class ApplicationMutations {
         @Arg('id', () => ID) id: string,
         @Arg('component', () => ComponentInput) componentInput: ComponentInput,
     ) {
-        const component = await this.componentRepo.findByApplicationAndId(this.application, id);
+        const component = await Component.findByApplicationAndId(this.application, id);
 
         if ('name' in componentInput) {
             component.name = componentInput.name;
@@ -84,90 +73,16 @@ export class ApplicationMutations {
             component.deploymentStrategy = componentInput.deploymentStrategy;
         }
 
-        return await this.componentRepo.save(component);
-    }
-
-    @Field(() => Secret)
-    async addSecret(
-        @Arg('containerGroup', () => ID) containerGroupID: string,
-        @Arg('key') key: string,
-        @Arg('value') value: string,
-    ) {
-        // TODO: This is not really secure because we don't scope the container group lookup.
-        // Instead, at some point in the future we need to move all of the containerGroup mutations into a ContainerGroupMutationsResolver.
-        const containerGroup = await this.containerGroupRepo.findOneOrFail({
-            where: {
-                id: containerGroupID,
-            },
-        });
-
-        const secret = this.secretRepo.create({
-            key,
-            value,
-            containerGroup,
-        });
-
-        return await this.secretRepo.save(secret);
-    }
-
-    @Field(() => Secret)
-    async editSecret(
-        @Arg('containerGroup', () => ID) containerGroupID: string,
-        @Arg('id', () => ID) id: string,
-        @Arg('key') key: string,
-        @Arg('value') value: string,
-    ) {
-        const containerGroup = await this.containerGroupRepo.findOneOrFail({
-            where: {
-                id: containerGroupID,
-            },
-        });
-
-        const secret = await this.secretRepo.findOneOrFail({
-            where: {
-                id,
-                containerGroup,
-            },
-        });
-
-        secret.key = key;
-        secret.value = value;
-
-        return await this.secretRepo.save(secret);
-    }
-
-    @Field(() => Secret)
-    async deleteSecret(
-        @Arg('containerGroup', () => ID) containerGroupID: string,
-        @Arg('id', () => ID) id: string,
-    ) {
-        const containerGroup = await this.containerGroupRepo.findOneOrFail({
-            where: {
-                id: containerGroupID,
-            },
-        });
-
-        const secret = await this.secretRepo.findOneOrFail({
-            where: {
-                id,
-                containerGroup,
-            },
-        });
-
-        await this.secretRepo.delete(secret.id);
-
-        return secret;
+        return await component.save();
     }
 }
 
 @Resolver()
 export class ApplicationMutationsResolver {
-    constructor(private applicationRepo = getCustomRepository(ApplicationRepository)) {}
-
     @Authorized()
     @Mutation(() => ApplicationMutations)
     async application(@Ctx() { user }: Context, @Arg('id', () => ID) id: string) {
-        const application = await this.applicationRepo.findForUserByID(
+        const application = await Application.findForUserByID(
             user,
             id,
             // All application mutations require AT LEAST write access to the organization.

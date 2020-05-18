@@ -7,11 +7,6 @@ function get() {
     return cookie.get(USER_COOKIE) !== '0';
 }
 
-// TODO: When we refactor away having nested entities under "me", we can get rid of this.
-export function getUserID() {
-    return cookie.get(USER_COOKIE);
-}
-
 const [useUserStore, api] = create<{ hasUser: boolean }>(() => ({
     hasUser: get(),
 }));

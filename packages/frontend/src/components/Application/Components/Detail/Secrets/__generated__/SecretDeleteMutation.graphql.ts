@@ -2,16 +2,15 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
+export type DeleteSecretInput = {
+    secretID: string;
+};
 export type SecretDeleteMutationVariables = {
-    application: string;
-    containerGroup: string;
-    secret: string;
+    input: DeleteSecretInput;
 };
 export type SecretDeleteMutationResponse = {
-    readonly application: {
-        readonly deleteSecret: {
-            readonly id: string;
-        };
+    readonly deleteSecret: {
+        readonly id: string;
     };
 };
 export type SecretDeleteMutation = {
@@ -23,14 +22,10 @@ export type SecretDeleteMutation = {
 
 /*
 mutation SecretDeleteMutation(
-  $application: ID!
-  $containerGroup: ID!
-  $secret: ID!
+  $input: DeleteSecretInput!
 ) {
-  application(id: $application) {
-    deleteSecret(containerGroup: $containerGroup, id: $secret) {
-      id
-    }
+  deleteSecret(input: $input) {
+    id
   }
 }
 */
@@ -40,20 +35,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "containerGroup",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "secret",
-    "type": "ID!"
+    "name": "input",
+    "type": "DeleteSecretInput!"
   }
 ],
 v1 = [
@@ -62,42 +45,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Secret",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "deleteSecret",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "containerGroup",
-            "variableName": "containerGroup"
-          },
-          {
-            "kind": "Variable",
-            "name": "id",
-            "variableName": "secret"
-          }
-        ],
-        "concreteType": "Secret",
-        "kind": "LinkedField",
-        "name": "deleteSecret",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -125,9 +86,9 @@ return {
     "metadata": {},
     "name": "SecretDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation SecretDeleteMutation(\n  $application: ID!\n  $containerGroup: ID!\n  $secret: ID!\n) {\n  application(id: $application) {\n    deleteSecret(containerGroup: $containerGroup, id: $secret) {\n      id\n    }\n  }\n}\n"
+    "text": "mutation SecretDeleteMutation(\n  $input: DeleteSecretInput!\n) {\n  deleteSecret(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'bd89474d668701761c5330f50bee2ba7';
+(node as any).hash = 'd073228e68015d40c9c5a587df05a2f6';
 export default node;

@@ -6,7 +6,6 @@ import {
 } from '../entity/OrganizationMembership';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
-import { getRepository } from 'typeorm';
 
 export function OrganizationAccess<T>(
     _typeFn: () => T,
@@ -18,9 +17,7 @@ export function OrganizationAccess<T>(
     return createMethodDecorator<Context>(async ({ root, context }, next) => {
         const organization = await getOrganization(root);
 
-        const organizationMembershipRepo = getRepository(OrganizationMembership);
-
-        const membership = await organizationMembershipRepo.findOneOrFail({
+        const membership = await OrganizationMembership.findOneOrFail({
             where: {
                 user: context.user,
                 organization: organization,

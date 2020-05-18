@@ -13,8 +13,6 @@ import {
 import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
-import { getRepository } from 'typeorm';
-import { Environment } from '../entity/Environment';
 
 @InputType()
 class DeleteComponentInput {
@@ -24,16 +22,10 @@ class DeleteComponentInput {
 
 @Resolver(() => Component)
 export class ComponentResolver {
-    constructor(
-        private componentRepo = getRepository(Component),
-        private containerGroupRepo = getRepository(ContainerGroup),
-        private environmentRepo = getRepository(Environment),
-    ) {}
-
     @Query(() => Component)
     component(@Arg('id', () => ID) id: string) {
         // TODO: pls pls pls implement auth here:
-        return this.componentRepo.findOneOrFail({ where: { id } });
+        return Component.findOneOrFail({ where: { id } });
     }
 
     @FieldResolver(() => Int)
@@ -53,16 +45,12 @@ export class ComponentResolver {
         @Arg('environment', () => ID) environmentID: string,
     ) {
         // TODO: Does this need a guard to make sure the environment is owned by the org?
-        const environment = await this.environmentRepo.findOneOrFail({
-            where: {
-                id: environmentID,
-            },
-        });
-
-        return this.containerGroupRepo.findOne({
+        return ContainerGroup.findOne({
             where: {
                 component,
-                environment,
+                environment: {
+                    id: environmentID
+                },
             },
         });
     }
@@ -70,8 +58,8 @@ export class ComponentResolver {
     @Mutation(() => Component)
     async deleteComponent(@Arg('input') input: DeleteComponentInput) {
         // TODO: Verify that I can actually do this:
-        const component = await this.componentRepo.findOneOrFail(input.componentID);
-        await this.componentRepo.delete(component.id);
+        const component = await Component.findOneOrFail(input.componentID);
+        await Component.delete(component.id);
         return component;
     }
 }

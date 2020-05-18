@@ -12,6 +12,15 @@ import { ObjectType, Field } from 'type-graphql';
 @ObjectType()
 @Entity()
 export class APIKey extends ExternalEntity {
+    static async createForUser(user: User, description: string) {
+        const apiKey = APIKey.create({
+            description,
+            user
+        });
+
+        return await this.save(apiKey);
+    }
+
     // NOTE: Never expose this column externally via GraphQL.
     @Column()
     key!: string;

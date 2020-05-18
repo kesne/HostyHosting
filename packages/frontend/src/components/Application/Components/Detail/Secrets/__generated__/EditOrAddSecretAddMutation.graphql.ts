@@ -2,19 +2,19 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type EditOrAddSecretAddMutationVariables = {
-    application: string;
-    containerGroup: string;
+export type CreateSecretInput = {
+    containerGroupID: string;
     key: string;
     value: string;
 };
+export type EditOrAddSecretAddMutationVariables = {
+    input: CreateSecretInput;
+};
 export type EditOrAddSecretAddMutationResponse = {
-    readonly application: {
-        readonly addSecret: {
-            readonly id: string;
-            readonly key: string;
-            readonly value: string;
-        };
+    readonly createSecret: {
+        readonly id: string;
+        readonly key: string;
+        readonly value: string;
     };
 };
 export type EditOrAddSecretAddMutation = {
@@ -26,17 +26,12 @@ export type EditOrAddSecretAddMutation = {
 
 /*
 mutation EditOrAddSecretAddMutation(
-  $application: ID!
-  $containerGroup: ID!
-  $key: String!
-  $value: String!
+  $input: CreateSecretInput!
 ) {
-  application(id: $application) {
-    addSecret(containerGroup: $containerGroup, key: $key, value: $value) {
-      id
-      key
-      value
-    }
+  createSecret(input: $input) {
+    id
+    key
+    value
   }
 }
 */
@@ -46,26 +41,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "containerGroup",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "key",
-    "type": "String!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "value",
-    "type": "String!"
+    "name": "input",
+    "type": "CreateSecretInput!"
   }
 ],
 v1 = [
@@ -74,61 +51,34 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Secret",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "createSecret",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "containerGroup",
-            "variableName": "containerGroup"
-          },
-          {
-            "kind": "Variable",
-            "name": "key",
-            "variableName": "key"
-          },
-          {
-            "kind": "Variable",
-            "name": "value",
-            "variableName": "value"
-          }
-        ],
-        "concreteType": "Secret",
-        "kind": "LinkedField",
-        "name": "addSecret",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "key",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "value",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "key",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "value",
         "storageKey": null
       }
     ],
@@ -156,9 +106,9 @@ return {
     "metadata": {},
     "name": "EditOrAddSecretAddMutation",
     "operationKind": "mutation",
-    "text": "mutation EditOrAddSecretAddMutation(\n  $application: ID!\n  $containerGroup: ID!\n  $key: String!\n  $value: String!\n) {\n  application(id: $application) {\n    addSecret(containerGroup: $containerGroup, key: $key, value: $value) {\n      id\n      key\n      value\n    }\n  }\n}\n"
+    "text": "mutation EditOrAddSecretAddMutation(\n  $input: CreateSecretInput!\n) {\n  createSecret(input: $input) {\n    id\n    key\n    value\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'e680d27f2ac9f35ef05120a95fb7320f';
+(node as any).hash = '2bda51be956ea37a648d3b85ad724f2d';
 export default node;

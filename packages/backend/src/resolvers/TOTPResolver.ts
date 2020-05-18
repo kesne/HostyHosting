@@ -1,20 +1,16 @@
 import { authenticator } from 'otplib';
 import { Resolver, Ctx, Arg, Mutation, Authorized } from 'type-graphql';
 import Result from './types/Result';
-import { GrantType } from '../entity/User';
+import { GrantType, User } from '../entity/User';
 import { Context } from '../types';
-import { UserRepository } from '../repositories/UserRepository';
-import { getCustomRepository } from 'typeorm';
 
 @Resolver()
 export class TOTPResolver {
-    constructor(private userRepo = getCustomRepository(UserRepository)) {}
-
     // NOTE: This is intentionally unauthorized because we don't yet have a full
     // user session that can be resolved.
     @Mutation(() => Result)
     async exchangeTOTP(@Arg('token') token: string) {
-        const user = await this.userRepo.fromTOTPSession(token);
+        const user = await User.fromTOTPSession(token);
         user.signIn();
         return new Result();
     }
@@ -36,15 +32,16 @@ export class TOTPResolver {
             throw new Error('Invalid TOTP');
         }
         user.totpSecret = secret;
-        await this.userRepo.save(user);
+        await user.save();
         return new Result();
     }
 
+    // TODO: This should just return a user type that way the cache is automatically updated.
     @Authorized(GrantType.SESSION)
     @Mutation(() => Result)
     async disableTotp(@Ctx() { user }: Context, @Arg('password') password: string) {
         await user.disableTOTP(password);
-        await this.userRepo.save(user);
+        await user.save();
         return new Result();
     }
 }

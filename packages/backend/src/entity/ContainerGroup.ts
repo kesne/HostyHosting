@@ -6,7 +6,6 @@ import {
     BeforeUpdate,
     OneToMany,
     Unique,
-    getRepository,
 } from 'typeorm';
 import { Component } from './Component';
 import { ObjectType, Field, registerEnumType } from 'type-graphql';
@@ -92,14 +91,12 @@ export class ContainerGroup extends ExternalEntity {
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;
 
-    // TODO: Enable these please:
     @BeforeInsert()
     @BeforeUpdate()
     async validateSize() {
-        const containerGroupRepo = getRepository(ContainerGroup);
         const organization = await this.organization;
 
-        const containerGroups = await containerGroupRepo.find({
+        const containerGroups = await ContainerGroup.find({
             where: {
                 organization: organization,
             },

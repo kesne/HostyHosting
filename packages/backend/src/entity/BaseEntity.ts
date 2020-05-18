@@ -5,13 +5,14 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    BaseEntity
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
 /**
  * An entity that is never exposed externally.
  */
-export abstract class InternalEntity {
+export abstract class InternalEntity extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     readonly id!: string;
 
@@ -32,7 +33,7 @@ export abstract class InternalEntity {
  * An entity that IS exposed via GraphQL.
  */
 @ObjectType()
-export abstract class ExternalEntity {
+export abstract class ExternalEntity extends BaseEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn('uuid')
     readonly id!: string;

@@ -4,12 +4,10 @@ import { Notification } from '../entity/Notification';
 
 @Resolver()
 export class NotificationResolver {
-    constructor(private notificationRepo = getRepository(Notification)) {}
-
     @Authorized()
     @Query(() => [Notification])
     async notifications() {
-        const notifications = await this.notificationRepo.find({
+        const notifications = await Notification.find({
             take: 10,
         });
 

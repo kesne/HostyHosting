@@ -1,27 +1,18 @@
 import axios from 'axios';
-import { Resolver, Query, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
+import { Resolver, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
 import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
 import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
-import { UserRepository } from '../repositories/UserRepository';
-import { PasswordResetRepository } from '../repositories/PasswordResetRepository';
-import { getCustomRepository, getRepository } from 'typeorm';
+import { PasswordReset } from '../entity/PasswordReset';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
 
 @Resolver(() => User)
 export class UserResolver {
-    constructor(
-        private userRepo = getCustomRepository(UserRepository),
-        private passwordResetRepo = getCustomRepository(PasswordResetRepository),
-        private organizationRepo = getRepository(Organization),
-        private organizationMembershipRepo = getRepository(OrganizationMembership),
-    ) {}
-
     // TODO: The fact that this field exists on all users is a red flag to me.
     // We probably want to move this outside of the user object.
     @Authorized(GrantType.SESSION)
@@ -47,7 +38,7 @@ export class UserResolver {
         @Arg('email') email: string,
         @Arg('password') password: string,
     ) {
-        await this.userRepo.signUp({
+        await User.signUp({
             username,
             name,
             email,
@@ -58,11 +49,8 @@ export class UserResolver {
     }
 
     @Mutation(() => SignInResult)
-    async signIn(
-        @Arg('email') email: string,
-        @Arg('password') password: string,
-    ) {
-        const user = await this.userRepo.findOne({ where: { email } });
+    async signIn(@Arg('email') email: string, @Arg('password') password: string) {
+        const user = await User.findOne({ where: { email } });
 
         if (!user) {
             throw new Error('No user found.');
@@ -76,7 +64,7 @@ export class UserResolver {
 
         // TODO: Move this into the User itself:
         // Remove any password reset so that it is no longer valid after signing in:
-        this.passwordResetRepo.removeForUser(user);
+        PasswordReset.removeForUser(user);
 
         if (user.totpSecret) {
             user.signIn(AuthType.TOTP);
@@ -126,7 +114,7 @@ export class UserResolver {
 
         const { viewer } = githubUser.data.data;
 
-        const user = await this.userRepo.findOne({
+        const user = await User.findOne({
             where: {
                 githubID: viewer.id,
                 email: viewer.email,
@@ -135,7 +123,7 @@ export class UserResolver {
 
         if (!user) {
             // TODO: What do we do about the username here?
-            await this.userRepo.signUp({
+            await User.signUp({
                 username: viewer.login,
                 githubID: viewer.id,
                 name: viewer.name,
@@ -154,7 +142,7 @@ export class UserResolver {
 
         // TODO: Move this into the User itself:
         // Remove any password reset so that it is no longer valid after signing in:
-        this.passwordResetRepo.removeForUser(user);
+        PasswordReset.removeForUser(user);
 
         if (user.totpSecret) {
             user.signIn(AuthType.TOTP);
@@ -180,7 +168,7 @@ export class UserResolver {
             user.username = username;
             const personalOrganization = await user.personalOrganization;
             personalOrganization.username = username;
-            await this.organizationRepo.save(personalOrganization);
+            personalOrganization.save();
         }
 
         if (name) {
@@ -191,12 +179,12 @@ export class UserResolver {
             user.email = email;
         }
 
-        return await this.userRepo.save(user);
+        return await user.save();
     }
 
     @Mutation(() => Result)
     async forgotPassword(@Arg('email') email: string) {
-        await this.passwordResetRepo.createForEmail(email);
+        await PasswordReset.createForEmail(email);
 
         return new Result();
     }
@@ -206,7 +194,7 @@ export class UserResolver {
     // the top-level as well. (this would move to be a client concern)
     @FieldResolver(() => [Organization])
     async organizations(@Root() user: User) {
-        const memberships = await this.organizationMembershipRepo.find({
+        const memberships = await OrganizationMembership.find({
             where: {
                 user: user,
             },
@@ -222,7 +210,7 @@ export class UserResolver {
     // TODO: Transaction:
     @Mutation(() => Result)
     async resetPassword(@Arg('uuid') uuid: string, @Arg('password') password: string) {
-        const reset = await this.passwordResetRepo.findOne({
+        const reset = await PasswordReset.findOne({
             where: { uuid },
             relations: ['user'],
         });
@@ -233,7 +221,7 @@ export class UserResolver {
         }
 
         if (password) {
-            const user = await this.userRepo.fromSession(AuthType.PASSWORD_RESET);
+            const user = await User.fromSession(AuthType.PASSWORD_RESET);
 
             if (!user) {
                 throw new Error('Did not find a started password reset.');
@@ -243,7 +231,7 @@ export class UserResolver {
             // await reset.remove();
 
             await user.setPassword(password);
-            await this.userRepo.save(user);
+            await user.save();
 
             user.signIn();
             return new Result();

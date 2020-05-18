@@ -5,7 +5,7 @@ export function removeUserCookie() {
     cookies.set('userID', '0', { httpOnly: false, signed: false });
 }
 
-export function setUserCookie(id: number) {
+export function setUserCookie(id: string) {
     const { cookies } = getCurrentRequest();
-    cookies.set('userID', String(id), { httpOnly: false, signed: false });
+    cookies.set('userID', id, { httpOnly: false, signed: false });
 }

@@ -5,8 +5,6 @@ import Result from './types/Result';
 import { Context } from '../types';
 import { APIKey } from '../entity/APIKey';
 import { GrantType } from '../entity/User';
-import { APIKeyRepository } from '../repositories/APIKeyRepository';
-import { getCustomRepository } from 'typeorm';
 import { createConnection, ConnectionArgs } from './types/Pagination';
 
 const API_KEY_EXPIRATION = 100;
@@ -20,8 +18,6 @@ export const [APIKeyConnection, APIKeyEdge] = createConnection(APIKey);
 
 @Resolver()
 export class APIKeyResolver {
-    constructor(private apiKeyRepo = getCustomRepository(APIKeyRepository)) {}
-
     @Mutation(() => String)
     async createAPIKeyRequest(): Promise<string> {
         const uuid = uuidv4();
@@ -42,7 +38,7 @@ export class APIKeyResolver {
             return null;
         }
 
-        const apiKey = await this.apiKeyRepo.findOneOrFail(tokenID);
+        const apiKey = await APIKey.findOneOrFail(tokenID);
 
         // Prevent the API Key from being retrieved multiple times:
         await redis.del(getRedisKeyName(uuid));
@@ -58,7 +54,7 @@ export class APIKeyResolver {
             throw new Error('The request was not found');
         }
 
-        const apiKey = await this.apiKeyRepo.createForUser(user, 'HostyHosting CLI');
+        const apiKey = await APIKey.createForUser(user, 'HostyHosting CLI');
 
         await redis.set(getRedisKeyName(uuid), apiKey.id);
 
@@ -71,7 +67,7 @@ export class APIKeyResolver {
         @Ctx() { user }: Context,
         @Arg('description') description: string,
     ): Promise<InstanceType<typeof APIKeyEdge>> {
-        const key = await this.apiKeyRepo.createForUser(user, description);
+        const key = await APIKey.createForUser(user, description);
         return {
             cursor: key.id,
             node: key,
@@ -81,14 +77,14 @@ export class APIKeyResolver {
     @Authorized(GrantType.SESSION)
     @Mutation(() => APIKey)
     async deleteAPIKey(@Ctx() { user }: Context, @Arg('id', () => ID) id: string): Promise<APIKey> {
-        const apiKey = await this.apiKeyRepo.findOneOrFail({
+        const apiKey = await APIKey.findOneOrFail({
             where: {
                 id,
                 user,
             },
         });
 
-        await this.apiKeyRepo.delete(apiKey.id);
+        await APIKey.delete(apiKey.id);
 
         return apiKey;
     }

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useApplicationParams } from '../../../ApplicationContext';
 import Button, { ButtonGroup } from '../../../../ui/Button';
 import { useFragment, graphql, useMutation } from 'react-relay/hooks';
 import { Secret_secret$key } from './__generated__/Secret_secret.graphql';
@@ -13,8 +12,6 @@ type Props = {
 };
 
 export default function Secret({ containerGroupID, onEdit, secret }: Props) {
-    const params = useApplicationParams();
-
     const data = useFragment(
         graphql`
             fragment Secret_secret on Secret {
@@ -27,11 +24,9 @@ export default function Secret({ containerGroupID, onEdit, secret }: Props) {
     );
 
     const [commit, isInFlight] = useMutation<SecretDeleteMutation>(graphql`
-        mutation SecretDeleteMutation($application: ID!, $containerGroup: ID!, $secret: ID!) {
-            application(id: $application) {
-                deleteSecret(containerGroup: $containerGroup, id: $secret) {
-                    id
-                }
+        mutation SecretDeleteMutation($input: DeleteSecretInput!) {
+            deleteSecret(input: $input) {
+                id
             }
         }
     `);
@@ -39,9 +34,9 @@ export default function Secret({ containerGroupID, onEdit, secret }: Props) {
     function handleDelete() {
         commit({
             variables: {
-                application: params.application,
-                containerGroup: containerGroupID,
-                secret: data.id,
+                input: {
+                    secretID: data.id,
+                },
             },
             // TODO: This doesn't remove the secret itself from storage.
             // When we move this to be connection-based, we should be good to go.

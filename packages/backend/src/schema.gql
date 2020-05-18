@@ -45,9 +45,6 @@ type ApplicationMutations {
   createComponent(component: ComponentInput!): Component!
   createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
   updateComponent(component: ComponentInput!, id: ID!): Component!
-  addSecret(value: String!, key: String!, containerGroup: ID!): Secret!
-  editSecret(value: String!, key: String!, id: ID!, containerGroup: ID!): Secret!
-  deleteSecret(id: ID!, containerGroup: ID!): Secret!
 }
 
 type Component {
@@ -113,6 +110,12 @@ input CreateEnvironmentInput {
   label: String!
 }
 
+input CreateSecretInput {
+  containerGroupID: ID!
+  key: String!
+  value: String!
+}
+
 type CurrentUser {
   id: ID!
   createdAt: DateTime!
@@ -152,9 +155,19 @@ input DeleteComponentInput {
   componentID: ID!
 }
 
+input DeleteSecretInput {
+  secretID: ID!
+}
+
 enum DeploymentStrategy {
   REPLACE
   RECREATE
+}
+
+input EditSecretInput {
+  secretID: ID!
+  key: String!
+  value: String!
 }
 
 type Environment {
@@ -184,6 +197,9 @@ type Mutation {
   deleteComponent(input: DeleteComponentInput!): Component!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
   changeOrganizationUsername: Organization!
+  createSecret(input: CreateSecretInput!): Secret!
+  editSecret(input: EditSecretInput!): Secret!
+  deleteSecret(input: DeleteSecretInput!): Secret!
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
   disableTotp(password: String!): Result!

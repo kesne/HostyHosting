@@ -27,6 +27,15 @@ registerEnumType(DeploymentStrategy, {
 @ObjectType()
 @Unique(['name', 'application'])
 export class Component extends ExternalEntity {
+    static findByApplicationAndId(application: Application, id: string) {
+        return this.findOneOrFail({
+            where: {
+                id,
+                application,
+            },
+        });
+    }
+
     @Field()
     @Column()
     @Matches(NAME_REGEX)

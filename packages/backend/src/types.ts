@@ -2,7 +2,7 @@ import { Context as KoaContext } from 'koa';
 import { User, AuthType } from './entity/User';
 
 export type Session = {
-    userID: number;
+    userID: string;
     type: AuthType;
 };
 export type Cookies = KoaContext['cookies'];
