@@ -1,8 +1,18 @@
 import { authenticator } from 'otplib';
-import { Resolver, Ctx, Arg, Mutation, Authorized, InputType, Field, FieldResolver, Root } from 'type-graphql';
+import {
+    Resolver,
+    Ctx,
+    Arg,
+    Mutation,
+    Authorized,
+    InputType,
+    Field,
+    FieldResolver,
+} from 'type-graphql';
 import Result from './types/Result';
 import { GrantType, User } from '../entity/User';
 import { Context } from '../types';
+import { CurrentUserOnly } from '../utils/permissions';
 
 @InputType()
 class EnableTOTPInput {
@@ -30,13 +40,10 @@ export class TOTPResolver {
     }
 
     // TODO: This seems weird to have on every user, can we move it?
+    @CurrentUserOnly()
     @Authorized(GrantType.SESSION)
     @FieldResolver()
-    onboardTOTP(@Ctx() { user: currentUser }: Context, @Root() user: User): string {
-        if (user.id !== currentUser.id) {
-            throw new Error('You can only enable TOTP for your own account.');
-        }
-
+    onboardTOTP(@Ctx() { user }: Context): string {
         if (user.totpSecret) {
             throw new Error('TOTP Already Enabled');
         }

@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { Resolver, Ctx, Mutation, Arg, FieldResolver, Root, Authorized, Query, Args } from 'type-graphql';
+import {
+    Resolver,
+    Ctx,
+    Mutation,
+    Arg,
+    FieldResolver,
+    Root,
+    Authorized,
+    Query,
+    Args,
+} from 'type-graphql';
 import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
@@ -9,6 +19,7 @@ import { OrganizationMembership } from '../entity/OrganizationMembership';
 import { PasswordReset } from '../entity/PasswordReset';
 import { APIKeyConnection } from './APIKeyResolver';
 import { ConnectionArgs } from './types/Pagination';
+import { CurrentUserOnly } from '../utils/permissions';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
@@ -21,13 +32,13 @@ export class UserResolver {
         return user;
     }
 
-    // TODO: Add a decorator for "CurrentUserOnly" to mark that this is only
-    // fetched on the current user.
+    @CurrentUserOnly()
     @FieldResolver()
     hasTOTP(@Ctx() { user }: Context): boolean {
         return !!user.totpSecret;
     }
 
+    @CurrentUserOnly()
     @FieldResolver(() => APIKeyConnection)
     async apiKeys(@Ctx() { user }: Context, @Args() _args: ConnectionArgs) {
         return {
