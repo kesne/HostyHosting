@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useMutation, graphql } from 'react-relay/hooks';
-import { useApplicationParams } from '../../ApplicationContext';
 import Button from '../../../ui/Button';
 import { DeleteComponentMutation } from './__generated__/DeleteComponentMutation.graphql';
 
@@ -10,15 +9,12 @@ type Props = {
 };
 
 export default function DeleteComponent({ id }: Props) {
-    const params = useApplicationParams();
     const navigate = useNavigate();
 
     const [commit, isInFlight] = useMutation<DeleteComponentMutation>(graphql`
-        mutation DeleteComponentMutation($application: ID!, $id: ID!) {
-            application(id: $application) {
-                deleteComponent(id: $id) {
-                    id
-                }
+        mutation DeleteComponentMutation($input: DeleteComponentInput!) {
+            deleteComponent(input: $input) {
+                id
             }
         }
     `);
@@ -26,8 +22,9 @@ export default function DeleteComponent({ id }: Props) {
     function handleDelete() {
         commit({
             variables: {
-                application: params.application,
-                id,
+                input: {
+                    componentID: id
+                },
             },
             onCompleted() {
                 // TODO: Because these elements are teleported in context, we need to define

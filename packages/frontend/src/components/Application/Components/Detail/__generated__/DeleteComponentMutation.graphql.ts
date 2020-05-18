@@ -2,15 +2,15 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
+export type DeleteComponentInput = {
+    componentID: string;
+};
 export type DeleteComponentMutationVariables = {
-    application: string;
-    id: string;
+    input: DeleteComponentInput;
 };
 export type DeleteComponentMutationResponse = {
-    readonly application: {
-        readonly deleteComponent: {
-            readonly id: string;
-        };
+    readonly deleteComponent: {
+        readonly id: string;
     };
 };
 export type DeleteComponentMutation = {
@@ -22,13 +22,10 @@ export type DeleteComponentMutation = {
 
 /*
 mutation DeleteComponentMutation(
-  $application: ID!
-  $id: ID!
+  $input: DeleteComponentInput!
 ) {
-  application(id: $application) {
-    deleteComponent(id: $id) {
-      id
-    }
+  deleteComponent(input: $input) {
+    id
   }
 }
 */
@@ -38,14 +35,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!"
+    "name": "input",
+    "type": "DeleteComponentInput!"
   }
 ],
 v1 = [
@@ -54,37 +45,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Component",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "deleteComponent",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "id",
-            "variableName": "id"
-          }
-        ],
-        "concreteType": "Component",
-        "kind": "LinkedField",
-        "name": "deleteComponent",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -112,9 +86,9 @@ return {
     "metadata": {},
     "name": "DeleteComponentMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteComponentMutation(\n  $application: ID!\n  $id: ID!\n) {\n  application(id: $application) {\n    deleteComponent(id: $id) {\n      id\n    }\n  }\n}\n"
+    "text": "mutation DeleteComponentMutation(\n  $input: DeleteComponentInput!\n) {\n  deleteComponent(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'a229582772cf12eb4a2bd91bcc05c690';
+(node as any).hash = 'bf0b1b4d0962709d83828b42324e7889';
 export default node;

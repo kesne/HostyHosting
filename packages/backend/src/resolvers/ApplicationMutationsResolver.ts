@@ -4,7 +4,6 @@ import { Component } from '../entity/Component';
 import { Context } from '../types';
 import { OrganizationPermission } from '../entity/OrganizationMembership';
 import { ComponentInput } from './types/ComponentInput';
-import { ApplicationInput } from './types/ApplicationInput';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
@@ -158,13 +157,6 @@ export class ApplicationMutations {
         await this.secretRepo.delete(secret.id);
 
         return secret;
-    }
-
-    @Field(() => Component)
-    async deleteComponent(@Arg('id', () => ID) id: string) {
-        const component = await this.componentRepo.findByApplicationAndId(this.application, id);
-        await this.componentRepo.delete(component.id);
-        return component;
     }
 }
 

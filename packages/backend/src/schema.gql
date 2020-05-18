@@ -48,7 +48,6 @@ type ApplicationMutations {
   addSecret(value: String!, key: String!, containerGroup: ID!): Secret!
   editSecret(value: String!, key: String!, id: ID!, containerGroup: ID!): Secret!
   deleteSecret(id: ID!, containerGroup: ID!): Secret!
-  deleteComponent(id: ID!): Component!
 }
 
 type Component {
@@ -149,6 +148,10 @@ input DeleteApplicationInput {
   applicationID: ID!
 }
 
+input DeleteComponentInput {
+  componentID: ID!
+}
+
 enum DeploymentStrategy {
   REPLACE
   RECREATE
@@ -178,6 +181,7 @@ type Mutation {
   createApplication(input: CreateApplicationInput!): Application!
   deleteApplication(input: DeleteApplicationInput!): Application!
   updateApplication(input: UpdateApplicationInput!): Application!
+  deleteComponent(input: DeleteComponentInput!): Component!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
   changeOrganizationUsername: Organization!
   exchangeTOTP(token: String!): Result!

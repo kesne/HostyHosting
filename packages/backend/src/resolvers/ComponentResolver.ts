@@ -1,9 +1,26 @@
-import { Resolver, FieldResolver, Int, Root, Arg, Query, ID } from 'type-graphql';
+import {
+    Resolver,
+    FieldResolver,
+    Int,
+    Root,
+    Arg,
+    Query,
+    ID,
+    Mutation,
+    InputType,
+    Field,
+} from 'type-graphql';
 import { Component } from '../entity/Component';
 import * as pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
 import { getRepository } from 'typeorm';
 import { Environment } from '../entity/Environment';
+
+@InputType()
+class DeleteComponentInput {
+    @Field(() => ID)
+    componentID!: string;
+}
 
 @Resolver(() => Component)
 export class ComponentResolver {
@@ -48,5 +65,13 @@ export class ComponentResolver {
                 environment,
             },
         });
+    }
+
+    @Mutation(() => Component)
+    async deleteComponent(@Arg('input') input: DeleteComponentInput) {
+        // TODO: Verify that I can actually do this:
+        const component = await this.componentRepo.findOneOrFail(input.componentID);
+        await this.componentRepo.delete(component.id);
+        return component;
     }
 }
