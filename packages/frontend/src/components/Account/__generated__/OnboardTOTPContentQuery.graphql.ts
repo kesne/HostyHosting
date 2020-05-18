@@ -4,7 +4,7 @@
 import { ConcreteRequest } from "relay-runtime";
 export type OnboardTOTPContentQueryVariables = {};
 export type OnboardTOTPContentQueryResponse = {
-    readonly me: {
+    readonly viewer: {
         readonly id: string;
         readonly name: string;
         readonly onboardTOTP: string;
@@ -19,7 +19,7 @@ export type OnboardTOTPContentQuery = {
 
 /*
 query OnboardTOTPContentQuery {
-  me {
+  viewer {
     id
     name
     onboardTOTP
@@ -34,7 +34,7 @@ var v0 = [
     "args": null,
     "concreteType": "CurrentUser",
     "kind": "LinkedField",
-    "name": "me",
+    "name": "viewer",
     "plural": false,
     "selections": [
       {
@@ -83,9 +83,9 @@ return {
     "metadata": {},
     "name": "OnboardTOTPContentQuery",
     "operationKind": "query",
-    "text": "query OnboardTOTPContentQuery {\n  me {\n    id\n    name\n    onboardTOTP\n  }\n}\n"
+    "text": "query OnboardTOTPContentQuery {\n  viewer {\n    id\n    name\n    onboardTOTP\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '64347fe4ce234d195bda5c4d4397bf50';
+(node as any).hash = '350946250998548fae201f7ce03d75ff';
 export default node;

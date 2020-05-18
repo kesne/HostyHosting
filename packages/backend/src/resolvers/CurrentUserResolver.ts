@@ -11,7 +11,7 @@ export class CurrentUser extends User {}
 export class CurrentUserResolver {
     @Authorized()
     @Query(() => CurrentUser)
-    async me(@Ctx() { user }: Context): Promise<User> {
+    async viewer(@Ctx() { user }: Context): Promise<User> {
         return user;
     }
 

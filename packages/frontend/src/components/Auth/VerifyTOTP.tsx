@@ -1,18 +1,16 @@
 import React from 'react';
 import tokenInputRules from '../../utils/tokenInputRules';
-import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { VerifyTOTPMutation } from './__generated__/VerifyTOTPMutation.graphql';
+import Form from '../forms/Form';
+import Input from '../forms/Input';
+import SubmitButton from '../forms/SubmitButton';
 
 type Props = {
     onSignIn(): void;
 };
 
 export default function VerifyTOTP({ onSignIn }: Props) {
-    const { register, errors, handleSubmit } = useForm();
-
     const [commit, isInFlight] = useMutation<VerifyTOTPMutation>(graphql`
         mutation VerifyTOTPMutation($token: String!) {
             exchangeTOTP(token: $token) {
@@ -33,24 +31,15 @@ export default function VerifyTOTP({ onSignIn }: Props) {
     }
 
     return (
-        <form className="space-y-6" onSubmit={handleSubmit(handleFinish)}>
+        <Form className="space-y-6" onSubmit={handleFinish} disabled={isInFlight}>
             <p className="text-sm leading-5 text-gray-700">
                 Two factor auth is enabled on this account. Please enter the token from your
                 authenticator app below:
             </p>
 
-            <Input
-                label="Token"
-                name="token"
-                ref={register(tokenInputRules)}
-                errors={errors}
-                disabled={isInFlight}
-                autoFocus
-            />
+            <Input label="Token" name="token" register={tokenInputRules} autoFocus />
 
-            <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
-                Verify Two Factor Auth
-            </Button>
-        </form>
+            <SubmitButton fullWidth>Verify Two Factor Auth</SubmitButton>
+        </Form>
     );
 }

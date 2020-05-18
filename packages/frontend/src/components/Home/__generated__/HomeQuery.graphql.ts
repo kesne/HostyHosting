@@ -7,8 +7,8 @@ export type HomeQueryVariables = {
     organization?: string | null;
 };
 export type HomeQueryResponse = {
-    readonly me: {
-        readonly " $fragmentRefs": FragmentRefs<"SelectOrganization_me">;
+    readonly viewer: {
+        readonly " $fragmentRefs": FragmentRefs<"SelectOrganization_viewer">;
     };
     readonly organization: {
         readonly " $fragmentRefs": FragmentRefs<"Applications_organization" | "Environments_organization">;
@@ -25,8 +25,8 @@ export type HomeQuery = {
 query HomeQuery(
   $organization: String
 ) {
-  me {
-    ...SelectOrganization_me
+  viewer {
+    ...SelectOrganization_viewer
     id
   }
   organization(username: $organization) {
@@ -55,7 +55,7 @@ fragment Environments_organization on Organization {
   }
 }
 
-fragment SelectOrganization_me on CurrentUser {
+fragment SelectOrganization_viewer on CurrentUser {
   id
   personalOrganization {
     id
@@ -117,13 +117,13 @@ return {
         "args": null,
         "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "viewer",
         "plural": false,
         "selections": [
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "SelectOrganization_me"
+            "name": "SelectOrganization_viewer"
           }
         ],
         "storageKey": null
@@ -163,7 +163,7 @@ return {
         "args": null,
         "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "viewer",
         "plural": false,
         "selections": [
           (v2/*: any*/),
@@ -256,9 +256,9 @@ return {
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery(\n  $organization: String\n) {\n  me {\n    ...SelectOrganization_me\n    id\n  }\n  organization(username: $organization) {\n    ...Applications_organization\n    ...Environments_organization\n    id\n  }\n}\n\nfragment Applications_organization on Organization {\n  id\n  username\n  applications {\n    id\n    name\n    description\n  }\n}\n\nfragment Environments_organization on Organization {\n  id\n  environments {\n    id\n    name\n    label\n  }\n}\n\nfragment SelectOrganization_me on CurrentUser {\n  id\n  personalOrganization {\n    id\n  }\n  organizations {\n    id\n    name\n    username\n  }\n}\n"
+    "text": "query HomeQuery(\n  $organization: String\n) {\n  viewer {\n    ...SelectOrganization_viewer\n    id\n  }\n  organization(username: $organization) {\n    ...Applications_organization\n    ...Environments_organization\n    id\n  }\n}\n\nfragment Applications_organization on Organization {\n  id\n  username\n  applications {\n    id\n    name\n    description\n  }\n}\n\nfragment Environments_organization on Organization {\n  id\n  environments {\n    id\n    name\n    label\n  }\n}\n\nfragment SelectOrganization_viewer on CurrentUser {\n  id\n  personalOrganization {\n    id\n  }\n  organizations {\n    id\n    name\n    username\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'f643b8810315f5086e92044bb4abdb10';
+(node as any).hash = 'f8f14aae5f9086812736e56af3cfee77';
 export default node;

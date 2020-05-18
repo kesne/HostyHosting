@@ -4,7 +4,7 @@ import FormItem from './FormItem';
 import { FieldError } from 'react-hook-form';
 import getError from './util/getError';
 
-type Props = {
+export type Props = {
     label: string;
     error?: string;
     errors?: Record<string, FieldError>;

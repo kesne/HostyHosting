@@ -1,11 +1,11 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
 import Card, { CardContent } from '../ui/Card';
 import { useLazyLoadQuery, graphql, useMutation } from 'react-relay/hooks';
 import { EditAccountQuery } from './__generated__/EditAccountQuery.graphql';
 import { EditAccountMutation } from './__generated__/EditAccountMutation.graphql';
+import Form from '../forms/Form';
+import SubmitButton from '../forms/SubmitButton';
+import Input from '../forms/Input';
 
 export default function EditAccount() {
     const [commit, isInFlight] = useMutation<EditAccountMutation>(graphql`
@@ -22,7 +22,7 @@ export default function EditAccount() {
     const data = useLazyLoadQuery<EditAccountQuery>(
         graphql`
             query EditAccountQuery {
-                me {
+                viewer {
                     id
                     username
                     name
@@ -32,8 +32,6 @@ export default function EditAccount() {
         `,
         {},
     );
-
-    const { register, errors, handleSubmit } = useForm();
 
     function handleFinish(values: Record<string, any>) {
         commit({
@@ -48,38 +46,30 @@ export default function EditAccount() {
     return (
         <Card>
             <CardContent>
-                <form className="space-y-6" onSubmit={handleSubmit(handleFinish)}>
+                <Form className="space-y-6" onSubmit={handleFinish} disabled={isInFlight}>
                     <Input
                         label="Username"
                         name="username"
-                        disabled={isInFlight}
-                        defaultValue={data.me.username}
-                        ref={register({ required: true })}
-                        errors={errors}
+                        defaultValue={data.viewer.username}
+                        register={{ required: true }}
                     />
                     <Input
                         label="Name"
                         name="name"
-                        disabled={isInFlight}
-                        defaultValue={data?.me.name}
-                        ref={register({ required: true })}
-                        errors={errors}
+                        defaultValue={data.viewer.name}
+                        register={{ required: true }}
                     />
                     <Input
                         label="Email"
                         name="email"
-                        disabled={isInFlight}
-                        defaultValue={data?.me.email}
-                        ref={register({ required: true })}
-                        errors={errors}
+                        defaultValue={data.viewer.email}
+                        register={{ required: true }}
                     />
 
                     <div>
-                        <Button disabled={isInFlight} variant="primary" type="submit">
-                            Save Changes
-                        </Button>
+                        <SubmitButton>Save Changes</SubmitButton>
                     </div>
-                </form>
+                </Form>
             </CardContent>
         </Card>
     );

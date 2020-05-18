@@ -27,7 +27,7 @@ export default function Security() {
     const data = useLazyLoadQuery<SecurityQuery>(
         graphql`
             query SecurityQuery {
-                me {
+                viewer {
                     id
                     hasTOTP
                 }
@@ -48,12 +48,12 @@ export default function Security() {
                 <Button>Change Password</Button>
                 <hr className="my-6" />
                 <p className="text-gray-700 leading-normal mb-2">
-                    Two factor auth <strong>{data.me.hasTOTP ? 'is' : 'is not'}</strong> enabled.
+                    Two factor auth <strong>{data.viewer.hasTOTP ? 'is' : 'is not'}</strong> enabled.
                 </p>
-                <Button variant={data.me.hasTOTP ? 'danger' : 'default'} onClick={on}>
-                    {data.me.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
+                <Button variant={data.viewer.hasTOTP ? 'danger' : 'default'} onClick={on}>
+                    {data.viewer.hasTOTP ? 'Disable' : 'Enable'} Two-Factor Authentication
                 </Button>
-                <TOTPModal visible={totpModalVisible} hasTOTP={data.me.hasTOTP} onClose={onClose} />
+                <TOTPModal visible={totpModalVisible} hasTOTP={data.viewer.hasTOTP} onClose={onClose} />
             </CardContent>
         </Card>
     );

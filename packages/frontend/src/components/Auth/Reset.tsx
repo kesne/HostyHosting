@@ -1,11 +1,11 @@
 import React from 'react';
 import Container from './Container';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
+import Input from '../forms/Input';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { ResetPasswordMutation } from './__generated__/ResetPasswordMutation.graphql';
+import SubmitButton from '../forms/SubmitButton';
+import Form from '../forms/Form';
 
 export default function Reset() {
     const navigate = useNavigate();
@@ -18,8 +18,6 @@ export default function Reset() {
             }
         }
     `);
-
-    const { register, errors, handleSubmit } = useForm();
 
     const onFinish = (values: Record<string, string>) => {
         commit({
@@ -35,7 +33,7 @@ export default function Reset() {
 
     return (
         <Container title="Finish resetting your password">
-            <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
+            <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
                 <p className="text-sm leading-5 text-gray-700">
                     You can set a new password for your account below, which can be used for all
                     future sign-ins.
@@ -45,16 +43,12 @@ export default function Reset() {
                     label="Password"
                     name="password"
                     type="password"
-                    ref={register({ required: true })}
-                    errors={errors}
-                    disabled={isInFlight}
+                    register={{ required: true }}
                     autoFocus
                 />
 
-                <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
-                    Reset Password
-                </Button>
-            </form>
+                <SubmitButton fullWidth>Reset Password</SubmitButton>
+            </Form>
         </Container>
     );
 }

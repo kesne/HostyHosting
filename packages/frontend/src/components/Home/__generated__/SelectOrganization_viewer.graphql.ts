@@ -3,7 +3,7 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type SelectOrganization_me = {
+export type SelectOrganization_viewer = {
     readonly id: string;
     readonly personalOrganization: {
         readonly id: string;
@@ -13,12 +13,12 @@ export type SelectOrganization_me = {
         readonly name: string;
         readonly username: string;
     }>;
-    readonly " $refType": "SelectOrganization_me";
+    readonly " $refType": "SelectOrganization_viewer";
 };
-export type SelectOrganization_me$data = SelectOrganization_me;
-export type SelectOrganization_me$key = {
-    readonly " $data"?: SelectOrganization_me$data;
-    readonly " $fragmentRefs": FragmentRefs<"SelectOrganization_me">;
+export type SelectOrganization_viewer$data = SelectOrganization_viewer;
+export type SelectOrganization_viewer$key = {
+    readonly " $data"?: SelectOrganization_viewer$data;
+    readonly " $fragmentRefs": FragmentRefs<"SelectOrganization_viewer">;
 };
 
 
@@ -35,7 +35,7 @@ return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "SelectOrganization_me",
+  "name": "SelectOrganization_viewer",
   "selections": [
     (v0/*: any*/),
     {
@@ -80,5 +80,5 @@ return {
   "type": "CurrentUser"
 };
 })();
-(node as any).hash = 'c58338a61cb34499336a642f04fe0593';
+(node as any).hash = '7cf887e53e4f40cf666b99e7f9cb55e9';
 export default node;

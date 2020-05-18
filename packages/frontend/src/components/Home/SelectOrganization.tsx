@@ -1,30 +1,33 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFragment, graphql } from 'react-relay/hooks';
-import { SelectOrganization_me$key } from './__generated__/SelectOrganization_me.graphql';
+import { SelectOrganization_viewer$key } from './__generated__/SelectOrganization_viewer.graphql';
 
 const PERSONAL = 'personal';
 
 type Props = {
-    organization: SelectOrganization_me$key;
+    viewer: SelectOrganization_viewer$key;
 };
 
-export default function SelectOrganization({ organization }: Props) {
+export default function SelectOrganization({ viewer }: Props) {
     const navigate = useNavigate();
 
-    const data = useFragment(graphql`
-        fragment SelectOrganization_me on CurrentUser {
-            id
-            personalOrganization {
+    const data = useFragment(
+        graphql`
+            fragment SelectOrganization_viewer on CurrentUser {
                 id
+                personalOrganization {
+                    id
+                }
+                organizations {
+                    id
+                    name
+                    username
+                }
             }
-            organizations {
-                id
-                name
-                username
-            }
-        }
-    `, organization);
+        `,
+        viewer,
+    );
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (event.target.value === PERSONAL) {
@@ -37,7 +40,7 @@ export default function SelectOrganization({ organization }: Props) {
     return (
         <div className="relative rounded-md shadow-sm w-60">
             <select
-                value={organization ? String(organization) : PERSONAL}
+                value={viewer ? String(viewer) : PERSONAL}
                 onChange={handleChange}
                 className="text-lg leading-6 font-semibold text-gray-900 block form-select w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
             >

@@ -4,7 +4,7 @@
 import { ConcreteRequest } from "relay-runtime";
 export type SecurityQueryVariables = {};
 export type SecurityQueryResponse = {
-    readonly me: {
+    readonly viewer: {
         readonly id: string;
         readonly hasTOTP: boolean;
     };
@@ -18,7 +18,7 @@ export type SecurityQuery = {
 
 /*
 query SecurityQuery {
-  me {
+  viewer {
     id
     hasTOTP
   }
@@ -32,7 +32,7 @@ var v0 = [
     "args": null,
     "concreteType": "CurrentUser",
     "kind": "LinkedField",
-    "name": "me",
+    "name": "viewer",
     "plural": false,
     "selections": [
       {
@@ -74,9 +74,9 @@ return {
     "metadata": {},
     "name": "SecurityQuery",
     "operationKind": "query",
-    "text": "query SecurityQuery {\n  me {\n    id\n    hasTOTP\n  }\n}\n"
+    "text": "query SecurityQuery {\n  viewer {\n    id\n    hasTOTP\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '394b1543d7fe8d64ad4f3e39fdb7c11e';
+(node as any).hash = '48aab241138f64d25ed5319bfe8f00e1';
 export default node;

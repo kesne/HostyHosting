@@ -225,7 +225,7 @@ type Query {
   getAPIKeyFromRequest(uuid: String!): String
   application(id: ID!): Application!
   component(id: ID!): Component!
-  me: CurrentUser!
+  viewer: CurrentUser!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(

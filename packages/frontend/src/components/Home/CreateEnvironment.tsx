@@ -1,8 +1,11 @@
 import React from 'react';
-import Input from '../ui/Input';
-import CreateModal from '../ui/CreateModal';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { CreateEnvironmentMutation } from './__generated__/CreateEnvironmentMutation.graphql';
+import Modal, { ModalFooter, ModalContent } from '../ui/Modal';
+import Input from '../forms/Input';
+import Form from '../forms/Form';
+import Button, { ButtonGroup } from '../ui/Button';
+import SubmitButton from '../forms/SubmitButton';
 
 type Props = {
     organization?: string;
@@ -48,25 +51,21 @@ export default function CreateEnvironment({ organization, open, onClose }: Props
     }
 
     return (
-        <CreateModal title="Create Environment" open={open} onClose={onClose} onSubmit={onCreate}>
-            {({ register, errors }) => (
-                <div className="space-y-6">
-                    <Input
-                        label="Name"
-                        name="name"
-                        ref={register({ required: true })}
-                        errors={errors}
-                        disabled={isInFlight}
-                    />
-                    <Input
-                        label="Label"
-                        name="label"
-                        ref={register({ required: true })}
-                        errors={errors}
-                        disabled={isInFlight}
-                    />
-                </div>
-            )}
-        </CreateModal>
+        <Modal open={open} onClose={onClose}>
+            <Form onSubmit={onCreate} disabled={isInFlight}>
+                <ModalContent title="Create Environment">
+                    <div className="space-y-6">
+                        <Input label="Name" name="name" register={{ required: true }} />
+                        <Input label="Label" name="label" register={{ required: true }} />
+                    </div>
+                </ModalContent>
+                <ModalFooter>
+                    <ButtonGroup>
+                        <SubmitButton>Create</SubmitButton>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ButtonGroup>
+                </ModalFooter>
+            </Form>
+        </Modal>
     );
 }

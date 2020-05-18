@@ -18,8 +18,8 @@ export default function Home() {
     const data = useLazyLoadQuery<HomeQuery>(
         graphql`
             query HomeQuery($organization: String) {
-                me {
-                    ...SelectOrganization_me
+                viewer {
+                    ...SelectOrganization_viewer
                 }
                 organization(username: $organization) {
                     ...Applications_organization
@@ -35,7 +35,7 @@ export default function Home() {
     return (
         <div>
             <PageHeader>
-                <SelectOrganization organization={data.me} />
+                <SelectOrganization viewer={data.viewer} />
             </PageHeader>
 
             <main>

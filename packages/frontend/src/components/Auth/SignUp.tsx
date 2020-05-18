@@ -2,16 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Container from './Container';
 import Link from '../ui/Link';
-import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
 import GithubButton from './GithubButton';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { SignUpMutation } from './__generated__/SignUpMutation.graphql';
+import Form from '../forms/Form';
+import Input from '../forms/Input';
+import SubmitButton from '../forms/SubmitButton';
 
 export default function SignUp() {
     const navigate = useNavigate();
-    const { register, errors, handleSubmit } = useForm();
 
     const [commit, isInFlight] = useMutation<SignUpMutation>(graphql`
         mutation SignUpMutation(
@@ -49,45 +48,20 @@ export default function SignUp() {
                 </span>
             }
         >
-            <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
-                <Input
-                    label="Username"
-                    name="username"
-                    errors={errors}
-                    ref={register({ required: true })}
-                    disabled={isInFlight}
-                    autoFocus
-                />
-                <Input
-                    label="Name"
-                    name="name"
-                    errors={errors}
-                    ref={register({ required: true })}
-                    disabled={isInFlight}
-                />
-
-                <Input
-                    label="Email"
-                    name="email"
-                    errors={errors}
-                    ref={register({ required: true })}
-                    disabled={isInFlight}
-                />
-
+            <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
+                <Input label="Username" name="username" register={{ required: true }} autoFocus />
+                <Input label="Name" name="name" register={{ required: true }} />
+                <Input label="Email" name="email" register={{ required: true }} />
                 <Input
                     label="Password"
                     name="password"
                     type="password"
-                    errors={errors}
-                    ref={register({ required: true })}
-                    disabled={isInFlight}
+                    register={{ required: true }}
                 />
 
-                <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
-                    Sign Up
-                </Button>
+                <SubmitButton fullWidth>Sign Up</SubmitButton>
                 <GithubButton />
-            </form>
+            </Form>
         </Container>
     );
 }

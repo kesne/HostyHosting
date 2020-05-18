@@ -1,10 +1,13 @@
 import React from 'react';
-import Input from '../../../../ui/Input';
 import { useApplicationParams } from '../../../ApplicationContext';
-import CreateModal from '../../../../ui/CreateModal';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { EditOrAddSecretEditMutation } from './__generated__/EditOrAddSecretEditMutation.graphql';
 import { EditOrAddSecretAddMutation } from './__generated__/EditOrAddSecretAddMutation.graphql';
+import Modal, { ModalContent, ModalFooter } from '../../../../ui/Modal';
+import Input from '../../../../forms/Input';
+import Form from '../../../../forms/Form';
+import Button, { ButtonGroup } from '../../../../ui/Button';
+import SubmitButton from '../../../../forms/SubmitButton';
 
 export type SecretEdit = {
     id: string;
@@ -103,34 +106,33 @@ export default function EditOrAddSecret({ id, secret, open, onClose }: Props) {
     }
 
     return (
-        <CreateModal
-            title={!!secret ? 'Create New Secret' : 'Edit Secret'}
-            onSubmit={onSubmit}
-            open={open}
-            onClose={onClose}
-        >
-            {({ errors, register }) => (
-                <div className="flex-1 space-y-6">
-                    <Input
-                        label="Key"
-                        placeholder="KEY"
-                        name="key"
-                        defaultValue={secret?.key}
-                        disabled={isInFlight}
-                        ref={register({ required: true })}
-                        errors={errors}
-                    />
-                    <Input
-                        label="Value"
-                        placeholder="VALUE"
-                        name="value"
-                        defaultValue={secret?.value}
-                        disabled={isInFlight}
-                        ref={register({ required: true })}
-                        errors={errors}
-                    />
-                </div>
-            )}
-        </CreateModal>
+        <Modal open={open} onClose={onClose}>
+            <Form onSubmit={onSubmit} disabled={isInFlight}>
+                <ModalContent title={!!secret ? 'Create New Secret' : 'Edit Secret'}>
+                    <div className="flex-1 space-y-6">
+                        <Input
+                            label="Key"
+                            placeholder="KEY"
+                            name="key"
+                            defaultValue={secret?.key}
+                            register={{ required: true }}
+                        />
+                        <Input
+                            label="Value"
+                            placeholder="VALUE"
+                            name="value"
+                            defaultValue={secret?.value}
+                            register={{ required: true }}
+                        />
+                    </div>
+                </ModalContent>
+                <ModalFooter>
+                    <ButtonGroup>
+                        <SubmitButton>Create</SubmitButton>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ButtonGroup>
+                </ModalFooter>
+            </Form>
+        </Modal>
     );
 }

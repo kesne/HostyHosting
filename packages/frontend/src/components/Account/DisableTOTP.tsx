@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import React from 'react';
 import { useMutation, graphql } from 'react-relay/hooks';
 import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
-import Input from '../ui/Input';
+import Input from '../forms/Input';
 import { DisableTOTPMutation } from './__generated__/DisableTOTPMutation.graphql';
+import Form from '../forms/Form';
+import SubmitButton from '../forms/SubmitButton';
 
 type Props = {
     visible: boolean;
@@ -12,8 +13,6 @@ type Props = {
 };
 
 export default function DisableTOTP({ visible, onClose }: Props) {
-    const { register, errors, reset, handleSubmit } = useForm();
-
     const [commit, isInFlight] = useMutation<DisableTOTPMutation>(graphql`
         mutation DisableTOTPMutation($password: String!) {
             disableTotp(password: $password) {
@@ -21,12 +20,6 @@ export default function DisableTOTP({ visible, onClose }: Props) {
             }
         }
     `);
-
-    useEffect(() => {
-        if (visible) {
-            reset();
-        }
-    }, [visible]);
 
     function handleOk(values: Record<string, string>) {
         commit({
@@ -41,7 +34,7 @@ export default function DisableTOTP({ visible, onClose }: Props) {
 
     return (
         <Modal open={visible} onClose={onClose}>
-            <form onSubmit={handleSubmit(handleOk)}>
+            <Form onSubmit={handleOk} disabled={isInFlight}>
                 <ModalContent title="Disable Two Factor Authentication">
                     <p className="text-gray-800 text-sm font-normal mb-4">
                         Please enter your password to disable two-factor authentication on your
@@ -52,21 +45,19 @@ export default function DisableTOTP({ visible, onClose }: Props) {
                         type="password"
                         label="Password"
                         placeholder="Password..."
-                        ref={register({ required: true })}
-                        errors={errors}
-                        disabled={isInFlight}
+                        register={{ required: true }}
                         autoFocus
                     />
                 </ModalContent>
                 <ModalFooter>
                     <ButtonGroup>
-                        <Button type="submit" variant="primary" disabled={isInFlight}>
+                        <SubmitButton>
                             Disable
-                        </Button>
+                        </SubmitButton>
                         <Button onClick={onClose}>Cancel</Button>
                     </ButtonGroup>
                 </ModalFooter>
-            </form>
+            </Form>
         </Modal>
     );
 }

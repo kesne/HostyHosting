@@ -1,25 +1,24 @@
 import React from 'react';
 import { useLazyLoadQuery, graphql, useMutation } from 'react-relay/hooks';
-import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
 import tokenInputRules from '../../utils/tokenInputRules';
 import SuspenseImage from '../SuspenseImage';
 import { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
 import { OnboardTOTPContentQuery } from './__generated__/OnboardTOTPContentQuery.graphql';
 import { OnboardTOTPContentMutation } from './__generated__/OnboardTOTPContentMutation.graphql';
+import Form from '../forms/Form';
+import Input from '../forms/Input';
+import SubmitButton from '../forms/SubmitButton';
 
 type Props = {
     onClose(): void;
 };
 
 export default function OnboardTOTPContent({ onClose }: Props) {
-    const { register, errors, handleSubmit } = useForm();
-
     const data = useLazyLoadQuery<OnboardTOTPContentQuery>(
         graphql`
             query OnboardTOTPContentQuery {
-                me {
+                viewer {
                     id
                     name
                     onboardTOTP
@@ -44,7 +43,7 @@ export default function OnboardTOTPContent({ onClose }: Props) {
         commit({
             variables: {
                 token: values.token,
-                secret: data.me.onboardTOTP,
+                secret: data.viewer.onboardTOTP,
             },
             onCompleted() {
                 onClose();
@@ -52,10 +51,12 @@ export default function OnboardTOTPContent({ onClose }: Props) {
         });
     }
 
-    const OTP_DATA = data ? `otpauth://totp/${data.me.name}?secret=${data.me.onboardTOTP}` : '';
+    const OTP_DATA = data
+        ? `otpauth://totp/${data.viewer.name}?secret=${data.viewer.onboardTOTP}`
+        : '';
 
     return (
-        <form onSubmit={handleSubmit(handleOk)}>
+        <Form onSubmit={handleOk} disabled={isInFlight}>
             <ModalContent title="Enable Two-Factor Authentication">
                 <p className="text-gray-800 text-sm font-normal mb-4">
                     Scan this QR code in an authenticator app to enable Two Factor Authentication.
@@ -73,7 +74,7 @@ export default function OnboardTOTPContent({ onClose }: Props) {
                     <br />
                     <div className="mt-2 mb-6">
                         <span className="px-2 py-1 border border-gray-200 bg-gray-100 font-mono leading-tight rounded">
-                            {data.me.onboardTOTP}
+                            {data.viewer.onboardTOTP}
                         </span>
                     </div>
                 </div>
@@ -81,20 +82,16 @@ export default function OnboardTOTPContent({ onClose }: Props) {
                     label="6 digit code"
                     type="number"
                     name="token"
-                    errors={errors}
-                    ref={register(tokenInputRules)}
-                    disabled={isInFlight}
+                    register={tokenInputRules}
                     autoFocus
                 />
             </ModalContent>
             <ModalFooter>
                 <ButtonGroup>
-                    <Button variant="primary" type="submit" disabled={isInFlight}>
-                        Enable
-                    </Button>
+                    <SubmitButton>Enable</SubmitButton>
                     <Button onClick={onClose}>Cancel</Button>
                 </ButtonGroup>
             </ModalFooter>
-        </form>
+        </Form>
     );
 }

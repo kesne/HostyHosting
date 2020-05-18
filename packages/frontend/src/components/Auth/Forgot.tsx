@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import Container from '../../components/Auth/Container';
 import Link from '../ui/Link';
-import { useForm } from 'react-hook-form';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { ForgotPasswordMutation } from './__generated__/ForgotPasswordMutation.graphql';
+import Input from '../forms/Input';
+import Form from '../forms/Form';
+import SubmitButton from '../forms/SubmitButton';
 
 export default function Forgot() {
-    const { register, errors, handleSubmit } = useForm();
     const [submitted, setSubmitted] = useState(false);
 
     const [commit, isInFlight] = useMutation<ForgotPasswordMutation>(graphql`
@@ -46,25 +45,16 @@ export default function Forgot() {
                     finish resetting your password
                 </p>
             ) : (
-                <form className="space-y-6" onSubmit={handleSubmit(onFinish)}>
+                <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
                     <p className="text-sm leading-5 text-gray-700">
                         Enter the email you created your account with, and we will email you a link
                         to reset your password.
                     </p>
 
-                    <Input
-                        label="Email"
-                        name="email"
-                        errors={errors}
-                        ref={register({ required: true })}
-                        disabled={isInFlight}
-                        autoFocus
-                    />
+                    <Input label="Email" name="email" autoFocus />
 
-                    <Button variant="primary" type="submit" disabled={isInFlight} fullWidth>
-                        Email Recovery Link
-                    </Button>
-                </form>
+                    <SubmitButton fullWidth>Email Recovery Link</SubmitButton>
+                </Form>
             )}
         </Container>
     );

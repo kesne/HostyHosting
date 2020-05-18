@@ -22,7 +22,7 @@ export default function APIKeys() {
     const data = useLazyLoadQuery<APIKeysQuery>(
         graphql`
             query APIKeysQuery {
-                me {
+                viewer {
                     id
                     apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
                         edges {
@@ -46,13 +46,13 @@ export default function APIKeys() {
                 configs: [
                     {
                         type: 'RANGE_DELETE',
-                        parentID: data.me.id,
+                        parentID: data.viewer.id,
                         connectionKeys: [
                             {
                                 key: 'APIKeys_apiKeys',
                             },
                         ],
-                        pathToConnection: [data.me.id, 'apiKeys'],
+                        pathToConnection: [data.viewer.id, 'apiKeys'],
                         deletedIDFieldName: 'id',
                     },
                 ],
@@ -64,7 +64,7 @@ export default function APIKeys() {
     return (
         <>
             <Card title="Manage API Keys" actions={<Button onClick={on}>Create API Key</Button>}>
-                <List items={data.me.apiKeys.edges}>
+                <List items={data.viewer.apiKeys.edges}>
                     {({ node: apiKey }) => (
                         <ListItem key={apiKey.id}>
                             <div className="flex justify-between">
@@ -80,7 +80,7 @@ export default function APIKeys() {
                     )}
                 </List>
             </Card>
-            <CreateAPIKey id={data.me.id} open={open} onClose={off} />
+            <CreateAPIKey id={data.viewer.id} open={open} onClose={off} />
         </>
     );
 }

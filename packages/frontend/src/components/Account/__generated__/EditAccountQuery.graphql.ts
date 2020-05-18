@@ -4,7 +4,7 @@
 import { ConcreteRequest } from "relay-runtime";
 export type EditAccountQueryVariables = {};
 export type EditAccountQueryResponse = {
-    readonly me: {
+    readonly viewer: {
         readonly id: string;
         readonly username: string;
         readonly name: string;
@@ -20,7 +20,7 @@ export type EditAccountQuery = {
 
 /*
 query EditAccountQuery {
-  me {
+  viewer {
     id
     username
     name
@@ -36,7 +36,7 @@ var v0 = [
     "args": null,
     "concreteType": "CurrentUser",
     "kind": "LinkedField",
-    "name": "me",
+    "name": "viewer",
     "plural": false,
     "selections": [
       {
@@ -92,9 +92,9 @@ return {
     "metadata": {},
     "name": "EditAccountQuery",
     "operationKind": "query",
-    "text": "query EditAccountQuery {\n  me {\n    id\n    username\n    name\n    email\n  }\n}\n"
+    "text": "query EditAccountQuery {\n  viewer {\n    id\n    username\n    name\n    email\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '2d4fee9cb63487d3ea742051049d4cdc';
+(node as any).hash = '5d059a18797d1b1b8ea0b665b5e5e404';
 export default node;

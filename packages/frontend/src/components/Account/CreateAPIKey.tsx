@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { ConnectionHandler } from 'relay-runtime';
+import { useMutation, graphql } from 'react-relay/hooks';
 import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
 import Button, { ButtonGroup } from '../ui/Button';
-import Input from '../ui/Input';
-import { useMutation, graphql } from 'react-relay/hooks';
 import { CreateAPIKeyMutation } from './__generated__/CreateAPIKeyMutation.graphql';
-import { ConnectionHandler } from 'relay-runtime';
+import Form from '../forms/Form';
+import Input from '../forms/Input';
+import SubmitButton from '../forms/SubmitButton';
 
 export default function CreateAPIKey({
     id,
@@ -17,7 +18,6 @@ export default function CreateAPIKey({
     onClose(): void;
 }) {
     const [privateKey, setPrivateKey] = useState('');
-    const { register, errors, handleSubmit, reset } = useForm();
 
     const [commit, isInFlight] = useMutation<CreateAPIKeyMutation>(graphql`
         mutation CreateAPIKeyMutation($description: String!) {
@@ -66,7 +66,6 @@ export default function CreateAPIKey({
 
     useEffect(() => {
         if (open) {
-            reset();
             setPrivateKey('');
         }
     }, [open]);
@@ -98,7 +97,7 @@ export default function CreateAPIKey({
                     </ModalFooter>
                 </>
             ) : (
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <Form onSubmit={onSubmit} disabled={isInFlight}>
                     <ModalContent title="Create API Key">
                         <p className="text-gray-800 text-sm font-normal mb-4">
                             API Keys grant external access to HostyHosting through the CLI.
@@ -106,20 +105,16 @@ export default function CreateAPIKey({
                         <Input
                             label="Description"
                             name="description"
-                            ref={register({ required: true })}
-                            errors={errors}
-                            disabled={isInFlight}
+                            register={{ required: true }}
                         />
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>
-                            <Button type="submit" variant="primary" disabled={isInFlight}>
-                                Create
-                            </Button>
+                            <SubmitButton>Create</SubmitButton>
                             <Button onClick={onClose}>Cancel</Button>
                         </ButtonGroup>
                     </ModalFooter>
-                </form>
+                </Form>
             )}
         </Modal>
     );

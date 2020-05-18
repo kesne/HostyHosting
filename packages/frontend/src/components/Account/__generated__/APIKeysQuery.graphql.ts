@@ -4,7 +4,7 @@
 import { ConcreteRequest } from "relay-runtime";
 export type APIKeysQueryVariables = {};
 export type APIKeysQueryResponse = {
-    readonly me: {
+    readonly viewer: {
         readonly id: string;
         readonly apiKeys: {
             readonly edges: ReadonlyArray<{
@@ -26,7 +26,7 @@ export type APIKeysQuery = {
 
 /*
 query APIKeysQuery {
-  me {
+  viewer {
     id
     apiKeys(first: 10) {
       edges {
@@ -152,7 +152,7 @@ return {
         "args": null,
         "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "viewer",
         "plural": false,
         "selections": [
           (v0/*: any*/),
@@ -183,7 +183,7 @@ return {
         "args": null,
         "concreteType": "CurrentUser",
         "kind": "LinkedField",
-        "name": "me",
+        "name": "viewer",
         "plural": false,
         "selections": [
           (v0/*: any*/),
@@ -220,7 +220,7 @@ return {
           "cursor": null,
           "direction": "forward",
           "path": [
-            "me",
+            "viewer",
             "apiKeys"
           ]
         }
@@ -228,9 +228,9 @@ return {
     },
     "name": "APIKeysQuery",
     "operationKind": "query",
-    "text": "query APIKeysQuery {\n  me {\n    id\n    apiKeys(first: 10) {\n      edges {\n        node {\n          id\n          description\n          createdAt\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n}\n"
+    "text": "query APIKeysQuery {\n  viewer {\n    id\n    apiKeys(first: 10) {\n      edges {\n        node {\n          id\n          description\n          createdAt\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'a20bd2fd1b4bf53246ad1fce556560c8';
+(node as any).hash = 'f8ec2b50084bc1fc47f22a2356914c47';
 export default node;

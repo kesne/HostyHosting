@@ -26,7 +26,7 @@ export default function UserInfo() {
     const data = useLazyLoadQuery<UserInfoQuery>(
         graphql`
             query UserInfoQuery {
-                me {
+                viewer {
                     id
                     username
                     name
@@ -51,10 +51,10 @@ export default function UserInfo() {
             <>
                 <div className="px-5">
                     <div className="text-base font-medium leading-none text-white">
-                        {data.me.name}
+                        {data.viewer.name}
                     </div>
                     <div className="mt-1 text-sm font-medium leading-none text-gray-400">
-                        {data.me.email}
+                        {data.viewer.email}
                     </div>
                 </div>
                 <div className="mt-3 px-2">
@@ -84,7 +84,7 @@ export default function UserInfo() {
     return (
         <OutsideClickHandler onOutsideClick={dropdownOff}>
             <div>
-                <HeaderLink onClick={dropdownToggle}>{data.me.name}</HeaderLink>
+                <HeaderLink onClick={dropdownToggle}>{data.viewer.name}</HeaderLink>
             </div>
             <AnimatePresence>
                 {dropdownOpen && (

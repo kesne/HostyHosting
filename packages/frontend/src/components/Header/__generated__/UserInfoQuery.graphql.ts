@@ -4,7 +4,7 @@
 import { ConcreteRequest } from "relay-runtime";
 export type UserInfoQueryVariables = {};
 export type UserInfoQueryResponse = {
-    readonly me: {
+    readonly viewer: {
         readonly id: string;
         readonly username: string;
         readonly name: string;
@@ -20,7 +20,7 @@ export type UserInfoQuery = {
 
 /*
 query UserInfoQuery {
-  me {
+  viewer {
     id
     username
     name
@@ -36,7 +36,7 @@ var v0 = [
     "args": null,
     "concreteType": "CurrentUser",
     "kind": "LinkedField",
-    "name": "me",
+    "name": "viewer",
     "plural": false,
     "selections": [
       {
@@ -92,9 +92,9 @@ return {
     "metadata": {},
     "name": "UserInfoQuery",
     "operationKind": "query",
-    "text": "query UserInfoQuery {\n  me {\n    id\n    username\n    name\n    email\n  }\n}\n"
+    "text": "query UserInfoQuery {\n  viewer {\n    id\n    username\n    name\n    email\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '95fc268ed7574396f0525bf5f2d6c9af';
+(node as any).hash = '7c71942063706b8296c6c359ff679ef1';
 export default node;
