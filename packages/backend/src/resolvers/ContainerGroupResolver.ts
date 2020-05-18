@@ -1,23 +1,49 @@
-import { Resolver, FieldResolver, Int, Root } from 'type-graphql';
-import { ContainerGroup } from '../entity/ContainerGroup';
-import Container from './types/Container';
-import * as pricing from '../utils/pricing';
+import { Resolver, FieldResolver, Int, Root, Mutation, Arg, InputType, Field, ID } from 'type-graphql';
+import { ContainerGroup, ContainerSize } from '../entity/ContainerGroup';
+import pricing from '../utils/pricing';
+import { Component } from '../entity/Component';
+import { Environment } from '../entity/Environment';
+
+@InputType()
+export class CreateContainerGroupInput {
+    @Field(() => ID)
+    componentID!: string;
+
+    @Field(() => ID)
+    environmentID!: string;
+
+    @Field(() => ContainerSize)
+    size!: ContainerSize;
+
+    @Field(() => Int)
+    containerCount!: number;
+}
+
 
 @Resolver(() => ContainerGroup)
 export class ContainerGroupResolver {
-    // TODO: This will eventually be done by querying the Crystal backend, but for now, it's here.
-    @FieldResolver(() => [Container])
-    containers() {
-        return Array.from({ length: 2 }, (_, i) =>
-            Object.assign(new Container(), {
-                id: i,
-                status: 'RUNNING',
-            }),
-        );
-    }
-
     @FieldResolver(() => Int)
     async monthlyPrice(@Root() containerGroup: ContainerGroup) {
         return pricing.calculateMonthlyCost(containerGroup.size, containerGroup.containerCount);
+    }
+
+    // TODO: Security pls:
+    @Mutation(() => ContainerGroup)
+    async createContainerGroup(
+        @Arg('input') input: CreateContainerGroupInput,
+    ) {
+        const component = await Component.findOneOrFail(input.componentID);
+        const environment = await Environment.findOneOrFail(input.environmentID);
+
+        const organization = await environment.organization
+
+        const containerGroup = new ContainerGroup();
+        containerGroup.environment = environment;
+        containerGroup.organization = organization;
+        containerGroup.component = component;
+        containerGroup.setSize(input.size);
+        containerGroup.setContainerCount(input.containerCount);
+
+        return await containerGroup.save();
     }
 }

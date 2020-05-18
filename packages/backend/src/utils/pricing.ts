@@ -10,6 +10,10 @@ const MULTIPLIER = {
     [ContainerSize.S16x16]: 16,
 };
 
-export function calculateMonthlyCost(size: ContainerSize, count: number) {
-    return PRICE_PER_BASE_CONTAINER * MULTIPLIER[size] * count;
+class Pricing {
+    calculateMonthlyCost(size: ContainerSize, count: number) {
+        return PRICE_PER_BASE_CONTAINER * MULTIPLIER[size] * count;
+    }
 }
+
+export default new Pricing();

@@ -36,17 +36,6 @@ type Application {
   environments: [Environment!]!
 }
 
-input ApplicationInput {
-  name: String
-  description: String
-}
-
-type ApplicationMutations {
-  createComponent(component: ComponentInput!): Component!
-  createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
-  updateComponent(component: ComponentInput!, id: ID!): Component!
-}
-
 type Component {
   id: ID!
   createdAt: DateTime!
@@ -59,17 +48,6 @@ type Component {
   containerGroup(environment: ID!): ContainerGroup
 }
 
-input ComponentInput {
-  image: String
-  name: String
-  deploymentStrategy: DeploymentStrategy
-}
-
-type Container {
-  id: ID!
-  status: String!
-}
-
 type ContainerGroup {
   id: ID!
   createdAt: DateTime!
@@ -79,15 +57,7 @@ type ContainerGroup {
   environment: Environment!
   component: Component!
   secrets: [Secret!]!
-  containers: [Container!]!
   monthlyPrice: Int!
-}
-
-input ContainerGroupInput {
-  componentID: ID!
-  environmentID: ID!
-  size: ContainerSize!
-  containerCount: Int!
 }
 
 enum ContainerSize {
@@ -102,6 +72,20 @@ input CreateApplicationInput {
   organizationID: ID!
   name: String!
   description: String
+}
+
+input CreateComponentInput {
+  applicationID: ID!
+  image: String!
+  name: String!
+  deploymentStrategy: DeploymentStrategy!
+}
+
+input CreateContainerGroupInput {
+  componentID: ID!
+  environmentID: ID!
+  size: ContainerSize!
+  containerCount: Int!
 }
 
 input CreateEnvironmentInput {
@@ -164,12 +148,6 @@ enum DeploymentStrategy {
   RECREATE
 }
 
-input EditSecretInput {
-  secretID: ID!
-  key: String!
-  value: String!
-}
-
 type Environment {
   id: ID!
   createdAt: DateTime!
@@ -190,15 +168,16 @@ type Mutation {
   grantAPIKey(uuid: String!): Result!
   createAPIKey(description: String!): APIKeyEdge!
   deleteAPIKey(id: ID!): APIKey!
-  application(id: ID!): ApplicationMutations!
   createApplication(input: CreateApplicationInput!): Application!
   deleteApplication(input: DeleteApplicationInput!): Application!
   updateApplication(input: UpdateApplicationInput!): Application!
   deleteComponent(input: DeleteComponentInput!): Component!
+  createComponent(input: CreateComponentInput!): Component!
+  createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
-  changeOrganizationUsername: Organization!
+  UNIMPLEMENTED__changeOrganizationUsername: Organization!
   createSecret(input: CreateSecretInput!): Secret!
-  editSecret(input: EditSecretInput!): Secret!
+  updateSecret(input: UpdateSecretInput!): Secret!
   deleteSecret(input: DeleteSecretInput!): Secret!
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
@@ -275,11 +254,6 @@ type Secret {
   value: String!
 }
 
-input SecretInput {
-  key: String!
-  value: String!
-}
-
 """
 A special type of result used just for SignIns. Provides a boolean for if the
 user requires a TOTP exchange before being fully logged in.
@@ -293,6 +267,19 @@ input UpdateApplicationInput {
   applicationID: ID!
   name: String
   description: String
+}
+
+input UpdateComponentInput {
+  componentID: ID!
+  image: String
+  name: String
+  deploymentStrategy: DeploymentStrategy
+}
+
+input UpdateSecretInput {
+  secretID: ID!
+  key: String!
+  value: String!
 }
 
 type User {

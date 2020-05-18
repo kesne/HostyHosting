@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useMutation, graphql } from 'react-relay/hooks';
 import clsx from 'clsx';
 import Label from '../../../ui/Label';
-import { useApplicationParams } from '../../ApplicationContext';
 import {
     CreateContainerGroupMutation,
     ContainerSize,
@@ -29,25 +28,19 @@ type Props = {
 
 export default function CreateContainerGroup({ component, environment, open, onClose }: Props) {
     // TODO: Form should support custom values:
-    const params = useApplicationParams();
     const [containerSize, setContainerSize] = useState<ContainerSize>('S1x1');
 
     const [commit, isInFlight] = useMutation<CreateContainerGroupMutation>(graphql`
-        mutation CreateContainerGroupMutation(
-            $application: ID!
-            $containerGroup: ContainerGroupInput!
-        ) {
-            application(id: $application) {
-                createContainerGroup(containerGroup: $containerGroup) {
+        mutation CreateContainerGroupMutation($input: CreateContainerGroupInput!) {
+            createContainerGroup(input: $input) {
+                id
+                monthlyPrice
+                containerCount
+                size
+                secrets {
                     id
-                    monthlyPrice
-                    containerCount
-                    size
-                    secrets {
-                        id
-                        key
-                        value
-                    }
+                    key
+                    value
                 }
             }
         }
@@ -64,12 +57,11 @@ export default function CreateContainerGroup({ component, environment, open, onC
     function handleSubmit(values: Record<string, string>) {
         commit({
             variables: {
-                ...params,
-                containerGroup: {
+                input: {
                     componentID: component,
+                    environmentID: environment,
                     size: containerSize,
                     containerCount: Number(values.containerCount),
-                    environmentID: environment,
                 },
             },
             onCompleted() {

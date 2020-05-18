@@ -1,5 +1,4 @@
 import React from 'react';
-import { useApplicationParams } from '../../../ApplicationContext';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { EditOrAddSecretEditMutation } from './__generated__/EditOrAddSecretEditMutation.graphql';
 import { EditOrAddSecretAddMutation } from './__generated__/EditOrAddSecretAddMutation.graphql';
@@ -22,68 +21,57 @@ type Props = {
     secret?: SecretEdit;
 };
 
+const updateMutation = graphql`
+    mutation EditOrAddSecretEditMutation($input: UpdateSecretInput!) {
+        updateSecret(input: $input) {
+            id
+            key
+            value
+        }
+    }
+`;
+
+const createMutation = graphql`
+    mutation EditOrAddSecretAddMutation($input: CreateSecretInput!) {
+        createSecret(input: $input) {
+            id
+            key
+            value
+        }
+    }
+`;
+
 export default function EditOrAddSecret({ id, secret, open, onClose }: Props) {
-    const params = useApplicationParams();
-
-    const [commitEdit, editIsInFlight] = useMutation<EditOrAddSecretEditMutation>(graphql`
-        mutation EditOrAddSecretEditMutation($input: EditSecretInput!) {
-            editSecret(input: $input) {
-                id
-                key
-                value
-            }
-        }
-    `);
-
-    const [commitCreate, addIsInFlight] = useMutation<EditOrAddSecretAddMutation>(graphql`
-        mutation EditOrAddSecretAddMutation($input: CreateSecretInput!) {
-            createSecret(input: $input) {
-                id
-                key
-                value
-            }
-        }
-    `);
-
-    const isInFlight = editIsInFlight || addIsInFlight;
+    const [commit, isInFlight] = useMutation<
+        EditOrAddSecretEditMutation | EditOrAddSecretAddMutation
+    >(secret ? updateMutation : createMutation);
 
     function onSubmit(values: Record<string, string>) {
-        if (!secret) {
-            commitCreate({
-                variables: {
-                    input: {
-                        containerGroupID: id,
-                        key: values.key,
-                        value: values.value,
-                    },
+        const baseInput = secret ? { secretID: secret.id } : { containerGroupID: id };
+
+        commit({
+            // @ts-ignore: TypeScript doesn't understand that we've typed BaseInput correctly
+            // because this function doesn't take the secret as a generic.
+            variables: {
+                input: {
+                    ...baseInput,
+                    key: values.key,
+                    value: values.value,
                 },
-                onCompleted() {
-                    onClose();
-                },
-                updater(store) {
+            },
+            onCompleted() {
+                onClose();
+            },
+            updater(store) {
+                if (!secret) {
                     const newNode = store.getRootField('createSecret');
 
                     const containerGroup = store.get(id)!;
                     const newNodes = [...containerGroup!.getLinkedRecords('secrets'), newNode];
                     containerGroup!.setLinkedRecords(newNodes, 'secrets');
-                },
-            });
-        } else {
-            commitEdit({
-                variables: {
-                    input: {
-                        secretID: secret.id,
-                        key: values.key,
-                        value: values.value,
-                    },
-                },
-                onCompleted() {
-                    onClose();
-                },
-            });
-        }
-
-        onClose();
+                }
+            },
+        });
     }
 
     return (

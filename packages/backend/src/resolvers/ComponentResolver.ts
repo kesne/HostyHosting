@@ -9,15 +9,49 @@ import {
     Mutation,
     InputType,
     Field,
+    Ctx,
 } from 'type-graphql';
-import { Component } from '../entity/Component';
-import * as pricing from '../utils/pricing';
+import { Component, DeploymentStrategy } from '../entity/Component';
+import pricing from '../utils/pricing';
 import { ContainerGroup } from '../entity/ContainerGroup';
+import { Application } from '../entity/Application';
+import { Context } from '../types';
+import { OrganizationPermission } from '../entity/OrganizationMembership';
 
 @InputType()
 class DeleteComponentInput {
     @Field(() => ID)
     componentID!: string;
+}
+
+@InputType()
+class CreateComponentInput {
+    @Field(() => ID)
+    applicationID!: string;
+
+    @Field()
+    image!: string;
+
+    @Field()
+    name!: string;
+
+    @Field(() => DeploymentStrategy)
+    deploymentStrategy!: DeploymentStrategy;
+}
+
+@InputType()
+class UpdateComponentInput {
+    @Field(() => ID)
+    componentID!: string;
+
+    @Field({ nullable: true })
+    image?: string;
+
+    @Field({ nullable: true })
+    name?: string;
+
+    @Field(() => DeploymentStrategy, { nullable: true })
+    deploymentStrategy?: DeploymentStrategy;
 }
 
 @Resolver(() => Component)
@@ -49,7 +83,7 @@ export class ComponentResolver {
             where: {
                 component,
                 environment: {
-                    id: environmentID
+                    id: environmentID,
                 },
             },
         });
@@ -61,5 +95,48 @@ export class ComponentResolver {
         const component = await Component.findOneOrFail(input.componentID);
         await Component.delete(component.id);
         return component;
+    }
+
+    @Mutation(() => Component)
+    async createComponent(
+        @Ctx() { user }: Context,
+        @Arg('input', () => CreateComponentInput) input: CreateComponentInput,
+    ) {
+        const application = await Application.findForUserByID(
+            user,
+            input.applicationID,
+            OrganizationPermission.WRITE,
+        );
+
+        const component = Component.create({
+            application,
+            name: input.name,
+            image: input.image,
+            deploymentStrategy: input.deploymentStrategy,
+        });
+
+        return await component.save();
+    }
+
+
+    @Field(() => Component)
+    async updateComponent(
+        @Arg('input') input: UpdateComponentInput,
+    ) {
+        const component = await Component.findOneOrFail(input.componentID);
+
+        if (typeof input.name !== 'undefined') {
+            component.name = input.name;
+        }
+
+        if (typeof input.image !== 'undefined') {
+            component.image = input.image;
+        }
+
+        if (typeof input.deploymentStrategy !== 'undefined') {
+            component.deploymentStrategy = input.deploymentStrategy;
+        }
+
+        return await component.save();
     }
 }

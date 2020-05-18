@@ -32,7 +32,7 @@ export class OrganizationResolver {
     }
 
     @Mutation(() => Organization)
-    async changeOrganizationUsername() {
+    async UNIMPLEMENTED__changeOrganizationUsername() {
         throw new Error('NOT IMPLEMENTED');
         // if (this.organization.isPersonal) {
         //     throw new Error('Personal organization usernames cannot be changed.');

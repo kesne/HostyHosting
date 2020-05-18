@@ -3,22 +3,20 @@
 
 import { ConcreteRequest } from "relay-runtime";
 export type DeploymentStrategy = "RECREATE" | "REPLACE" | "%future added value";
-export type ComponentInput = {
-    image?: string | null;
-    name?: string | null;
-    deploymentStrategy?: DeploymentStrategy | null;
+export type CreateComponentInput = {
+    applicationID: string;
+    image: string;
+    name: string;
+    deploymentStrategy: DeploymentStrategy;
 };
 export type CreateComponentMutationVariables = {
-    application: string;
-    component: ComponentInput;
+    input: CreateComponentInput;
 };
 export type CreateComponentMutationResponse = {
-    readonly application: {
-        readonly createComponent: {
-            readonly id: string;
-            readonly name: string;
-            readonly image: string;
-        };
+    readonly createComponent: {
+        readonly id: string;
+        readonly name: string;
+        readonly image: string;
     };
 };
 export type CreateComponentMutation = {
@@ -30,15 +28,12 @@ export type CreateComponentMutation = {
 
 /*
 mutation CreateComponentMutation(
-  $application: ID!
-  $component: ComponentInput!
+  $input: CreateComponentInput!
 ) {
-  application(id: $application) {
-    createComponent(component: $component) {
-      id
-      name
-      image
-    }
+  createComponent(input: $input) {
+    id
+    name
+    image
   }
 }
 */
@@ -48,14 +43,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "component",
-    "type": "ComponentInput!"
+    "name": "input",
+    "type": "CreateComponentInput!"
   }
 ],
 v1 = [
@@ -64,51 +53,34 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Component",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "createComponent",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "component",
-            "variableName": "component"
-          }
-        ],
-        "concreteType": "Component",
-        "kind": "LinkedField",
-        "name": "createComponent",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "image",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "image",
         "storageKey": null
       }
     ],
@@ -136,9 +108,9 @@ return {
     "metadata": {},
     "name": "CreateComponentMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateComponentMutation(\n  $application: ID!\n  $component: ComponentInput!\n) {\n  application(id: $application) {\n    createComponent(component: $component) {\n      id\n      name\n      image\n    }\n  }\n}\n"
+    "text": "mutation CreateComponentMutation(\n  $input: CreateComponentInput!\n) {\n  createComponent(input: $input) {\n    id\n    name\n    image\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'c1808ce4883beffb2e8fefc473adebe6';
+(node as any).hash = 'dff2373ce497bd49ff51510282ada263';
 export default node;

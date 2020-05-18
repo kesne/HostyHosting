@@ -3,29 +3,26 @@
 
 import { ConcreteRequest } from "relay-runtime";
 export type ContainerSize = "S16x16" | "S1x1" | "S2x2" | "S4x4" | "S8x8" | "%future added value";
-export type ContainerGroupInput = {
+export type CreateContainerGroupInput = {
     componentID: string;
     environmentID: string;
     size: ContainerSize;
     containerCount: number;
 };
 export type CreateContainerGroupMutationVariables = {
-    application: string;
-    containerGroup: ContainerGroupInput;
+    input: CreateContainerGroupInput;
 };
 export type CreateContainerGroupMutationResponse = {
-    readonly application: {
-        readonly createContainerGroup: {
+    readonly createContainerGroup: {
+        readonly id: string;
+        readonly monthlyPrice: number;
+        readonly containerCount: number;
+        readonly size: ContainerSize;
+        readonly secrets: ReadonlyArray<{
             readonly id: string;
-            readonly monthlyPrice: number;
-            readonly containerCount: number;
-            readonly size: ContainerSize;
-            readonly secrets: ReadonlyArray<{
-                readonly id: string;
-                readonly key: string;
-                readonly value: string;
-            }>;
-        };
+            readonly key: string;
+            readonly value: string;
+        }>;
     };
 };
 export type CreateContainerGroupMutation = {
@@ -37,20 +34,17 @@ export type CreateContainerGroupMutation = {
 
 /*
 mutation CreateContainerGroupMutation(
-  $application: ID!
-  $containerGroup: ContainerGroupInput!
+  $input: CreateContainerGroupInput!
 ) {
-  application(id: $application) {
-    createContainerGroup(containerGroup: $containerGroup) {
+  createContainerGroup(input: $input) {
+    id
+    monthlyPrice
+    containerCount
+    size
+    secrets {
       id
-      monthlyPrice
-      containerCount
-      size
-      secrets {
-        id
-        key
-        value
-      }
+      key
+      value
     }
   }
 }
@@ -61,14 +55,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "containerGroup",
-    "type": "ContainerGroupInput!"
+    "name": "input",
+    "type": "CreateContainerGroupInput!"
   }
 ],
 v1 = {
@@ -84,75 +72,58 @@ v2 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "ContainerGroup",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "createContainerGroup",
     "plural": false,
     "selections": [
+      (v1/*: any*/),
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "containerGroup",
-            "variableName": "containerGroup"
-          }
-        ],
-        "concreteType": "ContainerGroup",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "monthlyPrice",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "containerCount",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "size",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Secret",
         "kind": "LinkedField",
-        "name": "createContainerGroup",
-        "plural": false,
+        "name": "secrets",
+        "plural": true,
         "selections": [
           (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "monthlyPrice",
+            "name": "key",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "containerCount",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "size",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Secret",
-            "kind": "LinkedField",
-            "name": "secrets",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "key",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "value",
-                "storageKey": null
-              }
-            ],
+            "name": "value",
             "storageKey": null
           }
         ],
@@ -183,9 +154,9 @@ return {
     "metadata": {},
     "name": "CreateContainerGroupMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateContainerGroupMutation(\n  $application: ID!\n  $containerGroup: ContainerGroupInput!\n) {\n  application(id: $application) {\n    createContainerGroup(containerGroup: $containerGroup) {\n      id\n      monthlyPrice\n      containerCount\n      size\n      secrets {\n        id\n        key\n        value\n      }\n    }\n  }\n}\n"
+    "text": "mutation CreateContainerGroupMutation(\n  $input: CreateContainerGroupInput!\n) {\n  createContainerGroup(input: $input) {\n    id\n    monthlyPrice\n    containerCount\n    size\n    secrets {\n      id\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '3e41cd539b0bd854cb3c9cb7eaeede0e';
+(node as any).hash = '1f961b6b4775293dcf087f7cf1ed9317';
 export default node;

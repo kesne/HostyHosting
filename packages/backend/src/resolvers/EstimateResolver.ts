@@ -1,6 +1,6 @@
 import { Query, Resolver, Arg, Int } from 'type-graphql';
 import { ContainerSize } from '../entity/ContainerGroup';
-import * as pricing from '../utils/pricing';
+import pricing from '../utils/pricing';
 
 @Resolver()
 export class EstimateResolver {

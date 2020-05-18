@@ -5,7 +5,10 @@ import Button, { ButtonGroup } from '../../../ui/Button';
 import Tabs from '../../../ui/Tabs';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { useNavigate } from 'react-router';
-import { CreateComponentMutation, DeploymentStrategy } from './__generated__/CreateComponentMutation.graphql';
+import {
+    CreateComponentMutation,
+    DeploymentStrategy,
+} from './__generated__/CreateComponentMutation.graphql';
 import Form from '../../../forms/Form';
 import Input from '../../../forms/Input';
 import SubmitButton from '../../../forms/SubmitButton';
@@ -22,13 +25,11 @@ export default function CreateComponent({ visible, onClose }: Props) {
     const [deploymentType, setDeploymentType] = useState('docker-registry');
 
     const [commit, isInFlight] = useMutation<CreateComponentMutation>(graphql`
-        mutation CreateComponentMutation($application: ID!, $component: ComponentInput!) {
-            application(id: $application) {
-                createComponent(component: $component) {
-                    id
-                    name
-                    image
-                }
+        mutation CreateComponentMutation($input: CreateComponentInput!) {
+            createComponent(input: $input) {
+                id
+                name
+                image
             }
         }
     `);
@@ -36,15 +37,15 @@ export default function CreateComponent({ visible, onClose }: Props) {
     function onSubmit(data: Record<string, string>) {
         commit({
             variables: {
-                application: params.application,
-                component: {
+                input: {
+                    applicationID: params.application,
                     image: data.image,
                     name: data.name,
                     deploymentStrategy: data.strategy as DeploymentStrategy,
                 },
             },
             onCompleted(data) {
-                navigate(data.application.createComponent.id);
+                navigate(data.createComponent.id);
             },
         });
     }
@@ -90,9 +91,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>
-                            <SubmitButton>
-                                Create
-                            </SubmitButton>
+                            <SubmitButton>Create</SubmitButton>
                             <Button onClick={onClose}>Cancel</Button>
                         </ButtonGroup>
                     </ModalFooter>

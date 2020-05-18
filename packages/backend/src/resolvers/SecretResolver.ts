@@ -12,7 +12,7 @@ class CreateSecretInput {
 }
 
 @InputType()
-class EditSecretInput {
+class UpdateSecretInput {
     @Field(() => ID)
     secretID!: string;
     @Field()
@@ -44,8 +44,8 @@ export class SecretResolver {
     }
 
     @Mutation(() => Secret)
-    async editSecret(
-        @Arg('input') input: EditSecretInput,
+    async updateSecret(
+        @Arg('input') input: UpdateSecretInput,
     ) {
         const secret = await Secret.findOneOrFail(input.secretID);
 

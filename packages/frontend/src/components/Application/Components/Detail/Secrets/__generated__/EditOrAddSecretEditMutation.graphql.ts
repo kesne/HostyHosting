@@ -2,16 +2,16 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type EditSecretInput = {
+export type UpdateSecretInput = {
     secretID: string;
     key: string;
     value: string;
 };
 export type EditOrAddSecretEditMutationVariables = {
-    input: EditSecretInput;
+    input: UpdateSecretInput;
 };
 export type EditOrAddSecretEditMutationResponse = {
-    readonly editSecret: {
+    readonly updateSecret: {
         readonly id: string;
         readonly key: string;
         readonly value: string;
@@ -26,9 +26,9 @@ export type EditOrAddSecretEditMutation = {
 
 /*
 mutation EditOrAddSecretEditMutation(
-  $input: EditSecretInput!
+  $input: UpdateSecretInput!
 ) {
-  editSecret(input: $input) {
+  updateSecret(input: $input) {
     id
     key
     value
@@ -42,7 +42,7 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input",
-    "type": "EditSecretInput!"
+    "type": "UpdateSecretInput!"
   }
 ],
 v1 = [
@@ -57,7 +57,7 @@ v1 = [
     ],
     "concreteType": "Secret",
     "kind": "LinkedField",
-    "name": "editSecret",
+    "name": "updateSecret",
     "plural": false,
     "selections": [
       {
@@ -106,9 +106,9 @@ return {
     "metadata": {},
     "name": "EditOrAddSecretEditMutation",
     "operationKind": "mutation",
-    "text": "mutation EditOrAddSecretEditMutation(\n  $input: EditSecretInput!\n) {\n  editSecret(input: $input) {\n    id\n    key\n    value\n  }\n}\n"
+    "text": "mutation EditOrAddSecretEditMutation(\n  $input: UpdateSecretInput!\n) {\n  updateSecret(input: $input) {\n    id\n    key\n    value\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '9e5614a5162e0e14dc3d9d7abe22f9e4';
+(node as any).hash = '27c646292e8a92a333e86fa247332ce6';
 export default node;
