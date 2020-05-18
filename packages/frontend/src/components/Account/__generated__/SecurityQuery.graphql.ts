@@ -30,7 +30,7 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "CurrentUser",
+    "concreteType": "User",
     "kind": "LinkedField",
     "name": "viewer",
     "plural": false,

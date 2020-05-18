@@ -150,7 +150,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "CurrentUser",
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "viewer",
         "plural": false,
@@ -181,7 +181,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "CurrentUser",
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "viewer",
         "plural": false,

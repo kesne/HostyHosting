@@ -14,9 +14,10 @@ type Props = {
 
 export default function DisableTOTP({ visible, onClose }: Props) {
     const [commit, isInFlight] = useMutation<DisableTOTPMutation>(graphql`
-        mutation DisableTOTPMutation($password: String!) {
-            disableTotp(password: $password) {
-                ok
+        mutation DisableTOTPMutation($input: DisableTOTPInput!) {
+            disableTOTP(input: $input) {
+                id
+                hasTOTP
             }
         }
     `);
@@ -24,7 +25,9 @@ export default function DisableTOTP({ visible, onClose }: Props) {
     function handleOk(values: Record<string, string>) {
         commit({
             variables: {
-                password: values.password,
+                input: {
+                    password: values.password,
+                },
             },
             onCompleted() {
                 onClose();
@@ -51,9 +54,7 @@ export default function DisableTOTP({ visible, onClose }: Props) {
                 </ModalContent>
                 <ModalFooter>
                     <ButtonGroup>
-                        <SubmitButton>
-                            Disable
-                        </SubmitButton>
+                        <SubmitButton>Disable</SubmitButton>
                         <Button onClick={onClose}>Cancel</Button>
                     </ButtonGroup>
                 </ModalFooter>

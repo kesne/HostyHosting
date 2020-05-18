@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Resolver, Ctx, Mutation, Arg, FieldResolver, Root, Authorized } from 'type-graphql';
+import { Resolver, Ctx, Mutation, Arg, FieldResolver, Root, Authorized, Query, Args } from 'type-graphql';
 import { User, AuthType, GrantType } from '../entity/User';
 import { Context } from '../types';
 import Result from './types/Result';
@@ -7,28 +7,40 @@ import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
 import { PasswordReset } from '../entity/PasswordReset';
+import { APIKeyConnection } from './APIKeyResolver';
+import { ConnectionArgs } from './types/Pagination';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
 
 @Resolver(() => User)
 export class UserResolver {
-    // TODO: The fact that this field exists on all users is a red flag to me.
-    // We probably want to move this outside of the user object.
-    @Authorized(GrantType.SESSION)
+    @Authorized()
+    @Query(() => User)
+    async viewer(@Ctx() { user }: Context): Promise<User> {
+        return user;
+    }
+
+    // TODO: Add a decorator for "CurrentUserOnly" to mark that this is only
+    // fetched on the current user.
     @FieldResolver()
-    onboardTOTP(@Ctx() { user: currentUser }: Context, @Root() user: User): string {
-        if (user.id !== currentUser.id) {
-            throw new Error('You can only enable TOTP for your own account.');
-        }
+    hasTOTP(@Ctx() { user }: Context): boolean {
+        return !!user.totpSecret;
+    }
 
-        if (user.totpSecret) {
-            throw new Error('TOTP Already Enabled');
-        }
-
-        // TODO: Move this outside of the user model, it doesn't really make sense
-        // to be there. We can make a util file that does TOTP stuff.
-        return user.generateTotpSecret();
+    @FieldResolver(() => APIKeyConnection)
+    async apiKeys(@Ctx() { user }: Context, @Args() _args: ConnectionArgs) {
+        return {
+            edges: (await user.apiKeys).map(key => ({ node: key, cursor: key.id })),
+            pageInfo: { hasNextPage: false, hasPreviousPage: false },
+        };
+        // return this.apiKeyRepo.findAndCount({
+        //     where: {
+        //         user,
+        //     },
+        //     take: limit,
+        //     skip: offset,
+        // });
     }
 
     @Mutation(() => Result)

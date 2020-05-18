@@ -30,10 +30,9 @@ async function fetchQuery(request: RequestParameters, variables: Variables) {
     return await response.json();
 }
 
-// TODO: Re-create the environment when the user session changes.
-const environment = new Environment({
-    network: Network.create(fetchQuery),
-    store: new Store(new RecordSource()),
-});
-
-export default environment;
+export function createEnvironment() {
+    return new Environment({
+        network: Network.create(fetchQuery),
+        store: new Store(new RecordSource()),
+    });
+}

@@ -2,13 +2,17 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type OnboardTOTPContentMutationVariables = {
+export type EnableTOTPInput = {
     secret: string;
     token: string;
 };
+export type OnboardTOTPContentMutationVariables = {
+    input: EnableTOTPInput;
+};
 export type OnboardTOTPContentMutationResponse = {
-    readonly enableTotp: {
-        readonly ok: boolean;
+    readonly enableTOTP: {
+        readonly id: string;
+        readonly hasTOTP: boolean;
     };
 };
 export type OnboardTOTPContentMutation = {
@@ -20,11 +24,11 @@ export type OnboardTOTPContentMutation = {
 
 /*
 mutation OnboardTOTPContentMutation(
-  $secret: String!
-  $token: String!
+  $input: EnableTOTPInput!
 ) {
-  enableTotp(secret: $secret, token: $token) {
-    ok
+  enableTOTP(input: $input) {
+    id
+    hasTOTP
   }
 }
 */
@@ -34,14 +38,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "secret",
-    "type": "String!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "token",
-    "type": "String!"
+    "name": "input",
+    "type": "EnableTOTPInput!"
   }
 ],
 v1 = [
@@ -50,25 +48,27 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "secret",
-        "variableName": "secret"
-      },
-      {
-        "kind": "Variable",
-        "name": "token",
-        "variableName": "token"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "Result",
+    "concreteType": "User",
     "kind": "LinkedField",
-    "name": "enableTotp",
+    "name": "enableTOTP",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "hasTOTP",
         "storageKey": null
       }
     ],
@@ -96,9 +96,9 @@ return {
     "metadata": {},
     "name": "OnboardTOTPContentMutation",
     "operationKind": "mutation",
-    "text": "mutation OnboardTOTPContentMutation(\n  $secret: String!\n  $token: String!\n) {\n  enableTotp(secret: $secret, token: $token) {\n    ok\n  }\n}\n"
+    "text": "mutation OnboardTOTPContentMutation(\n  $input: EnableTOTPInput!\n) {\n  enableTOTP(input: $input) {\n    id\n    hasTOTP\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'bd8141849711f92b869eeded9be8cb2f';
+(node as any).hash = '518056602c8e7fa7731f670d074c472b';
 export default node;

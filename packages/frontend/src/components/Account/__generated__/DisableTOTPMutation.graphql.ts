@@ -2,12 +2,16 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type DisableTOTPMutationVariables = {
+export type DisableTOTPInput = {
     password: string;
 };
+export type DisableTOTPMutationVariables = {
+    input: DisableTOTPInput;
+};
 export type DisableTOTPMutationResponse = {
-    readonly disableTotp: {
-        readonly ok: boolean;
+    readonly disableTOTP: {
+        readonly id: string;
+        readonly hasTOTP: boolean;
     };
 };
 export type DisableTOTPMutation = {
@@ -19,10 +23,11 @@ export type DisableTOTPMutation = {
 
 /*
 mutation DisableTOTPMutation(
-  $password: String!
+  $input: DisableTOTPInput!
 ) {
-  disableTotp(password: $password) {
-    ok
+  disableTOTP(input: $input) {
+    id
+    hasTOTP
   }
 }
 */
@@ -32,8 +37,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "password",
-    "type": "String!"
+    "name": "input",
+    "type": "DisableTOTPInput!"
   }
 ],
 v1 = [
@@ -42,20 +47,27 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "password",
-        "variableName": "password"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "Result",
+    "concreteType": "User",
     "kind": "LinkedField",
-    "name": "disableTotp",
+    "name": "disableTOTP",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "hasTOTP",
         "storageKey": null
       }
     ],
@@ -83,9 +95,9 @@ return {
     "metadata": {},
     "name": "DisableTOTPMutation",
     "operationKind": "mutation",
-    "text": "mutation DisableTOTPMutation(\n  $password: String!\n) {\n  disableTotp(password: $password) {\n    ok\n  }\n}\n"
+    "text": "mutation DisableTOTPMutation(\n  $input: DisableTOTPInput!\n) {\n  disableTOTP(input: $input) {\n    id\n    hasTOTP\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '2f04deadc9251a9336f3ab7f16beac6b';
+(node as any).hash = '3822d5a21af1a41051e63286d5025200';
 export default node;

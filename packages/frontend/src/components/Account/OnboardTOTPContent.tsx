@@ -32,9 +32,10 @@ export default function OnboardTOTPContent({ onClose }: Props) {
     );
 
     const [commit, isInFlight] = useMutation<OnboardTOTPContentMutation>(graphql`
-        mutation OnboardTOTPContentMutation($secret: String!, $token: String!) {
-            enableTotp(secret: $secret, token: $token) {
-                ok
+        mutation OnboardTOTPContentMutation($input: EnableTOTPInput!) {
+            enableTOTP(input: $input) {
+                id
+                hasTOTP
             }
         }
     `);
@@ -42,8 +43,10 @@ export default function OnboardTOTPContent({ onClose }: Props) {
     function handleOk(values: Record<string, string>) {
         commit({
             variables: {
-                token: values.token,
-                secret: data.viewer.onboardTOTP,
+                input: {
+                    token: values.token,
+                    secret: data.viewer.onboardTOTP,
+                },
             },
             onCompleted() {
                 onClose();

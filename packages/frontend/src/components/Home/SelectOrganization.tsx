@@ -14,7 +14,7 @@ export default function SelectOrganization({ viewer }: Props) {
 
     const data = useFragment(
         graphql`
-            fragment SelectOrganization_viewer on CurrentUser {
+            fragment SelectOrganization_viewer on User {
                 id
                 personalOrganization {
                     id

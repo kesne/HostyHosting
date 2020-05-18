@@ -55,7 +55,7 @@ fragment Environments_organization on Organization {
   }
 }
 
-fragment SelectOrganization_viewer on CurrentUser {
+fragment SelectOrganization_viewer on User {
   id
   personalOrganization {
     id
@@ -115,7 +115,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "CurrentUser",
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "viewer",
         "plural": false,
@@ -161,7 +161,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "CurrentUser",
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "viewer",
         "plural": false,
@@ -256,7 +256,7 @@ return {
     "metadata": {},
     "name": "HomeQuery",
     "operationKind": "query",
-    "text": "query HomeQuery(\n  $organization: String\n) {\n  viewer {\n    ...SelectOrganization_viewer\n    id\n  }\n  organization(username: $organization) {\n    ...Applications_organization\n    ...Environments_organization\n    id\n  }\n}\n\nfragment Applications_organization on Organization {\n  id\n  username\n  applications {\n    id\n    name\n    description\n  }\n}\n\nfragment Environments_organization on Organization {\n  id\n  environments {\n    id\n    name\n    label\n  }\n}\n\nfragment SelectOrganization_viewer on CurrentUser {\n  id\n  personalOrganization {\n    id\n  }\n  organizations {\n    id\n    name\n    username\n  }\n}\n"
+    "text": "query HomeQuery(\n  $organization: String\n) {\n  viewer {\n    ...SelectOrganization_viewer\n    id\n  }\n  organization(username: $organization) {\n    ...Applications_organization\n    ...Environments_organization\n    id\n  }\n}\n\nfragment Applications_organization on Organization {\n  id\n  username\n  applications {\n    id\n    name\n    description\n  }\n}\n\nfragment Environments_organization on Organization {\n  id\n  environments {\n    id\n    name\n    label\n  }\n}\n\nfragment SelectOrganization_viewer on User {\n  id\n  personalOrganization {\n    id\n  }\n  organizations {\n    id\n    name\n    username\n  }\n}\n"
   }
 };
 })();

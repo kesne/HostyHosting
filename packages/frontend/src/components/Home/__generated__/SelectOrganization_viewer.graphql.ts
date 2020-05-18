@@ -77,8 +77,8 @@ return {
       "storageKey": null
     }
   ],
-  "type": "CurrentUser"
+  "type": "User"
 };
 })();
-(node as any).hash = '7cf887e53e4f40cf666b99e7f9cb55e9';
+(node as any).hash = '4bc9a28d68b7539ec0d39f3ce4a97012';
 export default node;
