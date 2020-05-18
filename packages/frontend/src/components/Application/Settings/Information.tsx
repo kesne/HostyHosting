@@ -22,13 +22,11 @@ export default function Information({ application }: Props) {
     );
 
     const [commit, isInFlight] = useMutation<InformationUpdateMutation>(graphql`
-        mutation InformationUpdateMutation($id: ID!, $application: ApplicationInput!) {
-            application(id: $id) {
-                update(application: $application) {
-                    id
-                    name
-                    description
-                }
+        mutation InformationUpdateMutation($input: UpdateApplicationInput!) {
+            updateApplication(input: $input) {
+                id
+                name
+                description
             }
         }
     `);
@@ -40,8 +38,8 @@ export default function Information({ application }: Props) {
     function handleBlur() {
         commit({
             variables: {
-                id: data.id,
-                application: {
+                input: {
+                    applicationID: data.id,
                     name,
                     description,
                 },

@@ -1,5 +1,5 @@
 import { getCustomRepository } from 'typeorm';
-import { Resolver, Query, Arg, Ctx, FieldResolver, Root } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, FieldResolver, Root, Mutation } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { OrganizationRepository } from '../repositories/OrganizationRepository';
@@ -37,5 +37,15 @@ export class OrganizationResolver {
         @Arg('name') name: string,
     ) {
         return await this.applicationRepo.findForUserAndOrganization(user, organization, name);
+    }
+
+    @Mutation(() => Organization)
+    async changeOrganizationUsername() {
+        throw new Error('NOT IMPLEMENTED');
+        // if (this.organization.isPersonal) {
+        //     throw new Error('Personal organization usernames cannot be changed.');
+        // }
+        // this.organization.username = username;
+        // await this.organizationRepo.save(this.organization);
     }
 }

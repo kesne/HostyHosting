@@ -15,13 +15,11 @@ type Props = {
 
 export default function CreateEnvironment({ organization, open, onClose }: Props) {
     const [commit, isInFlight] = useMutation<CreateEnvironmentMutation>(graphql`
-        mutation CreateEnvironmentMutation($organization: ID, $name: String!, $label: String!) {
-            organization(id: $organization) {
-                createEnvironment(name: $name, label: $label) {
-                    id
-                    name
-                    label
-                }
+        mutation CreateEnvironmentMutation($input: CreateEnvironmentInput!) {
+            createEnvironment(input: $input) {
+                id
+                name
+                label
             }
         }
     `);
@@ -29,16 +27,14 @@ export default function CreateEnvironment({ organization, open, onClose }: Props
     function onCreate(values: Record<string, string>) {
         commit({
             variables: {
-                organization: organization,
-                label: values.label,
-                name: values.name,
+                input: {
+                    organizationID: organization,
+                    label: values.label,
+                    name: values.name,
+                },
             },
             updater(store) {
-                const payload = store.getRootField('organization');
-                const newNode = payload!.getLinkedRecord('createEnvironment', {
-                    name: values.name,
-                    label: values.label,
-                });
+                const newNode = store.getRootField('createEnvironment');
 
                 const organizationProxy = store.get(organization!);
                 const newNodes = [...organizationProxy!.getLinkedRecords('environments'), newNode];

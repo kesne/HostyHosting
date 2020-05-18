@@ -24,32 +24,6 @@ export class ApplicationMutations {
         private secretRepo = getRepository(Secret),
     ) {}
 
-    // TODO: This needs to delete all associated resources. (cascasde should solve this)
-    @Field(() => Application)
-    async delete() {
-        // TODO: Spin down all resources, and instead of immedietly deleting, mark
-        // it in a state of deletion, and don't allow modification to the model.
-        await this.applicationRepo.delete(this.application.id);
-
-        return this.application;
-    }
-
-    @Field(() => Application)
-    async update(@Arg('application', () => ApplicationInput) applicationInput: ApplicationInput) {
-        if (typeof applicationInput.name !== 'undefined' && applicationInput.name !== null) {
-            this.application.name = applicationInput.name;
-        }
-
-        if (
-            typeof applicationInput.description !== 'undefined' &&
-            applicationInput.description !== null
-        ) {
-            this.application.description = applicationInput.description;
-        }
-
-        return await this.applicationRepo.save(this.application);
-    }
-
     @Field(() => Component)
     async createComponent(@Arg('component', () => ComponentInput) componentInput: ComponentInput) {
         const component = this.componentRepo.create({

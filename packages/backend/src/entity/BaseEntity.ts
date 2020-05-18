@@ -35,7 +35,7 @@ export abstract class InternalEntity {
 export abstract class ExternalEntity {
     @Field(() => ID)
     @PrimaryGeneratedColumn('uuid')
-    readonly id!: number;
+    readonly id!: string;
 
     @Field()
     @CreateDateColumn({ type: 'timestamp' })

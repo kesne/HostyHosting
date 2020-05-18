@@ -2,24 +2,22 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type ApplicationInput = {
-    name?: string | null;
+export type CreateApplicationInput = {
+    organizationID: string;
+    name: string;
     description?: string | null;
 };
 export type CreateApplicationMutationVariables = {
-    organization?: string | null;
-    application: ApplicationInput;
+    input: CreateApplicationInput;
 };
 export type CreateApplicationMutationResponse = {
-    readonly organization: {
-        readonly createApplication: {
+    readonly createApplication: {
+        readonly id: string;
+        readonly name: string;
+        readonly description: string;
+        readonly organization: {
             readonly id: string;
-            readonly name: string;
-            readonly description: string;
-            readonly organization: {
-                readonly id: string;
-                readonly username: string;
-            };
+            readonly username: string;
         };
     };
 };
@@ -32,18 +30,15 @@ export type CreateApplicationMutation = {
 
 /*
 mutation CreateApplicationMutation(
-  $organization: ID
-  $application: ApplicationInput!
+  $input: CreateApplicationInput!
 ) {
-  organization(id: $organization) {
-    createApplication(application: $application) {
+  createApplication(input: $input) {
+    id
+    name
+    description
+    organization {
       id
-      name
-      description
-      organization {
-        id
-        username
-      }
+      username
     }
   }
 }
@@ -54,14 +49,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "organization",
-    "type": "ID"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "application",
-    "type": "ApplicationInput!"
+    "name": "input",
+    "type": "CreateApplicationInput!"
   }
 ],
 v1 = {
@@ -77,27 +66,36 @@ v2 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "organization"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "OrganizationMutations",
+    "concreteType": "Application",
     "kind": "LinkedField",
-    "name": "organization",
+    "name": "createApplication",
     "plural": false,
     "selections": [
+      (v1/*: any*/),
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "application",
-            "variableName": "application"
-          }
-        ],
-        "concreteType": "Application",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "description",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Organization",
         "kind": "LinkedField",
-        "name": "createApplication",
+        "name": "organization",
         "plural": false,
         "selections": [
           (v1/*: any*/),
@@ -105,33 +103,7 @@ v2 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "description",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Organization",
-            "kind": "LinkedField",
-            "name": "organization",
-            "plural": false,
-            "selections": [
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "username",
-                "storageKey": null
-              }
-            ],
+            "name": "username",
             "storageKey": null
           }
         ],
@@ -162,9 +134,9 @@ return {
     "metadata": {},
     "name": "CreateApplicationMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateApplicationMutation(\n  $organization: ID\n  $application: ApplicationInput!\n) {\n  organization(id: $organization) {\n    createApplication(application: $application) {\n      id\n      name\n      description\n      organization {\n        id\n        username\n      }\n    }\n  }\n}\n"
+    "text": "mutation CreateApplicationMutation(\n  $input: CreateApplicationInput!\n) {\n  createApplication(input: $input) {\n    id\n    name\n    description\n    organization {\n      id\n      username\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '510a80a092bf151021b1d35e35eccabd';
+(node as any).hash = '7d687723f5070ec5ec4e50ba83b0bf33';
 export default node;

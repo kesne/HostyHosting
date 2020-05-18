@@ -28,11 +28,9 @@ export default function Delete({ application }: Props) {
     );
 
     const [commit, isInFlight] = useMutation<DeleteApplicationMutation>(graphql`
-        mutation DeleteApplicationMutation($application: ID!) {
-            application(id: $application) {
-                delete {
-                    id
-                }
+        mutation DeleteApplicationMutation($input: DeleteApplicationInput!) {
+            deleteApplication(input: $input) {
+                id
             }
         }
     `);
@@ -41,7 +39,9 @@ export default function Delete({ application }: Props) {
         e.preventDefault();
         commit({
             variables: {
-                application: data.id,
+                input: {
+                    applicationID: data.id,
+                }
             },
             onCompleted() {
                 // TODO: Find a better place to go to:

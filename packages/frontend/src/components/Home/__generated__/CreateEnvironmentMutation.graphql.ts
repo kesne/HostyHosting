@@ -2,18 +2,19 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type CreateEnvironmentMutationVariables = {
-    organization?: string | null;
+export type CreateEnvironmentInput = {
+    organizationID: string;
     name: string;
     label: string;
 };
+export type CreateEnvironmentMutationVariables = {
+    input: CreateEnvironmentInput;
+};
 export type CreateEnvironmentMutationResponse = {
-    readonly organization: {
-        readonly createEnvironment: {
-            readonly id: string;
-            readonly name: string;
-            readonly label: string;
-        };
+    readonly createEnvironment: {
+        readonly id: string;
+        readonly name: string;
+        readonly label: string;
     };
 };
 export type CreateEnvironmentMutation = {
@@ -25,16 +26,12 @@ export type CreateEnvironmentMutation = {
 
 /*
 mutation CreateEnvironmentMutation(
-  $organization: ID
-  $name: String!
-  $label: String!
+  $input: CreateEnvironmentInput!
 ) {
-  organization(id: $organization) {
-    createEnvironment(name: $name, label: $label) {
-      id
-      name
-      label
-    }
+  createEnvironment(input: $input) {
+    id
+    name
+    label
   }
 }
 */
@@ -44,20 +41,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "organization",
-    "type": "ID"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "name",
-    "type": "String!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "label",
-    "type": "String!"
+    "name": "input",
+    "type": "CreateEnvironmentInput!"
   }
 ],
 v1 = [
@@ -66,56 +51,34 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "organization"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "OrganizationMutations",
+    "concreteType": "Environment",
     "kind": "LinkedField",
-    "name": "organization",
+    "name": "createEnvironment",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "label",
-            "variableName": "label"
-          },
-          {
-            "kind": "Variable",
-            "name": "name",
-            "variableName": "name"
-          }
-        ],
-        "concreteType": "Environment",
-        "kind": "LinkedField",
-        "name": "createEnvironment",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "label",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "label",
         "storageKey": null
       }
     ],
@@ -143,9 +106,9 @@ return {
     "metadata": {},
     "name": "CreateEnvironmentMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateEnvironmentMutation(\n  $organization: ID\n  $name: String!\n  $label: String!\n) {\n  organization(id: $organization) {\n    createEnvironment(name: $name, label: $label) {\n      id\n      name\n      label\n    }\n  }\n}\n"
+    "text": "mutation CreateEnvironmentMutation(\n  $input: CreateEnvironmentInput!\n) {\n  createEnvironment(input: $input) {\n    id\n    name\n    label\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '87bb86c7a7bf18d21934e4eb719f8384';
+(node as any).hash = '13f4364a30091f47a944792b4bac04ef';
 export default node;

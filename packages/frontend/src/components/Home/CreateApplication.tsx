@@ -19,16 +19,14 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
     const navigate = useNavigate();
 
     const [commit, isInFlight] = useMutation<CreateApplicationMutation>(graphql`
-        mutation CreateApplicationMutation($organization: ID, $application: ApplicationInput!) {
-            organization(id: $organization) {
-                createApplication(application: $application) {
+        mutation CreateApplicationMutation($input: CreateApplicationInput!) {
+            createApplication(input: $input) {
+                id
+                name
+                description
+                organization {
                     id
-                    name
-                    description
-                    organization {
-                        id
-                        username
-                    }
+                    username
                 }
             }
         }
@@ -37,15 +35,15 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
     function handleFinish(values: Record<string, string>) {
         commit({
             variables: {
-                organization,
-                application: {
+                input: {
+                    organizationID: organization,
                     name: values.name,
                     description: values.description,
                 },
             },
             onCompleted(data) {
                 navigate(
-                    `/orgs/${data.organization.createApplication.organization.username}/apps/${data.organization.createApplication.name}`,
+                    `/orgs/${data.createApplication.organization.username}/apps/${data.createApplication.name}`,
                 );
             },
         });

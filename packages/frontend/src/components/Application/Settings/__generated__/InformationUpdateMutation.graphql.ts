@@ -2,21 +2,19 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type ApplicationInput = {
+export type UpdateApplicationInput = {
+    applicationID: string;
     name?: string | null;
     description?: string | null;
 };
 export type InformationUpdateMutationVariables = {
-    id: string;
-    application: ApplicationInput;
+    input: UpdateApplicationInput;
 };
 export type InformationUpdateMutationResponse = {
-    readonly application: {
-        readonly update: {
-            readonly id: string;
-            readonly name: string;
-            readonly description: string;
-        };
+    readonly updateApplication: {
+        readonly id: string;
+        readonly name: string;
+        readonly description: string;
     };
 };
 export type InformationUpdateMutation = {
@@ -28,15 +26,12 @@ export type InformationUpdateMutation = {
 
 /*
 mutation InformationUpdateMutation(
-  $id: ID!
-  $application: ApplicationInput!
+  $input: UpdateApplicationInput!
 ) {
-  application(id: $id) {
-    update(application: $application) {
-      id
-      name
-      description
-    }
+  updateApplication(input: $input) {
+    id
+    name
+    description
   }
 }
 */
@@ -46,14 +41,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "application",
-    "type": "ApplicationInput!"
+    "name": "input",
+    "type": "UpdateApplicationInput!"
   }
 ],
 v1 = [
@@ -62,51 +51,34 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "id"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Application",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "updateApplication",
     "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "application",
-            "variableName": "application"
-          }
-        ],
-        "concreteType": "Application",
-        "kind": "LinkedField",
-        "name": "update",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "description",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "description",
         "storageKey": null
       }
     ],
@@ -134,9 +106,9 @@ return {
     "metadata": {},
     "name": "InformationUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation InformationUpdateMutation(\n  $id: ID!\n  $application: ApplicationInput!\n) {\n  application(id: $id) {\n    update(application: $application) {\n      id\n      name\n      description\n    }\n  }\n}\n"
+    "text": "mutation InformationUpdateMutation(\n  $input: UpdateApplicationInput!\n) {\n  updateApplication(input: $input) {\n    id\n    name\n    description\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '22da4165bec5d43538906d97c0819c5f';
+(node as any).hash = '697402cd20ac9bc10069690a9204791d';
 export default node;

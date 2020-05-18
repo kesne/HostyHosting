@@ -42,8 +42,6 @@ input ApplicationInput {
 }
 
 type ApplicationMutations {
-  delete: Application!
-  update(application: ApplicationInput!): Application!
   createComponent(component: ComponentInput!): Component!
   createContainerGroup(containerGroup: ContainerGroupInput!): ContainerGroup!
   updateComponent(component: ComponentInput!, id: ID!): Component!
@@ -104,6 +102,18 @@ enum ContainerSize {
   S16x16
 }
 
+input CreateApplicationInput {
+  organizationID: ID!
+  name: String!
+  description: String
+}
+
+input CreateEnvironmentInput {
+  organizationID: ID!
+  name: String!
+  label: String!
+}
+
 type CurrentUser {
   id: ID!
   createdAt: DateTime!
@@ -135,6 +145,10 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+input DeleteApplicationInput {
+  applicationID: ID!
+}
+
 enum DeploymentStrategy {
   REPLACE
   RECREATE
@@ -161,13 +175,11 @@ type Mutation {
   createAPIKey(description: String!): APIKeyEdge!
   deleteAPIKey(id: ID!): APIKey!
   application(id: ID!): ApplicationMutations!
-  organization(
-    """
-    The ID of the organization that you will be performing mutations on. If
-    empty, we will use the signed-in users personal organization.
-    """
-    id: ID
-  ): OrganizationMutations!
+  createApplication(input: CreateApplicationInput!): Application!
+  deleteApplication(input: DeleteApplicationInput!): Application!
+  updateApplication(input: UpdateApplicationInput!): Application!
+  createEnvironment(input: CreateEnvironmentInput!): Environment!
+  changeOrganizationUsername: Organization!
   exchangeTOTP(token: String!): Result!
   enableTotp(token: String!, secret: String!): Result!
   disableTotp(password: String!): Result!
@@ -206,12 +218,6 @@ type Organization {
   applications: [Application!]!
   environments: [Environment!]!
   application(name: String!): Application!
-}
-
-type OrganizationMutations {
-  changeUsername(username: String!): Organization!
-  createEnvironment(label: String!, name: String!): Environment!
-  createApplication(application: ApplicationInput!): Application!
 }
 
 type PageInfo {
@@ -261,6 +267,12 @@ user requires a TOTP exchange before being fully logged in.
 type SignInResult {
   ok: Boolean!
   requiresTOTP: Boolean!
+}
+
+input UpdateApplicationInput {
+  applicationID: ID!
+  name: String
+  description: String
 }
 
 type User {

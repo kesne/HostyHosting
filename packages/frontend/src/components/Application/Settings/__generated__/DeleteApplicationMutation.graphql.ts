@@ -2,14 +2,15 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
+export type DeleteApplicationInput = {
+    applicationID: string;
+};
 export type DeleteApplicationMutationVariables = {
-    application: string;
+    input: DeleteApplicationInput;
 };
 export type DeleteApplicationMutationResponse = {
-    readonly application: {
-        readonly delete: {
-            readonly id: string;
-        };
+    readonly deleteApplication: {
+        readonly id: string;
     };
 };
 export type DeleteApplicationMutation = {
@@ -21,12 +22,10 @@ export type DeleteApplicationMutation = {
 
 /*
 mutation DeleteApplicationMutation(
-  $application: ID!
+  $input: DeleteApplicationInput!
 ) {
-  application(id: $application) {
-    delete {
-      id
-    }
+  deleteApplication(input: $input) {
+    id
   }
 }
 */
@@ -36,8 +35,8 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
+    "name": "input",
+    "type": "DeleteApplicationInput!"
   }
 ],
 v1 = [
@@ -46,31 +45,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "application"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ApplicationMutations",
+    "concreteType": "Application",
     "kind": "LinkedField",
-    "name": "application",
+    "name": "deleteApplication",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "Application",
-        "kind": "LinkedField",
-        "name": "delete",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -98,9 +86,9 @@ return {
     "metadata": {},
     "name": "DeleteApplicationMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteApplicationMutation(\n  $application: ID!\n) {\n  application(id: $application) {\n    delete {\n      id\n    }\n  }\n}\n"
+    "text": "mutation DeleteApplicationMutation(\n  $input: DeleteApplicationInput!\n) {\n  deleteApplication(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '0078f882020e8a6a351c8231406a5311';
+(node as any).hash = 'd7cc00ecdeade9525450f8362175df4a';
 export default node;
