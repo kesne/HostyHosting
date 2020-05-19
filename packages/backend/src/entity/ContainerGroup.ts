@@ -7,7 +7,7 @@ import {
     OneToMany,
     Unique,
 } from 'typeorm';
-import { Component } from './Component';
+import { Component, DeploymentStrategy } from './Component';
 import { ObjectType, Field, registerEnumType } from 'type-graphql';
 import { Min } from 'class-validator';
 import { ExternalEntity } from './BaseEntity';
@@ -79,6 +79,11 @@ export class ContainerGroup extends ExternalEntity {
         { lazy: true },
     )
     component!: Lazy<Component>;
+
+    // Used to overwrite the Component deployment strategy.
+    @Field(() => DeploymentStrategy, { nullable: true })
+    @Column({ type: 'enum', enum: DeploymentStrategy, nullable: true })
+    deploymentStrategy?: DeploymentStrategy;
 
     @Field(() => [Secret])
     @OneToMany(

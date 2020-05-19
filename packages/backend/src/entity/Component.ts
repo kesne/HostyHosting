@@ -42,7 +42,6 @@ export class Component extends ExternalEntity {
     @Length(3, 20)
     name!: string;
 
-    // TODO: We will probably want to move this definition down into container groups:
     @Field(() => DeploymentStrategy)
     @Column({ type: 'enum', enum: DeploymentStrategy, default: DeploymentStrategy.RECREATE })
     deploymentStrategy!: DeploymentStrategy;

@@ -5,7 +5,6 @@ import { InternalEntity } from './BaseEntity';
 
 @Entity()
 export class PasswordReset extends InternalEntity {
-    // TODO: Maybe rename to createForUser() and take in a pre-resolved user?
     static async createForEmail(email: string) {
         const user = await User.findOne({ where: { email } });
 
