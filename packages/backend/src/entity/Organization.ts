@@ -4,7 +4,11 @@ import { ObjectType, Field, ForbiddenError } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
 import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
-import { OrganizationMembership, OrganizationPermission, permissionIsAtLeast } from './OrganizationMembership';
+import {
+    OrganizationMembership,
+    OrganizationPermission,
+    permissionIsAtLeast,
+} from './OrganizationMembership';
 import { Environment } from './Environment';
 import { User } from './User';
 import { NAME_REGEX } from '../constants';
@@ -45,7 +49,10 @@ export class Organization extends ExternalEntity {
         membership.organization = organization;
         membership.permission = OrganizationPermission.ADMIN;
 
-        return { organization, membership };
+        organization.memberships = [membership];
+        organization.environments = Environment.createDefaultEnvironments(organization);
+
+        return organization;
     }
 
     /**
@@ -106,7 +113,7 @@ export class Organization extends ExternalEntity {
     @OneToMany(
         () => OrganizationMembership,
         membership => membership.organization,
-        { lazy: true },
+        { lazy: true, cascade: true },
     )
     memberships!: Lazy<OrganizationMembership[]>;
 
@@ -122,7 +129,7 @@ export class Organization extends ExternalEntity {
     @OneToMany(
         () => Environment,
         environment => environment.organization,
-        { lazy: true },
+        { lazy: true, cascade: true },
     )
     environments!: Lazy<Environment[]>;
 }

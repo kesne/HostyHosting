@@ -12,6 +12,7 @@ import { run } from '../utils/currentRequest';
 import { Network } from '../entity/Network';
 import { User } from '../entity/User';
 import { Environment } from '../entity/Environment';
+import { Secret } from '../entity/Secret';
 
 async function withConnection(fn: any) {
     const mockContext = {
@@ -36,6 +37,7 @@ async function withConnection(fn: any) {
 async function seed() {
     // Start by removing the ENTIRE world.
     await APIKey.delete({});
+    await Secret.delete({});
     await ContainerGroup.delete({});
     await Component.delete({});
     await Application.delete({});
@@ -69,6 +71,7 @@ async function seed() {
     const netflixOrg = new Organization();
     netflixOrg.name = 'Netflix';
     netflixOrg.username = 'netflix';
+    netflixOrg.environments = Environment.createDefaultEnvironments(netflixOrg);
     await netflixOrg.save();
 
     const netflixMembership = new OrganizationMembership();
@@ -76,7 +79,6 @@ async function seed() {
     netflixMembership.organization = netflixOrg;
     netflixMembership.permission = OrganizationPermission.ADMIN;
     await netflixMembership.save();
-    await Environment.createDefaultEnvironments(netflixOrg);
 }
 
 withConnection(seed);

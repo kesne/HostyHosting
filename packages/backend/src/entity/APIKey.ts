@@ -18,7 +18,7 @@ export class APIKey extends ExternalEntity {
             user
         });
 
-        return await this.save(apiKey);
+        return await apiKey.save();
     }
 
     // NOTE: Never expose this column externally via GraphQL.

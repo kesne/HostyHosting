@@ -20,7 +20,7 @@ export class PasswordReset extends InternalEntity {
         }
 
         const passwordReset = this.create({ user });
-        await this.save(passwordReset);
+        await passwordReset.save();
     }
 
     static async removeForUser(user: User) {

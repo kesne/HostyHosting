@@ -11,11 +11,11 @@ import { NAME_REGEX } from '../constants';
 @Entity()
 @Unique(['name', 'organization'])
 export class Environment extends ExternalEntity {
-    static async createDefaultEnvironments(organization: Organization) {
-        await Promise.all([
-            this.createForOrganization(organization, 'prod', 'Production').save(),
-            this.createForOrganization(organization, 'test', 'Test').save(),
-        ]);
+    static createDefaultEnvironments(organization: Organization) {
+        return [
+            this.createForOrganization(organization, 'prod', 'Production'),
+            this.createForOrganization(organization, 'test', 'Test'),
+        ];
     }
 
     static createForOrganization(organization: Organization, name: string, label: string) {

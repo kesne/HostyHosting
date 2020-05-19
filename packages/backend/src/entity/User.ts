@@ -104,23 +104,17 @@ export class User extends ExternalEntity {
             await user.setPassword(password);
         }
 
-        user.save();
-
-        // Create a basic organization:
-        const { organization, membership } = Organization.createPersonal(user);
-
-        await organization.save();
-        await membership.save();
-
-        // Create the default environments:
-        await Environment.createDefaultEnvironments(organization);
+        // Create the personal organization:
+        const organization = Organization.createPersonal(user);
+        user.personalOrganization = organization;
 
         // Set the users personal organization:
-        // TODO: Find a way to avoid this:
         user.personalOrganization = organization;
+
         await user.save();
 
         user.signIn();
+
         return user;
     }
 
@@ -203,7 +197,7 @@ export class User extends ExternalEntity {
     // personal organization membership, and loads the organization through that, but we could avoid
     // some annoying setting up of relations if we model it this way.
     @Field(() => Organization)
-    @OneToOne(() => Organization, { lazy: true })
+    @OneToOne(() => Organization, { lazy: true, cascade: true })
     @JoinColumn()
     personalOrganization!: Lazy<Organization>;
 
