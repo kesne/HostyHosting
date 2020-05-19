@@ -12,6 +12,7 @@ import { NAME_REGEX } from '../constants';
 import { removeUserCookie, setUserCookie } from '../utils/cookies';
 import { getCurrentRequest } from '../utils/currentRequest';
 import { Environment } from './Environment';
+import { PasswordReset } from './PasswordReset';
 
 // NOTE: This was chosed based on a stack overflow post. Probably should do more
 // research if you ever deploy this for real.
@@ -113,7 +114,7 @@ export class User extends ExternalEntity {
 
         await user.save();
 
-        user.signIn();
+        await user.signIn();
 
         return user;
     }
@@ -179,13 +180,16 @@ export class User extends ExternalEntity {
         return await compare(password, this.passwordHash);
     }
 
-    signIn(type: AuthType = AuthType.FULL) {
+    async signIn(type: AuthType = AuthType.FULL) {
         const { session } = getCurrentRequest();
         session.userID = this.id;
         session.type = type;
         if (type === AuthType.FULL) {
             setUserCookie(this.id);
         }
+
+        // Remove any password reset so that it is no longer valid after signing in:
+        await PasswordReset.removeForUser(this);
     }
 
     signOut() {

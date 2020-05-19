@@ -35,7 +35,7 @@ export class TOTPResolver {
     @Mutation(() => Result)
     async exchangeTOTP(@Arg('token') token: string) {
         const user = await User.fromTOTPSession(token);
-        user.signIn();
+        await user.signIn();
         return new Result();
     }
 

@@ -85,17 +85,13 @@ export class UserResolver {
             throw new Error('Invalid password.');
         }
 
-        // TODO: Move this into the User itself:
-        // Remove any password reset so that it is no longer valid after signing in:
-        PasswordReset.removeForUser(user);
-
         if (user.totpSecret) {
-            user.signIn(AuthType.TOTP);
+            await user.signIn(AuthType.TOTP);
 
             return new SignInResult(true);
         }
 
-        user.signIn();
+        await user.signIn();
 
         return new SignInResult(false);
     }
@@ -159,21 +155,16 @@ export class UserResolver {
         // If the user is not passwordless, then we need to prevent them from
         // signing in with just github.
         if (!user.isPasswordless) {
-            // TODO: Refine the error message:
             throw new Error('User account is not passwordless.');
         }
 
-        // TODO: Move this into the User itself:
-        // Remove any password reset so that it is no longer valid after signing in:
-        PasswordReset.removeForUser(user);
-
         if (user.totpSecret) {
-            user.signIn(AuthType.TOTP);
+            await user.signIn(AuthType.TOTP);
 
             return new SignInResult(true);
         }
 
-        user.signIn();
+        await user.signIn();
 
         return new SignInResult(false);
     }
@@ -212,9 +203,6 @@ export class UserResolver {
         return new Result();
     }
 
-    // TODO: Why is this on the user and not just a Query method.
-    // TODO: Should we just bite the bullet and make personal organizations returned at
-    // the top-level as well. (this would move to be a client concern)
     @FieldResolver(() => [Organization])
     async organizations(@Root() user: User) {
         const memberships = await OrganizationMembership.find({
@@ -250,17 +238,16 @@ export class UserResolver {
                 throw new Error('Did not find a started password reset.');
             }
 
-            // TODO: Why is this commented out??
-            // await reset.remove();
+            await reset.remove();
 
             await user.setPassword(password);
             await user.save();
 
-            user.signIn();
+            await user.signIn();
             return new Result();
         }
 
-        reset.user.signIn(AuthType.PASSWORD_RESET);
+        await reset.user.signIn(AuthType.PASSWORD_RESET);
 
         return new Result();
     }

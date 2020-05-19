@@ -38,8 +38,6 @@ export default function Security() {
 
     function onClose() {
         off();
-        // TODO: Either refetch or make the onboarding / disabling modify the store.
-        // refetch();
     }
 
     return (
