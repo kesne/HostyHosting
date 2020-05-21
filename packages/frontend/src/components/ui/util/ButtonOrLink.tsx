@@ -2,10 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { HTMLAttributes } from 'react';
 
-export default function ButtonOrLink({
-    to,
-    ...props
-}: HTMLAttributes<HTMLAnchorElement | HTMLButtonElement> & { to?: string }) {
+export type Props = HTMLAttributes<HTMLAnchorElement | HTMLButtonElement> & { to?: string };
+
+export default function ButtonOrLink({ to, ...props }: Props) {
     if (to) {
         return <Link to={to} {...props} />;
     }

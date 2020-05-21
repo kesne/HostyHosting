@@ -1,44 +1,48 @@
 import React from 'react';
 import CreateEnvironment from './CreateEnvironment';
 import useBoolean from '../../utils/useBoolean';
-import Card from '../ui/Card';
 import List, { ListItem } from '../ui/List';
-import { useFragment, graphql } from 'react-relay/hooks';
-import { Environments_organization$key } from './__generated__/Environments_organization.graphql';
+import { graphql, useLazyLoadQuery } from 'react-relay/hooks';
 import Button from '../ui/Button';
+import HomePage from './HomePage';
+import { useParams } from 'react-router-dom';
+import { EnvironmentsQuery } from './__generated__/EnvironmentsQuery.graphql';
 
-type Props = {
-    organization: Environments_organization$key;
-};
-
-export default function Environments({ organization }: Props) {
+export default function Environments() {
+    const params = useParams();
     const [create, { off, on }] = useBoolean(false);
 
-    const data = useFragment(
+    const data = useLazyLoadQuery<EnvironmentsQuery>(
         graphql`
-            fragment Environments_organization on Organization {
-                id
-                environments {
+            query EnvironmentsQuery($organization: String) {
+                organization(username: $organization) {
                     id
-                    name
-                    label
+                    environments {
+                        id
+                        name
+                        label
+                    }
                 }
             }
         `,
-        organization,
+        {
+            organization: params.organization,
+        },
     );
+
+    const { organization } = data;
 
     return (
         <>
-            <Card
+            <HomePage
                 title="Environments"
                 actions={
                     <Button onClick={on} variant="primary">
-                        New Environment
+                        Create Environment
                     </Button>
                 }
             >
-                <List items={data.environments}>
+                <List items={organization.environments} divide>
                     {environment => (
                         <ListItem key={environment.id}>
                             <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
@@ -47,8 +51,8 @@ export default function Environments({ organization }: Props) {
                         </ListItem>
                     )}
                 </List>
-            </Card>
-            <CreateEnvironment organization={data.id} open={create} onClose={off} />
+            </HomePage>
+            <CreateEnvironment organization={organization.id} open={create} onClose={off} />
         </>
     );
 }

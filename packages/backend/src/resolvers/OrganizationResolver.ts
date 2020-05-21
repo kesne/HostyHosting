@@ -1,7 +1,8 @@
-import { Resolver, Query, Arg, Ctx, FieldResolver, Root, Mutation } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, FieldResolver, Root, Mutation, Field, Int } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { Application } from '../entity/Application';
+import { OrganizationMembership } from '../entity/OrganizationMembership';
 
 @Resolver(() => Organization)
 export class OrganizationResolver {
@@ -22,6 +23,16 @@ export class OrganizationResolver {
         return Organization.findForUser(user, { username });
     }
 
+    @Mutation(() => Organization)
+    async UNIMPLEMENTED__changeOrganizationUsername() {
+        throw new Error('NOT IMPLEMENTED');
+        // if (this.organization.isPersonal) {
+        //     throw new Error('Personal organization usernames cannot be changed.');
+        // }
+        // this.organization.username = username;
+        // await this.organizationRepo.save(this.organization);
+    }
+
     @FieldResolver(() => Application)
     async application(
         @Ctx() { user }: Context,
@@ -31,13 +42,12 @@ export class OrganizationResolver {
         return await Application.findForUserAndOrganization(user, organization, name);
     }
 
-    @Mutation(() => Organization)
-    async UNIMPLEMENTED__changeOrganizationUsername() {
-        throw new Error('NOT IMPLEMENTED');
-        // if (this.organization.isPersonal) {
-        //     throw new Error('Personal organization usernames cannot be changed.');
-        // }
-        // this.organization.username = username;
-        // await this.organizationRepo.save(this.organization);
+    @FieldResolver(() => Int)
+    async memberCount(@Root() organization: Organization) {
+        return await OrganizationMembership.count({
+            where: {
+                organization,
+            },
+        });
     }
 }

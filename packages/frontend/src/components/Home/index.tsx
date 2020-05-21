@@ -1,51 +1,43 @@
 import React from 'react';
-import SelectOrganization from './SelectOrganization';
-import PageHeader from '../ui/PageHeader';
-import Dropdown, { DropdownItem } from '../ui/Dropdown';
-import { useParams } from 'react-router-dom';
-import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
-import { HomeQuery } from './__generated__/HomeQuery.graphql';
+import Container from '../ui/Container';
+import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Applications from './Applications';
 import Environments from './Environments';
+import SelectOrganization from './SelectOrganization';
 
-// TODO: Don't make the default route go here, instead use a redirect to route into
-// the personal organization `/orgs/:username`.
 export default function Home() {
-    // TODO: Don't do this:
-    // NOTE: If not present, we will assume the user personal organization
-    const params = useParams();
-
-    const data = useLazyLoadQuery<HomeQuery>(
-        graphql`
-            query HomeQuery($organization: String) {
-                viewer {
-                    ...SelectOrganization_viewer
-                }
-                organization(username: $organization) {
-                    ...Applications_organization
-                    ...Environments_organization
-                }
-            }
-        `,
-        {
-            organization: params.organization,
-        },
-    );
+    const { pathname } = useLocation();
 
     return (
-        <div>
-            <PageHeader>
-                <SelectOrganization viewer={data.viewer} />
-            </PageHeader>
-
-            <main>
-                <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                    <div className="px-4 py-4 sm:px-0 space-y-6">
-                        <Applications organization={data.organization} />
-                        <Environments organization={data.organization} />
+        <Container>
+            <div className="flex">
+                <div className="flex flex-shrink-0">
+                    <div className="flex flex-col w-64 py-2 pr-4">
+                        <SelectOrganization />
+                        <div className="mt-6">
+                            <VerticalNav value={pathname}>
+                                <VerticalNavItem to="." label="Applications" />
+                                <VerticalNavItem to="routers" label="Routers" />
+                                <VerticalNavItem to="environments" label="Environments" />
+                            </VerticalNav>
+                        </div>
                     </div>
                 </div>
-            </main>
-        </div>
+                <div className="flex flex-col w-0 flex-1 overflow-hidden bg-white border border-gray-200 border-t-0">
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={<Applications />}
+                        />
+                        <Route path="routers" element={<div>TODO: add routers</div>} />
+                        <Route
+                            path="environments"
+                            element={<Environments />}
+                        />
+                    </Routes>
+                </div>
+            </div>
+        </Container>
     );
 }

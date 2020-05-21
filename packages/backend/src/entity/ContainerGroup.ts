@@ -80,11 +80,6 @@ export class ContainerGroup extends ExternalEntity {
     )
     component!: Lazy<Component>;
 
-    // Used to overwrite the Component deployment strategy.
-    @Field(() => DeploymentStrategy, { nullable: true })
-    @Column({ type: 'enum', enum: DeploymentStrategy, nullable: true })
-    deploymentStrategy?: DeploymentStrategy;
-
     @Field(() => [Secret])
     @OneToMany(
         () => Secret,

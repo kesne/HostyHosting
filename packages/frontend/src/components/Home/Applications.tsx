@@ -1,58 +1,65 @@
 import React from 'react';
-import Card from '../ui/Card';
-import { useFragment, graphql } from 'react-relay/hooks';
-import { Applications_organization$key } from './__generated__/Applications_organization.graphql';
+import { useParams } from 'react-router-dom';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import List, { ListItem } from '../ui/List';
 import Button from '../ui/Button';
 import CreateApplication from './CreateApplication';
 import useBoolean from '../../utils/useBoolean';
+import HomePage from './HomePage';
+import { ApplicationsQuery } from './__generated__/ApplicationsQuery.graphql';
 
-type Props = {
-    organization: Applications_organization$key;
-};
-
-export default function Applications({ organization }: Props) {
+export default function Applications() {
+    const params = useParams();
     const [create, { off, on }] = useBoolean(false);
 
-    const data = useFragment(
+    const data = useLazyLoadQuery<ApplicationsQuery>(
         graphql`
-            fragment Applications_organization on Organization {
-                id
-                username
-                applications {
+            query ApplicationsQuery($organization: String) {
+                organization(username: $organization) {
                     id
-                    name
-                    description
+                    username
+                    applications {
+                        id
+                        name
+                        description
+                    }
                 }
             }
         `,
-        organization,
+        {
+            organization: params.organization,
+        },
     );
+
+    const { organization } = data;
 
     return (
         <>
-            <Card
+            <HomePage
                 title="Applications"
                 actions={
                     <Button onClick={on} variant="primary">
-                        New Application
+                        Create Application
                     </Button>
                 }
             >
-                <List items={data.applications}>
+                <List items={organization.applications} divide>
                     {application => (
                         <ListItem
                             key={application.id}
-                            to={`/orgs/${data.username}/apps/${application.name}`}
+                            to={`/orgs/${organization.username}/apps/${application.name}`}
                         >
-                            <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
-                                {application.name}
-                            </div>
+                            <div className="text-gray-900 text-base">{application.name}</div>
+                            {application.description && (
+                                <div className="text-sm text-gray-500 mt-2">
+                                    {application.description}
+                                </div>
+                            )}
                         </ListItem>
                     )}
                 </List>
-            </Card>
-            <CreateApplication organization={data.id} visible={create} onClose={off} />
+            </HomePage>
+            <CreateApplication organization={organization.id} visible={create} onClose={off} />
         </>
     );
 }

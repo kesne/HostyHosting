@@ -2,15 +2,9 @@ import React from 'react';
 import clsx from 'clsx';
 import OptionalLink from './util/OptionalLink';
 
-export function ListItem({
-    to,
-    children,
-}: {
-    to?: string;
-    children: React.ReactNode;
-}) {
+export function ListItem({ to, children }: { to?: string; children: React.ReactNode }) {
     return (
-        <li className="border-b border-gray-200 last:border-b-0">
+        <li>
             <OptionalLink
                 to={to}
                 className={clsx(
@@ -49,12 +43,18 @@ export function ListItem({
 export default function List<T>({
     items,
     children,
+    divide,
 }: {
     items?: readonly T[];
     children: (item: T, i: number) => React.ReactNode;
+    divide?: boolean;
 }) {
     // TODO: better UI
     if (!items) return null;
 
-    return <ul>{items.map((item, i) => children(item, i))}</ul>;
+    return (
+        <ul className={clsx(divide && 'divide-y divide-gray-200')}>
+            {items.map((item, i) => children(item, i))}
+        </ul>
+    );
 }

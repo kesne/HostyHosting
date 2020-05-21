@@ -1,32 +1,41 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFragment, graphql } from 'react-relay/hooks';
-import { SelectOrganization_viewer$key } from './__generated__/SelectOrganization_viewer.graphql';
+import { useNavigate, useParams } from 'react-router-dom';
+import { graphql, useLazyLoadQuery } from 'react-relay/hooks';
+import { SelectOrganizationQuery } from './__generated__/SelectOrganizationQuery.graphql';
+import { BaseDropdown, DropdownItem } from '../ui/Dropdown';
 
 const PERSONAL = 'personal';
 
-type Props = {
-    viewer: SelectOrganization_viewer$key;
-};
-
-export default function SelectOrganization({ viewer }: Props) {
+export default function SelectOrganization() {
+    const params = useParams();
     const navigate = useNavigate();
 
-    const data = useFragment(
+    const data = useLazyLoadQuery<SelectOrganizationQuery>(
         graphql`
-            fragment SelectOrganization_viewer on User {
-                id
-                personalOrganization {
+            query SelectOrganizationQuery($organization: String) {
+                viewer {
                     id
+                    personalOrganization {
+                        id
+                        username
+                    }
+                    organizations {
+                        id
+                        name
+                        username
+                    }
                 }
-                organizations {
+                organization(username: $organization) {
                     id
                     name
                     username
+                    memberCount
                 }
             }
         `,
-        viewer,
+        {
+            organization: params.organization,
+        },
     );
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -38,19 +47,41 @@ export default function SelectOrganization({ viewer }: Props) {
     }
 
     return (
-        <div className="relative rounded-md shadow-sm w-60">
-            <select
-                value={viewer ? String(viewer) : PERSONAL}
-                onChange={handleChange}
-                className="text-lg leading-6 font-semibold text-gray-900 block form-select w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-            >
-                <option value={PERSONAL}>Personal</option>
-                {data.organizations.map(org => (
-                    <option key={org.username} value={org.username}>
-                        {org.name}
-                    </option>
-                ))}
-            </select>
-        </div>
+        <>
+            <div className="flex items-center mt-2">
+                <div className="flex-1">
+                    <h3 className="text-gray-900">{data.organization.name}</h3>
+                    <p className="text-sm text-gray-700">{data.organization.memberCount} members</p>
+                </div>
+                <BaseDropdown
+                    Component={({ onClick }) => (
+                        <button
+                            onClick={onClick}
+                            className="text-gray-800 w-7 rounded bg-gray-200 p-1 hover:bg-gray-50 focus:outline-none focus:shadow-outline-indigo"
+                        >
+                            <svg
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                            </svg>
+                        </button>
+                    )}
+                >
+                    <DropdownItem to={`/orgs/${data.viewer.personalOrganization.username}`}>
+                        Personal
+                    </DropdownItem>
+                    {data.viewer.organizations.map(org => (
+                        <DropdownItem key={org.username} to={`/orgs/${org.username}`}>
+                            {org.name}
+                        </DropdownItem>
+                    ))}
+                </BaseDropdown>
+            </div>
+        </>
     );
 }

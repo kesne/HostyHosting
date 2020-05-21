@@ -37,7 +37,7 @@ export default function App() {
                 <Layout>
                     <Routes>
                         <PrivateRoute path="/" element={<Home />} />
-                        <PrivateRoute path="/orgs/:organization" element={<Home />} />
+                        <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
                         <PrivateRoute
                             path="/orgs/:organization/apps/:application/*"
                             element={<Application />}

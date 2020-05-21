@@ -56,7 +56,6 @@ type ContainerGroup {
   containerCount: Float!
   environment: Environment!
   component: Component!
-  deploymentStrategy: DeploymentStrategy
   secrets: [Secret!]!
   monthlyPrice: Int!
 }
@@ -201,6 +200,7 @@ type Organization {
   applications: [Application!]!
   environments: [Environment!]!
   application(name: String!): Application!
+  memberCount: Int!
 }
 
 type PageInfo {
