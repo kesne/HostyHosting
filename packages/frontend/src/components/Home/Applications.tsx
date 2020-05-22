@@ -14,7 +14,7 @@ export default function Applications() {
 
     const data = useLazyLoadQuery<ApplicationsQuery>(
         graphql`
-            query ApplicationsQuery($organization: String) {
+            query ApplicationsQuery($organization: String!) {
                 organization(username: $organization) {
                     id
                     username

@@ -10,7 +10,7 @@ export type CreateAPIKeyMutationResponse = {
         readonly node: {
             readonly id: string;
             readonly description: string;
-            readonly createdAt: unknown;
+            readonly createdAt: string;
             readonly privateKey: string | null;
         };
     };

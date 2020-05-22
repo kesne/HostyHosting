@@ -8,27 +8,30 @@ import { OverviewQuery } from './__generated__/OverviewQuery.graphql';
 export default function Overview() {
     const params = useApplicationParams();
 
-    const data = useLazyLoadQuery<OverviewQuery>(graphql`
-        query OverviewQuery($application: ID!) {
-            application(id: $application) {
-                id
-                description
-                updatedAt
-                createdAt
-                createdBy {
-                    name
+    const data = useLazyLoadQuery<OverviewQuery>(
+        graphql`
+            query OverviewQuery($application: ID!) {
+                application(id: $application) {
+                    id
+                    description
+                    updatedAt
+                    createdAt
+                    createdBy {
+                        name
+                    }
                 }
             }
-        }
-    `, {
-        application: params.application
-    });
+        `,
+        {
+            application: params.application,
+        },
+    );
 
     const { application } = data;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Card header={<h3 className="text-lg leading-6 font-medium text-gray-900">Details</h3>}>
+            <Card title="Details">
                 <div className="px-4 py-5 sm:p-0">
                     <dl>
                         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
@@ -66,20 +69,7 @@ export default function Overview() {
                     </dl>
                 </div>
             </Card>
-            <Card
-                header={
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Deployment History
-                    </h3>
-                }
-            >
-                TODO
-            </Card>
-            <Card
-                header={<h3 className="text-lg leading-6 font-medium text-gray-900">Containers</h3>}
-            >
-                TODO
-            </Card>
+            <Card title="Deployment History">TODO</Card>
         </div>
     );
 }

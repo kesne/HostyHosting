@@ -14,7 +14,7 @@ export default function Environments() {
 
     const data = useLazyLoadQuery<EnvironmentsQuery>(
         graphql`
-            query EnvironmentsQuery($organization: String) {
+            query EnvironmentsQuery($organization: String!) {
                 organization(username: $organization) {
                     id
                     environments {

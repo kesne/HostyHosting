@@ -7,7 +7,7 @@ export type Notification_notification = {
     readonly id: string;
     readonly title: string;
     readonly body: string;
-    readonly createdAt: unknown;
+    readonly createdAt: string;
     readonly " $refType": "Notification_notification";
 };
 export type Notification_notification$data = Notification_notification;

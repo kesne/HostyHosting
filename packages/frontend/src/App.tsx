@@ -9,9 +9,11 @@ import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
 import GrantAPIKey from './components/Auth/GrantAPIKey';
+import IndexRedirect from './components/IndexRedirect';
 import FourOhFour from './components/404';
 import { createEnvironment } from './utils/environment';
 import { useHasUser } from './utils/user';
+import 'react-placeholder/lib/reactPlaceholder.css';
 
 export default function App() {
     const hasUser = useHasUser();
@@ -36,7 +38,7 @@ export default function App() {
             <Router>
                 <Layout>
                     <Routes>
-                        <PrivateRoute path="/" element={<Home />} />
+                        <PrivateRoute path="/" element={<IndexRedirect />} />
                         <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
                         <PrivateRoute
                             path="/orgs/:organization/apps/:application/*"

@@ -9,17 +9,9 @@ export class OrganizationResolver {
     @Query(() => Organization)
     async organization(
         @Ctx() { user }: Context,
-        @Arg('username', () => String, {
-            nullable: true,
-            description:
-                'The username of the organization to load. If empty, we will use the signed-in users personal organization.',
-        })
-        username?: string,
+        @Arg('username', () => String)
+        username: string,
     ) {
-        if (!username) {
-            return await user.personalOrganization;
-        }
-
         return Organization.findForUser(user, { username });
     }
 

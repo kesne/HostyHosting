@@ -20,7 +20,7 @@ export function VerticalNavItem({
     const selected = location.pathname === toLocation.pathname;
 
     if (!small) {
-        return <option value={to}>{label}</option>;
+        return <option value={toLocation.pathname}>{label}</option>;
     }
 
     return (

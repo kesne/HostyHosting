@@ -3,7 +3,7 @@
 
 import { ConcreteRequest } from "relay-runtime";
 export type EnvironmentsQueryVariables = {
-    organization?: string | null;
+    organization: string;
 };
 export type EnvironmentsQueryResponse = {
     readonly organization: {
@@ -24,7 +24,7 @@ export type EnvironmentsQuery = {
 
 /*
 query EnvironmentsQuery(
-  $organization: String
+  $organization: String!
 ) {
   organization(username: $organization) {
     id
@@ -43,7 +43,7 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "organization",
-    "type": "String"
+    "type": "String!"
   }
 ],
 v1 = {
@@ -120,9 +120,9 @@ return {
     "metadata": {},
     "name": "EnvironmentsQuery",
     "operationKind": "query",
-    "text": "query EnvironmentsQuery(\n  $organization: String\n) {\n  organization(username: $organization) {\n    id\n    environments {\n      id\n      name\n      label\n    }\n  }\n}\n"
+    "text": "query EnvironmentsQuery(\n  $organization: String!\n) {\n  organization(username: $organization) {\n    id\n    environments {\n      id\n      name\n      label\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'a94101ca84ab93335ff4a5e1e8f1c6fd';
+(node as any).hash = 'ae8c403052b83d189051909a0bd49aee';
 export default node;

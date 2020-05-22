@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, Suspense } from 'react';
 import { useParams, Routes, Route, Outlet, useMatch, useResolvedLocation } from 'react-router-dom';
 import Settings from './Settings';
 import Overview from './Overview';
@@ -10,6 +10,7 @@ import Container from '../ui/Container';
 import { BreadcrumbsHeader } from './Breadcrumbs';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ApplicationQuery } from './__generated__/ApplicationQuery.graphql';
+import Loader from './Loader';
 
 function ApplicationLayout() {
     const { pathname } = useResolvedLocation('.');
@@ -39,7 +40,9 @@ function ApplicationLayout() {
                     ]}
                 />
             </div>
-            <Outlet />
+            <Suspense fallback={<Loader />}>
+                <Outlet />
+            </Suspense>
         </>
     );
 }

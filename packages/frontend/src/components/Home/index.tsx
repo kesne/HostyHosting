@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Container from '../ui/Container';
 import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Applications from './Applications';
 import Environments from './Environments';
 import SelectOrganization from './SelectOrganization';
+import PageLoading from './PageLoading';
 
 export default function Home() {
     const { pathname } = useLocation();
 
     return (
-        <Container>
-            <div className="flex">
+        <Container className="flex-1 flex flex-col">
+            <div className="flex flex-1 flex-col sm:flex-row">
                 <div className="flex flex-shrink-0">
-                    <div className="flex flex-col w-64 py-2 pr-4">
+                    <div className="flex flex-col py-4 px-4 sm:px-0 w-full sm:w-64 sm:pr-4">
                         <SelectOrganization />
                         <div className="mt-6">
                             <VerticalNav value={pathname}>
@@ -24,18 +25,14 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col w-0 flex-1 overflow-hidden bg-white border border-gray-200 border-t-0">
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={<Applications />}
-                        />
-                        <Route path="routers" element={<div>TODO: add routers</div>} />
-                        <Route
-                            path="environments"
-                            element={<Environments />}
-                        />
-                    </Routes>
+                <div className="flex flex-col flex-1 overflow-hidden bg-white border border-gray-200 border-t-0 border-b-0">
+                    <Suspense fallback={<PageLoading />}>
+                        <Routes>
+                            <Route path="/" element={<Applications />} />
+                            <Route path="routers" element={<div>TODO: add routers</div>} />
+                            <Route path="environments" element={<Environments />} />
+                        </Routes>
+                    </Suspense>
                 </div>
             </div>
         </Container>

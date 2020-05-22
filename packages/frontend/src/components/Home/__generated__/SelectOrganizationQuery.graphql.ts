@@ -3,7 +3,7 @@
 
 import { ConcreteRequest } from "relay-runtime";
 export type SelectOrganizationQueryVariables = {
-    organization?: string | null;
+    organization: string;
 };
 export type SelectOrganizationQueryResponse = {
     readonly viewer: {
@@ -34,7 +34,7 @@ export type SelectOrganizationQuery = {
 
 /*
 query SelectOrganizationQuery(
-  $organization: String
+  $organization: String!
 ) {
   viewer {
     id
@@ -63,7 +63,7 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "organization",
-    "type": "String"
+    "type": "String!"
   }
 ],
 v1 = {
@@ -176,9 +176,9 @@ return {
     "metadata": {},
     "name": "SelectOrganizationQuery",
     "operationKind": "query",
-    "text": "query SelectOrganizationQuery(\n  $organization: String\n) {\n  viewer {\n    id\n    personalOrganization {\n      id\n      username\n    }\n    organizations {\n      id\n      name\n      username\n    }\n  }\n  organization(username: $organization) {\n    id\n    name\n    username\n    memberCount\n  }\n}\n"
+    "text": "query SelectOrganizationQuery(\n  $organization: String!\n) {\n  viewer {\n    id\n    personalOrganization {\n      id\n      username\n    }\n    organizations {\n      id\n      name\n      username\n    }\n  }\n  organization(username: $organization) {\n    id\n    name\n    username\n    memberCount\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '9add0733367ba330e39fb60b9bf957ea';
+(node as any).hash = '90b7371f38db0c7f935becb984ee2838';
 export default node;

@@ -1,18 +1,16 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { useParams } from 'react-router-dom';
 import { graphql, useLazyLoadQuery } from 'react-relay/hooks';
+import { TextRow } from 'react-placeholder/lib/placeholders';
 import { SelectOrganizationQuery } from './__generated__/SelectOrganizationQuery.graphql';
 import { BaseDropdown, DropdownItem } from '../ui/Dropdown';
 
-const PERSONAL = 'personal';
-
-export default function SelectOrganization() {
+function SelectOrganizationWithData() {
     const params = useParams();
-    const navigate = useNavigate();
 
     const data = useLazyLoadQuery<SelectOrganizationQuery>(
         graphql`
-            query SelectOrganizationQuery($organization: String) {
+            query SelectOrganizationQuery($organization: String!) {
                 viewer {
                     id
                     personalOrganization {
@@ -37,14 +35,6 @@ export default function SelectOrganization() {
             organization: params.organization,
         },
     );
-
-    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-        if (event.target.value === PERSONAL) {
-            navigate('/');
-        } else {
-            navigate(`/orgs/${event.target.value}`);
-        }
-    }
 
     return (
         <>
@@ -83,5 +73,26 @@ export default function SelectOrganization() {
                 </BaseDropdown>
             </div>
         </>
+    );
+}
+
+function SelectFallback() {
+    return (
+        <div>
+            <div className="w-28">
+                <TextRow color="#E0E0E0" />
+            </div>
+            <div className="w-48">
+                <TextRow color="#E0E0E0" />
+            </div>
+        </div>
+    );
+}
+
+export default function SelectOrganization() {
+    return (
+        <Suspense fallback={<SelectFallback />}>
+            <SelectOrganizationWithData />
+        </Suspense>
     );
 }

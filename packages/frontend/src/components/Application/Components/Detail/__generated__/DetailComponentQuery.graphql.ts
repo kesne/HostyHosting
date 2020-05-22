@@ -18,8 +18,8 @@ export type DetailComponentQueryResponse = {
         readonly component: {
             readonly id: string;
             readonly name: string;
-            readonly createdAt: unknown;
-            readonly updatedAt: unknown;
+            readonly createdAt: string;
+            readonly updatedAt: string;
             readonly deploymentStrategy: DeploymentStrategy;
         };
     };

@@ -9,8 +9,8 @@ export type OverviewQueryResponse = {
     readonly application: {
         readonly id: string;
         readonly description: string;
-        readonly updatedAt: unknown;
-        readonly createdAt: unknown;
+        readonly updatedAt: string;
+        readonly createdAt: string;
         readonly createdBy: {
             readonly name: string;
         } | null;

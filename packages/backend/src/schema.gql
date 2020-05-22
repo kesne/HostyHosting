@@ -216,12 +216,7 @@ type Query {
   component(id: ID!): Component!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
-  organization(
-    """
-    The username of the organization to load. If empty, we will use the signed-in users personal organization.
-    """
-    username: String
-  ): Organization!
+  organization(username: String!): Organization!
   viewer: User!
 }
 

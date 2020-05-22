@@ -11,7 +11,7 @@ export type APIKeysQueryResponse = {
                 readonly node: {
                     readonly id: string;
                     readonly description: string;
-                    readonly createdAt: unknown;
+                    readonly createdAt: string;
                 };
             }>;
         };
