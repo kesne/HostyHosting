@@ -10,6 +10,7 @@ import { useApplicationParams } from '../../ApplicationContext';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { DetailComponentQuery } from './__generated__/DetailComponentQuery.graphql';
 import DeleteComponent from './DeleteComponent';
+import { Crumb, CrumbActions } from '../../Crumbs';
 
 export default function Detail() {
     const params = useParams();
@@ -47,25 +48,20 @@ export default function Detail() {
     const { component } = application;
 
     return (
-        <Breadcrumb
-            name={component.name}
-            url={params.component}
-            actions={
-                <>
-                    <span className="ml-3 relative shadow-sm rounded-md">
-                        <DeleteComponent id={data.application.component.id} />
-                    </span>
-                    <span className="ml-3 relative shadow-sm rounded-md">
-                        <Button onClick={editingOn}>Edit</Button>
-                        {/* <EditComponent
+        <Crumb name={component.name} url={params.component}>
+            <CrumbActions>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <DeleteComponent id={data.application.component.id} />
+                </span>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <Button onClick={editingOn}>Edit</Button>
+                    {/* <EditComponent
                                     component={component}
                                     visible={editing}
                                     onClose={editingOff}
                                 /> */}
-                    </span>
-                </>
-            }
-        >
+                </span>
+            </CrumbActions>
             <div className="mb-4">
                 <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
                     <div className="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
@@ -108,6 +104,6 @@ export default function Detail() {
                 }))}
             />
             {environment && <ContainerGroup component={component.id} environment={environment} />}
-        </Breadcrumb>
+        </Crumb>
     );
 }

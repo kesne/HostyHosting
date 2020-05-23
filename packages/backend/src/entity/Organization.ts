@@ -101,6 +101,8 @@ export class Organization extends ExternalEntity {
     @Matches(NAME_REGEX)
     username!: string;
 
+    // TODO: Rename this because it's _HELLA_ confusing that name on org means "label",
+    // and name everywhere else means "DNS Name"
     @Field()
     @Column()
     @Length(3, 20)

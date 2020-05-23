@@ -30,10 +30,13 @@ class CreateComponentInput {
     applicationID!: string;
 
     @Field()
-    image!: string;
+    name!: string;
 
     @Field()
-    name!: string;
+    label!: string;
+
+    @Field()
+    image!: string;
 
     @Field(() => DeploymentStrategy)
     deploymentStrategy!: DeploymentStrategy;
@@ -45,10 +48,13 @@ class UpdateComponentInput {
     componentID!: string;
 
     @Field({ nullable: true })
-    image?: string;
+    name?: string;
 
     @Field({ nullable: true })
-    name?: string;
+    label?: string;
+
+    @Field({ nullable: true })
+    image?: string;
 
     @Field(() => DeploymentStrategy, { nullable: true })
     deploymentStrategy?: DeploymentStrategy;
@@ -111,6 +117,7 @@ export class ComponentResolver {
         const component = Component.create({
             application,
             name: input.name,
+            label: input.label,
             image: input.image,
             deploymentStrategy: input.deploymentStrategy,
         });
@@ -127,6 +134,10 @@ export class ComponentResolver {
 
         if (typeof input.name !== 'undefined') {
             component.name = input.name;
+        }
+
+        if (typeof input.label !== 'undefined') {
+            component.label = input.label;
         }
 
         if (typeof input.image !== 'undefined') {

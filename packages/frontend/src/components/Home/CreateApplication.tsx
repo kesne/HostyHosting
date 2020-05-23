@@ -8,9 +8,10 @@ import Form from '../forms/Form';
 import Input from '../forms/Input';
 import TextArea from '../forms/TextArea';
 import SubmitButton from '../forms/SubmitButton';
+import { paramCase } from 'param-case';
 
 type Props = {
-    organization?: string;
+    organization: string;
     visible: boolean;
     onClose(): void;
 };
@@ -37,6 +38,7 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
             variables: {
                 input: {
                     organizationID: organization,
+                    label: values.label,
                     name: values.name,
                     description: values.description,
                 },
@@ -55,8 +57,17 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                 <ModalContent title="Create Application">
                     <div className="space-y-6">
                         <Input
+                            name="label"
+                            label="Label"
+                            register={{ required: true }}
+                            autoComplete="off"
+                            assignOnChange={({ label }) => ({
+                                name: paramCase(label),
+                            })}
+                        />
+                        <Input
                             name="name"
-                            label="Application Name"
+                            label="Name"
                             register={{ required: true }}
                             autoComplete="off"
                         />

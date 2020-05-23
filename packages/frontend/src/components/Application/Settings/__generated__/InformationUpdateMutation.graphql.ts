@@ -5,6 +5,7 @@ import { ConcreteRequest } from "relay-runtime";
 export type UpdateApplicationInput = {
     applicationID: string;
     name?: string | null;
+    label?: string | null;
     description?: string | null;
 };
 export type InformationUpdateMutationVariables = {

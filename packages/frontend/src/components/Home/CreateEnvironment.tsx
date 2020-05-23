@@ -1,14 +1,15 @@
 import React from 'react';
 import { useMutation, graphql } from 'react-relay/hooks';
-import { CreateEnvironmentMutation } from './__generated__/CreateEnvironmentMutation.graphql';
+import { paramCase } from 'param-case';
 import Modal, { ModalFooter, ModalContent } from '../ui/Modal';
 import Input from '../forms/Input';
 import Form from '../forms/Form';
 import Button, { ButtonGroup } from '../ui/Button';
 import SubmitButton from '../forms/SubmitButton';
+import { CreateEnvironmentMutation } from './__generated__/CreateEnvironmentMutation.graphql';
 
 type Props = {
-    organization?: string;
+    organization: string;
     open: boolean;
     onClose(): void;
 };
@@ -51,8 +52,16 @@ export default function CreateEnvironment({ organization, open, onClose }: Props
             <Form onSubmit={onCreate} disabled={isInFlight}>
                 <ModalContent title="Create Environment">
                     <div className="space-y-6">
+                        <Input
+                            label="Label"
+                            name="label"
+                            register={{ required: true }}
+                            autoComplete="off"
+                            assignOnChange={({ label }) => ({
+                                name: paramCase(label),
+                            })}
+                        />
                         <Input label="Name" name="name" register={{ required: true }} />
-                        <Input label="Label" name="label" register={{ required: true }} />
                     </div>
                 </ModalContent>
                 <ModalFooter>

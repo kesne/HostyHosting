@@ -26,6 +26,9 @@ class CreateApplicationInput {
     @Field()
     name!: string;
 
+    @Field()
+    label!: string;
+
     @Field({ nullable: true })
     description?: string;
 }
@@ -43,6 +46,9 @@ class UpdateApplicationInput {
 
     @Field({ nullable: true })
     name?: string;
+
+    @Field({ nullable: true })
+    label?: string;
 
     @Field({ nullable: true })
     description?: string;
@@ -82,6 +88,7 @@ export class ApplicationResolver {
 
         const app = Application.create({
             name: input.name,
+            label: input.label,
             description: input.description ?? '',
             organization: organization,
             createdBy: user,
@@ -106,6 +113,10 @@ export class ApplicationResolver {
         const application = await Application.findForUserByID(user, input.applicationID);
         if (typeof input.name !== 'undefined' && input.name !== null) {
             application.name = input.name;
+        }
+
+        if (typeof input.label !== 'undefined' && input.label !== null) {
+            application.label = input.label;
         }
 
         if (typeof input.description !== 'undefined' && input.description !== null) {

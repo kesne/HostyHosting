@@ -21,6 +21,7 @@ export default function Applications() {
                     applications {
                         id
                         name
+                        label
                         description
                     }
                 }
@@ -49,7 +50,12 @@ export default function Applications() {
                             key={application.id}
                             to={`/orgs/${organization.username}/apps/${application.name}`}
                         >
-                            <div className="text-gray-900 text-base">{application.name}</div>
+                            <div className="flex">
+                                <div className="text-gray-900 text-base mr-2">
+                                    {application.label}
+                                </div>
+                                <div className="text-gray-400 text-base">({application.name})</div>
+                            </div>
                             {application.description && (
                                 <div className="text-sm text-gray-500 mt-2">
                                     {application.description}

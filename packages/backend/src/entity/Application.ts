@@ -77,6 +77,10 @@ export class Application extends ExternalEntity {
     name!: string;
 
     @Field()
+    @Column()
+    label!: string;
+
+    @Field()
     @Column({ default: '' })
     @Length(0, 250)
     description!: string;

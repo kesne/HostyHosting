@@ -12,6 +12,7 @@ export type ApplicationsQueryResponse = {
         readonly applications: ReadonlyArray<{
             readonly id: string;
             readonly name: string;
+            readonly label: string;
             readonly description: string;
         }>;
     };
@@ -33,6 +34,7 @@ query ApplicationsQuery(
     applications {
       id
       name
+      label
       description
     }
   }
@@ -98,6 +100,13 @@ v2 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "label",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "description",
             "storageKey": null
           }
@@ -129,9 +138,9 @@ return {
     "metadata": {},
     "name": "ApplicationsQuery",
     "operationKind": "query",
-    "text": "query ApplicationsQuery(\n  $organization: String!\n) {\n  organization(username: $organization) {\n    id\n    username\n    applications {\n      id\n      name\n      description\n    }\n  }\n}\n"
+    "text": "query ApplicationsQuery(\n  $organization: String!\n) {\n  organization(username: $organization) {\n    id\n    username\n    applications {\n      id\n      name\n      label\n      description\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'b57f76b24d92953c30f5c49c58d13afa';
+(node as any).hash = '6fb07ec65db6a4f1660ae0010b13eb43';
 export default node;

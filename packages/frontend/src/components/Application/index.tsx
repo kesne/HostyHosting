@@ -7,7 +7,7 @@ import ApplicationContext from './ApplicationContext';
 import PageHeader from '../ui/PageHeader';
 import Tabs from '../ui/Tabs';
 import Container from '../ui/Container';
-import { BreadcrumbsHeader } from './Breadcrumbs';
+import { Provider, Header, Crumb } from './Crumbs';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ApplicationQuery } from './__generated__/ApplicationQuery.graphql';
 import Loader from './Loader';
@@ -59,6 +59,7 @@ export default function Application() {
                     application(name: $application) {
                         id
                         name
+                        label
                     }
                 }
             }
@@ -81,31 +82,35 @@ export default function Application() {
 
     return (
         <ApplicationContext.Provider value={applicationContext}>
-            <PageHeader>
-                <BreadcrumbsHeader
-                    root={[
-                        {
-                            name: application.name,
-                            url: '.',
-                        },
-                        {
-                            name: organization.name,
-                            url: '../..',
-                        },
-                    ]}
-                />
-            </PageHeader>
+            <Provider>
+                <Crumb name={organization.name} url="../..">
+                    <Crumb
+                        name={
+                            <>
+                                {application.label}{' '}
+                                <span className="text-gray-400">({application.name})</span>
+                            </>
+                        }
+                        name={application.label}
+                        url="."
+                    >
+                        <PageHeader>
+                            <Header />
+                        </PageHeader>
 
-            <Container>
-                <Routes>
-                    <Route path="/" element={<ApplicationLayout />}>
-                        <Route path="/" element={<Overview />} />
-                        <Route path="components" element={<Components list />} />
-                        <Route path="settings" element={<Settings />} />
-                    </Route>
-                    <Route path="components/*" element={<Components />} />
-                </Routes>
-            </Container>
+                        <Container>
+                            <Routes>
+                                <Route path="/" element={<ApplicationLayout />}>
+                                    <Route path="/" element={<Overview />} />
+                                    <Route path="components" element={<Components list />} />
+                                    <Route path="settings" element={<Settings />} />
+                                </Route>
+                                <Route path="components/*" element={<Components />} />
+                            </Routes>
+                        </Container>
+                    </Crumb>
+                </Crumb>
+            </Provider>
         </ApplicationContext.Provider>
     );
 }

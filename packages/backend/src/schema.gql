@@ -28,6 +28,7 @@ type Application {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  label: String!
   description: String!
   createdBy: User
   organization: Organization!
@@ -41,6 +42,7 @@ type Component {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  label: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
   containerGroups: [ContainerGroup!]!
@@ -71,13 +73,15 @@ enum ContainerSize {
 input CreateApplicationInput {
   organizationID: ID!
   name: String!
+  label: String!
   description: String
 }
 
 input CreateComponentInput {
   applicationID: ID!
-  image: String!
   name: String!
+  label: String!
+  image: String!
   deploymentStrategy: DeploymentStrategy!
 }
 
@@ -245,13 +249,15 @@ type SignInResult {
 input UpdateApplicationInput {
   applicationID: ID!
   name: String
+  label: String
   description: String
 }
 
 input UpdateComponentInput {
   componentID: ID!
-  image: String
   name: String
+  label: String
+  image: String
   deploymentStrategy: DeploymentStrategy
 }
 

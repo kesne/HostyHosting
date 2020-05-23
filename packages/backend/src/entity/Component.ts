@@ -42,6 +42,10 @@ export class Component extends ExternalEntity {
     @Length(3, 20)
     name!: string;
 
+    @Field()
+    @Column()
+    label!: string;
+
     @Field(() => DeploymentStrategy)
     @Column({ type: 'enum', enum: DeploymentStrategy, default: DeploymentStrategy.RECREATE })
     deploymentStrategy!: DeploymentStrategy;

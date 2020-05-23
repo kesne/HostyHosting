@@ -5,6 +5,7 @@ import { ConcreteRequest } from "relay-runtime";
 export type CreateApplicationInput = {
     organizationID: string;
     name: string;
+    label: string;
     description?: string | null;
 };
 export type CreateApplicationMutationVariables = {

@@ -13,6 +13,7 @@ import Form from '../../../forms/Form';
 import Input from '../../../forms/Input';
 import SubmitButton from '../../../forms/SubmitButton';
 import Select from '../../../forms/Select';
+import { paramCase } from 'param-case';
 
 type Props = {
     visible: boolean;
@@ -40,6 +41,7 @@ export default function CreateComponent({ visible, onClose }: Props) {
                 input: {
                     applicationID: params.application,
                     image: data.image,
+                    label: data.label,
                     name: data.name,
                     deploymentStrategy: data.strategy as DeploymentStrategy,
                 },
@@ -65,6 +67,15 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                     { label: 'Github', value: 'github' },
                                     { label: 'Custom Registry', value: 'custom-registry' },
                                 ]}
+                            />
+                            <Input
+                                label="Label"
+                                name="label"
+                                register={{ required: true }}
+                                autoComplete="off"
+                                assignOnChange={({ label }) => ({
+                                    name: paramCase(label),
+                                })}
                             />
                             <Input
                                 label="Name"
