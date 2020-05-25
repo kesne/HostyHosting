@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 
 type Crumb = {
-    name: string;
+    name: string | React.ReactNode;
     url: string;
 };
 
@@ -109,7 +109,7 @@ export function Header() {
             <div className="mt-2 md:flex md:items-center md:justify-between">
                 <div className="flex-1 min-w-0">
                     <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
-                        {current.name}
+                        {current?.name}
                     </h2>
                 </div>
                 <div className="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4" ref={setActionsEl} />
@@ -167,23 +167,26 @@ export function Provider({ children }: { children: React.ReactNode }) {
     );
 }
 
+const CrumbDataContext = createContext<Crumb[]>([]);
+
+// TODO: Should we resolve the "to" relative to the current history.
 export function Crumb({ children, ...crumb }: Crumb & { children: React.ReactNode }) {
     const context = useCrumbContext();
     const [id] = useState(() => Math.random());
-    const hasAdded = useRef(false);
-
-    if (!hasAdded.current) {
-        context.add(id, crumb);
-        hasAdded.current = true;
-    }
+    const crumbs = useContext(CrumbDataContext);
 
     useEffect(() => {
+        console.log(crumbs, crumb);
+        context.add(id, crumb);
         return () => {
             context.remove(id);
         };
     }, []);
 
-    return <>{children}</>;
+    return (
+        // TODO: Use the complete provider data rather than the current data source.
+        <CrumbDataContext.Provider value={[crumb, ...crumbs]}>{children}</CrumbDataContext.Provider>
+    );
 }
 
 export function CrumbActions({ children }: { children: React.ReactNode }) {

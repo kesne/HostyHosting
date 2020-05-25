@@ -44,26 +44,36 @@ export default function Applications() {
                     </Button>
                 }
             >
-                <List items={organization.applications} divide>
-                    {application => (
-                        <ListItem
-                            key={application.id}
-                            to={`/orgs/${organization.username}/apps/${application.name}`}
-                        >
-                            <div className="flex">
-                                <div className="text-gray-900 text-base mr-2">
-                                    {application.label}
-                                </div>
-                                <div className="text-gray-400 text-base">({application.name})</div>
-                            </div>
-                            {application.description && (
-                                <div className="text-sm text-gray-500 mt-2">
-                                    {application.description}
-                                </div>
+                <>
+                    <div className="flex-1 flex flex-col">
+                        <List items={organization.applications}>
+                            {application => (
+                                <ListItem
+                                    key={application.id}
+                                    to={`/orgs/${organization.username}/apps/${application.name}`}
+                                >
+                                    <div className="flex">
+                                        <div className="text-gray-900 text-base mr-2">
+                                            {application.label}
+                                        </div>
+                                        <div className="text-gray-400 text-base">
+                                            ({application.name})
+                                        </div>
+                                    </div>
+                                    {application.description && (
+                                        <div className="text-sm text-gray-500 mt-2">
+                                            {application.description}
+                                        </div>
+                                    )}
+                                </ListItem>
                             )}
-                        </ListItem>
-                    )}
-                </List>
+                        </List>
+                    </div>
+                    <div className="border-t border-gray-200 p-4 flex justify-end space-x-4">
+                        <Button>Previous</Button>
+                        <Button>Next</Button>
+                    </div>
+                </>
             </HomePage>
             <CreateApplication organization={organization.id} visible={create} onClose={off} />
         </>

@@ -43,17 +43,30 @@ export function ListItem({ to, children }: { to?: string; children: React.ReactN
 export default function List<T>({
     items,
     children,
-    divide,
 }: {
     items?: readonly T[];
     children: (item: T, i: number) => React.ReactNode;
-    divide?: boolean;
 }) {
-    // TODO: better UI
-    if (!items) return null;
+    if (!items || !items.length)
+        return (
+            <div className="text-gray-500 m-6 flex flex-col items-center flex-1 justify-center">
+                <svg
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    className="h-12"
+                >
+                    <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                </svg>
+                <div>No Data</div>
+            </div>
+        );
 
     return (
-        <ul className={clsx(divide && 'divide-y divide-gray-200')}>
+        <ul className="divide-y divide-gray-200">
             {items.map((item, i) => children(item, i))}
         </ul>
     );

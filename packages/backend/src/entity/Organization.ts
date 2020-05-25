@@ -12,6 +12,7 @@ import {
 import { Environment } from './Environment';
 import { User } from './User';
 import { NAME_REGEX } from '../constants';
+import { Router } from './Router';
 
 @ObjectType()
 @Entity()
@@ -134,4 +135,12 @@ export class Organization extends ExternalEntity {
         { lazy: true, cascade: true },
     )
     environments!: Lazy<Environment[]>;
+
+    @Field(() => [Router])
+    @OneToMany(
+        () => Router,
+        router => router.organization,
+        { lazy: true, cascade: true },
+    )
+    routers!: Lazy<Router[]>;
 }

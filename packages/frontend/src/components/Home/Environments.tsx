@@ -42,7 +42,7 @@ export default function Environments() {
                     </Button>
                 }
             >
-                <List items={organization.environments} divide>
+                <List items={organization.environments}>
                     {environment => (
                         <ListItem key={environment.id}>
                             <div className="text-sm leading-5 font-medium text-indigo-600 truncate">

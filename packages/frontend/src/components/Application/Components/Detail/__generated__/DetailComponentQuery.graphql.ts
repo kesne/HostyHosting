@@ -18,6 +18,7 @@ export type DetailComponentQueryResponse = {
         readonly component: {
             readonly id: string;
             readonly name: string;
+            readonly label: string;
             readonly createdAt: string;
             readonly updatedAt: string;
             readonly deploymentStrategy: DeploymentStrategy;
@@ -46,6 +47,7 @@ query DetailComponentQuery(
     component(id: $component) {
       id
       name
+      label
       createdAt
       updatedAt
       deploymentStrategy
@@ -83,7 +85,14 @@ v2 = {
   "name": "name",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "label",
+  "storageKey": null
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -109,13 +118,7 @@ v3 = [
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "label",
-            "storageKey": null
-          }
+          (v3/*: any*/)
         ],
         "storageKey": null
       },
@@ -135,6 +138,7 @@ v3 = [
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -169,7 +173,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "DetailComponentQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query"
   },
   "kind": "Request",
@@ -177,16 +181,16 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DetailComponentQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
     "id": null,
     "metadata": {},
     "name": "DetailComponentQuery",
     "operationKind": "query",
-    "text": "query DetailComponentQuery(\n  $application: ID!\n  $component: ID!\n) {\n  application(id: $application) {\n    id\n    environments {\n      id\n      name\n      label\n    }\n    component(id: $component) {\n      id\n      name\n      createdAt\n      updatedAt\n      deploymentStrategy\n    }\n  }\n}\n"
+    "text": "query DetailComponentQuery(\n  $application: ID!\n  $component: ID!\n) {\n  application(id: $application) {\n    id\n    environments {\n      id\n      name\n      label\n    }\n    component(id: $component) {\n      id\n      name\n      label\n      createdAt\n      updatedAt\n      deploymentStrategy\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '04a3efdf72055431a8a1ae17981a21cb';
+(node as any).hash = '19302ba6fb8219c10f6de9931ac4f5f8';
 export default node;

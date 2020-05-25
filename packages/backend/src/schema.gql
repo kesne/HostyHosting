@@ -98,6 +98,11 @@ input CreateEnvironmentInput {
   label: String!
 }
 
+input CreateRouterInput {
+  organizationID: ID!
+  label: String!
+}
+
 input CreateSecretInput {
   containerGroupID: ID!
   key: String!
@@ -115,6 +120,10 @@ input DeleteApplicationInput {
 
 input DeleteComponentInput {
   componentID: ID!
+}
+
+input DeleteRouterInput {
+  routerID: ID!
 }
 
 input DeleteSecretInput {
@@ -163,6 +172,8 @@ type Mutation {
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
   UNIMPLEMENTED__changeOrganizationUsername: Organization!
+  createRouter(input: CreateRouterInput!): Router!
+  deleteRouter(input: DeleteRouterInput!): Router!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
   deleteSecret(input: DeleteSecretInput!): Secret!
@@ -203,6 +214,7 @@ type Organization {
   maxComputeUnits: Float!
   applications: [Application!]!
   environments: [Environment!]!
+  routers: [Router!]!
   application(name: String!): Application!
   memberCount: Int!
 }
@@ -221,12 +233,32 @@ type Query {
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(username: String!): Organization!
+  router(id: ID!): Router!
   viewer: User!
 }
 
 """Provides a boolean to determine if the action was successful or not."""
 type Result {
   ok: Boolean!
+}
+
+type Router {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  label: String!
+  rules: [RouterRule!]!
+}
+
+type RouterRule {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  domain: String!
+  path: String!
+  forwardPath: Boolean!
+  component: Component!
+  environment: Environment!
 }
 
 type Secret {

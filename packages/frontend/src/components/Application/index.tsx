@@ -91,7 +91,6 @@ export default function Application() {
                                 <span className="text-gray-400">({application.name})</span>
                             </>
                         }
-                        name={application.label}
                         url="."
                     >
                         <PageHeader>

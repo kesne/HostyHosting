@@ -5,8 +5,9 @@ import { ConcreteRequest } from "relay-runtime";
 export type DeploymentStrategy = "RECREATE" | "REPLACE" | "%future added value";
 export type CreateComponentInput = {
     applicationID: string;
-    image: string;
     name: string;
+    label: string;
+    image: string;
     deploymentStrategy: DeploymentStrategy;
 };
 export type CreateComponentMutationVariables = {

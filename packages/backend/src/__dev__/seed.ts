@@ -13,6 +13,8 @@ import { Network } from '../entity/Network';
 import { User } from '../entity/User';
 import { Environment } from '../entity/Environment';
 import { Secret } from '../entity/Secret';
+import { Router } from '../entity/Router';
+import { RouterRule } from '../entity/RouterRule';
 
 async function withConnection(fn: any) {
     const mockContext = {

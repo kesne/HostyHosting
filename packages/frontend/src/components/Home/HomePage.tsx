@@ -16,7 +16,7 @@ export default function HomePage({ children, title, actions }: Props) {
                 </div>
                 {actions && <div>{actions}</div>}
             </div>
-            <div>{children}</div>
+            {children}
         </>
     );
 }

@@ -28,6 +28,7 @@ export default function Detail() {
                     component(id: $component) {
                         id
                         name
+                        label
                         createdAt
                         updatedAt
                         deploymentStrategy
@@ -48,7 +49,14 @@ export default function Detail() {
     const { component } = application;
 
     return (
-        <Crumb name={component.name} url={params.component}>
+        <Crumb
+            name={
+                <>
+                    {component.label} <span className="text-gray-400">({component.name})</span>
+                </>
+            }
+            url={params.component}
+        >
             <CrumbActions>
                 <span className="ml-3 relative shadow-sm rounded-md">
                     <DeleteComponent id={data.application.component.id} />

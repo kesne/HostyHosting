@@ -1,11 +1,5 @@
 # TODO list for upcoming streams:
 
-- Add basic pagination UI
-- Add empty list UI
-- Label / Name Revamp
-
-If extra time:
-
 - Look into implementing pagination.
 - Enabling concurrent mode.
 
