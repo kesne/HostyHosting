@@ -82,34 +82,32 @@ export default function Application() {
 
     return (
         <ApplicationContext.Provider value={applicationContext}>
-            <Provider>
-                <Crumb name={organization.name} url="../..">
-                    <Crumb
-                        name={
-                            <>
-                                {application.label}{' '}
-                                <span className="text-gray-400">({application.name})</span>
-                            </>
-                        }
-                        url="."
-                    >
-                        <PageHeader>
-                            <Header />
-                        </PageHeader>
+            <Crumb name={organization.name} url="../..">
+                <Crumb
+                    name={
+                        <>
+                            {application.label}{' '}
+                            <span className="text-gray-400">({application.name})</span>
+                        </>
+                    }
+                    url="."
+                >
+                    <PageHeader>
+                        <Header />
+                    </PageHeader>
 
-                        <Container>
-                            <Routes>
-                                <Route path="/" element={<ApplicationLayout />}>
-                                    <Route path="/" element={<Overview />} />
-                                    <Route path="components" element={<Components list />} />
-                                    <Route path="settings" element={<Settings />} />
-                                </Route>
-                                <Route path="components/*" element={<Components />} />
-                            </Routes>
-                        </Container>
-                    </Crumb>
+                    <Container>
+                        <Routes>
+                            <Route path="/" element={<ApplicationLayout />}>
+                                <Route path="/" element={<Overview />} />
+                                <Route path="components" element={<Components list />} />
+                                <Route path="settings" element={<Settings />} />
+                            </Route>
+                            <Route path="components/*" element={<Components />} />
+                        </Routes>
+                    </Container>
                 </Crumb>
-            </Provider>
+            </Crumb>
         </ApplicationContext.Provider>
     );
 }

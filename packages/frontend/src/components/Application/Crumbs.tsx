@@ -1,60 +1,32 @@
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    useMemo,
-    useRef,
-    useCallback,
-} from 'react';
+import React, { createContext, useContext, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import create from 'zustand';
 
 type Crumb = {
     name: string | React.ReactNode;
     url: string;
 };
 
-type Subscriber = () => void;
+const [useCrumbState] = create<{
+    crumbs: Crumb[];
+    setCrumbs: (setter: (crumbs: Crumb[]) => Crumb[]) => void;
+}>(set => ({
+    crumbs: [],
+    setCrumbs: setter => set(({ crumbs: oldCrumbs }) => ({ crumbs: setter(oldCrumbs) })),
+}));
 
-type CrumbContext = {
-    provideCandidate(id: number, crumbs: Crumb[]): void;
-    removeCandidate(id: number): void;
-    get(): Crumb[];
-    subscribe(subscribe: Subscriber): () => void;
-};
-
-const CrumbContext = createContext<CrumbContext | null>(null);
-
-type RefContext = [HTMLDivElement | null, (el: HTMLDivElement) => void] | null;
-const RefContext = createContext<RefContext>(null);
-
-function useRefContext() {
-    const context = useContext(RefContext);
-    if (!context) {
-        throw new Error('This component was not rendered inside of a ref provider.');
-    }
-    return context;
-}
-
-function useCrumbContext() {
-    const context = useContext(CrumbContext);
-    if (!context) {
-        throw new Error('This component was not rendered inside of a crumb provider.');
-    }
-    return context;
-}
+const [useActionRefState] = create<{
+    ref: HTMLDivElement | null;
+    setRef(ref: HTMLDivElement | null): void;
+}>(set => ({
+    ref: null,
+    setRef: ref => set({ ref }),
+}));
 
 export function Header() {
-    const crumbContext = useCrumbContext();
-    const [, setActionsEl] = useRefContext();
-    const [crumbs, setCrumbs] = useState(crumbContext.get());
-
-    useEffect(() => {
-        return crumbContext.subscribe(() => {
-            setCrumbs(crumbContext.get());
-        });
-    }, [crumbContext]);
+    const crumbs = useCrumbState(({ crumbs }) => crumbs);
+    const setActionsRef = useActionRefState(({ setRef }) => setRef);
 
     const [current, ...rest] = crumbs;
 
@@ -112,86 +84,65 @@ export function Header() {
                         {current?.name}
                     </h2>
                 </div>
-                <div className="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4" ref={setActionsEl} />
+                <div className="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4" ref={setActionsRef} />
             </div>
         </div>
     );
 }
 
-export function Provider({ children }: { children: React.ReactNode }) {
-    const subscribers = useRef<Set<Subscriber>>(new Set());
-    const crumbCandidates = useRef<Map<number, Crumb[]>>(new Map());
-    const actionsContext = useState<HTMLDivElement | null>(null);
+const CrumbParentCompleteContext = createContext<(cb: () => void) => void>(cb => cb());
 
-    const dispatchUpdate = useCallback(() => {
-        Promise.resolve().then(() => {
-            subscribers.current.forEach(sub => {
-                sub();
-            });
-        });
-    }, [subscribers]);
-
-    const crumbContext = useMemo<CrumbContext>(
-        () => ({
-            get() {
-                return [...crumbCandidates.current.values()].reduce((acc, candidate) => {
-                    if (candidate.length > acc.length) {
-                        return candidate;
-                    } else {
-                        return acc;
-                    }
-                }, []);
-            },
-            subscribe(sub: Subscriber) {
-                subscribers.current.add(sub);
-                return () => {
-                    subscribers.current.delete(sub);
-                };
-            },
-            provideCandidate(id, candidate) {
-                crumbCandidates.current.set(id, candidate);
-                dispatchUpdate();
-            },
-            removeCandidate(id) {
-                crumbCandidates.current.delete(id);
-                dispatchUpdate();
-            },
-        }),
-        [],
-    );
-
-    return (
-        <CrumbContext.Provider value={crumbContext}>
-            <RefContext.Provider value={actionsContext}>{children}</RefContext.Provider>
-        </CrumbContext.Provider>
-    );
-}
-
-const CrumbDataContext = createContext<Crumb[]>([]);
-
-// TODO: Should we resolve the "to" relative to the current history.
+// TODO: Should we resolve the "url" relative to the current history.
 export function Crumb({ children, ...crumb }: Crumb & { children: React.ReactNode }) {
-    const context = useCrumbContext();
-    const [id] = useState(() => Math.random());
-    const parentCrumbs = useContext(CrumbDataContext);
-    const crumbs = useMemo(() => [crumb, ...parentCrumbs], [parentCrumbs, crumb]);
+    const onParentComplete = useContext(CrumbParentCompleteContext);
+    const setCrumbs = useCrumbState(({ setCrumbs }) => setCrumbs);
+    const hasRendered = useRef(false);
+    const childCallback = useRef<(() => void) | null>(null);
+
+    const onDone = useMemo(
+        () => (cb: () => void) => {
+            if (hasRendered.current) {
+                cb();
+            } else {
+                if (childCallback.current) {
+                    throw new Error(
+                        'Multiple Crumbs were rendered under a parent crumb. This has undefined behavior.',
+                    );
+                } else {
+                    childCallback.current = cb;
+                }
+            }
+        },
+        [hasRendered, childCallback],
+    );
 
     useEffect(() => {
-        context.provideCandidate(id, crumbs);
+        onParentComplete(() => {
+            setCrumbs(oldCrumbs => [crumb, ...oldCrumbs]);
+            if (childCallback.current) {
+                childCallback.current();
+            }
+            hasRendered.current = true;
+        });
+
         return () => {
-            context.removeCandidate(id);
+            setCrumbs(oldCrumbs => oldCrumbs.filter(c => c !== crumb));
         };
     }, []);
 
-    return <CrumbDataContext.Provider value={crumbs}>{children}</CrumbDataContext.Provider>;
+    return (
+        <CrumbParentCompleteContext.Provider value={onDone}>
+            {children}
+        </CrumbParentCompleteContext.Provider>
+    );
 }
 
 export function CrumbActions({ children }: { children: React.ReactNode }) {
-    const [actionsEl] = useRefContext();
+    const actionsRef = useActionRefState(({ ref }) => ref);
 
-    if (!actionsEl) {
+    if (!actionsRef) {
         return null;
     }
 
-    return createPortal(children, actionsEl);
+    return createPortal(children, actionsRef);
 }

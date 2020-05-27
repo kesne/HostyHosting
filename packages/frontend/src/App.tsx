@@ -35,24 +35,24 @@ export default function App() {
 
     return (
         <RelayEnvironmentProvider environment={environmentRef.current}>
-            <Router>
-                <Layout>
-                    <Routes>
-                        <PrivateRoute path="/" element={<IndexRedirect />} />
-                        <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
-                        <PrivateRoute
-                            path="/orgs/:organization/apps/:application/*"
-                            element={<Application />}
-                        />
-                        <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
-                        <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
-                        <PrivateRoute path="/account/*" element={<Account />} />
-                        <Route path="*">
-                            <FourOhFour />
-                        </Route>
-                    </Routes>
-                </Layout>
-            </Router>
+                <Router>
+                    <Layout>
+                        <Routes>
+                            <PrivateRoute path="/" element={<IndexRedirect />} />
+                            <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
+                            <PrivateRoute
+                                path="/orgs/:organization/apps/:application/*"
+                                element={<Application />}
+                            />
+                            <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
+                            <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
+                            <PrivateRoute path="/account/*" element={<Account />} />
+                            <Route path="*">
+                                <FourOhFour />
+                            </Route>
+                        </Routes>
+                    </Layout>
+                </Router>
         </RelayEnvironmentProvider>
     );
 }
