@@ -15,13 +15,11 @@ type Crumb = {
     url: string;
 };
 
-type CrumbWithID = [number, Crumb];
-
-type Subscriber = (crumbs: Crumb[]) => void;
+type Subscriber = () => void;
 
 type CrumbContext = {
-    add(id: number, crumb: Crumb): void;
-    remove(id: number): void;
+    provideCandidate(id: number, crumbs: Crumb[]): void;
+    removeCandidate(id: number): void;
     get(): Crumb[];
     subscribe(subscribe: Subscriber): () => void;
 };
@@ -53,7 +51,9 @@ export function Header() {
     const [crumbs, setCrumbs] = useState(crumbContext.get());
 
     useEffect(() => {
-        return crumbContext.subscribe(setCrumbs);
+        return crumbContext.subscribe(() => {
+            setCrumbs(crumbContext.get());
+        });
     }, [crumbContext]);
 
     const [current, ...rest] = crumbs;
@@ -118,31 +118,29 @@ export function Header() {
     );
 }
 
-function getCrumb(crumbWithID: CrumbWithID) {
-    return crumbWithID[1];
-}
-
 export function Provider({ children }: { children: React.ReactNode }) {
     const subscribers = useRef<Set<Subscriber>>(new Set());
-    const crumbs = useRef<CrumbWithID[]>([]);
+    const crumbCandidates = useRef<Map<number, Crumb[]>>(new Map());
     const actionsContext = useState<HTMLDivElement | null>(null);
 
-    const setCrumbs = useCallback(
-        (newCrumbs: CrumbWithID[]) => {
-            crumbs.current = newCrumbs;
-            Promise.resolve().then(() => {
-                subscribers.current.forEach(sub => {
-                    sub(newCrumbs.map(getCrumb));
-                });
+    const dispatchUpdate = useCallback(() => {
+        Promise.resolve().then(() => {
+            subscribers.current.forEach(sub => {
+                sub();
             });
-        },
-        [crumbs, subscribers],
-    );
+        });
+    }, [subscribers]);
 
     const crumbContext = useMemo<CrumbContext>(
         () => ({
             get() {
-                return crumbs.current.map(getCrumb);
+                return [...crumbCandidates.current.values()].reduce((acc, candidate) => {
+                    if (candidate.length > acc.length) {
+                        return candidate;
+                    } else {
+                        return acc;
+                    }
+                }, []);
             },
             subscribe(sub: Subscriber) {
                 subscribers.current.add(sub);
@@ -150,11 +148,13 @@ export function Provider({ children }: { children: React.ReactNode }) {
                     subscribers.current.delete(sub);
                 };
             },
-            add(id, crumb) {
-                setCrumbs([[id, crumb], ...crumbs.current]);
+            provideCandidate(id, candidate) {
+                crumbCandidates.current.set(id, candidate);
+                dispatchUpdate();
             },
-            remove(id) {
-                setCrumbs(crumbs.current.filter(([cid]) => cid !== id));
+            removeCandidate(id) {
+                crumbCandidates.current.delete(id);
+                dispatchUpdate();
             },
         }),
         [],
@@ -173,20 +173,17 @@ const CrumbDataContext = createContext<Crumb[]>([]);
 export function Crumb({ children, ...crumb }: Crumb & { children: React.ReactNode }) {
     const context = useCrumbContext();
     const [id] = useState(() => Math.random());
-    const crumbs = useContext(CrumbDataContext);
+    const parentCrumbs = useContext(CrumbDataContext);
+    const crumbs = useMemo(() => [crumb, ...parentCrumbs], [parentCrumbs, crumb]);
 
     useEffect(() => {
-        console.log(crumbs, crumb);
-        context.add(id, crumb);
+        context.provideCandidate(id, crumbs);
         return () => {
-            context.remove(id);
+            context.removeCandidate(id);
         };
     }, []);
 
-    return (
-        // TODO: Use the complete provider data rather than the current data source.
-        <CrumbDataContext.Provider value={[crumb, ...crumbs]}>{children}</CrumbDataContext.Provider>
-    );
+    return <CrumbDataContext.Provider value={crumbs}>{children}</CrumbDataContext.Provider>;
 }
 
 export function CrumbActions({ children }: { children: React.ReactNode }) {
