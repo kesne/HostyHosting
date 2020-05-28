@@ -1,22 +1,23 @@
-import React from 'react';
-import { graphql, useRefetchableFragment } from 'react-relay/hooks';
+import React, { unstable_useTransition } from 'react';
+import { graphql, useFragment } from 'react-relay/hooks';
 import List, { ListItem } from '../../ui/List';
 import Button from '../../ui/Button';
 import { ApplicationsListFragment_organization$key } from './__generated__/ApplicationsListFragment_organization.graphql';
-import { ApplicationsListQuery } from './__generated__/ApplicationsListQuery.graphql';
 
 type Props = {
     organization: ApplicationsListFragment_organization$key;
+    onNextPage(cursor: string): void;
 };
 
-export default function ApplicationsList({ organization }: Props) {
-    const [data, refetch] = useRefetchableFragment<
-        ApplicationsListQuery,
-        ApplicationsListFragment_organization$key
-    >(
+export default function ApplicationsList({ organization, onNextPage }: Props) {
+    const [startTransition, isPending] = unstable_useTransition({
+        // Allow the old list data to be used for up to 5 seconds:
+        timeoutMs: 5000,
+    });
+
+    const data = useFragment(
         graphql`
-            fragment ApplicationsListFragment_organization on Organization
-                @refetchable(queryName: "ApplicationsListQuery") {
+            fragment ApplicationsListFragment_organization on Organization {
                 username
                 applications(after: $cursor, first: $count) {
                     pageInfo {
@@ -37,6 +38,12 @@ export default function ApplicationsList({ organization }: Props) {
         `,
         organization,
     );
+
+    function handleNext() {
+        startTransition(() => {
+            onNextPage(data.applications.pageInfo.endCursor!);
+        });
+    }
 
     return (
         <>
@@ -64,11 +71,7 @@ export default function ApplicationsList({ organization }: Props) {
             </div>
             <div className="border-t border-gray-200 p-4 flex justify-end space-x-4">
                 <Button>Previous</Button>
-                <Button
-                    onClick={() => {
-                        refetch({ cursor: data.applications.pageInfo.endCursor });
-                    }}
-                >
+                <Button disabled={isPending} onClick={handleNext}>
                     Next
                 </Button>
             </div>

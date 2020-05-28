@@ -52,7 +52,6 @@ fragment ApplicationsListFragment_organization on Organization {
       }
     }
   }
-  id
 }
 */
 
@@ -250,7 +249,7 @@ return {
     "metadata": {},
     "name": "ApplicationsQuery",
     "operationKind": "query",
-    "text": "query ApplicationsQuery(\n  $organization: String!\n  $cursor: ID\n  $count: Int!\n) {\n  organization(username: $organization) {\n    id\n    username\n    ...ApplicationsListFragment_organization\n  }\n}\n\nfragment ApplicationsListFragment_organization on Organization {\n  username\n  applications(after: $cursor, first: $count) {\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        name\n        label\n        description\n      }\n    }\n  }\n  id\n}\n"
+    "text": "query ApplicationsQuery(\n  $organization: String!\n  $cursor: ID\n  $count: Int!\n) {\n  organization(username: $organization) {\n    id\n    username\n    ...ApplicationsListFragment_organization\n  }\n}\n\nfragment ApplicationsListFragment_organization on Organization {\n  username\n  applications(after: $cursor, first: $count) {\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        name\n        label\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();

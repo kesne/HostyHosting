@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import Button from '../../ui/Button';
@@ -11,6 +11,7 @@ import { ApplicationsQuery } from './__generated__/ApplicationsQuery.graphql';
 export default function Applications() {
     const params = useParams();
     const [create, { off, on }] = useBoolean(false);
+    const [cursor, setCursor] = useState<string | undefined>();
 
     const data = useLazyLoadQuery<ApplicationsQuery>(
         graphql`
@@ -25,8 +26,13 @@ export default function Applications() {
         {
             organization: params.organization,
             count: 1,
+            cursor,
         },
     );
+
+    function handleNextPage(cursor: string) {
+        setCursor(cursor);
+    }
 
     return (
         <>
@@ -38,7 +44,7 @@ export default function Applications() {
                     </Button>
                 }
             >
-                <ApplicationsList organization={data.organization} />
+                <ApplicationsList organization={data.organization} onNextPage={handleNextPage} />
             </HomePage>
             <CreateApplication organization={data.organization.id} visible={create} onClose={off} />
         </>

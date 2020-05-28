@@ -20,7 +20,6 @@ export type ApplicationsListFragment_organization = {
             };
         }>;
     };
-    readonly id: string | null;
     readonly " $refType": "ApplicationsListFragment_organization";
 };
 export type ApplicationsListFragment_organization$data = ApplicationsListFragment_organization;
@@ -31,15 +30,7 @@ export type ApplicationsListFragment_organization$key = {
 
 
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
@@ -53,16 +44,7 @@ return {
     }
   ],
   "kind": "Fragment",
-  "metadata": {
-    "refetch": {
-      "connection": null,
-      "fragmentPathInResult": [
-        "node"
-      ],
-      "operation": require('./ApplicationsListQuery.graphql.ts'),
-      "identifierField": "id"
-    }
-  },
+  "metadata": null,
   "name": "ApplicationsListFragment_organization",
   "selections": [
     {
@@ -139,7 +121,13 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -169,11 +157,9 @@ return {
         }
       ],
       "storageKey": null
-    },
-    (v0/*: any*/)
+    }
   ],
   "type": "Organization"
 };
-})();
-(node as any).hash = '0c0c0b8ef55808371c0d061bdc484317';
+(node as any).hash = '20ad2b68c47ce433839fc0eaf79ce891';
 export default node;
