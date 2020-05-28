@@ -1,7 +1,18 @@
 import Relay from 'graphql-relay';
 import { ObjectType, Field, ClassType, ID, ArgsType, Int } from 'type-graphql';
+import { Min, Max } from 'class-validator';
 
 export type ConnectionCursor = Relay.ConnectionCursor;
+
+export class Cursor {
+    static serialize(id: Date) {
+        return Buffer.from(id.toString(), 'utf8').toString('base64');
+    }
+
+    static parse(cursor: string) {
+        return new Date(Buffer.from(cursor, 'base64').toString('utf8'));
+    }
+}
 
 @ObjectType()
 export class PageInfo implements Relay.PageInfo {
@@ -21,8 +32,14 @@ export class ConnectionArgs implements Relay.ConnectionArguments {
     before?: ConnectionCursor;
     @Field(() => ID, { nullable: true, description: 'Paginate after opaque cursor' })
     after?: ConnectionCursor;
+
+    @Min(0)
+    @Max(10)
     @Field(() => Int, { nullable: true, description: 'Paginate first' })
     first?: number;
+
+    @Min(0)
+    @Max(10)
     @Field(() => Int, { nullable: true, description: 'Paginate last' })
     last?: number;
 }

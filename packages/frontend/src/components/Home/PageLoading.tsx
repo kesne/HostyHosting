@@ -10,8 +10,8 @@ export default function PageLoading() {
                 </div>
             </div>
             <div className="divide-y divide-gray-200">
-                {Array.from({ length: 3 }, () => (
-                    <div className="p-6">
+                {Array.from({ length: 3 }, (_, i) => (
+                    <div key={i} className="p-6">
                         <div className="w-36">
                             <TextRow color="#E0E0E0" />
                         </div>

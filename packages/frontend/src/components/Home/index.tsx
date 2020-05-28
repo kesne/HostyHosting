@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Container from '../ui/Container';
 import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
-import { Routes, Route, useLocation } from 'react-router-dom';
 import Applications from './Applications';
 import Environments from './Environments';
 import SelectOrganization from './SelectOrganization';

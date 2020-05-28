@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
-import { Breadcrumb } from '../../Breadcrumbs';
 import useBoolean from '../../../../utils/useBoolean';
 import Tabs from '../../../ui/Tabs';
 import ContainerGroup from './ContainerGroup';
@@ -111,7 +110,7 @@ export default function Detail() {
                     value: String(id),
                 }))}
             />
-            {environment && <ContainerGroup component={component.id} environment={environment} />}
+            <ContainerGroup component={component.id} environment={environment} />
         </Crumb>
     );
 }

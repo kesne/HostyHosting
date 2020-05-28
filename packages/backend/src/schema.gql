@@ -37,6 +37,18 @@ type Application {
   environments: [Environment!]!
 }
 
+type ApplicationConnection {
+  pageInfo: PageInfo!
+  edges: [ApplicationEdge!]!
+}
+
+type ApplicationEdge {
+  node: Application!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
+}
+
 type Component {
   id: ID!
   createdAt: DateTime!
@@ -196,6 +208,10 @@ type Network {
   name: String!
 }
 
+interface Node {
+  id: ID!
+}
+
 type Notification {
   id: ID!
   createdAt: DateTime!
@@ -204,7 +220,7 @@ type Notification {
   body: String!
 }
 
-type Organization {
+type Organization implements Node {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -212,9 +228,21 @@ type Organization {
   username: String!
   name: String!
   maxComputeUnits: Float!
-  applications: [Application!]!
   environments: [Environment!]!
   routers: [Router!]!
+  applications(
+    """Paginate before opaque cursor"""
+    before: ID
+
+    """Paginate after opaque cursor"""
+    after: ID
+
+    """Paginate first"""
+    first: Int
+
+    """Paginate last"""
+    last: Int
+  ): ApplicationConnection!
   application(name: String!): Application!
   memberCount: Int!
 }
@@ -231,6 +259,8 @@ type Query {
   application(id: ID!): Application!
   component(id: ID!): Component!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
   notifications: [Notification!]!
   organization(username: String!): Organization!
   router(id: ID!): Router!

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import OptionalLink from './util/OptionalLink';
 
@@ -40,14 +40,32 @@ export function ListItem({ to, children }: { to?: string; children: React.ReactN
     );
 }
 
+type Connection<T> = {
+    readonly edges: ReadonlyArray<{
+        readonly node: T;
+    }>;
+};
+
 export default function List<T>({
     items,
+    connection,
     children,
 }: {
     items?: readonly T[];
+    connection?: Connection<T>;
     children: (item: T, i: number) => React.ReactNode;
 }) {
-    if (!items || !items.length)
+    const nodes = useMemo(() => {
+        if (items) {
+            return items;
+        }
+        if (connection) {
+            return connection.edges.map(({ node }) => node);
+        }
+        return [];
+    }, [items, connection]);
+
+    if (!nodes.length)
         return (
             <div className="text-gray-500 m-6 flex flex-col items-center flex-1 justify-center">
                 <svg
@@ -66,8 +84,6 @@ export default function List<T>({
         );
 
     return (
-        <ul className="divide-y divide-gray-200">
-            {items.map((item, i) => children(item, i))}
-        </ul>
+        <ul className="divide-y divide-gray-200">{nodes.map((item, i) => children(item, i))}</ul>
     );
 }

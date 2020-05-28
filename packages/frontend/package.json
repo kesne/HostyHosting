@@ -41,8 +41,8 @@
         "react-outside-click-handler": "^1.3.0",
         "react-placeholder": "^4.0.1",
         "react-relay": "^0.0.0-experimental-895a6fe0",
-        "react-router": "^6.0.0-alpha.5",
-        "react-router-dom": "^6.0.0-alpha.5",
+        "react-router": "^0.0.0-experimental-b1ff171f",
+        "react-router-dom": "^0.0.0-experimental-b1ff171f",
         "tailwindcss": "^1.2.0",
         "typeface-inter": "^3.12.0",
         "zustand": "^2.2.3"

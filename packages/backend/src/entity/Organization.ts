@@ -13,8 +13,9 @@ import { Environment } from './Environment';
 import { User } from './User';
 import { NAME_REGEX } from '../constants';
 import { Router } from './Router';
+import { Node } from '../resolvers/types/Node';
 
-@ObjectType()
+@ObjectType({ implements: Node })
 @Entity()
 export class Organization extends ExternalEntity {
     static async findForUser(
@@ -120,7 +121,6 @@ export class Organization extends ExternalEntity {
     )
     memberships!: Lazy<OrganizationMembership[]>;
 
-    @Field(() => [Application])
     @OneToMany(
         () => Application,
         application => application.organization,

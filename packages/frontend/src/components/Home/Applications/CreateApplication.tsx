@@ -1,14 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modal, { ModalContent, ModalFooter } from '../ui/Modal';
-import Button, { ButtonGroup } from '../ui/Button';
-import { useMutation, graphql } from 'react-relay/hooks';
-import { CreateApplicationMutation } from './__generated__/CreateApplicationMutation.graphql';
-import Form from '../forms/Form';
-import Input from '../forms/Input';
-import TextArea from '../forms/TextArea';
-import SubmitButton from '../forms/SubmitButton';
 import { paramCase } from 'param-case';
+import Modal, { ModalContent, ModalFooter } from '../../ui/Modal';
+import Button, { ButtonGroup } from '../../ui/Button';
+import { useMutation, graphql } from 'react-relay/hooks';
+import Form from '../../forms/Form';
+import Input from '../../forms/Input';
+import TextArea from '../../forms/TextArea';
+import SubmitButton from '../../forms/SubmitButton';
+import { CreateApplicationMutation } from './__generated__/CreateApplicationMutation.graphql';
 
 type Props = {
     organization: string;
