@@ -8,5 +8,9 @@
     "license": "SEE LICENSE IN LICENSE.MD",
     "private": true,
     "dependencies": {},
-    "devDependencies": {}
+    "devDependencies": {},
+    "resolutions": {
+        "react": "^0.0.0-experimental-33c3af284",
+        "react-dom": "^0.0.0-experimental-33c3af284"
+    }
 }
