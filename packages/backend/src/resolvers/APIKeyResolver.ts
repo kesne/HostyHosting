@@ -1,11 +1,11 @@
-import { Resolver, Mutation, Query, Arg, Authorized, Ctx, Int, ID, Args } from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, Authorized, Ctx, ID } from 'type-graphql';
 import { v4 as uuidv4 } from 'uuid';
 import redis from '../redis';
 import Result from './types/Result';
 import { Context } from '../types';
 import { APIKey } from '../entity/APIKey';
 import { GrantType } from '../entity/User';
-import { createConnection, ConnectionArgs } from './types/Pagination';
+import { createConnection } from './types/Pagination';
 
 const API_KEY_EXPIRATION = 100;
 const REQUEST_VALUE = '@@request';

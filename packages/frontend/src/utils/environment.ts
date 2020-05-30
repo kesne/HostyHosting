@@ -7,7 +7,6 @@ import {
     RequestParameters,
 } from 'relay-runtime';
 import { checkCookies } from './user';
-import handlerProvider from './handlerProvider';
 
 async function fetchQuery(request: RequestParameters, variables: Variables) {
     const response = await fetch('/api/graphql', {
@@ -32,11 +31,14 @@ async function fetchQuery(request: RequestParameters, variables: Variables) {
 }
 
 export function createEnvironment() {
+    const network = Network.create(fetchQuery);
+
+    const store = new Store(new RecordSource(), {
+        gcReleaseBufferSize: 10,
+    });
+
     return new Environment({
-        handlerProvider,
-        network: Network.create(fetchQuery),
-        store: new Store(new RecordSource(), {
-            gcReleaseBufferSize: 10,
-        }),
+        network,
+        store,
     });
 }

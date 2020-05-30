@@ -8,22 +8,36 @@ import Card from '../../../ui/Card';
 import Button from '../../../ui/Button';
 import List from '../../../ui/List';
 import { ListQuery } from './__generated__/ListQuery.graphql';
+import Pagination, { usePagination } from '../../../ui/Pagination';
 
 export default function Components() {
     const params = useApplicationParams();
+    const [paginationArgs, paginationProps] = usePagination(10);
 
-    const data = useLazyLoadQuery<ListQuery>(graphql`
-        query ListQuery($application: ID!) {
-            application(id: $application) {
-                id
-                components {
-                    ...Component_component
+    const data = useLazyLoadQuery<ListQuery>(
+        graphql`
+            query ListQuery($application: ID!, $limit: Int!, $offset: Int!) {
+                application(id: $application) {
+                    id
+                    components(limit: $limit, offset: $offset) {
+                        pageInfo {
+                            hasNextPage
+                            hasPreviousPage
+                        }
+                        edges {
+                            node {
+                                ...Component_component
+                            }
+                        }
+                    }
                 }
             }
-        }
-    `, {
-        application: params.application
-    });
+        `,
+        {
+            application: params.application,
+            ...paginationArgs,
+        },
+    );
 
     const [createVisible, { on, off }] = useBoolean(false);
 
@@ -39,9 +53,11 @@ export default function Components() {
             }
         >
             <CreateComponent visible={createVisible} onClose={off} />
-            <List items={application.components}>
+            <List connection={application.components}>
                 {component => <Component component={component} />}
             </List>
+
+            <Pagination pageInfo={application.components.pageInfo} {...paginationProps} />
         </Card>
     );
 }

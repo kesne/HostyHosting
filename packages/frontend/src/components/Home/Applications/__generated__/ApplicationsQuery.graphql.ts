@@ -5,8 +5,8 @@ import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type ApplicationsQueryVariables = {
     organization: string;
-    cursor?: string | null;
-    count: number;
+    limit: number;
+    offset?: number | null;
 };
 export type ApplicationsQueryResponse = {
     readonly organization: {
@@ -25,8 +25,8 @@ export type ApplicationsQuery = {
 /*
 query ApplicationsQuery(
   $organization: String!
-  $cursor: ID
-  $count: Int!
+  $limit: Int!
+  $offset: Int
 ) {
   organization(username: $organization) {
     id
@@ -37,9 +37,11 @@ query ApplicationsQuery(
 
 fragment ApplicationsListFragment_organization on Organization {
   username
-  applications(after: $cursor, first: $count) {
+  applications(limit: $limit, offset: $offset) {
     pageInfo {
+      startCursor
       endCursor
+      hasPreviousPage
       hasNextPage
     }
     edges {
@@ -66,14 +68,14 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "cursor",
-    "type": "ID"
+    "name": "limit",
+    "type": "Int!"
   },
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "count",
-    "type": "Int!"
+    "name": "offset",
+    "type": "Int"
   }
 ],
 v1 = [
@@ -146,13 +148,13 @@ return {
             "args": [
               {
                 "kind": "Variable",
-                "name": "after",
-                "variableName": "cursor"
+                "name": "limit",
+                "variableName": "limit"
               },
               {
                 "kind": "Variable",
-                "name": "first",
-                "variableName": "count"
+                "name": "offset",
+                "variableName": "offset"
               }
             ],
             "concreteType": "ApplicationConnection",
@@ -172,7 +174,21 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "startCursor",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "endCursor",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "hasPreviousPage",
                     "storageKey": null
                   },
                   {
@@ -249,9 +265,9 @@ return {
     "metadata": {},
     "name": "ApplicationsQuery",
     "operationKind": "query",
-    "text": "query ApplicationsQuery(\n  $organization: String!\n  $cursor: ID\n  $count: Int!\n) {\n  organization(username: $organization) {\n    id\n    username\n    ...ApplicationsListFragment_organization\n  }\n}\n\nfragment ApplicationsListFragment_organization on Organization {\n  username\n  applications(after: $cursor, first: $count) {\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        name\n        label\n        description\n      }\n    }\n  }\n}\n"
+    "text": "query ApplicationsQuery(\n  $organization: String!\n  $limit: Int!\n  $offset: Int\n) {\n  organization(username: $organization) {\n    id\n    username\n    ...ApplicationsListFragment_organization\n  }\n}\n\nfragment ApplicationsListFragment_organization on Organization {\n  username\n  applications(limit: $limit, offset: $offset) {\n    pageInfo {\n      startCursor\n      endCursor\n      hasPreviousPage\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        name\n        label\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '70e985531656a8c1fbfc252ed4eb9e7f';
+(node as any).hash = '53156b38a7ea0aaa23fef7079580f996';
 export default node;

@@ -102,8 +102,8 @@ export default function CreateComponent({ visible, onClose }: Props) {
                     </ModalContent>
                     <ModalFooter>
                         <ButtonGroup>
-                            <SubmitButton>Create</SubmitButton>
                             <Button onClick={onClose}>Cancel</Button>
+                            <SubmitButton>Create</SubmitButton>
                         </ButtonGroup>
                     </ModalFooter>
                 </Form>

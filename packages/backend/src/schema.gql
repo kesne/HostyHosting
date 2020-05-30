@@ -32,9 +32,9 @@ type Application {
   description: String!
   createdBy: User
   organization: Organization!
-  components: [Component!]!
   component(id: ID!): Component!
   environments: [Environment!]!
+  components(limit: Int!, offset: Int): ComponentConnection!
 }
 
 type ApplicationConnection {
@@ -57,9 +57,20 @@ type Component {
   label: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
-  containerGroups: [ContainerGroup!]!
   monthlyPrice: Int!
   containerGroup(environment: ID!): ContainerGroup
+}
+
+type ComponentConnection {
+  pageInfo: PageInfo!
+  edges: [ComponentEdge!]!
+}
+
+type ComponentEdge {
+  node: Component!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
 }
 
 type ContainerGroup {
@@ -70,8 +81,8 @@ type ContainerGroup {
   containerCount: Float!
   environment: Environment!
   component: Component!
-  secrets: [Secret!]!
   monthlyPrice: Int!
+  secrets(limit: Int!, offset: Int): SecretConnection!
 }
 
 enum ContainerSize {
@@ -183,7 +194,6 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
-  UNIMPLEMENTED__changeOrganizationUsername: Organization!
   createRouter(input: CreateRouterInput!): Router!
   deleteRouter(input: DeleteRouterInput!): Router!
   createSecret(input: CreateSecretInput!): Secret!
@@ -208,10 +218,6 @@ type Network {
   name: String!
 }
 
-interface Node {
-  id: ID!
-}
-
 type Notification {
   id: ID!
   createdAt: DateTime!
@@ -220,7 +226,7 @@ type Notification {
   body: String!
 }
 
-type Organization implements Node {
+type Organization {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -230,19 +236,7 @@ type Organization implements Node {
   maxComputeUnits: Float!
   environments: [Environment!]!
   routers: [Router!]!
-  applications(
-    """Paginate before opaque cursor"""
-    before: ID
-
-    """Paginate after opaque cursor"""
-    after: ID
-
-    """Paginate first"""
-    first: Int
-
-    """Paginate last"""
-    last: Int
-  ): ApplicationConnection!
+  applications(limit: Int!, offset: Int): ApplicationConnection!
   application(name: String!): Application!
   memberCount: Int!
 }
@@ -259,8 +253,6 @@ type Query {
   application(id: ID!): Application!
   component(id: ID!): Component!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
-  node(id: ID!): Node
-  nodes(ids: [ID!]!): [Node]!
   notifications: [Notification!]!
   organization(username: String!): Organization!
   router(id: ID!): Router!
@@ -297,6 +289,18 @@ type Secret {
   updatedAt: DateTime!
   key: String!
   value: String!
+}
+
+type SecretConnection {
+  pageInfo: PageInfo!
+  edges: [SecretEdge!]!
+}
+
+type SecretEdge {
+  node: Secret!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
 }
 
 """
@@ -339,18 +343,6 @@ type User {
   personalOrganization: Organization!
   onboardTOTP: String!
   hasTOTP: Boolean!
-  apiKeys(
-    """Paginate before opaque cursor"""
-    before: ID
-
-    """Paginate after opaque cursor"""
-    after: ID
-
-    """Paginate first"""
-    first: Int
-
-    """Paginate last"""
-    last: Int
-  ): APIKeyConnection!
+  apiKeys(limit: Int!, offset: Int): APIKeyConnection!
   organizations: [Organization!]!
 }

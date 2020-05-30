@@ -7,7 +7,9 @@ export type ApplicationsListFragment_organization = {
     readonly username: string;
     readonly applications: {
         readonly pageInfo: {
+            readonly startCursor: string | null;
             readonly endCursor: string | null;
+            readonly hasPreviousPage: boolean;
             readonly hasNextPage: boolean;
         };
         readonly edges: ReadonlyArray<{
@@ -34,12 +36,12 @@ const node: ReaderFragment = {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
-      "name": "cursor",
-      "type": "ID"
+      "name": "limit",
+      "type": "Int!"
     },
     {
       "kind": "RootArgument",
-      "name": "count",
+      "name": "offset",
       "type": "Int"
     }
   ],
@@ -59,13 +61,13 @@ const node: ReaderFragment = {
       "args": [
         {
           "kind": "Variable",
-          "name": "after",
-          "variableName": "cursor"
+          "name": "limit",
+          "variableName": "limit"
         },
         {
           "kind": "Variable",
-          "name": "first",
-          "variableName": "count"
+          "name": "offset",
+          "variableName": "offset"
         }
       ],
       "concreteType": "ApplicationConnection",
@@ -85,7 +87,21 @@ const node: ReaderFragment = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "startCursor",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "endCursor",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "hasPreviousPage",
               "storageKey": null
             },
             {
@@ -161,5 +177,5 @@ const node: ReaderFragment = {
   ],
   "type": "Organization"
 };
-(node as any).hash = '20ad2b68c47ce433839fc0eaf79ce891';
+(node as any).hash = '295167caea2112b5ed9ab2c6916f05f2';
 export default node;

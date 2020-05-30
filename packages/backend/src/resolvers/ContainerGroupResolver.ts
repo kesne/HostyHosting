@@ -1,8 +1,12 @@
-import { Resolver, FieldResolver, Int, Root, Mutation, Arg, InputType, Field, ID } from 'type-graphql';
+import { Resolver, FieldResolver, Int, Root, Mutation, Arg, InputType, Field, ID, Args } from 'type-graphql';
 import { ContainerGroup, ContainerSize } from '../entity/ContainerGroup';
 import pricing from '../utils/pricing';
 import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
+import { createConnection, LimitOffsetArgs } from './types/Pagination';
+import { Secret } from '../entity/Secret';
+
+const [SecretConnection] = createConnection(Secret);
 
 @InputType()
 export class CreateContainerGroupInput {
@@ -25,6 +29,15 @@ export class ContainerGroupResolver {
     @FieldResolver(() => Int)
     async monthlyPrice(@Root() containerGroup: ContainerGroup) {
         return pricing.calculateMonthlyCost(containerGroup.size, containerGroup.containerCount);
+    }
+
+    @FieldResolver(() => SecretConnection)
+    async secrets(@Root() containerGroup: ContainerGroup, @Args() args: LimitOffsetArgs) {
+        return await Secret.findAndPaginate({
+            where: {
+                containerGroup
+            }
+        }, args)
     }
 
     // TODO: Security pls:

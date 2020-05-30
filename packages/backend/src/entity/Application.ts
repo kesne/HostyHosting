@@ -98,7 +98,6 @@ export class Application extends ExternalEntity {
     )
     organization!: Lazy<Organization>;
 
-    @Field(() => [Component])
     @OneToMany(
         () => Component,
         component => component.application,

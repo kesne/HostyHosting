@@ -31,7 +31,7 @@ export const ModalFooterContext = React.createContext(false);
 export function ModalFooter({ children }: { children: React.ReactNode }) {
     return (
         <ModalFooterContext.Provider value={true}>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse sticky bottom-0">
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sticky bottom-0">
                 {children}
             </div>
         </ModalFooterContext.Provider>

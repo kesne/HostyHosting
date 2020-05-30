@@ -1,6 +1,6 @@
 import { authenticator } from 'otplib';
 import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
-import { compare, hash } from 'bcryptjs';
+import SecurePassword from 'secure-password';
 import { Lazy } from '../types';
 import { Organization } from './Organization';
 import { ObjectType, Field, Int } from 'type-graphql';
@@ -11,12 +11,12 @@ import { OrganizationMembership } from './OrganizationMembership';
 import { NAME_REGEX } from '../constants';
 import { removeUserCookie, setUserCookie } from '../utils/cookies';
 import { getCurrentRequest } from '../utils/currentRequest';
-import { Environment } from './Environment';
 import { PasswordReset } from './PasswordReset';
 
-// NOTE: This was chosed based on a stack overflow post. Probably should do more
-// research if you ever deploy this for real.
-const SALT_ROUNDS = 10;
+const securePassword = new SecurePassword({
+    memlimit: SecurePassword.MEMLIMIT_DEFAULT,
+    opslimit: SecurePassword.OPSLIMIT_DEFAULT,
+});
 
 export enum AuthType {
     FULL = 'FULL',
@@ -143,11 +143,11 @@ export class User extends ExternalEntity {
     @IsEmail()
     email!: string;
 
-    @Column({ nullable: true })
-    passwordHash!: string;
+    @Column({ type: 'bytea', nullable: true })
+    passwordHash!: Buffer;
 
     async setPassword(newPassword: string) {
-        this.passwordHash = await hash(newPassword, SALT_ROUNDS);
+        this.passwordHash = await securePassword.hash(Buffer.from(newPassword));
     }
 
     get isPasswordless() {
@@ -163,7 +163,7 @@ export class User extends ExternalEntity {
             return;
         }
 
-        const passwordValid = await compare(password, this.passwordHash);
+        const passwordValid = await this.checkPassword(password);
 
         if (!passwordValid) {
             throw new Error('Password is not valid!');
@@ -177,7 +177,16 @@ export class User extends ExternalEntity {
     }
 
     async checkPassword(password: string) {
-        return await compare(password, this.passwordHash);
+        const result = await securePassword.verify(Buffer.from(password), this.passwordHash);
+
+        // The hash params used for the stored hash have since changed, so we should re-hash the password
+        // to ensure that it is as secure as possible:
+        if (result === SecurePassword.VALID_NEEDS_REHASH) {
+            await this.setPassword(password);
+            await this.save();
+        }
+
+        return result === SecurePassword.VALID || result === SecurePassword.VALID_NEEDS_REHASH;
     }
 
     async signIn(type: AuthType = AuthType.FULL) {

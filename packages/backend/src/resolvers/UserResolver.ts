@@ -17,12 +17,14 @@ import { Organization } from '../entity/Organization';
 import SignInResult from './types/SignInResult';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
 import { PasswordReset } from '../entity/PasswordReset';
-import { APIKeyConnection } from './APIKeyResolver';
-import { ConnectionArgs } from './types/Pagination';
+import { ConnectionArgs, LimitOffsetArgs, createConnection } from './types/Pagination';
 import { CurrentUserOnly } from '../utils/permissions';
+import { APIKey } from '../entity/APIKey';
 
 // TODO: We should probably separate out things that are associated with the "user" (me query, enable/disable totp, updateAccount)
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
+
+const [APIKeyConnection] = createConnection(APIKey);
 
 @Resolver(() => User)
 export class UserResolver {
@@ -40,18 +42,12 @@ export class UserResolver {
 
     @CurrentUserOnly()
     @FieldResolver(() => APIKeyConnection)
-    async apiKeys(@Ctx() { user }: Context, @Args() _args: ConnectionArgs) {
-        return {
-            edges: (await user.apiKeys).map(key => ({ node: key, cursor: key.id })),
-            pageInfo: { hasNextPage: false, hasPreviousPage: false },
-        };
-        // return this.apiKeyRepo.findAndCount({
-        //     where: {
-        //         user,
-        //     },
-        //     take: limit,
-        //     skip: offset,
-        // });
+    async apiKeys(@Ctx() { user }: Context, @Args() args: LimitOffsetArgs) {
+        return await APIKey.findAndPaginate({
+            where: {
+                user
+            }
+        }, args);
     }
 
     @Mutation(() => Result)

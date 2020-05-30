@@ -80,7 +80,6 @@ export class ContainerGroup extends ExternalEntity {
     )
     component!: Lazy<Component>;
 
-    @Field(() => [Secret])
     @OneToMany(
         () => Secret,
         secret => secret.containerGroup,

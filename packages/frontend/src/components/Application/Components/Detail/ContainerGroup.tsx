@@ -7,6 +7,7 @@ import useBoolean from '../../../../utils/useBoolean';
 import CreateContainerGroup from './CreateContainerGroup';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ContainerGroupQuery } from './__generated__/ContainerGroupQuery.graphql';
+import { usePagination } from '../../../ui/Pagination';
 
 type Props = {
     component: string;
@@ -14,9 +15,16 @@ type Props = {
 };
 
 export default function ContainerGroup({ component, environment }: Props) {
+    const [paginationArgs, { onNextPage, onPreviousPage }] = usePagination(10);
+
     const data = useLazyLoadQuery<ContainerGroupQuery>(
         graphql`
-            query ContainerGroupQuery($component: ID!, $environment: ID!) {
+            query ContainerGroupQuery(
+                $component: ID!
+                $environment: ID!
+                $limit: Int!
+                $offset: Int
+            ) {
                 component(id: $component) {
                     id
                     containerGroup(environment: $environment) {
@@ -24,7 +32,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                         monthlyPrice
                         containerCount
                         size
-                        ...Secrets_containerGroup
+                        ...Secrets_containerGroup @arguments(limit: $limit, offset: $offset)
                     }
                 }
             }
@@ -32,6 +40,7 @@ export default function ContainerGroup({ component, environment }: Props) {
         {
             component,
             environment,
+            ...paginationArgs,
         },
     );
 
@@ -82,7 +91,12 @@ export default function ContainerGroup({ component, environment }: Props) {
                         </Card>
                     </div>
                     <div className="mt-4">
-                        <Secrets id={containerGroup.id} containerGroup={containerGroup} />
+                        <Secrets
+                            id={containerGroup.id}
+                            containerGroup={containerGroup}
+                            onNextPage={onNextPage}
+                            onPreviousPage={onPreviousPage}
+                        />
                     </div>
                 </>
             ) : (

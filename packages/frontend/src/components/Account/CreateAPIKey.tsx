@@ -40,26 +40,8 @@ export default function CreateAPIKey({
             onCompleted(data) {
                 setPrivateKey(data.createAPIKey.node.privateKey!);
             },
+            // TODO: Write updater
             updater(store) {
-                const meRecord = store.get(id)!;
-
-                const connectionRecord = ConnectionHandler.getConnection(
-                    meRecord,
-                    'APIKeys_apiKeys',
-                )!;
-
-                const newAPIKeyRecord = store
-                    .getRootField('createAPIKey')!
-                    .getLinkedRecord('node')!;
-
-                const newEdge = ConnectionHandler.createEdge(
-                    store,
-                    connectionRecord,
-                    newAPIKeyRecord,
-                    'APIKeyEdge',
-                );
-
-                ConnectionHandler.insertEdgeBefore(connectionRecord, newEdge);
             },
         });
     }

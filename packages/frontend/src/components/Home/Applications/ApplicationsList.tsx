@@ -3,25 +3,24 @@ import { graphql, useFragment } from 'react-relay/hooks';
 import List, { ListItem } from '../../ui/List';
 import Button from '../../ui/Button';
 import { ApplicationsListFragment_organization$key } from './__generated__/ApplicationsListFragment_organization.graphql';
+import Pagination from '../../ui/Pagination';
 
 type Props = {
     organization: ApplicationsListFragment_organization$key;
-    onNextPage(cursor: string): void;
+    onNextPage(): void;
+    onPreviousPage(): void;
 };
 
-export default function ApplicationsList({ organization, onNextPage }: Props) {
-    const [startTransition, isPending] = unstable_useTransition({
-        // Allow the old list data to be used for up to 5 seconds:
-        timeoutMs: 5000,
-    });
-
+export default function ApplicationsList({ organization, onNextPage, onPreviousPage }: Props) {
     const data = useFragment(
         graphql`
             fragment ApplicationsListFragment_organization on Organization {
                 username
-                applications(after: $cursor, first: $count) {
+                applications(limit: $limit, offset: $offset) {
                     pageInfo {
+                        startCursor
                         endCursor
+                        hasPreviousPage
                         hasNextPage
                     }
                     edges {
@@ -38,12 +37,6 @@ export default function ApplicationsList({ organization, onNextPage }: Props) {
         `,
         organization,
     );
-
-    function handleNext() {
-        startTransition(() => {
-            onNextPage(data.applications.pageInfo.endCursor!);
-        });
-    }
 
     return (
         <>
@@ -69,12 +62,11 @@ export default function ApplicationsList({ organization, onNextPage }: Props) {
                     )}
                 </List>
             </div>
-            <div className="border-t border-gray-200 p-4 flex justify-end space-x-4">
-                <Button>Previous</Button>
-                <Button disabled={isPending} onClick={handleNext}>
-                    Next
-                </Button>
-            </div>
+            <Pagination
+                pageInfo={data.applications.pageInfo}
+                onNextPage={onNextPage}
+                onPreviousPage={onPreviousPage}
+            />
         </>
     );
 }

@@ -13,9 +13,8 @@ import { Environment } from './Environment';
 import { User } from './User';
 import { NAME_REGEX } from '../constants';
 import { Router } from './Router';
-import { Node } from '../resolvers/types/Node';
 
-@ObjectType({ implements: Node })
+@ObjectType()
 @Entity()
 export class Organization extends ExternalEntity {
     static async findForUser(

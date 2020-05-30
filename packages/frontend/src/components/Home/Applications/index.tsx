@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import Button from '../../ui/Button';
@@ -7,15 +7,16 @@ import useBoolean from '../../../utils/useBoolean';
 import HomePage from '../HomePage';
 import ApplicationsList from './ApplicationsList';
 import { ApplicationsQuery } from './__generated__/ApplicationsQuery.graphql';
+import { usePagination } from '../../ui/Pagination';
 
 export default function Applications() {
     const params = useParams();
     const [create, { off, on }] = useBoolean(false);
-    const [cursor, setCursor] = useState<string | undefined>();
+    const [paginationArgs, paginationProps] = usePagination(10);
 
     const data = useLazyLoadQuery<ApplicationsQuery>(
         graphql`
-            query ApplicationsQuery($organization: String!, $cursor: ID, $count: Int!) {
+            query ApplicationsQuery($organization: String!, $limit: Int!, $offset: Int) {
                 organization(username: $organization) {
                     id
                     username
@@ -25,14 +26,9 @@ export default function Applications() {
         `,
         {
             organization: params.organization,
-            count: 1,
-            cursor,
+            ...paginationArgs
         },
     );
-
-    function handleNextPage(cursor: string) {
-        setCursor(cursor);
-    }
 
     return (
         <>
@@ -44,7 +40,10 @@ export default function Applications() {
                     </Button>
                 }
             >
-                <ApplicationsList organization={data.organization} onNextPage={handleNextPage} />
+                <ApplicationsList
+                    organization={data.organization}
+                    {...paginationProps}
+                />
             </HomePage>
             <CreateApplication organization={data.organization.id} visible={create} onClose={off} />
         </>

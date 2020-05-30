@@ -3,24 +3,39 @@ import EditOrAddSecret, { SecretEdit } from './EditOrAddSecret';
 import List, { ListItem } from '../../../../ui/List';
 import Secret from './Secret';
 import { useFragment, graphql } from 'react-relay/hooks';
-import { Secrets_containerGroup$key } from '../__generated__/Secrets_containerGroup.graphql';
 import Card from '../../../../ui/Card';
 import Button from '../../../../ui/Button';
+import Pagination from '../../../../ui/Pagination';
+import { Secrets_containerGroup$key } from './__generated__/Secrets_containerGroup.graphql';
 
 export type Props = {
     id: string;
     containerGroup: Secrets_containerGroup$key;
+    onNextPage(): void;
+    onPreviousPage(): void;
 };
 
-export default function Secrets({ containerGroup }: Props) {
+export default function Secrets({ containerGroup, onNextPage, onPreviousPage }: Props) {
     const [modalSecret, setModalSecret] = useState<null | { secret?: SecretEdit }>(null);
 
     const data = useFragment(
         graphql`
-            fragment Secrets_containerGroup on ContainerGroup {
+            fragment Secrets_containerGroup on ContainerGroup
+                @argumentDefinitions(
+                    limit: { type: "Int", defaultValue: 10 }
+                    offset: { type: "Int", defaultValue: 0 }
+                ) {
                 id
-                secrets {
-                    ...Secret_secret
+                secrets(limit: $limit, offset: $offset) {
+                    pageInfo {
+                        hasNextPage
+                        hasPreviousPage
+                    }
+                    edges {
+                        node {
+                            ...Secret_secret
+                        }
+                    }
                 }
             }
         `,
@@ -42,7 +57,7 @@ export default function Secrets({ containerGroup }: Props) {
                 onClose={() => setModalSecret(null)}
                 secret={modalSecret?.secret}
             />
-            <List items={data.secrets}>
+            <List connection={data.secrets}>
                 {secret => (
                     <ListItem>
                         <Secret
@@ -53,6 +68,11 @@ export default function Secrets({ containerGroup }: Props) {
                     </ListItem>
                 )}
             </List>
+            <Pagination
+                pageInfo={data.secrets.pageInfo}
+                onNextPage={onNextPage}
+                onPreviousPage={onPreviousPage}
+            />
         </Card>
     );
 }

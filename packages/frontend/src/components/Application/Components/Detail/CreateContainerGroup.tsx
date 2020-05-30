@@ -37,11 +37,7 @@ export default function CreateContainerGroup({ component, environment, open, onC
                 monthlyPrice
                 containerCount
                 size
-                secrets {
-                    id
-                    key
-                    value
-                }
+                ...Secrets_containerGroup
             }
         }
     `);
@@ -63,6 +59,14 @@ export default function CreateContainerGroup({ component, environment, open, onC
                     size: containerSize,
                     containerCount: Number(values.containerCount),
                 },
+            },
+            updater(store) {
+                const newNode = store.getRootField('createContainerGroup');
+
+                const componentNode = store.get(component)!;
+                componentNode.setLinkedRecord(newNode, 'containerGroup', {
+                    environment,
+                });
             },
             onCompleted() {
                 onClose();

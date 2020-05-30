@@ -1,7 +1,7 @@
 # TODO list for upcoming streams:
 
-- Look into implementing pagination.
-- Enabling concurrent mode.
+- Get pagination deployed in more places
+- Implement route events
 
 ## Future Sutff:
 

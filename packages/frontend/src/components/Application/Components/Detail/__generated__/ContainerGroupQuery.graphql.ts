@@ -7,6 +7,8 @@ export type ContainerSize = "S16x16" | "S1x1" | "S2x2" | "S4x4" | "S8x8" | "%fut
 export type ContainerGroupQueryVariables = {
     component: string;
     environment: string;
+    limit: number;
+    offset?: number | null;
 };
 export type ContainerGroupQueryResponse = {
     readonly component: {
@@ -31,6 +33,8 @@ export type ContainerGroupQuery = {
 query ContainerGroupQuery(
   $component: ID!
   $environment: ID!
+  $limit: Int!
+  $offset: Int
 ) {
   component(id: $component) {
     id
@@ -39,7 +43,7 @@ query ContainerGroupQuery(
       monthlyPrice
       containerCount
       size
-      ...Secrets_containerGroup
+      ...Secrets_containerGroup_21LIQA
     }
   }
 }
@@ -50,11 +54,19 @@ fragment Secret_secret on Secret {
   value
 }
 
-fragment Secrets_containerGroup on ContainerGroup {
+fragment Secrets_containerGroup_21LIQA on ContainerGroup {
   id
-  secrets {
-    ...Secret_secret
-    id
+  secrets(limit: $limit, offset: $offset) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    edges {
+      node {
+        ...Secret_secret
+        id
+      }
+    }
   }
 }
 */
@@ -72,6 +84,18 @@ var v0 = [
     "kind": "LocalArgument",
     "name": "environment",
     "type": "ID!"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit",
+    "type": "Int!"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset",
+    "type": "Int"
   }
 ],
 v1 = [
@@ -115,7 +139,19 @@ v6 = {
   "kind": "ScalarField",
   "name": "size",
   "storageKey": null
-};
+},
+v7 = [
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -145,7 +181,7 @@ return {
               (v5/*: any*/),
               (v6/*: any*/),
               {
-                "args": null,
+                "args": (v7/*: any*/),
                 "kind": "FragmentSpread",
                 "name": "Secrets_containerGroup"
               }
@@ -187,25 +223,72 @@ return {
               (v6/*: any*/),
               {
                 "alias": null,
-                "args": null,
-                "concreteType": "Secret",
+                "args": (v7/*: any*/),
+                "concreteType": "SecretConnection",
                 "kind": "LinkedField",
                 "name": "secrets",
-                "plural": true,
+                "plural": false,
                 "selections": [
-                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "key",
+                    "concreteType": "PageInfo",
+                    "kind": "LinkedField",
+                    "name": "pageInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "hasNextPage",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "hasPreviousPage",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "value",
+                    "concreteType": "SecretEdge",
+                    "kind": "LinkedField",
+                    "name": "edges",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Secret",
+                        "kind": "LinkedField",
+                        "name": "node",
+                        "plural": false,
+                        "selections": [
+                          (v2/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "key",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "value",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -224,9 +307,9 @@ return {
     "metadata": {},
     "name": "ContainerGroupQuery",
     "operationKind": "query",
-    "text": "query ContainerGroupQuery(\n  $component: ID!\n  $environment: ID!\n) {\n  component(id: $component) {\n    id\n    containerGroup(environment: $environment) {\n      id\n      monthlyPrice\n      containerCount\n      size\n      ...Secrets_containerGroup\n    }\n  }\n}\n\nfragment Secret_secret on Secret {\n  id\n  key\n  value\n}\n\nfragment Secrets_containerGroup on ContainerGroup {\n  id\n  secrets {\n    ...Secret_secret\n    id\n  }\n}\n"
+    "text": "query ContainerGroupQuery(\n  $component: ID!\n  $environment: ID!\n  $limit: Int!\n  $offset: Int\n) {\n  component(id: $component) {\n    id\n    containerGroup(environment: $environment) {\n      id\n      monthlyPrice\n      containerCount\n      size\n      ...Secrets_containerGroup_21LIQA\n    }\n  }\n}\n\nfragment Secret_secret on Secret {\n  id\n  key\n  value\n}\n\nfragment Secrets_containerGroup_21LIQA on ContainerGroup {\n  id\n  secrets(limit: $limit, offset: $offset) {\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n    }\n    edges {\n      node {\n        ...Secret_secret\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'ac57c126b5b5a1d8e6024ba6e49b06fe';
+(node as any).hash = '7427a894df8faf5d71f04157cbd0c664';
 export default node;

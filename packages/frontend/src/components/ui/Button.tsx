@@ -1,21 +1,12 @@
-import React, { Children, ButtonHTMLAttributes, useContext } from 'react';
+import React, { ButtonHTMLAttributes, useContext } from 'react';
 import clsx from 'clsx';
 import { ModalFooterContext } from './Modal';
 
 export function ButtonGroup({ children }: { children: React.ReactNode }) {
     return (
-        <>
-            {Children.map(children, (child, i) => (
-                <span
-                    className={clsx('flex w-full sm:ml-3 sm:w-auto', {
-                        'sm:ml-3': i === Children.count(children),
-                        'mt-3 sm:mt-0': i !== 0
-                    })}
-                >
-                    {child}
-                </span>
-            ))}
-        </>
+        <div className="space-y-3 sm:space-y-0 sm:space-x-3 flex flex-col-reverse sm:flex-row space-y-reverse justify-end">
+            {children}
+        </div>
     );
 }
 

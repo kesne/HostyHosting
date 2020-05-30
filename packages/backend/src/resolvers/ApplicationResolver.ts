@@ -10,6 +10,7 @@ import {
     Mutation,
     InputType,
     Field,
+    Args,
 } from 'type-graphql';
 import { Application } from '../entity/Application';
 import { Context } from '../types';
@@ -17,6 +18,9 @@ import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
 import { OrganizationPermission } from '../entity/OrganizationMembership';
 import { Organization } from '../entity/Organization';
+import { createConnection, LimitOffsetArgs } from './types/Pagination';
+
+const [ComponentConnection] = createConnection(Component);
 
 @InputType()
 class CreateApplicationInput {
@@ -76,6 +80,18 @@ export class ApplicationResolver {
     async environments(@Root() application: Application) {
         const organization = await application.organization;
         return organization.environments;
+    }
+
+    @FieldResolver(() => ComponentConnection)
+    async components(@Root() application: Application, @Args() args: LimitOffsetArgs) {
+        return await Component.findAndPaginate(
+            {
+                where: {
+                    application,
+                },
+            },
+            args,
+        );
     }
 
     @Mutation(() => Application)

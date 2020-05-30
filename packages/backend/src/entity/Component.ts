@@ -63,7 +63,6 @@ export class Component extends ExternalEntity {
     )
     application!: Lazy<Application>;
 
-    @Field(() => [ContainerGroup])
     @OneToMany(
         () => ContainerGroup,
         containerGroup => containerGroup.component,

@@ -24,7 +24,7 @@ export default function APIKeys() {
             query APIKeysQuery {
                 viewer {
                     id
-                    apiKeys(first: 10) @connection(key: "APIKeys_apiKeys") {
+                    apiKeys(limit: 10) {
                         edges {
                             node {
                                 id
@@ -41,21 +41,9 @@ export default function APIKeys() {
 
     function handleDelete(id: string) {
         return () => {
+            // TODO: Write updater:
             commit({
                 variables: { id },
-                configs: [
-                    {
-                        type: 'RANGE_DELETE',
-                        parentID: data.viewer.id,
-                        connectionKeys: [
-                            {
-                                key: 'APIKeys_apiKeys',
-                            },
-                        ],
-                        pathToConnection: [data.viewer.id, 'apiKeys'],
-                        deletedIDFieldName: 'id',
-                    },
-                ],
             });
         };
     }

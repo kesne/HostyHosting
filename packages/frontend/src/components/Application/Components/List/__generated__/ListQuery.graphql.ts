@@ -5,13 +5,23 @@ import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type ListQueryVariables = {
     application: string;
+    limit: number;
+    offset: number;
 };
 export type ListQueryResponse = {
     readonly application: {
         readonly id: string;
-        readonly components: ReadonlyArray<{
-            readonly " $fragmentRefs": FragmentRefs<"Component_component">;
-        }>;
+        readonly components: {
+            readonly pageInfo: {
+                readonly hasNextPage: boolean;
+                readonly hasPreviousPage: boolean;
+            };
+            readonly edges: ReadonlyArray<{
+                readonly node: {
+                    readonly " $fragmentRefs": FragmentRefs<"Component_component">;
+                };
+            }>;
+        };
     };
 };
 export type ListQuery = {
@@ -24,12 +34,22 @@ export type ListQuery = {
 /*
 query ListQuery(
   $application: ID!
+  $limit: Int!
+  $offset: Int!
 ) {
   application(id: $application) {
     id
-    components {
-      ...Component_component
-      id
+    components(limit: $limit, offset: $offset) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        node {
+          ...Component_component
+          id
+        }
+      }
     }
   }
 }
@@ -47,6 +67,18 @@ var v0 = [
     "kind": "LocalArgument",
     "name": "application",
     "type": "ID!"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit",
+    "type": "Int!"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset",
+    "type": "Int!"
   }
 ],
 v1 = [
@@ -61,6 +93,43 @@ v2 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v3 = [
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  }
+],
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PageInfo",
+  "kind": "LinkedField",
+  "name": "pageInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasPreviousPage",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -81,16 +150,39 @@ return {
           (v2/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "concreteType": "Component",
+            "args": (v3/*: any*/),
+            "concreteType": "ComponentConnection",
             "kind": "LinkedField",
             "name": "components",
-            "plural": true,
+            "plural": false,
             "selections": [
+              (v4/*: any*/),
               {
+                "alias": null,
                 "args": null,
-                "kind": "FragmentSpread",
-                "name": "Component_component"
+                "concreteType": "ComponentEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Component",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "Component_component"
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -118,18 +210,41 @@ return {
           (v2/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "concreteType": "Component",
+            "args": (v3/*: any*/),
+            "concreteType": "ComponentConnection",
             "kind": "LinkedField",
             "name": "components",
-            "plural": true,
+            "plural": false,
             "selections": [
-              (v2/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "name",
+                "concreteType": "ComponentEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Component",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -145,9 +260,9 @@ return {
     "metadata": {},
     "name": "ListQuery",
     "operationKind": "query",
-    "text": "query ListQuery(\n  $application: ID!\n) {\n  application(id: $application) {\n    id\n    components {\n      ...Component_component\n      id\n    }\n  }\n}\n\nfragment Component_component on Component {\n  id\n  name\n}\n"
+    "text": "query ListQuery(\n  $application: ID!\n  $limit: Int!\n  $offset: Int!\n) {\n  application(id: $application) {\n    id\n    components(limit: $limit, offset: $offset) {\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n      }\n      edges {\n        node {\n          ...Component_component\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment Component_component on Component {\n  id\n  name\n}\n"
   }
 };
 })();
-(node as any).hash = 'f4a09162175b259c19cf1cb2cf87f206';
+(node as any).hash = '67a986902337dda520fb58cec61dad23';
 export default node;
