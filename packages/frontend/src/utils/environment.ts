@@ -34,7 +34,7 @@ export function createEnvironment() {
     const network = Network.create(fetchQuery);
 
     const store = new Store(new RecordSource(), {
-        gcReleaseBufferSize: 10,
+        gcReleaseBufferSize: 0,
     });
 
     return new Environment({

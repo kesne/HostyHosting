@@ -126,6 +126,15 @@ input CreateRouterInput {
   label: String!
 }
 
+input CreateRouterRuleInput {
+  routerID: ID!
+  domain: String!
+  pathPrefix: String!
+  forwardPathPrefix: Boolean!
+  componentID: ID!
+  environmentID: ID!
+}
+
 input CreateSecretInput {
   containerGroupID: ID!
   key: String!
@@ -196,6 +205,7 @@ type Mutation {
   createEnvironment(input: CreateEnvironmentInput!): Environment!
   createRouter(input: CreateRouterInput!): Router!
   deleteRouter(input: DeleteRouterInput!): Router!
+  createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
   deleteSecret(input: DeleteSecretInput!): Secret!
@@ -269,7 +279,8 @@ type Router {
   createdAt: DateTime!
   updatedAt: DateTime!
   label: String!
-  rules: [RouterRule!]!
+  organization: Organization!
+  rules(limit: Int!, offset: Int): RouterRuleConnection!
 }
 
 type RouterRule {
@@ -277,10 +288,22 @@ type RouterRule {
   createdAt: DateTime!
   updatedAt: DateTime!
   domain: String!
-  path: String!
-  forwardPath: Boolean!
+  pathPrefix: String!
+  forwardPathPrefix: Boolean!
   component: Component!
   environment: Environment!
+}
+
+type RouterRuleConnection {
+  pageInfo: PageInfo!
+  edges: [RouterRuleEdge!]!
+}
+
+type RouterRuleEdge {
+  node: RouterRule!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
 }
 
 type Secret {

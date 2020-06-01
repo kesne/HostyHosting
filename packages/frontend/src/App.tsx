@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Environment } from 'relay-runtime';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import Layout from './components/Layout';
@@ -8,12 +8,12 @@ import Auth from './components/Auth';
 import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
+import Router from './components/Router';
 import GrantAPIKey from './components/Auth/GrantAPIKey';
 import IndexRedirect from './components/IndexRedirect';
 import FourOhFour from './components/404';
 import { createEnvironment } from './utils/environment';
 import { useHasUser } from './utils/user';
-import 'react-placeholder/lib/reactPlaceholder.css';
 
 export default function App() {
     const hasUser = useHasUser();
@@ -35,24 +35,25 @@ export default function App() {
 
     return (
         <RelayEnvironmentProvider environment={environmentRef.current}>
-                <Router>
-                    <Layout>
-                        <Routes>
-                            <PrivateRoute path="/" element={<IndexRedirect />} />
-                            <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
-                            <PrivateRoute
-                                path="/orgs/:organization/apps/:application/*"
-                                element={<Application />}
-                            />
-                            <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
-                            <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
-                            <PrivateRoute path="/account/*" element={<Account />} />
-                            <Route path="*">
-                                <FourOhFour />
-                            </Route>
-                        </Routes>
-                    </Layout>
-                </Router>
+            <BrowserRouter>
+                <Layout>
+                    <Routes>
+                        <PrivateRoute path="/" element={<IndexRedirect />} />
+                        <PrivateRoute path="/orgs/:organization/*" element={<Home />} />
+                        <PrivateRoute
+                            path="/orgs/:organization/apps/:application/*"
+                            element={<Application />}
+                        />
+                        <PrivateRoute path="/router/:router/*" element={<Router />} />
+                        <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
+                        <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
+                        <PrivateRoute path="/account/*" element={<Account />} />
+                        <Route path="*">
+                            <FourOhFour />
+                        </Route>
+                    </Routes>
+                </Layout>
+            </BrowserRouter>
         </RelayEnvironmentProvider>
     );
 }

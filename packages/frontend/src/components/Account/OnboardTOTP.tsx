@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import ContentLoader from 'react-content-loader';
 import Modal, { ModalFooter, ModalContent } from '../ui/Modal';
 import OnboardTOTPContent from './OnboardTOTPContent';
 import Button from '../ui/Button';
@@ -13,7 +12,7 @@ function LoadingModal({ onClose }: any) {
     return (
         <>
             <ModalContent title="Enable Two-Factor Authentication">
-                <ContentLoader />
+                TODO: LOADING STUFF
             </ModalContent>
             <ModalFooter>
                 <Button onClick={onClose}>Cancel</Button>

@@ -44,7 +44,7 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
             <Input label="Email address" name="email" register={{ required: true }} autoFocus />
             <Input label="Password" name="password" type="password" register={{ required: true }} />
             <div className="flex items-center justify-between">
-                <Checkbox />
+                <Checkbox label="Remember Me" />
                 <span className="text-sm leading-5">
                     <Link to="/auth/forgot">Forgot your password?</Link>
                 </span>

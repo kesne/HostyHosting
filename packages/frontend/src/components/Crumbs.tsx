@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import create from 'zustand';
 
 type Crumb = {
-    name: string | React.ReactNode;
+    name: string;
     url: string;
 };
 
@@ -24,9 +24,18 @@ const [useActionRefState] = create<{
     setRef: ref => set({ ref }),
 }));
 
+const [useSubtitleRefState] = create<{
+    ref: HTMLDivElement | null;
+    setRef(ref: HTMLDivElement | null): void;
+}>(set => ({
+    ref: null,
+    setRef: ref => set({ ref }),
+}));
+
 export function Header() {
     const crumbs = useCrumbState(({ crumbs }) => crumbs);
     const setActionsRef = useActionRefState(({ setRef }) => setRef);
+    const setSubtitleRef = useSubtitleRefState(({ setRef }) => setRef);
 
     const [current, ...rest] = crumbs;
 
@@ -86,6 +95,7 @@ export function Header() {
                 </div>
                 <div className="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4" ref={setActionsRef} />
             </div>
+            <div ref={setSubtitleRef} />
         </div>
     );
 }
@@ -135,6 +145,16 @@ export function Crumb({ children, ...crumb }: Crumb & { children: React.ReactNod
             {children}
         </CrumbParentCompleteContext.Provider>
     );
+}
+
+export function CrumbSubtitle({ children }: { children: React.ReactNode }) {
+    const subtitleRef = useSubtitleRefState(({ ref }) => ref);
+
+    if (!subtitleRef) {
+        return null;
+    }
+
+    return createPortal(<div className="mt-2">{children}</div>, subtitleRef);
 }
 
 export function CrumbActions({ children }: { children: React.ReactNode }) {

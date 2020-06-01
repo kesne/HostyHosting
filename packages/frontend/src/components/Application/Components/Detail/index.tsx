@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import formatDate from '../../../../utils/formatDate';
 import Button from '../../../ui/Button';
@@ -9,7 +9,9 @@ import { useApplicationParams } from '../../ApplicationContext';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { DetailComponentQuery } from './__generated__/DetailComponentQuery.graphql';
 import DeleteComponent from './DeleteComponent';
-import { Crumb, CrumbActions } from '../../Crumbs';
+import { Crumb, CrumbActions, CrumbSubtitle } from '../../../Crumbs';
+import Badge from '../../../ui/Badge';
+import ContainerGroupLoading from './ContainerGroupLoading';
 
 export default function Detail() {
     const params = useParams();
@@ -48,30 +50,11 @@ export default function Detail() {
     const { component } = application;
 
     return (
-        <Crumb
-            name={
-                <>
-                    {component.label} <span className="text-gray-400">({component.name})</span>
-                </>
-            }
-            url={params.component}
-        >
-            <CrumbActions>
-                <span className="ml-3 relative shadow-sm rounded-md">
-                    <DeleteComponent id={data.application.component.id} />
-                </span>
-                <span className="ml-3 relative shadow-sm rounded-md">
-                    <Button onClick={editingOn}>Edit</Button>
-                    {/* <EditComponent
-                                    component={component}
-                                    visible={editing}
-                                    onClose={editingOff}
-                                /> */}
-                </span>
-            </CrumbActions>
-            <div className="mb-4">
-                <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
-                    <div className="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
+        <Crumb name={component.label} url={params.component}>
+            <CrumbSubtitle>
+                <div className="flex items-center space-y-3 sm:space-y-0 sm:space-x-6 flex-col sm:flex-row sm:flex-wrap">
+                    <Badge label={component.name} />
+                    <div className="flex items-center text-sm leading-5 text-gray-500">
                         <svg
                             fill="none"
                             stroke="currentColor"
@@ -85,7 +68,7 @@ export default function Detail() {
                         </svg>
                         {component.deploymentStrategy}
                     </div>
-                    <div className="mt-2 flex items-center text-sm leading-5 text-gray-500">
+                    <div className="flex items-center text-sm leading-5 text-gray-500">
                         <svg
                             fill="none"
                             stroke="currentColor"
@@ -101,7 +84,20 @@ export default function Detail() {
                         {formatDate(component.updatedAt)}
                     </div>
                 </div>
-            </div>
+            </CrumbSubtitle>
+            <CrumbActions>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <DeleteComponent id={data.application.component.id} />
+                </span>
+                <span className="ml-3 relative shadow-sm rounded-md">
+                    <Button onClick={editingOn}>Edit</Button>
+                    {/* <EditComponent
+                                    component={component}
+                                    visible={editing}
+                                    onClose={editingOff}
+                                /> */}
+                </span>
+            </CrumbActions>
             <Tabs
                 value={environment}
                 onChange={setEnvironment}
@@ -110,7 +106,9 @@ export default function Detail() {
                     value: String(id),
                 }))}
             />
-            <ContainerGroup component={component.id} environment={environment} />
+            <Suspense fallback={<ContainerGroupLoading />}>
+                <ContainerGroup component={component.id} environment={environment} />
+            </Suspense>
         </Crumb>
     );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import List from './List';
 import Detail from './Detail';
 import { Route, Routes } from 'react-router-dom';
-import { Crumb } from '../Crumbs';
+import { Crumb } from '../../Crumbs';
 
 export default function Components({ list }: { list?: boolean }) {
     if (list) {

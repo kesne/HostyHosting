@@ -29,6 +29,7 @@ export default function Routers() {
             organization: params.organization,
         },
     );
+
     return (
         <HomePage
             title="Routers"
@@ -40,7 +41,7 @@ export default function Routers() {
         >
             <List items={data.organization.routers}>
                 {router => (
-                    <ListItem key={router.id}>
+                    <ListItem to={`/router/${router.id}`} key={router.id}>
                         <div>{router.label}</div>
                     </ListItem>
                 )}

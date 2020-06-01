@@ -5,7 +5,7 @@ import Region from './Region';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { useApplicationParams } from '../ApplicationContext';
 import { SettingsQuery } from './__generated__/SettingsQuery.graphql';
-import { Crumb } from '../Crumbs';
+import { Crumb } from '../../Crumbs';
 
 export default function Settings() {
     const params = useApplicationParams();

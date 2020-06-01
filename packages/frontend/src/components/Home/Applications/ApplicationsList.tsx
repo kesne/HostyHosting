@@ -4,6 +4,7 @@ import List, { ListItem } from '../../ui/List';
 import Button from '../../ui/Button';
 import { ApplicationsListFragment_organization$key } from './__generated__/ApplicationsListFragment_organization.graphql';
 import Pagination from '../../ui/Pagination';
+import Badge from '../../ui/Badge';
 
 type Props = {
     organization: ApplicationsListFragment_organization$key;
@@ -47,11 +48,11 @@ export default function ApplicationsList({ organization, onNextPage, onPreviousP
                             key={application.id}
                             to={`/orgs/${data.username}/apps/${application.name}`}
                         >
-                            <div className="flex">
-                                <div className="text-gray-900 text-base mr-2">
+                            <div className="flex items-center">
+                                <div className="text-gray-900 font-medium text-base mr-2">
                                     {application.label}
                                 </div>
-                                <div className="text-gray-400 text-base">({application.name})</div>
+                                <Badge label={application.name} />
                             </div>
                             {application.description && (
                                 <div className="text-sm text-gray-500 mt-2">

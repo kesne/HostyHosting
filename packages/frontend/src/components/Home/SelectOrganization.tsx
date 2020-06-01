@@ -1,9 +1,12 @@
 import React, { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { graphql, useLazyLoadQuery } from 'react-relay/hooks';
-import { TextRow } from 'react-placeholder/lib/placeholders';
 import { SelectOrganizationQuery } from './__generated__/SelectOrganizationQuery.graphql';
 import { BaseDropdown, DropdownItem } from '../ui/Dropdown';
+
+function TextRow() {
+    return 'TODO: Fix this!';
+}
 
 function SelectOrganizationWithData() {
     const params = useParams();

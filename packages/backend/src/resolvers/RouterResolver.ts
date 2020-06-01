@@ -1,8 +1,12 @@
-import { Resolver, Query, Arg, ID, Mutation, InputType, Field, Ctx } from 'type-graphql';
+import { Resolver, Query, Arg, ID, Mutation, InputType, Field, Ctx, FieldResolver, Root, Args } from 'type-graphql';
 import { Router } from '../entity/Router';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { OrganizationPermission } from '../entity/OrganizationMembership';
+import { createConnection, LimitOffsetArgs } from './types/Pagination';
+import { RouterRule } from '../entity/RouterRule';
+
+const [RouterRuleConnection] = createConnection(RouterRule);
 
 @InputType()
 class CreateRouterInput {
@@ -43,5 +47,14 @@ export class RouterResolver {
     @Mutation(() => Router)
     deleteRouter(@Arg('input') input: DeleteRouterInput) {
 		throw new Error('TODO: Implement this.');
-	}
+    }
+
+    @FieldResolver(() => RouterRuleConnection)
+    rules(@Root() router: Router, @Args() args: LimitOffsetArgs) {
+        return RouterRule.findAndPaginate({
+            where: {
+                router,
+            }
+        }, args);
+    }
 }

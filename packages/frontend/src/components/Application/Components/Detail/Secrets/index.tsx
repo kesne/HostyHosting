@@ -47,7 +47,7 @@ export default function Secrets({ containerGroup, onNextPage, onPreviousPage }: 
             title="Secrets"
             actions={
                 <Button variant="primary" onClick={() => setModalSecret({})}>
-                    Add
+                    Add Secret
                 </Button>
             }
         >

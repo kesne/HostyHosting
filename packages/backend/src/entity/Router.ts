@@ -12,7 +12,6 @@ export class Router extends ExternalEntity {
     @Column()
     label!: string;
 
-    @Field(() => [RouterRule])
     @OneToMany(
         () => RouterRule,
         routerRule => routerRule.router,
@@ -20,6 +19,7 @@ export class Router extends ExternalEntity {
     )
     rules!: Lazy<RouterRule[]>;
 
+    @Field(() => Organization)
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;
 }
