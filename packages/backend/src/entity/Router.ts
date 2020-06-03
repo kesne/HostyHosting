@@ -4,10 +4,25 @@ import { ObjectType, Field } from 'type-graphql';
 import { Organization } from './Organization';
 import { RouterRule } from './RouterRule';
 import { Lazy } from '../types';
+import { User } from './User';
+import { OrganizationPermission } from './OrganizationMembership';
 
 @ObjectType()
 @Entity()
 export class Router extends ExternalEntity {
+    static async findForUser(user: User, id: string) {
+        const router = await Router.findOneOrFail({
+            where: { id },
+            relations: ['organization'],
+        });
+
+        const organization = await router.organization;
+
+        organization.ensureUserHasAccess(user, OrganizationPermission.WRITE);
+
+        return router;
+    }
+
     @Field()
     @Column()
     label!: string;

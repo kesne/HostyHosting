@@ -1,9 +1,10 @@
-import { Resolver, Query, Arg, Ctx, FieldResolver, Root, Int, Args } from 'type-graphql';
+import { Resolver, Query, Arg, Ctx, FieldResolver, Root, Int, Args, Field } from 'type-graphql';
 import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import { Application } from '../entity/Application';
 import { OrganizationMembership } from '../entity/OrganizationMembership';
 import { createConnection, ConnectionArgs, LimitOffsetArgs } from './types/Pagination';
+import { Like } from 'typeorm';
 
 const [ApplicationConnection] = createConnection(Application);
 

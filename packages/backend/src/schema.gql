@@ -81,6 +81,7 @@ type ContainerGroup {
   containerCount: Float!
   environment: Environment!
   component: Component!
+  dnsName: String!
   monthlyPrice: Int!
   secrets(limit: Int!, offset: Int): SecretConnection!
 }
@@ -128,11 +129,11 @@ input CreateRouterInput {
 
 input CreateRouterRuleInput {
   routerID: ID!
-  domain: String!
-  pathPrefix: String!
-  forwardPathPrefix: Boolean!
   componentID: ID!
   environmentID: ID!
+  domain: String!
+  pathPrefix: String
+  forwardPathPrefix: Boolean
 }
 
 input CreateSecretInput {
@@ -288,8 +289,8 @@ type RouterRule {
   createdAt: DateTime!
   updatedAt: DateTime!
   domain: String!
-  pathPrefix: String!
-  forwardPathPrefix: Boolean!
+  pathPrefix: String
+  forwardPathPrefix: Boolean
   component: Component!
   environment: Environment!
 }

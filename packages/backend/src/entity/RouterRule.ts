@@ -16,13 +16,13 @@ export class RouterRule extends ExternalEntity {
     @Column()
     domain!: string;
 
-    @Field()
-    @Column()
-    pathPrefix!: string;
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    pathPrefix?: string;
 
-    @Field()
-    @Column({ default: true })
-    forwardPathPrefix: boolean = true;
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    forwardPathPrefix?: boolean;
 
     // TODO: Should this be a ContainerGroup or should we keep it at this level?
     @Field(() => Component)

@@ -25,16 +25,7 @@ export class Organization extends ExternalEntity {
         const where = 'id' in condition ? { id: condition.id } : { username: condition.username };
         const organization = await this.findOneOrFail({ where });
 
-        const membership = await OrganizationMembership.findOneOrFail({
-            where: {
-                user: user,
-                organization: organization,
-            },
-        });
-
-        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
-            throw new ForbiddenError();
-        }
+        organization.ensureUserHasAccess(user, permission);
 
         return organization;
     }
@@ -142,4 +133,17 @@ export class Organization extends ExternalEntity {
         { lazy: true, cascade: true },
     )
     routers!: Lazy<Router[]>;
+
+    async ensureUserHasAccess(user: User, permission?: OrganizationPermission) {
+        const membership = await OrganizationMembership.findOneOrFail({
+            where: {
+                user: user,
+                organization: this,
+            },
+        });
+
+        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
+            throw new ForbiddenError();
+        }
+    }
 }

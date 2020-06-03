@@ -1,12 +1,4 @@
-import {
-    Entity,
-    Column,
-    ManyToOne,
-    BeforeInsert,
-    BeforeUpdate,
-    OneToMany,
-    Unique,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, BeforeInsert, BeforeUpdate, OneToMany, Unique } from 'typeorm';
 import { Component, DeploymentStrategy } from './Component';
 import { ObjectType, Field, registerEnumType } from 'type-graphql';
 import { Min } from 'class-validator';
@@ -89,6 +81,16 @@ export class ContainerGroup extends ExternalEntity {
 
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;
+
+    @Field(() => String)
+    async dnsName() {
+        const component = await this.component;
+        const organization = await this.organization;
+        const environment = await this.environment;
+        const application = await component.application;
+
+        return `${organization.username}.${environment.name}.${application.name}.${component.name}`;
+    }
 
     @BeforeInsert()
     @BeforeUpdate()

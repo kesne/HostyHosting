@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 type Props = {
-    children(values: Record<string, string>): React.ReactNode;
+    children(values: Record<string, any>): React.ReactNode;
 };
 
 export default function Computed({ children }: Props) {

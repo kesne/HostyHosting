@@ -24,8 +24,8 @@ export type RouterQueryResponse = {
             readonly edges: ReadonlyArray<{
                 readonly node: {
                     readonly domain: string;
-                    readonly pathPrefix: string;
-                    readonly forwardPathPrefix: boolean;
+                    readonly pathPrefix: string | null;
+                    readonly forwardPathPrefix: boolean | null;
                     readonly component: {
                         readonly id: string;
                     };

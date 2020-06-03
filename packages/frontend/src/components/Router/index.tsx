@@ -10,10 +10,13 @@ import { Crumb, Header } from '../Crumbs';
 import Pagination, { usePagination } from '../ui/Pagination';
 import List, { ListItem } from '../ui/List';
 import CreateRouterRule from './CreateRouterRule';
+import useBoolean from '../../utils/useBoolean';
+import Button from '../ui/Button';
 
 export default function Router() {
     const params = useParams();
     const [paginationArgs, paginationProps] = usePagination(10);
+    const [open, { on, off }] = useBoolean(false);
     const data = useLazyLoadQuery<RouterQuery>(
         graphql`
             query RouterQuery($router: ID!, $limit: Int!, $offset: Int) {
@@ -64,14 +67,30 @@ export default function Router() {
                 </PageHeader>
 
                 <Container className="my-6">
-                    <Card title="Rules">
+                    <Card
+                        title="Rules"
+                        actions={
+                            <Button variant="primary" onClick={on}>
+                                Create Rule
+                            </Button>
+                        }
+                    >
                         <List connection={data.router.rules}>
-                            {() => <ListItem>Rule here</ListItem>}
+                            {rule => (
+                                <ListItem>
+                                    {rule.domain} {rule.environment.id} {rule.component.id}{' '}
+                                    {rule.pathPrefix} {rule.forwardPathPrefix}
+                                </ListItem>
+                            )}
                         </List>
                         <Pagination pageInfo={data.router.rules.pageInfo} {...paginationProps} />
                     </Card>
                 </Container>
-                <CreateRouterRule />
+                <CreateRouterRule
+                    open={open}
+                    onClose={off}
+                    organization={data.router.organization.username}
+                />
             </Crumb>
         </Crumb>
     );
