@@ -1,10 +1,22 @@
-import { Resolver, FieldResolver, Int, Root, Mutation, Arg, InputType, Field, ID, Args } from 'type-graphql';
+import {
+    Resolver,
+    FieldResolver,
+    Int,
+    Root,
+    Mutation,
+    Arg,
+    InputType,
+    Field,
+    ID,
+    Args,
+} from 'type-graphql';
 import { ContainerGroup, ContainerSize } from '../entity/ContainerGroup';
 import pricing from '../utils/pricing';
 import { Component } from '../entity/Component';
 import { Environment } from '../entity/Environment';
 import { createConnection, LimitOffsetArgs } from './types/Pagination';
 import { Secret } from '../entity/Secret';
+import { RouterRule } from '../entity/RouterRule';
 
 const [SecretConnection] = createConnection(Secret);
 
@@ -23,7 +35,6 @@ export class CreateContainerGroupInput {
     containerCount!: number;
 }
 
-
 @Resolver(() => ContainerGroup)
 export class ContainerGroupResolver {
     @FieldResolver(() => Int)
@@ -33,22 +44,33 @@ export class ContainerGroupResolver {
 
     @FieldResolver(() => SecretConnection)
     async secrets(@Root() containerGroup: ContainerGroup, @Args() args: LimitOffsetArgs) {
-        return await Secret.findAndPaginate({
+        return await Secret.findAndPaginate(
+            {
+                where: {
+                    containerGroup,
+                },
+            },
+            args,
+        );
+    }
+
+    @FieldResolver(() => [RouterRule])
+    async routerRules(@Root() containerGroup: ContainerGroup) {
+        return RouterRule.find({
             where: {
-                containerGroup
-            }
-        }, args)
+                component: await containerGroup.component,
+                environment: await containerGroup.environment,
+            },
+        });
     }
 
     // TODO: Security pls:
     @Mutation(() => ContainerGroup)
-    async createContainerGroup(
-        @Arg('input') input: CreateContainerGroupInput,
-    ) {
+    async createContainerGroup(@Arg('input') input: CreateContainerGroupInput) {
         const component = await Component.findOneOrFail(input.componentID);
         const environment = await Environment.findOneOrFail(input.environmentID);
 
-        const organization = await environment.organization
+        const organization = await environment.organization;
 
         const containerGroup = new ContainerGroup();
         containerGroup.environment = environment;

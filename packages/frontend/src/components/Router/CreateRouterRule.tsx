@@ -18,9 +18,20 @@ type Props = {
     open: boolean;
     onClose(): void;
     organization: string;
+
+    application?: string;
+    environment?: string;
+    component?: string;
 };
 
-export default function CreateRouterRule({ open, onClose, organization }: Props) {
+export default function CreateRouterRule({
+    open,
+    application,
+    environment,
+    component,
+    onClose,
+    organization,
+}: Props) {
     const params = useParams();
     const [commit, isInFlight] = useMutation<CreateRouterRuleMutation>(graphql`
         mutation CreateRouterRuleMutation($input: CreateRouterRuleInput!) {
@@ -47,7 +58,15 @@ export default function CreateRouterRule({ open, onClose, organization }: Props)
 
     return (
         <Modal open={open} onClose={onClose}>
-            <Form disabled={isInFlight} onSubmit={onSubmit}>
+            <Form
+                disabled={isInFlight}
+                onSubmit={onSubmit}
+                defaultValues={{
+                    application,
+                    component,
+                    environment,
+                }}
+            >
                 <ModalContent title="Create Rule">
                     <div className="space-y-6">
                         <Input label="Domain" name="domain" register={{ required: true }} />

@@ -1,11 +1,4 @@
-import {
-    Entity,
-    Column,
-    ManyToOne,
-    JoinColumn,
-    OneToMany,
-    Unique,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Unique } from 'typeorm';
 import { ObjectType, Field, registerEnumType } from 'type-graphql';
 import { Application } from './Application';
 import { ContainerGroup } from './ContainerGroup';
@@ -56,6 +49,7 @@ export class Component extends ExternalEntity {
     @Column()
     image!: string;
 
+    @Field(() => Application)
     @ManyToOne(
         () => Application,
         application => application.components,

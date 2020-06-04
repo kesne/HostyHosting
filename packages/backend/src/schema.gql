@@ -57,6 +57,7 @@ type Component {
   label: String!
   deploymentStrategy: DeploymentStrategy!
   image: String!
+  application: Application!
   monthlyPrice: Int!
   containerGroup(environment: ID!): ContainerGroup
 }
@@ -81,9 +82,11 @@ type ContainerGroup {
   containerCount: Float!
   environment: Environment!
   component: Component!
+  organization: Organization!
   dnsName: String!
   monthlyPrice: Int!
   secrets(limit: Int!, offset: Int): SecretConnection!
+  routerRules: [RouterRule!]!
 }
 
 enum ContainerSize {

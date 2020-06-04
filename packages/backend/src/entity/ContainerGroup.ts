@@ -79,6 +79,7 @@ export class ContainerGroup extends ExternalEntity {
     )
     secrets!: Lazy<Secret[]>;
 
+    @Field(() => Organization)
     @ManyToOne(() => Organization, { lazy: true })
     organization!: Lazy<Organization>;
 

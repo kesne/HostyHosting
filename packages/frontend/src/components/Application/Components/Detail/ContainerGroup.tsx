@@ -8,6 +8,7 @@ import CreateContainerGroup from './CreateContainerGroup';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ContainerGroupQuery } from './__generated__/ContainerGroupQuery.graphql';
 import { usePagination } from '../../../ui/Pagination';
+import CreateRouterRule from '../../../Router/CreateRouterRule';
 
 type Props = {
     component: string;
@@ -27,11 +28,27 @@ export default function ContainerGroup({ component, environment }: Props) {
             ) {
                 component(id: $component) {
                     id
+                    application {
+                        id
+                    }
                     containerGroup(environment: $environment) {
                         id
                         monthlyPrice
                         containerCount
                         size
+                        organization {
+                            username
+                        }
+                        environment {
+                            id
+                        }
+                        routerRules {
+                            id
+                            domain
+                            pathPrefix
+                            forwardPathPrefix
+                        }
+                        # Break this out into a separate query, or use relay helpers?:
                         ...Secrets_containerGroup @arguments(limit: $limit, offset: $offset)
                     }
                 }
@@ -45,6 +62,10 @@ export default function ContainerGroup({ component, environment }: Props) {
     );
 
     const [creating, { on: creatingOn, off: creatingOff }] = useBoolean(false);
+    const [
+        creatingRouterRule,
+        { on: creatingRouterRuleOn, off: creatingRouterRuleOff },
+    ] = useBoolean(false);
 
     const { containerGroup } = data.component;
 
@@ -88,6 +109,32 @@ export default function ContainerGroup({ component, environment }: Props) {
                                     </dd>
                                 </dl>
                             </CardContent>
+                        </Card>
+                    </div>
+                    <div className="mt-4">
+                        <Card
+                            title="Router Rules"
+                            actions={
+                                <Button variant="primary" onClick={creatingRouterRuleOn}>
+                                    Create Router Rule
+                                </Button>
+                            }
+                        >
+                            {containerGroup.routerRules.map(routerRule => (
+                                <div>
+                                    {routerRule.domain}
+                                    {routerRule.pathPrefix}
+                                    {routerRule.forwardPathPrefix}
+                                </div>
+                            ))}
+                            <CreateRouterRule
+                                organization={containerGroup.organization.username}
+                                application={data.component.application.id}
+                                component={data.component.id}
+                                environment={containerGroup.environment.id}
+                                open={creatingRouterRule}
+                                onClose={creatingRouterRuleOff}
+                            />
                         </Card>
                     </div>
                     <div className="mt-4">
