@@ -11,7 +11,7 @@
         "@koa/cors": "^3.0.0",
         "@koa/router": "^8.0.5",
         "@types/mailgun-js": "^0.22.4",
-        "apollo-server-koa": "^2.9.15",
+        "apollo-server-koa": "^2.14.2",
         "axios": "^0.19.2",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
