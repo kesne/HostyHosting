@@ -5,13 +5,14 @@ import { SearchComponentsQuery } from './__generated__/SearchComponentsQuery.gra
 
 type Props = {
     application: string;
+    disabled?: boolean;
 };
 
-export default function SearchComponents({ application }: Props) {
+export default function SearchComponents({ application, disabled }: Props) {
     const data = useLazyLoadQuery<SearchComponentsQuery>(
         graphql`
             query SearchComponentsQuery($application: ID!) {
-				application(id: $application) {
+                application(id: $application) {
                     components(limit: 10) {
                         edges {
                             node {
@@ -31,10 +32,12 @@ export default function SearchComponents({ application }: Props) {
 
     return (
         <>
-            <Select label="Component" name="component">
+            <Select disabled={disabled} label="Component" name="component">
                 <option></option>
                 {data.application.components.edges.map(({ node: component }) => (
-                    <option key={component.id} value={component.id}>{component.label} ({component.name})</option>
+                    <option key={component.id} value={component.id}>
+                        {component.label} ({component.name})
+                    </option>
                 ))}
             </Select>
         </>

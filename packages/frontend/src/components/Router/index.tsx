@@ -1,6 +1,5 @@
 import React from 'react';
 import PageHeader from '../ui/PageHeader';
-import Title from '../ui/Title';
 import Container from '../ui/Container';
 import Card from '../ui/Card';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
@@ -87,6 +86,7 @@ export default function Router() {
                     </Card>
                 </Container>
                 <CreateRouterRule
+                    router={data.router.id}
                     open={open}
                     onClose={off}
                     organization={data.router.organization.username}

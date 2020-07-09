@@ -13,26 +13,30 @@ import Preview from './Preview';
 import { useMutation, graphql } from 'react-relay/hooks';
 import { CreateRouterRuleMutation } from './__generated__/CreateRouterRuleMutation.graphql';
 import { useParams } from 'react-router';
+import SearchRouters from './SearchRouters';
 
 type Props = {
     open: boolean;
     onClose(): void;
     organization: string;
 
+    router?: string;
     application?: string;
     environment?: string;
     component?: string;
+    disableComponentSelection?: boolean;
 };
 
 export default function CreateRouterRule({
     open,
+    router,
     application,
     environment,
     component,
     onClose,
     organization,
+    disableComponentSelection
 }: Props) {
-    const params = useParams();
     const [commit, isInFlight] = useMutation<CreateRouterRuleMutation>(graphql`
         mutation CreateRouterRuleMutation($input: CreateRouterRuleInput!) {
             createRouterRule(input: $input) {
@@ -45,7 +49,7 @@ export default function CreateRouterRule({
         commit({
             variables: {
                 input: {
-                    routerID: params.router,
+                    routerID: values.router,
                     componentID: values.component,
                     environmentID: values.environment,
                     domain: values.domain,
@@ -65,6 +69,7 @@ export default function CreateRouterRule({
                     application,
                     component,
                     environment,
+                    router
                 }}
             >
                 <ModalContent title="Create Rule">
@@ -90,13 +95,15 @@ export default function CreateRouterRule({
                             }
                         </Computed>
 
-                        <SearchEnvironments organization={organization} />
+                        {!router && <SearchRouters organization={organization} />}
 
-                        <SearchApplications organization={organization} />
+                        <SearchEnvironments disabled={disableComponentSelection} organization={organization} />
+
+                        <SearchApplications disabled={disableComponentSelection} organization={organization} />
 
                         <Computed>
                             {({ application }) =>
-                                application && <SearchComponents application={application} />
+                                application && <SearchComponents disabled={disableComponentSelection} application={application} />
                             }
                         </Computed>
 
@@ -121,7 +128,7 @@ export default function CreateRouterRule({
                 </ModalContent>
                 <ModalFooter>
                     <ButtonGroup>
-                        <Button>Cancel</Button>
+                        <Button onClick={onClose}>Cancel</Button>
                         <SubmitButton>Create</SubmitButton>
                     </ButtonGroup>
                 </ModalFooter>

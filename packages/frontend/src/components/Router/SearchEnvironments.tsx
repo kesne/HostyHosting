@@ -5,9 +5,10 @@ import { SearchEnvironmentsQuery } from './__generated__/SearchEnvironmentsQuery
 
 type Props = {
     organization: string;
+    disabled?: boolean;
 };
 
-export default function SearchEnvironments({ organization }: Props) {
+export default function SearchEnvironments({ organization, disabled }: Props) {
     const data = useLazyLoadQuery<SearchEnvironmentsQuery>(
         graphql`
             query SearchEnvironmentsQuery($organization: String!) {
@@ -27,7 +28,7 @@ export default function SearchEnvironments({ organization }: Props) {
 
     return (
         <>
-            <Select label="Environment" name="environment">
+            <Select disabled={disabled} label="Environment" name="environment">
                 <option></option>
                 {data.organization.environments.map(environment => (
                     <option key={environment.id} value={environment.id}>

@@ -1,14 +1,14 @@
-import React, { useState, unstable_useDeferredValue } from 'react';
+import React from 'react';
 import Select from '../forms/Select';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
-import Input from '../ui/Input';
 import { SearchApplicationsQuery } from './__generated__/SearchApplicationsQuery.graphql';
 
 type Props = {
     organization: string;
+    disabled?: boolean;
 };
 
-export default function SearchApplications({ organization }: Props) {
+export default function SearchApplications({ organization, disabled }: Props) {
     const data = useLazyLoadQuery<SearchApplicationsQuery>(
         graphql`
             query SearchApplicationsQuery($organization: String!) {
@@ -32,7 +32,7 @@ export default function SearchApplications({ organization }: Props) {
 
     return (
         <>
-            <Select label="Application" name="application">
+            <Select disabled={disabled} label="Application" name="application">
                 <option></option>
                 {data.organization.applications.edges.map(({ node: application }) => (
                     <option key={application.id} value={application.id}>{application.label} ({application.name})</option>

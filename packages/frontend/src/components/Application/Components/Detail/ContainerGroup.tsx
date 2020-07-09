@@ -9,6 +9,7 @@ import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ContainerGroupQuery } from './__generated__/ContainerGroupQuery.graphql';
 import { usePagination } from '../../../ui/Pagination';
 import CreateRouterRule from '../../../Router/CreateRouterRule';
+import List, { ListItem } from '../../../ui/List';
 
 type Props = {
     component: string;
@@ -120,13 +121,20 @@ export default function ContainerGroup({ component, environment }: Props) {
                                 </Button>
                             }
                         >
-                            {containerGroup.routerRules.map(routerRule => (
-                                <div>
-                                    {routerRule.domain}
-                                    {routerRule.pathPrefix}
-                                    {routerRule.forwardPathPrefix}
-                                </div>
-                            ))}
+                            <List items={containerGroup.routerRules}>
+                                {routerRule => (
+                                    <ListItem key={routerRule.id}>
+                                        <div className="font-mono text-gray-900">
+                                            {routerRule.domain}
+                                            {routerRule.pathPrefix && (
+                                            <span className="text-gray-500">
+                                                <span className="mx-1">/</span>{routerRule.pathPrefix}
+                                            </span>
+                                            )}
+                                        </div>
+                                    </ListItem>
+                                )}
+                            </List>
                             <CreateRouterRule
                                 organization={containerGroup.organization.username}
                                 application={data.component.application.id}
@@ -134,6 +142,7 @@ export default function ContainerGroup({ component, environment }: Props) {
                                 environment={containerGroup.environment.id}
                                 open={creatingRouterRule}
                                 onClose={creatingRouterRuleOff}
+                                disableComponentSelection
                             />
                         </Card>
                     </div>
