@@ -15,17 +15,25 @@ export default function Form<T = Values>({
     children,
     onSubmit,
     defaultValues,
+    autoComplete,
     disabled = false,
     ...props
 }: Props<T>) {
     const form = useForm<T>({
         defaultValues,
+        // TODO: Look into if this is really what we want, or if we want it to
+        // be defined form-by-form.
+        mode: 'onChange',
     });
 
     return (
         <DisabledContext.Provider value={disabled}>
             <FormContext {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} {...props}>
+                <form
+                    autoComplete={autoComplete ?? 'off'}
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    {...props}
+                >
                     {children}
                 </form>
             </FormContext>

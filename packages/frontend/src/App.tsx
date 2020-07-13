@@ -8,7 +8,6 @@ import Auth from './components/Auth';
 import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
-import Router from './components/Router';
 import GrantAPIKey from './components/Auth/GrantAPIKey';
 import IndexRedirect from './components/IndexRedirect';
 import FourOhFour from './components/404';
@@ -44,7 +43,6 @@ export default function App() {
                             path="/orgs/:organization/apps/:application/*"
                             element={<Application />}
                         />
-                        <PrivateRoute path="/router/:router/*" element={<Router />} />
                         <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
                         <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
                         <PrivateRoute path="/account/*" element={<Account />} />

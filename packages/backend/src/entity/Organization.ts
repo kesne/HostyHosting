@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
 import { Application } from './Application';
 import { ObjectType, Field, ForbiddenError } from 'type-graphql';
 import { Length, Matches } from 'class-validator';
@@ -41,8 +41,13 @@ export class Organization extends ExternalEntity {
         membership.organization = organization;
         membership.permission = OrganizationPermission.ADMIN;
 
+        const router = new Router();
+        router.organization = organization;
+        router.label = "Default";
+
         organization.memberships = [membership];
         organization.environments = Environment.createDefaultEnvironments(organization);
+        organization.router = router;
 
         return organization;
     }
@@ -126,13 +131,13 @@ export class Organization extends ExternalEntity {
     )
     environments!: Lazy<Environment[]>;
 
-    @Field(() => [Router])
-    @OneToMany(
+    @Field(() => Router)
+    @OneToOne(
         () => Router,
         router => router.organization,
         { lazy: true, cascade: true },
     )
-    routers!: Lazy<Router[]>;
+    router!: Lazy<Router>;
 
     async ensureUserHasAccess(user: User, permission?: OrganizationPermission) {
         const membership = await OrganizationMembership.findOneOrFail({

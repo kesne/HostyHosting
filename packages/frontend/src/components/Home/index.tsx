@@ -6,7 +6,6 @@ import Applications from './Applications';
 import Environments from './Environments';
 import SelectOrganization from './SelectOrganization';
 import PageLoading from './PageLoading';
-import Routers from './Routers';
 
 export default function Home() {
     const { pathname } = useLocation();
@@ -20,7 +19,6 @@ export default function Home() {
                         <div className="mt-6">
                             <VerticalNav value={pathname}>
                                 <VerticalNavItem to="." label="Applications" />
-                                <VerticalNavItem to="routers" label="Routers" />
                                 <VerticalNavItem to="environments" label="Environments" />
                             </VerticalNav>
                         </div>
@@ -30,7 +28,6 @@ export default function Home() {
                     <Suspense fallback={<PageLoading />}>
                         <Routes>
                             <Route path="/" element={<Applications />} />
-                            <Route path="routers" element={<Routers />} />
                             <Route path="environments" element={<Environments />} />
                         </Routes>
                     </Suspense>

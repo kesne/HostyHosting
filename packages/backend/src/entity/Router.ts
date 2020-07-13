@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, OneToMany, Column } from 'typeorm';
+import { Entity, OneToMany, Column, OneToOne, JoinColumn } from 'typeorm';
 import { ExternalEntity } from './BaseEntity';
 import { ObjectType, Field } from 'type-graphql';
 import { Organization } from './Organization';
@@ -35,6 +35,7 @@ export class Router extends ExternalEntity {
     rules!: Lazy<RouterRule[]>;
 
     @Field(() => Organization)
-    @ManyToOne(() => Organization, { lazy: true })
+    @OneToOne(() => Organization, { lazy: true })
+    @JoinColumn()
     organization!: Lazy<Organization>;
 }

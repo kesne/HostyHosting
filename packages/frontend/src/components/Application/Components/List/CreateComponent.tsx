@@ -72,7 +72,6 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 label="Label"
                                 name="label"
                                 register={{ required: true }}
-                                autoComplete="off"
                                 assignOnChange={({ label }) => ({
                                     name: paramCase(label),
                                 })}
@@ -81,13 +80,11 @@ export default function CreateComponent({ visible, onClose }: Props) {
                                 label="Name"
                                 name="name"
                                 register={{ required: true }}
-                                autoComplete="off"
                             />
                             <Input
                                 label="Image Name"
                                 name="image"
                                 register={{ required: true }}
-                                autoComplete="off"
                             />
                             {/* TODO: Make this a two-up big button UI. */}
                             <Select

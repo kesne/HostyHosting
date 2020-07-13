@@ -125,15 +125,8 @@ input CreateEnvironmentInput {
   label: String!
 }
 
-input CreateRouterInput {
-  organizationID: ID!
-  label: String!
-}
-
 input CreateRouterRuleInput {
-  routerID: ID!
-  componentID: ID!
-  environmentID: ID!
+  containerGroupID: ID!
   domain: String!
   pathPrefix: String
   forwardPathPrefix: Boolean
@@ -156,10 +149,6 @@ input DeleteApplicationInput {
 
 input DeleteComponentInput {
   componentID: ID!
-}
-
-input DeleteRouterInput {
-  routerID: ID!
 }
 
 input DeleteSecretInput {
@@ -207,8 +196,6 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
-  createRouter(input: CreateRouterInput!): Router!
-  deleteRouter(input: DeleteRouterInput!): Router!
   createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
@@ -249,7 +236,7 @@ type Organization {
   name: String!
   maxComputeUnits: Float!
   environments: [Environment!]!
-  routers: [Router!]!
+  router: Router!
   applications(limit: Int!, offset: Int): ApplicationConnection!
   application(name: String!): Application!
   memberCount: Int!
@@ -269,7 +256,7 @@ type Query {
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
   organization(username: String!): Organization!
-  router(id: ID!): Router!
+  router(organization: String!): Router!
   viewer: User!
 }
 
@@ -294,8 +281,7 @@ type RouterRule {
   domain: String!
   pathPrefix: String
   forwardPathPrefix: Boolean
-  component: Component!
-  environment: Environment!
+  containerGroup: ContainerGroup!
 }
 
 type RouterRuleConnection {

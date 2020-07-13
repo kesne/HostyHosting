@@ -33,7 +33,7 @@ export default function Reset() {
 
     return (
         <Container title="Finish resetting your password">
-            <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
+            <Form autoComplete="on" className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
                 <p className="text-sm leading-5 text-gray-700">
                     You can set a new password for your account below, which can be used for all
                     future sign-ins.
@@ -43,6 +43,7 @@ export default function Reset() {
                     label="Password"
                     name="password"
                     type="password"
+                    autoComplete="new-password"
                     register={{ required: true }}
                     autoFocus
                 />

@@ -56,7 +56,6 @@ export default function CreateEnvironment({ organization, open, onClose }: Props
                             label="Label"
                             name="label"
                             register={{ required: true }}
-                            autoComplete="off"
                             assignOnChange={({ label }) => ({
                                 name: paramCase(label),
                             })}

@@ -40,9 +40,9 @@ export default function EmailPassword({ onSignIn, onRequiresTOTP }: Props) {
     };
 
     return (
-        <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
-            <Input label="Email address" name="email" register={{ required: true }} autoFocus />
-            <Input label="Password" name="password" type="password" register={{ required: true }} />
+        <Form autoComplete="on" className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
+            <Input label="Email address" autoComplete="email" name="email" register={{ required: true }} autoFocus />
+            <Input label="Password" autoComplete="current-password" name="password" type="password" register={{ required: true }} />
             <div className="flex items-center justify-between">
                 <Checkbox label="Remember Me" />
                 <span className="text-sm leading-5">

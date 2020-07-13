@@ -1,12 +1,14 @@
 import { Entity, Column, ManyToOne, BeforeInsert, BeforeUpdate, OneToMany, Unique } from 'typeorm';
 import { Component, DeploymentStrategy } from './Component';
-import { ObjectType, Field, registerEnumType } from 'type-graphql';
+import { ObjectType, Field, registerEnumType, ForbiddenError } from 'type-graphql';
 import { Min } from 'class-validator';
 import { ExternalEntity } from './BaseEntity';
 import { Lazy } from '../types';
 import { Environment } from './Environment';
 import { Organization } from './Organization';
 import { Secret } from './Secret';
+import { User } from './User';
+import { OrganizationMembership, OrganizationPermission, permissionIsAtLeast } from './OrganizationMembership';
 
 export enum ContainerSize {
     S1x1 = 'S1x1', // 1 Compute Unit, 128 mb
@@ -37,6 +39,25 @@ export function containerCountAndSizeToComputeUnits(count: number, size: Contain
 @ObjectType()
 @Unique(['component', 'environment'])
 export class ContainerGroup extends ExternalEntity {
+    static async findForUser(user: User, id: string, permission?: OrganizationPermission) {
+        const containerGroup = await this.findOneOrFail({
+            where: { id },
+        });
+
+        const membership = await OrganizationMembership.findOneOrFail({
+            where: {
+                user,
+                organization: await containerGroup.organization,
+            },
+        });
+
+        if (permission && !permissionIsAtLeast(permission, membership.permission)) {
+            throw new ForbiddenError();
+        }
+
+        return containerGroup;
+    }
+
     @Field(() => ContainerSize)
     @Column({ type: 'enum', enum: ContainerSize })
     readonly size!: ContainerSize;

@@ -48,14 +48,15 @@ export default function SignUp() {
                 </span>
             }
         >
-            <Form className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
-                <Input label="Username" name="username" register={{ required: true }} autoFocus />
-                <Input label="Name" name="name" register={{ required: true }} />
-                <Input label="Email" name="email" register={{ required: true }} />
+            <Form autoComplete="on" className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
+                <Input label="Username" autoComplete="username" name="username" register={{ required: true }} autoFocus />
+                <Input label="Name" autoComplete="name" name="name" register={{ required: true }} />
+                <Input label="Email" autoComplete="email" name="email" register={{ required: true }} />
                 <Input
                     label="Password"
                     name="password"
                     type="password"
+                    autoComplete="new-password"
                     register={{ required: true }}
                 />
 

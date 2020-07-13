@@ -1,10 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
 import { ExternalEntity } from './BaseEntity';
-import { Component } from './Component';
-import { Environment } from './Environment';
 import { Lazy } from '../types';
 import { Router } from './Router';
+import { ContainerGroup } from './ContainerGroup';
 
 @ObjectType()
 @Entity()
@@ -24,12 +23,7 @@ export class RouterRule extends ExternalEntity {
     @Column({ nullable: true })
     forwardPathPrefix?: boolean;
 
-    // TODO: Should this be a ContainerGroup or should we keep it at this level?
-    @Field(() => Component)
-    @ManyToOne(() => Component, { lazy: true })
-    component!: Lazy<Component>;
-
-    @Field(() => Environment)
-    @ManyToOne(() => Environment, { lazy: true })
-    environment!: Lazy<Environment>;
+    @Field(() => ContainerGroup)
+    @ManyToOne(() => ContainerGroup, { lazy: true })
+    containerGroup!: Lazy<ContainerGroup>;
 }

@@ -60,7 +60,6 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                             name="label"
                             label="Label"
                             register={{ required: true }}
-                            autoComplete="off"
                             assignOnChange={({ label }) => ({
                                 name: paramCase(label),
                             })}
@@ -69,7 +68,6 @@ export default function CreateApplication({ organization, visible, onClose }: Pr
                             name="name"
                             label="Name"
                             register={{ required: true }}
-                            autoComplete="off"
                         />
                         <TextArea name="description" label="Description" />
                     </div>

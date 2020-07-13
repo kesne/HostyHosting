@@ -2,33 +2,33 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
-export type CreateRouterInput = {
-    organizationID: string;
-    label: string;
+export type CreateRouterRuleInput = {
+    containerGroupID: string;
+    domain: string;
+    pathPrefix?: string | null;
+    forwardPathPrefix?: boolean | null;
 };
-export type CreateRouterMutationVariables = {
-    input: CreateRouterInput;
+export type CreateRouterRuleMutationVariables = {
+    input: CreateRouterRuleInput;
 };
-export type CreateRouterMutationResponse = {
-    readonly createRouter: {
+export type CreateRouterRuleMutationResponse = {
+    readonly createRouterRule: {
         readonly id: string;
-        readonly label: string;
     };
 };
-export type CreateRouterMutation = {
-    readonly response: CreateRouterMutationResponse;
-    readonly variables: CreateRouterMutationVariables;
+export type CreateRouterRuleMutation = {
+    readonly response: CreateRouterRuleMutationResponse;
+    readonly variables: CreateRouterRuleMutationVariables;
 };
 
 
 
 /*
-mutation CreateRouterMutation(
-  $input: CreateRouterInput!
+mutation CreateRouterRuleMutation(
+  $input: CreateRouterRuleInput!
 ) {
-  createRouter(input: $input) {
+  createRouterRule(input: $input) {
     id
-    label
   }
 }
 */
@@ -39,7 +39,7 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input",
-    "type": "CreateRouterInput!"
+    "type": "CreateRouterRuleInput!"
   }
 ],
 v1 = [
@@ -52,9 +52,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Router",
+    "concreteType": "RouterRule",
     "kind": "LinkedField",
-    "name": "createRouter",
+    "name": "createRouterRule",
     "plural": false,
     "selections": [
       {
@@ -62,13 +62,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "label",
         "storageKey": null
       }
     ],
@@ -80,7 +73,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "CreateRouterMutation",
+    "name": "CreateRouterRuleMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation"
   },
@@ -88,17 +81,17 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "CreateRouterMutation",
+    "name": "CreateRouterRuleMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
     "id": null,
     "metadata": {},
-    "name": "CreateRouterMutation",
+    "name": "CreateRouterRuleMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateRouterMutation(\n  $input: CreateRouterInput!\n) {\n  createRouter(input: $input) {\n    id\n    label\n  }\n}\n"
+    "text": "mutation CreateRouterRuleMutation(\n  $input: CreateRouterRuleInput!\n) {\n  createRouterRule(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '092c2c72df0230b04bebc0697fc99c76';
+(node as any).hash = 'f8b9e2f321b3e4afd7a4d38d5f6aed67';
 export default node;

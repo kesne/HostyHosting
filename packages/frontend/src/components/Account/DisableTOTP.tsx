@@ -37,7 +37,7 @@ export default function DisableTOTP({ visible, onClose }: Props) {
 
     return (
         <Modal open={visible} onClose={onClose}>
-            <Form onSubmit={handleOk} disabled={isInFlight}>
+            <Form autoComplete="on" onSubmit={handleOk} disabled={isInFlight}>
                 <ModalContent title="Disable Two Factor Authentication">
                     <p className="text-gray-800 text-sm font-normal mb-4">
                         Please enter your password to disable two-factor authentication on your
@@ -48,6 +48,7 @@ export default function DisableTOTP({ visible, onClose }: Props) {
                         type="password"
                         label="Password"
                         placeholder="Password..."
+                        autoComplete="current-password"
                         register={{ required: true }}
                         autoFocus
                     />

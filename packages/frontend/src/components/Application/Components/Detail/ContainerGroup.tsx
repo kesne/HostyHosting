@@ -8,7 +8,7 @@ import CreateContainerGroup from './CreateContainerGroup';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { ContainerGroupQuery } from './__generated__/ContainerGroupQuery.graphql';
 import { usePagination } from '../../../ui/Pagination';
-import CreateRouterRule from '../../../Router/CreateRouterRule';
+import CreateRouterRule from './CreateRouterRule';
 import List, { ListItem } from '../../../ui/List';
 
 type Props = {
@@ -127,22 +127,19 @@ export default function ContainerGroup({ component, environment }: Props) {
                                         <div className="font-mono text-gray-900">
                                             {routerRule.domain}
                                             {routerRule.pathPrefix && (
-                                            <span className="text-gray-500">
-                                                <span className="mx-1">/</span>{routerRule.pathPrefix}
-                                            </span>
+                                                <span className="text-gray-500">
+                                                    <span className="mx-1">/</span>
+                                                    {routerRule.pathPrefix}
+                                                </span>
                                             )}
                                         </div>
                                     </ListItem>
                                 )}
                             </List>
                             <CreateRouterRule
-                                organization={containerGroup.organization.username}
-                                application={data.component.application.id}
-                                component={data.component.id}
-                                environment={containerGroup.environment.id}
+                                containerGroup={containerGroup.id}
                                 open={creatingRouterRule}
                                 onClose={creatingRouterRuleOff}
-                                disableComponentSelection
                             />
                         </Card>
                     </div>

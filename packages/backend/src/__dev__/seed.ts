@@ -40,6 +40,8 @@ async function seed() {
     // Start by removing the ENTIRE world.
     await APIKey.delete({});
     await Secret.delete({});
+    await RouterRule.delete({});
+    await Router.delete({});
     await ContainerGroup.delete({});
     await Component.delete({});
     await Application.delete({});
@@ -76,10 +78,16 @@ async function seed() {
     netflixOrg.environments = Environment.createDefaultEnvironments(netflixOrg);
     await netflixOrg.save();
 
+    const netflixRouter = new Router();
+    netflixRouter.label = 'Default';
+    netflixRouter.organization = netflixOrg;
+    await netflixRouter.save();
+
     const netflixMembership = new OrganizationMembership();
     netflixMembership.user = user;
     netflixMembership.organization = netflixOrg;
     netflixMembership.permission = OrganizationPermission.ADMIN;
+
     await netflixMembership.save();
 }
 
