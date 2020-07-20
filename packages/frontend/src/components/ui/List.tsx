@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import OptionalLink from './util/OptionalLink';
+import { Connection } from './types';
 
 export function ListItem({ to, children }: { to?: string; children: React.ReactNode }) {
     return (
@@ -39,12 +40,6 @@ export function ListItem({ to, children }: { to?: string; children: React.ReactN
         </li>
     );
 }
-
-type Connection<T> = {
-    readonly edges: ReadonlyArray<{
-        readonly node: T;
-    }>;
-};
 
 export default function List<T>({
     items,

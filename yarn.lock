@@ -1157,9 +1157,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.7.6":
-  version "7.9.6"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.6.tgz#a9102eb5cadedf3f31d08a9ecf294af7827ea29f"
-  integrity sha512-64AF1xY3OAkFHqOb9s4jpgk1Mm5vDZ4L3acHvAml+53nO1XbXLuDodsVpO4OIUsmemlUHMxNdYMNJmsvOwLrvQ==
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.5.tgz#303d8bd440ecd5a491eae6117fd3367698674c5c"
+  integrity sha512-otddXKhdNn7d0ptoFRHtMLa8LqDxLYwTjB4nYgM1yy5N6gU/MUf8zqyyLltCH3yAVitBzmwK4us+DD0l/MauAg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -9099,10 +9099,10 @@ highlight.js@^9.6.0:
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.18.1.tgz#ed21aa001fe6252bb10a3d76d47573c6539fe13c"
   integrity sha512-OrVKYz70LHsnCgmbXctv/bfuvntIKDz177h0Co37DQ5jamGZLVmoCVMtjMtNZY3X9DrCcKfklHPNeA0uPZhSJg==
 
-history@5.0.0-beta.9:
-  version "5.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/history/-/history-5.0.0-beta.9.tgz#fe230706c18c5f7f132001e55215e71b4aaab6d6"
-  integrity sha512-iLpu0fzu3iM041KDMNsawyB6YZjPLB+Bn+Pvq2lMnY7xxpxDIYvEz7r4et3Na8FthWzbYeukjl74ZKGWXcLhIA==
+history@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/history/-/history-5.0.0.tgz#0cabbb6c4bbf835addb874f8259f6d25101efd08"
+  integrity sha512-3NyRMKIiFSJmIPdq7FxkNMJkQ7ZEtVblOQ38VtKaA0zZMW1Eo6Q6W8oDKEflr1kNNTItSnk4JMCO1deeSgbLLg==
   dependencies:
     "@babel/runtime" "^7.7.6"
 
@@ -14175,36 +14175,19 @@ react-relay@^0.0.0-experimental-895a6fe0:
     nullthrows "^1.1.1"
     relay-runtime "9.1.0"
 
-react-router-dom@^0.0.0-experimental-b1ff171f:
-  version "0.0.0-experimental-b1ff171f"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-0.0.0-experimental-b1ff171f.tgz#5841bcc2f6abc3d3e56da244e48bd0f0b8fd261a"
-  integrity sha512-2ntU6gm7h9U6vxBEeOUjK60/6dutjzexZgBywb2hCLwxGSBue6CgBc0rM/6um6wmK9k949b+QhXTcctiPmtfOg==
+react-router-dom@^0.0.0-experimental-ffd8c7d0:
+  version "0.0.0-experimental-ffd8c7d0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-0.0.0-experimental-ffd8c7d0.tgz#8742c2c7dbbc01237ea2fb97005ec3ace4be6937"
+  integrity sha512-tu8XLvu7ZpOeCP6xO4lNGzf+Iy9G8ElsiU/UlC/T4gb5ZbfxB/IAfZIKSzgqn8+Oh/dGca+1Xr1HZbKrib2Hfw==
   dependencies:
-    history "5.0.0-beta.9"
     prop-types "^15.7.2"
+    react-router "0.0.0-experimental-ffd8c7d0"
 
-react-router-dom@^6.0.0-alpha.5:
-  version "6.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.0.0-alpha.5.tgz#3c3e22226ee610eb91042a351741ce3f53596323"
-  integrity sha512-xo3VM55aE563uyZBPoUplfCPOYKJmTP2oA8wamm0k4K07e/6T4x4DDunS5Gu2VIy+m2+5mZp8n0rT6S+tYCb6Q==
+react-router@0.0.0-experimental-ffd8c7d0:
+  version "0.0.0-experimental-ffd8c7d0"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-0.0.0-experimental-ffd8c7d0.tgz#ccc6187d554a4082bc503ad392318d407ea652ac"
+  integrity sha512-DMEkLwdFfpKnPaQi2M739iIW4erffoAF/fkbxE8j9c/uIqyX+Sy632DEGt8UsoCJEGNfrkaIUFmNqfTSz2JBzA==
   dependencies:
-    history "5.0.0-beta.9"
-    prop-types "^15.7.2"
-
-react-router@^0.0.0-experimental-b1ff171f:
-  version "0.0.0-experimental-b1ff171f"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-0.0.0-experimental-b1ff171f.tgz#8047f7b3afa6bc90ad7cd3aa74e31abd675bbe09"
-  integrity sha512-Mg+XGkQifxJ+UeyuVPklV78Tookfyh0Exm8iwIiCGlbMk66bk/+caj7l05eBvWlPR18j0SAuxboD3UQsNhbUtw==
-  dependencies:
-    history "5.0.0-beta.9"
-    prop-types "^15.7.2"
-
-react-router@^6.0.0-alpha.5:
-  version "6.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.0.0-alpha.5.tgz#c98805e50dc0e64787aa8aa4fa6753b435f2496b"
-  integrity sha512-cDj70bTUAgcfx6b5Fx1+wVlBSDVZGo8N+GUDk/yNFDCyGLfAsFlRpS3BhQqx8c49w2cCW+OrXxFhB4cbLZxWJw==
-  dependencies:
-    history "5.0.0-beta.9"
     prop-types "^15.7.2"
 
 react-side-effect@^1.1.0:

@@ -4,7 +4,7 @@ import Modal, { ModalContent, ModalFooter } from '../../../ui/Modal';
 import Button, { ButtonGroup } from '../../../ui/Button';
 import Tabs from '../../../ui/Tabs';
 import { useMutation, graphql } from 'react-relay/hooks';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import {
     CreateComponentMutation,
     DeploymentStrategy,

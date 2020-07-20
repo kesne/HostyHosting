@@ -239,7 +239,34 @@ type Organization {
   router: Router!
   applications(limit: Int!, offset: Int): ApplicationConnection!
   application(name: String!): Application!
+  members(limit: Int!, offset: Int): OrganizationMembershipConnection!
   memberCount: Int!
+}
+
+type OrganizationMembership {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  permission: OrganizationPermission!
+  user: User!
+}
+
+type OrganizationMembershipConnection {
+  pageInfo: PageInfo!
+  edges: [OrganizationMembershipEdge!]!
+}
+
+type OrganizationMembershipEdge {
+  node: OrganizationMembership!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
+}
+
+enum OrganizationPermission {
+  READ
+  WRITE
+  ADMIN
 }
 
 type PageInfo {

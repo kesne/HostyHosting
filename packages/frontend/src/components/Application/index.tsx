@@ -1,5 +1,5 @@
 import React, { useMemo, Suspense } from 'react';
-import { useParams, Routes, Route, Outlet, useMatch, useResolvedLocation } from 'react-router-dom';
+import { useParams, Routes, Route, Outlet, useMatch, useResolvedPath } from 'react-router-dom';
 import Settings from './Settings';
 import Overview from './Overview';
 import Components from './Components';
@@ -14,7 +14,7 @@ import Loader from './Loader';
 import Badge from '../ui/Badge';
 
 function ApplicationLayout({ name }: { name: string }) {
-    const { pathname } = useResolvedLocation('.');
+    const { pathname } = useResolvedPath('.');
     const pageMatch = useMatch(`${pathname}/:page`);
 
     return (

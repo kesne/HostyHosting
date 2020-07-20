@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, graphql } from 'react-relay/hooks';
 import Button from '../../../ui/Button';
 import { DeleteComponentMutation } from './__generated__/DeleteComponentMutation.graphql';

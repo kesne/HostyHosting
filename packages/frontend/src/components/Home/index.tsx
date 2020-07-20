@@ -1,14 +1,32 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useParams } from 'react-router-dom';
 import Container from '../ui/Container';
 import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
 import Applications from './Applications';
+import Members from './Members';
 import Environments from './Environments';
 import SelectOrganization from './SelectOrganization';
 import PageLoading from './PageLoading';
+import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
+import { HomeQuery } from './__generated__/HomeQuery.graphql';
 
 export default function Home() {
     const { pathname } = useLocation();
+    const params = useParams();
+
+    const data = useLazyLoadQuery<HomeQuery>(
+        graphql`
+            query HomeQuery($organization: String!) {
+                organization(username: $organization) {
+                    id
+                    isPersonal
+                }
+            }
+        `,
+        {
+            organization: params.organization,
+        },
+    );
 
     return (
         <Container className="flex-1 flex flex-col">
@@ -20,6 +38,15 @@ export default function Home() {
                             <VerticalNav value={pathname}>
                                 <VerticalNavItem to="." label="Applications" />
                                 <VerticalNavItem to="environments" label="Environments" />
+                                {!data.organization.isPersonal && (
+                                    <>
+                                        <div className="border-t border-gray-200 my-2" />
+                                        <h4 className="uppercase text-xs font-semibold text-gray-500 pt-2">
+                                            Organization Management
+                                        </h4>
+                                        <VerticalNavItem to="members" label="Members" />
+                                    </>
+                                )}
                             </VerticalNav>
                         </div>
                     </div>
@@ -29,6 +56,7 @@ export default function Home() {
                         <Routes>
                             <Route path="/" element={<Applications />} />
                             <Route path="environments" element={<Environments />} />
+                            <Route path="members" element={<Members />} />
                         </Routes>
                     </Suspense>
                 </div>

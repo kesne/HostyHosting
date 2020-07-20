@@ -7,6 +7,7 @@ import { createConnection, ConnectionArgs, LimitOffsetArgs } from './types/Pagin
 import { Like } from 'typeorm';
 
 const [ApplicationConnection] = createConnection(Application);
+const [OrganizationMembershipConnection] = createConnection(OrganizationMembership);
 
 @Resolver(() => Organization)
 export class OrganizationResolver {
@@ -38,6 +39,19 @@ export class OrganizationResolver {
         @Arg('name') name: string,
     ) {
         return await Application.findForUserAndOrganization(user, organization, name);
+    }
+
+    @FieldResolver(() => OrganizationMembershipConnection)
+    async members(@Root() organization: Organization, @Args() args: LimitOffsetArgs) {
+        return await OrganizationMembership.findAndPaginate<Application>(
+            {
+                relations: ['user'],
+                where: {
+                    organization,
+                },
+            },
+            args,
+        );
     }
 
     @FieldResolver(() => Int)

@@ -30,6 +30,7 @@ function SelectOrganizationWithData() {
                     id
                     name
                     username
+                    isPersonal
                     memberCount
                 }
             }
@@ -44,7 +45,11 @@ function SelectOrganizationWithData() {
             <div className="flex items-center mt-2">
                 <div className="flex-1">
                     <h3 className="text-gray-900">{data.organization.name}</h3>
-                    <p className="text-sm text-gray-700">{data.organization.memberCount} members</p>
+                    {!data.organization.isPersonal && (
+                        <p className="text-sm text-gray-700">
+                            {data.organization.memberCount} members
+                        </p>
+                    )}
                 </div>
                 <BaseDropdown
                     Component={({ onClick }) => (

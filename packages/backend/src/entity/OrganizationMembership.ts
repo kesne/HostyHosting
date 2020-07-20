@@ -4,9 +4,9 @@ import {
     Column,
 } from 'typeorm';
 import { User } from './User';
-import { InternalEntity } from './BaseEntity';
+import { ExternalEntity } from './BaseEntity';
 import { Organization } from './Organization';
-import { registerEnumType } from 'type-graphql';
+import { registerEnumType, Field, ObjectType } from 'type-graphql';
 
 export enum OrganizationPermission {
     // Allow reading anything but no mutations
@@ -34,8 +34,10 @@ registerEnumType(OrganizationPermission, {
     name: 'OrganizationPermission',
 });
 
+@ObjectType()
 @Entity()
-export class OrganizationMembership extends InternalEntity {
+export class OrganizationMembership extends ExternalEntity {
+    @Field(() => OrganizationPermission)
     @Column({ type: 'enum', enum: OrganizationPermission, default: OrganizationPermission.READ })
     permission!: OrganizationPermission;
 
@@ -45,6 +47,7 @@ export class OrganizationMembership extends InternalEntity {
     )
     organization!: Organization;
 
+    @Field(() => User)
     @ManyToOne(
         () => User,
         user => user.organizationMemberships,

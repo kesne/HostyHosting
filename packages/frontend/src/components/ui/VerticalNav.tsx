@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate, useMatch, useResolvedLocation, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useResolvedPath, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from './constants';
@@ -15,7 +15,7 @@ export function VerticalNavItem({
 }) {
     const small = useMediaQuery(MEDIA_QUERIES.SMALL);
     const location = useLocation();
-    const toLocation = useResolvedLocation(to);
+    const toLocation = useResolvedPath(to);
 
     const selected = location.pathname === toLocation.pathname;
 

@@ -22,6 +22,7 @@ export type SelectOrganizationQueryResponse = {
         readonly id: string;
         readonly name: string;
         readonly username: string;
+        readonly isPersonal: boolean;
         readonly memberCount: number;
     };
 };
@@ -52,6 +53,7 @@ query SelectOrganizationQuery(
     id
     name
     username
+    isPersonal
     memberCount
   }
 }
@@ -148,6 +150,13 @@ v4 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "isPersonal",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "memberCount",
         "storageKey": null
       }
@@ -176,9 +185,9 @@ return {
     "metadata": {},
     "name": "SelectOrganizationQuery",
     "operationKind": "query",
-    "text": "query SelectOrganizationQuery(\n  $organization: String!\n) {\n  viewer {\n    id\n    personalOrganization {\n      id\n      username\n    }\n    organizations {\n      id\n      name\n      username\n    }\n  }\n  organization(username: $organization) {\n    id\n    name\n    username\n    memberCount\n  }\n}\n"
+    "text": "query SelectOrganizationQuery(\n  $organization: String!\n) {\n  viewer {\n    id\n    personalOrganization {\n      id\n      username\n    }\n    organizations {\n      id\n      name\n      username\n    }\n  }\n  organization(username: $organization) {\n    id\n    name\n    username\n    isPersonal\n    memberCount\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '90b7371f38db0c7f935becb984ee2838';
+(node as any).hash = '08ca8e69d2dff27b7fe4cb7c4983b551';
 export default node;
