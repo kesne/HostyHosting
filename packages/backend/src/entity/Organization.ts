@@ -43,7 +43,7 @@ export class Organization extends ExternalEntity {
 
         const router = new Router();
         router.organization = organization;
-        router.label = "Default";
+        router.label = 'Default';
 
         organization.memberships = [membership];
         organization.environments = Environment.createDefaultEnvironments(organization);
@@ -150,5 +150,20 @@ export class Organization extends ExternalEntity {
         if (permission && !permissionIsAtLeast(permission, membership.permission)) {
             throw new ForbiddenError();
         }
+    }
+
+    async addUserToOrganization(user: User, permission: OrganizationPermission) {
+        const membership = OrganizationMembership.create({
+            // TODO: I need to figure out why I need to expand these entites like this, but if I don't, it fails.
+            user: {
+                id: user.id,
+            },
+            organization: {
+                id: this.id,
+            },
+            permission,
+        });
+
+        return membership.save();
     }
 }

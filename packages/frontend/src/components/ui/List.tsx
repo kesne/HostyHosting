@@ -52,11 +52,13 @@ export default function List<T>({
 }) {
     const nodes = useMemo(() => {
         if (items) {
-            return items;
+            return items.filter(Boolean);
         }
+
         if (connection) {
-            return connection.edges.map(({ node }) => node);
+            return connection.edges.map(({ node }) => node).filter(Boolean);
         }
+
         return [];
     }, [items, connection]);
 

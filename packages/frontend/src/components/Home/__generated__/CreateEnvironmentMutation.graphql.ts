@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type CreateEnvironmentInput = {
@@ -41,8 +42,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "CreateEnvironmentInput!"
+    "name": "input"
   }
 ],
 v1 = [
@@ -92,7 +92,8 @@ return {
     "metadata": null,
     "name": "CreateEnvironmentMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -102,6 +103,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "b940778b45b3b7b0bf9e8ab455511a6b",
     "id": null,
     "metadata": {},
     "name": "CreateEnvironmentMutation",

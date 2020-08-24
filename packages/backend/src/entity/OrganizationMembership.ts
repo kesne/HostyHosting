@@ -8,6 +8,7 @@ import { ExternalEntity } from './BaseEntity';
 import { Organization } from './Organization';
 import { registerEnumType, Field, ObjectType } from 'type-graphql';
 
+// TODO: Should these be integers so that it's easy to tell what we can do?
 export enum OrganizationPermission {
     // Allow reading anything but no mutations
     READ = 'READ',

@@ -5,7 +5,6 @@ import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from '../ui/constants';
 import Notifications from './Notifications';
 import UserInfo from './UserInfo';
-import HeaderLink from './HeaderLink';
 
 export default function SignedInHeader() {
     const [navOpen, { toggle: navToggle, off: navOff }] = useBoolean(false);
@@ -18,13 +17,6 @@ export default function SignedInHeader() {
         }
     }, [mediumOrBigger]);
 
-    const headerLinks = (
-        <>
-            <HeaderLink to="/">Dashboard</HeaderLink>
-            <HeaderLink to="/organizations">Organizations</HeaderLink>
-        </>
-    );
-
     return (
         <nav className="bg-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,9 +25,6 @@ export default function SignedInHeader() {
                         <Link to="/" className="flex-shrink-0 text-white text-lg font-semibold">
                             HostyHosting
                         </Link>
-                        {mediumOrBigger && (
-                            <div className="ml-10 flex items-baseline">{headerLinks}</div>
-                        )}
                     </div>
                     {mediumOrBigger ? (
                         <div className="ml-4 flex items-center md:ml-6">
@@ -102,7 +91,6 @@ export default function SignedInHeader() {
             </div>
             {!mediumOrBigger && navOpen && (
                 <div>
-                    <div className="px-2 pt-2 pb-3 sm:px-3">{headerLinks}</div>
                     <div className="pt-4 pb-3 border-t border-gray-700">
                         <Suspense fallback={null}>
                             <UserInfo />

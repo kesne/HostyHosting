@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type DisableTOTPInput = {
@@ -37,8 +38,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "DisableTOTPInput!"
+    "name": "input"
   }
 ],
 v1 = [
@@ -81,7 +81,8 @@ return {
     "metadata": null,
     "name": "DisableTOTPMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -91,6 +92,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "545bf730e06fa95f375e430103da9145",
     "id": null,
     "metadata": {},
     "name": "DisableTOTPMutation",

@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type IndexRedirectQueryVariables = {};
@@ -60,7 +61,8 @@ return {
     "metadata": null,
     "name": "IndexRedirectQuery",
     "selections": (v0/*: any*/),
-    "type": "Query"
+    "type": "Query",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -70,6 +72,7 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
+    "cacheID": "9927e4fcea6c3d266adc50a35cb47801",
     "id": null,
     "metadata": {},
     "name": "IndexRedirectQuery",

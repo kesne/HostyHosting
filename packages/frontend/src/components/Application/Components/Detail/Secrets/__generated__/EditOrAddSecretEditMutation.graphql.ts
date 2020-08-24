@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type UpdateSecretInput = {
@@ -41,8 +42,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "UpdateSecretInput!"
+    "name": "input"
   }
 ],
 v1 = [
@@ -92,7 +92,8 @@ return {
     "metadata": null,
     "name": "EditOrAddSecretEditMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -102,6 +103,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "22d053c74bcc910104cc6daebf333f5e",
     "id": null,
     "metadata": {},
     "name": "EditOrAddSecretEditMutation",

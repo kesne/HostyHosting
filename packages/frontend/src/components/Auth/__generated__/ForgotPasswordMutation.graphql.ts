@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type ForgotPasswordMutationVariables = {
@@ -32,8 +33,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "email",
-    "type": "String!"
+    "name": "email"
   }
 ],
 v1 = [
@@ -69,7 +69,8 @@ return {
     "metadata": null,
     "name": "ForgotPasswordMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -79,6 +80,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "c5e5bc3648c0b9611f4cf19418c123ee",
     "id": null,
     "metadata": {},
     "name": "ForgotPasswordMutation",

@@ -151,6 +151,10 @@ input DeleteComponentInput {
   componentID: ID!
 }
 
+input DeleteOrganizationMembershipInput {
+  id: ID!
+}
+
 input DeleteSecretInput {
   secretID: ID!
 }
@@ -184,6 +188,13 @@ type ExternalEntity {
   updatedAt: DateTime!
 }
 
+input InviteToOrganizationInput {
+  organizationID: ID!
+  name: String!
+  email: String!
+  permission: OrganizationPermission!
+}
+
 type Mutation {
   createAPIKeyRequest: String!
   grantAPIKey(uuid: String!): Result!
@@ -196,6 +207,9 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
+  deleteOrganizationMembership(input: DeleteOrganizationMembershipInput!): TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns!
+  updateOrganizationMembership(input: UpdateOrganizationMembershipInput!): OrganizationMembership!
+  inviteToOrganization(input: InviteToOrganizationInput!): OrganizationMembership!
   createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
@@ -239,6 +253,7 @@ type Organization {
   router: Router!
   applications(limit: Int!, offset: Int): ApplicationConnection!
   application(name: String!): Application!
+  membership: OrganizationMembership!
   members(limit: Int!, offset: Int): OrganizationMembershipConnection!
   memberCount: Int!
 }
@@ -352,6 +367,10 @@ type SignInResult {
   requiresTOTP: Boolean!
 }
 
+type TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns {
+  id: ID
+}
+
 input UpdateApplicationInput {
   applicationID: ID!
   name: String
@@ -365,6 +384,11 @@ input UpdateComponentInput {
   label: String
   image: String
   deploymentStrategy: DeploymentStrategy
+}
+
+input UpdateOrganizationMembershipInput {
+  id: ID!
+  permission: OrganizationPermission!
 }
 
 input UpdateSecretInput {

@@ -66,6 +66,13 @@ async function seed() {
         password: 'admin',
     });
 
+    const otherUser = await User.signUp({
+        email: 'test@vapejuicejordan.rip',
+        name: 'Test User',
+        username: 'test',
+        password: 'test',
+    });
+
     // Allocate more max compute units to myself for testing:
     const personalOrg = await user.personalOrganization;
     personalOrg.maxComputeUnits = 100;
@@ -83,12 +90,8 @@ async function seed() {
     netflixRouter.organization = netflixOrg;
     await netflixRouter.save();
 
-    const netflixMembership = new OrganizationMembership();
-    netflixMembership.user = user;
-    netflixMembership.organization = netflixOrg;
-    netflixMembership.permission = OrganizationPermission.ADMIN;
-
-    await netflixMembership.save();
+    await netflixOrg.addUserToOrganization(user, OrganizationPermission.ADMIN);
+    await netflixOrg.addUserToOrganization(otherUser, OrganizationPermission.WRITE);
 }
 
 withConnection(seed);

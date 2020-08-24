@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type DeploymentStrategy = "RECREATE" | "REPLACE" | "%future added value";
@@ -61,14 +62,12 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "application",
-    "type": "ID!"
+    "name": "application"
   },
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "component",
-    "type": "ID!"
+    "name": "component"
   }
 ],
 v1 = {
@@ -174,7 +173,8 @@ return {
     "metadata": null,
     "name": "DetailComponentQuery",
     "selections": (v4/*: any*/),
-    "type": "Query"
+    "type": "Query",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -184,6 +184,7 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
+    "cacheID": "fa5193fd06da04c615eaa518c4dd1209",
     "id": null,
     "metadata": {},
     "name": "DetailComponentQuery",

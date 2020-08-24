@@ -3,29 +3,33 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type DeleteComponentInput = {
-    componentID: string;
+export type OrganizationPermission = "ADMIN" | "READ" | "WRITE" | "%future added value";
+export type InviteToOrganizationInput = {
+    organizationID: string;
+    name: string;
+    email: string;
+    permission: OrganizationPermission;
 };
-export type DeleteComponentMutationVariables = {
-    input: DeleteComponentInput;
+export type InviteMemberMutationVariables = {
+    input: InviteToOrganizationInput;
 };
-export type DeleteComponentMutationResponse = {
-    readonly deleteComponent: {
+export type InviteMemberMutationResponse = {
+    readonly inviteToOrganization: {
         readonly id: string;
     };
 };
-export type DeleteComponentMutation = {
-    readonly response: DeleteComponentMutationResponse;
-    readonly variables: DeleteComponentMutationVariables;
+export type InviteMemberMutation = {
+    readonly response: InviteMemberMutationResponse;
+    readonly variables: InviteMemberMutationVariables;
 };
 
 
 
 /*
-mutation DeleteComponentMutation(
-  $input: DeleteComponentInput!
+mutation InviteMemberMutation(
+  $input: InviteToOrganizationInput!
 ) {
-  deleteComponent(input: $input) {
+  inviteToOrganization(input: $input) {
     id
   }
 }
@@ -49,9 +53,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Component",
+    "concreteType": "OrganizationMembership",
     "kind": "LinkedField",
-    "name": "deleteComponent",
+    "name": "inviteToOrganization",
     "plural": false,
     "selections": [
       {
@@ -70,7 +74,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeleteComponentMutation",
+    "name": "InviteMemberMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -79,18 +83,18 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeleteComponentMutation",
+    "name": "InviteMemberMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "46352b4ca228f1be864c65066fdd13ad",
+    "cacheID": "4a86db8a5d34209d690cb8f307ac9177",
     "id": null,
     "metadata": {},
-    "name": "DeleteComponentMutation",
+    "name": "InviteMemberMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteComponentMutation(\n  $input: DeleteComponentInput!\n) {\n  deleteComponent(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation InviteMemberMutation(\n  $input: InviteToOrganizationInput!\n) {\n  inviteToOrganization(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'bf0b1b4d0962709d83828b42324e7889';
+(node as any).hash = 'd483bedbd850112971601419784cf1d4';
 export default node;

@@ -1,7 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
+import { FragmentRefs } from "relay-runtime";
 export type OrganizationPermission = "ADMIN" | "READ" | "WRITE" | "%future added value";
 export type MembersQueryVariables = {
     organization: string;
@@ -12,6 +14,10 @@ export type MembersQueryResponse = {
     readonly organization: {
         readonly id: string;
         readonly isPersonal: boolean;
+        readonly membership: {
+            readonly id: string;
+            readonly permission: OrganizationPermission;
+        };
         readonly members: {
             readonly pageInfo: {
                 readonly startCursor: string | null;
@@ -30,9 +36,11 @@ export type MembersQueryResponse = {
                         readonly name: string;
                         readonly username: string;
                     };
+                    readonly " $fragmentRefs": FragmentRefs<"EditMembership_organizationMembership" | "RemoveMembership_organizationMembership">;
                 };
             }>;
         };
+        readonly " $fragmentRefs": FragmentRefs<"InviteMember_organization">;
     };
 };
 export type MembersQuery = {
@@ -51,6 +59,10 @@ query MembersQuery(
   organization(username: $organization) {
     id
     isPersonal
+    membership {
+      id
+      permission
+    }
     members(limit: $limit, offset: $offset) {
       pageInfo {
         startCursor
@@ -69,183 +81,323 @@ query MembersQuery(
             name
             username
           }
+          ...EditMembership_organizationMembership
+          ...RemoveMembership_organizationMembership
         }
       }
     }
+    ...InviteMember_organization
+  }
+}
+
+fragment EditMembership_organizationMembership on OrganizationMembership {
+  id
+  permission
+  user {
+    id
+    name
+  }
+}
+
+fragment InviteMember_organization on Organization {
+  id
+  membership {
+    id
+    permission
+  }
+}
+
+fragment RemoveMembership_organizationMembership on OrganizationMembership {
+  id
+  user {
+    id
+    name
   }
 }
 */
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "organization"
+},
+v3 = [
   {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "organization",
-    "type": "String!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit",
-    "type": "Int!"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset",
-    "type": "Int"
+    "kind": "Variable",
+    "name": "username",
+    "variableName": "organization"
   }
 ],
-v1 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = [
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isPersonal",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "permission",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "OrganizationMembership",
+  "kind": "LinkedField",
+  "name": "membership",
+  "plural": false,
+  "selections": [
+    (v4/*: any*/),
+    (v6/*: any*/)
+  ],
+  "storageKey": null
+},
+v8 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "username",
-        "variableName": "organization"
-      }
-    ],
-    "concreteType": "Organization",
-    "kind": "LinkedField",
-    "name": "organization",
-    "plural": false,
-    "selections": [
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  }
+],
+v9 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PageInfo",
+  "kind": "LinkedField",
+  "name": "pageInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "startCursor",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "endCursor",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasPreviousPage",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "cursor",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "user",
+  "plural": false,
+  "selections": [
+    (v4/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "username",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
       (v1/*: any*/),
+      (v2/*: any*/)
+    ],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "MembersQuery",
+    "selections": [
       {
         "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "isPersonal",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "limit",
-            "variableName": "limit"
-          },
-          {
-            "kind": "Variable",
-            "name": "offset",
-            "variableName": "offset"
-          }
-        ],
-        "concreteType": "OrganizationMembershipConnection",
+        "args": (v3/*: any*/),
+        "concreteType": "Organization",
         "kind": "LinkedField",
-        "name": "members",
+        "name": "organization",
         "plural": false,
         "selections": [
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "concreteType": "PageInfo",
+            "args": (v8/*: any*/),
+            "concreteType": "OrganizationMembershipConnection",
             "kind": "LinkedField",
-            "name": "pageInfo",
+            "name": "members",
             "plural": false,
             "selections": [
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "startCursor",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "endCursor",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "hasPreviousPage",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "hasNextPage",
+                "concreteType": "OrganizationMembershipEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  (v10/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "OrganizationMembership",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      (v6/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "EditMembership_organizationMembership"
+                      },
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "RemoveMembership_organizationMembership"
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
           {
-            "alias": null,
             "args": null,
-            "concreteType": "OrganizationMembershipEdge",
+            "kind": "FragmentSpread",
+            "name": "InviteMember_organization"
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
+    "kind": "Operation",
+    "name": "MembersQuery",
+    "selections": [
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "Organization",
+        "kind": "LinkedField",
+        "name": "organization",
+        "plural": false,
+        "selections": [
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v7/*: any*/),
+          {
+            "alias": null,
+            "args": (v8/*: any*/),
+            "concreteType": "OrganizationMembershipConnection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "members",
+            "plural": false,
             "selections": [
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "cursor",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "OrganizationMembership",
+                "concreteType": "OrganizationMembershipEdge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
+                "name": "edges",
+                "plural": true,
                 "selections": [
-                  (v1/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "permission",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "User",
+                    "concreteType": "OrganizationMembership",
                     "kind": "LinkedField",
-                    "name": "user",
+                    "name": "node",
                     "plural": false,
                     "selections": [
-                      (v1/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "name",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "username",
-                        "storageKey": null
-                      }
+                      (v4/*: any*/),
+                      (v6/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -258,34 +410,17 @@ v2 = [
         ],
         "storageKey": null
       }
-    ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "MembersQuery",
-    "selections": (v2/*: any*/),
-    "type": "Query"
-  },
-  "kind": "Request",
-  "operation": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Operation",
-    "name": "MembersQuery",
-    "selections": (v2/*: any*/)
+    ]
   },
   "params": {
+    "cacheID": "c2c197c019a2929beee621e5692a2534",
     "id": null,
     "metadata": {},
     "name": "MembersQuery",
     "operationKind": "query",
-    "text": "query MembersQuery(\n  $organization: String!\n  $limit: Int!\n  $offset: Int\n) {\n  organization(username: $organization) {\n    id\n    isPersonal\n    members(limit: $limit, offset: $offset) {\n      pageInfo {\n        startCursor\n        endCursor\n        hasPreviousPage\n        hasNextPage\n      }\n      edges {\n        cursor\n        node {\n          id\n          permission\n          createdAt\n          user {\n            id\n            name\n            username\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MembersQuery(\n  $organization: String!\n  $limit: Int!\n  $offset: Int\n) {\n  organization(username: $organization) {\n    id\n    isPersonal\n    membership {\n      id\n      permission\n    }\n    members(limit: $limit, offset: $offset) {\n      pageInfo {\n        startCursor\n        endCursor\n        hasPreviousPage\n        hasNextPage\n      }\n      edges {\n        cursor\n        node {\n          id\n          permission\n          createdAt\n          user {\n            id\n            name\n            username\n          }\n          ...EditMembership_organizationMembership\n          ...RemoveMembership_organizationMembership\n        }\n      }\n    }\n    ...InviteMember_organization\n  }\n}\n\nfragment EditMembership_organizationMembership on OrganizationMembership {\n  id\n  permission\n  user {\n    id\n    name\n  }\n}\n\nfragment InviteMember_organization on Organization {\n  id\n  membership {\n    id\n    permission\n  }\n}\n\nfragment RemoveMembership_organizationMembership on OrganizationMembership {\n  id\n  user {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '6012a567d33c5392c9dcd7c497b187b8';
+(node as any).hash = 'bae4314143eb637dc543cfd04f1ee31b';
 export default node;

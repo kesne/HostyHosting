@@ -14,7 +14,7 @@ type BaseComponentProps = {
 export default function createFormComponent<Props extends BaseComponentProps>(
     Component: React.ComponentType<Props>,
 ): React.ComponentType<FormProps<Props>> {
-    function FormComponent({ assignOnChange, ...props }: FormProps<Props>) {
+    function FormComponent({ assignOnChange, register, ...props }: FormProps<Props>) {
         const form = useFormContext();
         const disabled = useContext(DisabledContext);
 
@@ -32,7 +32,7 @@ export default function createFormComponent<Props extends BaseComponentProps>(
         return (
             // @ts-ignore: TODO: Figure out this type error:
             <Component
-                ref={props.register ? form.register(props.register) : form.register}
+                ref={register ? form.register(register) : form.register}
                 errors={form.errors}
                 disabled={disabled}
                 {...props}

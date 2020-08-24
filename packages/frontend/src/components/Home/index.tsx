@@ -45,6 +45,8 @@ export default function Home() {
                                             Organization Management
                                         </h4>
                                         <VerticalNavItem to="members" label="Members" />
+                                        <VerticalNavItem to="billing" label="Billing" />
+                                        <VerticalNavItem to="settings" label="Settings" />
                                     </>
                                 )}
                             </VerticalNav>

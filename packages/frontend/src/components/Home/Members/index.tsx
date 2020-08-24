@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import HomePage from '../HomePage';
 import Button from '../../ui/Button';
-import List, { ListItem } from '../../ui/List';
 import useBoolean from '../../../utils/useBoolean';
 import { MembersQuery } from './__generated__/MembersQuery.graphql';
 import Pagination, { usePagination } from '../../ui/Pagination';
 import Table, { TableRow, TableHeader, TableDataCell } from '../../ui/Table';
 import formatDate from '../../../utils/formatDate';
+import InviteMember from './InviteMember';
+import RemoveMembership from './RemoveMembership';
+import EditMembership from './EditMembership';
 
 export default function Members() {
     const params = useParams();
@@ -22,6 +24,10 @@ export default function Members() {
                 organization(username: $organization) {
                     id
                     isPersonal
+                    membership {
+                        id
+                        permission
+                    }
                     members(limit: $limit, offset: $offset) {
                         pageInfo {
                             startCursor
@@ -40,9 +46,12 @@ export default function Members() {
                                     name
                                     username
                                 }
+                                ...EditMembership_organizationMembership
+                                ...RemoveMembership_organizationMembership
                             }
                         }
                     }
+                    ...InviteMember_organization
                 }
             }
         `,
@@ -60,9 +69,12 @@ export default function Members() {
             navigate('..');
         }
     }, [organization.isPersonal]);
+
     if (organization.isPersonal) {
         return null;
     }
+
+    const canEdit = organization.membership.permission === 'ADMIN';
 
     return (
         <>
@@ -83,6 +95,7 @@ export default function Members() {
                                 <TableHeader label="Username" />
                                 <TableHeader label="Permission" />
                                 <TableHeader label="Added" />
+                                {canEdit && <TableHeader label="" />}
                             </>
                         }
                     >
@@ -98,13 +111,21 @@ export default function Members() {
                                 <TableDataCell variant="secondary">
                                     {formatDate(membership.createdAt)}
                                 </TableDataCell>
+                                {canEdit && (
+                                    <TableDataCell>
+                                        <div className="text-right space-x-2">
+                                            <EditMembership membership={membership} />
+                                            <RemoveMembership membership={membership} />
+                                        </div>
+                                    </TableDataCell>
+                                )}
                             </TableRow>
                         )}
                     </Table>
                 </div>
                 <Pagination pageInfo={organization.members.pageInfo} {...paginationProps} />
             </HomePage>
-            {/* <CreateEnvironment organization={organization.id} open={create} onClose={off} /> */}
+            <InviteMember organization={organization} open={create} onClose={off} />
         </>
     );
 }

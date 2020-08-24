@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { Connection } from './types';
 
@@ -35,7 +35,7 @@ export function TableDataCell({
 
 export function TableRow({ children }: { children: React.ReactNode }) {
     return (
-        <tr className="bg-white odd:bg-gray-50">
+        <tr className="bg-white even:bg-gray-50">
             {children}
             {/* <td className="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                 <a href="#" className="text-indigo-600 hover:text-indigo-900">
@@ -55,12 +55,16 @@ export default function Table<T>({
     connection: Connection<T>;
     children: (item: T, i: number) => React.ReactNode;
 }) {
+    const nodes = useMemo(() => connection.edges.map(item => item.node).filter(Boolean), [
+        connection.edges,
+    ]);
+
     return (
         <table className="min-w-full">
             <thead>
                 <tr>{header}</tr>
             </thead>
-            <tbody>{connection.edges.map((item, i) => children(item.node, i))}</tbody>
+            <tbody>{nodes.map((node, i) => children(node, i))}</tbody>
         </table>
     );
 }

@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type SelectOrganizationQueryVariables = {
@@ -64,8 +65,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "organization",
-    "type": "String!"
+    "name": "organization"
   }
 ],
 v1 = {
@@ -171,7 +171,8 @@ return {
     "metadata": null,
     "name": "SelectOrganizationQuery",
     "selections": (v4/*: any*/),
-    "type": "Query"
+    "type": "Query",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -181,6 +182,7 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
+    "cacheID": "867567c56d4858299b09555b726dc3c8",
     "id": null,
     "metadata": {},
     "name": "SelectOrganizationQuery",

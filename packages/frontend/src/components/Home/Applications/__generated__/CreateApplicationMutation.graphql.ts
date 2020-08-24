@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type CreateApplicationInput = {
@@ -50,8 +51,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "CreateApplicationInput!"
+    "name": "input"
   }
 ],
 v1 = {
@@ -121,7 +121,8 @@ return {
     "metadata": null,
     "name": "CreateApplicationMutation",
     "selections": (v2/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -131,6 +132,7 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
+    "cacheID": "3eec78a1d3963a592dc4eef000ecb0da",
     "id": null,
     "metadata": {},
     "name": "CreateApplicationMutation",

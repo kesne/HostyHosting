@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type DeleteApplicationInput = {
@@ -35,8 +36,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "DeleteApplicationInput!"
+    "name": "input"
   }
 ],
 v1 = [
@@ -72,7 +72,8 @@ return {
     "metadata": null,
     "name": "DeleteApplicationMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -82,6 +83,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "55bd0ba522c0d9c676aceb8f781d2009",
     "id": null,
     "metadata": {},
     "name": "DeleteApplicationMutation",

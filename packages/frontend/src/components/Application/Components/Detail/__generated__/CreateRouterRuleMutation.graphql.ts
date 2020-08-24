@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type CreateRouterRuleInput = {
@@ -38,8 +39,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "CreateRouterRuleInput!"
+    "name": "input"
   }
 ],
 v1 = [
@@ -75,7 +75,8 @@ return {
     "metadata": null,
     "name": "CreateRouterRuleMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -85,6 +86,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "958d09457c0acbf41492d418f9e5bd11",
     "id": null,
     "metadata": {},
     "name": "CreateRouterRuleMutation",

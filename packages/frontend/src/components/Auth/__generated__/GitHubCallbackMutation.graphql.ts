@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type GitHubCallbackMutationVariables = {
@@ -34,8 +35,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "code",
-    "type": "String!"
+    "name": "code"
   }
 ],
 v1 = [
@@ -78,7 +78,8 @@ return {
     "metadata": null,
     "name": "GitHubCallbackMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -88,6 +89,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "979431d828c3ffcf1b15e0a5cdf59670",
     "id": null,
     "metadata": {},
     "name": "GitHubCallbackMutation",

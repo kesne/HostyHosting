@@ -3,36 +3,34 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type CreateSecretInput = {
-    containerGroupID: string;
-    key: string;
-    value: string;
+export type OrganizationPermission = "ADMIN" | "READ" | "WRITE" | "%future added value";
+export type UpdateOrganizationMembershipInput = {
+    id: string;
+    permission: OrganizationPermission;
 };
-export type EditOrAddSecretAddMutationVariables = {
-    input: CreateSecretInput;
+export type EditMembershipMutationVariables = {
+    input: UpdateOrganizationMembershipInput;
 };
-export type EditOrAddSecretAddMutationResponse = {
-    readonly createSecret: {
+export type EditMembershipMutationResponse = {
+    readonly updateOrganizationMembership: {
         readonly id: string;
-        readonly key: string;
-        readonly value: string;
+        readonly permission: OrganizationPermission;
     };
 };
-export type EditOrAddSecretAddMutation = {
-    readonly response: EditOrAddSecretAddMutationResponse;
-    readonly variables: EditOrAddSecretAddMutationVariables;
+export type EditMembershipMutation = {
+    readonly response: EditMembershipMutationResponse;
+    readonly variables: EditMembershipMutationVariables;
 };
 
 
 
 /*
-mutation EditOrAddSecretAddMutation(
-  $input: CreateSecretInput!
+mutation EditMembershipMutation(
+  $input: UpdateOrganizationMembershipInput!
 ) {
-  createSecret(input: $input) {
+  updateOrganizationMembership(input: $input) {
     id
-    key
-    value
+    permission
   }
 }
 */
@@ -55,9 +53,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Secret",
+    "concreteType": "OrganizationMembership",
     "kind": "LinkedField",
-    "name": "createSecret",
+    "name": "updateOrganizationMembership",
     "plural": false,
     "selections": [
       {
@@ -71,14 +69,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "key",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "value",
+        "name": "permission",
         "storageKey": null
       }
     ],
@@ -90,7 +81,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditOrAddSecretAddMutation",
+    "name": "EditMembershipMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -99,18 +90,18 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EditOrAddSecretAddMutation",
+    "name": "EditMembershipMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "65280eb53d0ff3db29869b39fe3ef48e",
+    "cacheID": "b0a0d130f88521c8087a15966b9ad82f",
     "id": null,
     "metadata": {},
-    "name": "EditOrAddSecretAddMutation",
+    "name": "EditMembershipMutation",
     "operationKind": "mutation",
-    "text": "mutation EditOrAddSecretAddMutation(\n  $input: CreateSecretInput!\n) {\n  createSecret(input: $input) {\n    id\n    key\n    value\n  }\n}\n"
+    "text": "mutation EditMembershipMutation(\n  $input: UpdateOrganizationMembershipInput!\n) {\n  updateOrganizationMembership(input: $input) {\n    id\n    permission\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '2bda51be956ea37a648d3b85ad724f2d';
+(node as any).hash = 'ddd0294b6945cbb0909f0ea802977d3f';
 export default node;

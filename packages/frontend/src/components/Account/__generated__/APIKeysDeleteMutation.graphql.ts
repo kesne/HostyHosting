@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
 export type APIKeysDeleteMutationVariables = {
@@ -32,8 +33,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!"
+    "name": "id"
   }
 ],
 v1 = [
@@ -69,7 +69,8 @@ return {
     "metadata": null,
     "name": "APIKeysDeleteMutation",
     "selections": (v1/*: any*/),
-    "type": "Mutation"
+    "type": "Mutation",
+    "abstractKey": null
   },
   "kind": "Request",
   "operation": {
@@ -79,6 +80,7 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
+    "cacheID": "8d7f0879ecc1eed31cf19ddc886b3f0b",
     "id": null,
     "metadata": {},
     "name": "APIKeysDeleteMutation",
