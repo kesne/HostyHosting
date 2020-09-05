@@ -12,13 +12,15 @@ import {
     InputType,
     ID,
 } from 'type-graphql';
-import { Organization } from '../entity/Organization';
+import { Organization, OrganizationClass } from '../entity/Organization';
 import { Context } from '../types';
 import { Application } from '../entity/Application';
 import { OrganizationMembership, OrganizationPermission } from '../entity/OrganizationMembership';
 import { createConnection, LimitOffsetArgs } from './types/Pagination';
 import { resolve } from 'path';
 import { OrganizationAccess } from '../utils/permissions';
+import { OrganizationInvite } from '../entity/OrganizationInvite';
+import Result from './types/Result';
 
 const [ApplicationConnection] = createConnection(Application);
 const [OrganizationMembershipConnection] = createConnection(OrganizationMembership);
@@ -42,7 +44,7 @@ export class OrganizationResolver {
         return Organization.findForUser(user, { username });
     }
 
-    @Mutation(() => OrganizationMembership)
+    @Mutation(() => Result)
     async inviteToOrganization(
         @Arg('input') input: InviteToOrganizationInput,
         @Ctx() { user }: Context,
@@ -53,20 +55,19 @@ export class OrganizationResolver {
             OrganizationPermission.ADMIN,
         );
 
-        // 1. See if the user exists.
-        // 2a. If user exists, create invite record, and send an email.
-        // 2b. If user does not exist, create invite record (not bound to user), send an email (the flow here is signup -> auto-accept the invite).
-        // 3. Add route to accept the invite.
-
-        console.log({ input });
-
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    id: 'TODO',
-                });
-            }, 2000);
+        const invite = OrganizationInvite.create({
+            organization,
+            email: input.email,
+            name: input.name,
+            permission: input.permission,
         });
+
+        // TODO: Snail mail the user telling them to join the organization.
+        await invite.save();
+
+        console.log(invite);
+
+        return new Result();
     }
 
     @FieldResolver(() => ApplicationConnection)

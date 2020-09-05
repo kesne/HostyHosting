@@ -5,6 +5,7 @@ import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import Auth from './components/Auth';
+import Invite from './components/Auth/Invite';
 import Application from './components/Application';
 import PrivateRoute from './components/PrivateRoute';
 import Account from './components/Account';
@@ -46,6 +47,9 @@ export default function App() {
                         <PrivateRoute path="/grant/:uuid" element={<GrantAPIKey />} />
                         <PrivateRoute path="/auth/*" unauthenticated element={<Auth />} />
                         <PrivateRoute path="/account/*" element={<Account />} />
+                        <Route path="/invite/:uuid">
+                            <Invite />
+                        </Route>
                         <Route path="*">
                             <FourOhFour />
                         </Route>

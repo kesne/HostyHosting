@@ -64,7 +64,7 @@ export default function RemoveMembership({ membership }: Props) {
             </IconButton>
             <Modal open={open} onClose={off}>
                 <Form onSubmit={onSubmit} disabled={isInFlight}>
-                    <ModalContent title={`Remove "${data.user.name}" From Organizaiton`}>
+                    <ModalContent title={`SRemove "${data.user.name}" From Organizaiton`}>
                         Are you sure you want to remove this user from the organization
                     </ModalContent>
                     <ModalFooter>

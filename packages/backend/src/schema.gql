@@ -207,9 +207,10 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
+  acceptInvite(id: ID!): Organization!
   deleteOrganizationMembership(input: DeleteOrganizationMembershipInput!): TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns!
   updateOrganizationMembership(input: UpdateOrganizationMembershipInput!): OrganizationMembership!
-  inviteToOrganization(input: InviteToOrganizationInput!): OrganizationMembership!
+  inviteToOrganization(input: InviteToOrganizationInput!): Result!
   createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
@@ -258,6 +259,13 @@ type Organization {
   memberCount: Int!
 }
 
+type OrganizationInvitePreview {
+  name: String!
+  email: String!
+  permission: OrganizationPermission!
+  organizationName: String!
+}
+
 type OrganizationMembership {
   id: ID!
   createdAt: DateTime!
@@ -297,6 +305,7 @@ type Query {
   component(id: ID!): Component!
   estimateMonthlyPrice(count: Int!, size: ContainerSize!): Int!
   notifications: [Notification!]!
+  organizationInvitePreview(id: ID!): OrganizationInvitePreview!
   organization(username: String!): Organization!
   router(organization: String!): Router!
   viewer: User!

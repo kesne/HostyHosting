@@ -33,7 +33,7 @@ export default function InviteMember({ open, onClose, organization }: Props) {
     const [commit, isInFlight] = useMutation<InviteMemberMutation>(graphql`
         mutation InviteMemberMutation($input: InviteToOrganizationInput!) {
             inviteToOrganization(input: $input) {
-                id
+                ok
             }
         }
     `);

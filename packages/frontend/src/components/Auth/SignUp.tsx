@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Container from './Container';
 import Link from '../ui/Link';
 import GithubButton from './GithubButton';
@@ -11,6 +11,7 @@ import SubmitButton from '../forms/SubmitButton';
 
 export default function SignUp() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [commit, isInFlight] = useMutation<SignUpMutation>(graphql`
         mutation SignUpMutation(
@@ -39,6 +40,8 @@ export default function SignUp() {
         });
     };
 
+    const state = (location.state ?? {}) as Record<string, string>;
+
     return (
         <Container
             title="Create a new account"
@@ -48,10 +51,30 @@ export default function SignUp() {
                 </span>
             }
         >
-            <Form autoComplete="on" className="space-y-6" onSubmit={onFinish} disabled={isInFlight}>
-                <Input label="Username" autoComplete="username" name="username" register={{ required: true }} autoFocus />
+            <Form
+                defaultValues={{
+                    name: state.name ?? '',
+                    email: state.email ?? '',
+                }}
+                autoComplete="on"
+                className="space-y-6"
+                onSubmit={onFinish}
+                disabled={isInFlight}
+            >
+                <Input
+                    label="Username"
+                    autoComplete="username"
+                    name="username"
+                    register={{ required: true }}
+                    autoFocus
+                />
                 <Input label="Name" autoComplete="name" name="name" register={{ required: true }} />
-                <Input label="Email" autoComplete="email" name="email" register={{ required: true }} />
+                <Input
+                    label="Email"
+                    autoComplete="email"
+                    name="email"
+                    register={{ required: true }}
+                />
                 <Input
                     label="Password"
                     name="password"

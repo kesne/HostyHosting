@@ -15,7 +15,7 @@ export type InviteMemberMutationVariables = {
 };
 export type InviteMemberMutationResponse = {
     readonly inviteToOrganization: {
-        readonly id: string;
+        readonly ok: boolean;
     };
 };
 export type InviteMemberMutation = {
@@ -30,7 +30,7 @@ mutation InviteMemberMutation(
   $input: InviteToOrganizationInput!
 ) {
   inviteToOrganization(input: $input) {
-    id
+    ok
   }
 }
 */
@@ -53,7 +53,7 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "OrganizationMembership",
+    "concreteType": "Result",
     "kind": "LinkedField",
     "name": "inviteToOrganization",
     "plural": false,
@@ -62,7 +62,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "ok",
         "storageKey": null
       }
     ],
@@ -87,14 +87,14 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4a86db8a5d34209d690cb8f307ac9177",
+    "cacheID": "f1bc5cee86d7529a61cdb39a614c7770",
     "id": null,
     "metadata": {},
     "name": "InviteMemberMutation",
     "operationKind": "mutation",
-    "text": "mutation InviteMemberMutation(\n  $input: InviteToOrganizationInput!\n) {\n  inviteToOrganization(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation InviteMemberMutation(\n  $input: InviteToOrganizationInput!\n) {\n  inviteToOrganization(input: $input) {\n    ok\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'd483bedbd850112971601419784cf1d4';
+(node as any).hash = 'a2df49d1c5cc49b3a70c35089d642804';
 export default node;

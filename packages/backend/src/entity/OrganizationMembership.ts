@@ -1,8 +1,4 @@
-import {
-    Entity,
-    ManyToOne,
-    Column,
-} from 'typeorm';
+import { Entity, ManyToOne, Column, Unique } from 'typeorm';
 import { User } from './User';
 import { ExternalEntity } from './BaseEntity';
 import { Organization } from './Organization';
@@ -37,6 +33,7 @@ registerEnumType(OrganizationPermission, {
 
 @ObjectType()
 @Entity()
+@Unique(['organization', 'user'])
 export class OrganizationMembership extends ExternalEntity {
     @Field(() => OrganizationPermission)
     @Column({ type: 'enum', enum: OrganizationPermission, default: OrganizationPermission.READ })
