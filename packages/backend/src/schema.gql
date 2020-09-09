@@ -207,10 +207,10 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
+  inviteToOrganization(input: InviteToOrganizationInput!): Result!
   acceptInvite(id: ID!): Organization!
   deleteOrganizationMembership(input: DeleteOrganizationMembershipInput!): TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns!
   updateOrganizationMembership(input: UpdateOrganizationMembershipInput!): OrganizationMembership!
-  inviteToOrganization(input: InviteToOrganizationInput!): Result!
   createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
@@ -256,7 +256,29 @@ type Organization {
   application(name: String!): Application!
   membership: OrganizationMembership!
   members(limit: Int!, offset: Int): OrganizationMembershipConnection!
+  invites(limit: Int!, offset: Int): OrganizationInviteConnection!
   memberCount: Int!
+}
+
+type OrganizationInvite {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+  name: String!
+  permission: OrganizationPermission!
+}
+
+type OrganizationInviteConnection {
+  pageInfo: PageInfo!
+  edges: [OrganizationInviteEdge!]!
+}
+
+type OrganizationInviteEdge {
+  node: OrganizationInvite!
+
+  """Used in `before` and `after` args"""
+  cursor: ID!
 }
 
 type OrganizationInvitePreview {

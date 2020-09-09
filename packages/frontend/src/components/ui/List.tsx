@@ -81,6 +81,6 @@ export default function List<T>({
         );
 
     return (
-        <ul className="divide-y divide-gray-200">{nodes.map((item, i) => children(item, i))}</ul>
+        <ul className="divide-y divide-gray-200 overflow-y-auto">{nodes.map((item, i) => children(item, i))}</ul>
     );
 }

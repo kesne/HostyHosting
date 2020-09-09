@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import HomePage from '../HomePage';
@@ -11,6 +11,7 @@ import formatDate from '../../../utils/formatDate';
 import InviteMember from './InviteMember';
 import RemoveMembership from './RemoveMembership';
 import EditMembership from './EditMembership';
+import InvitedMembers from './InvitedMembers';
 
 export default function Members() {
     const params = useParams();
@@ -81,9 +82,12 @@ export default function Members() {
             <HomePage
                 title="Members"
                 actions={
-                    <Button onClick={on} variant="primary">
-                        Invite Member
-                    </Button>
+                    <div className="flex items-center space-x-4">
+                        <InvitedMembers />
+                        <Button onClick={on} variant="primary">
+                            Invite Member
+                        </Button>
+                    </div>
                 }
             >
                 <div className="flex-1">
