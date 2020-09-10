@@ -16,6 +16,7 @@ import { Organization } from '../entity/Organization';
 import { Context } from '../types';
 import Result from './types/Result';
 import { User } from '../entity/User';
+import { TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns } from './OrganizationMembershipResolver';
 
 @ObjectType()
 class OrganizationInvitePreview {
@@ -107,5 +108,15 @@ export class OrganizationInviteResolver {
     async acceptInvite(@Arg('id', () => ID) id: string, @Ctx() { user }: Context) {
         const invite = await OrganizationInvite.accept(id, user);
         return invite.organization;
+    }
+
+    @Authorized()
+    @Mutation(() => TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns)
+    async removeInvite(@Arg('id', () => ID) id: string, @Ctx() { user }: Context) {
+        const invite = await OrganizationInvite.findOneOrFail(id);
+        const organization = await invite.organization;
+        organization.ensureUserHasAccess(user, OrganizationPermission.ADMIN);
+        await OrganizationInvite.delete(invite.id);
+        return invite;
     }
 }

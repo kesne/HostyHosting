@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import FocusTrap from 'focus-trap-react';
 import noScroll from 'no-scroll';
 import useKeyboardEvent from './util/useKeyboardEvent';
 import Portal from './util/Portal';
+import FocusTrap from './util/FocusTrap';
 import { AnimatePresence, motion } from 'framer-motion';
 import useMediaQuery from '../../utils/useMediaQuery';
 import { MEDIA_QUERIES } from './constants';
@@ -31,9 +31,7 @@ export const ModalFooterContext = React.createContext(false);
 export function ModalFooter({ children }: { children: React.ReactNode }) {
     return (
         <ModalFooterContext.Provider value={true}>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sticky bottom-0">
-                {children}
-            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sticky bottom-0">{children}</div>
         </ModalFooterContext.Provider>
     );
 }

@@ -39,6 +39,7 @@ export class OrganizationMembership extends ExternalEntity {
     @Column({ type: 'enum', enum: OrganizationPermission, default: OrganizationPermission.READ })
     permission!: OrganizationPermission;
 
+    @Field(() => Organization)
     @ManyToOne(
         () => Organization,
         organization => organization.memberships,

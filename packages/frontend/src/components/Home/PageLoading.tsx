@@ -1,5 +1,6 @@
 import React from 'react';
 import Text from '../ui/placeholder/Text';
+import Container from '../ui/placeholder/Container';
 
 export default function PageLoading() {
     return (
@@ -9,10 +10,10 @@ export default function PageLoading() {
             </div>
             <div className="divide-y divide-gray-200">
                 {Array.from({ length: 3 }, (_, i) => (
-                    <div key={i} className="p-6">
+                    <Container key={i} className="p-6">
                         <Text className="w-36" />
                         <Text className="w-64" />
-                    </div>
+                    </Container>
                 ))}
             </div>
         </div>

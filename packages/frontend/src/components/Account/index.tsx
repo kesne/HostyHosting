@@ -6,6 +6,7 @@ import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
 import Container from '../ui/Container';
 import APIKeys from './APIKeys';
 import Spinner from '../Spinner';
+import Organizations from './Organizations';
 
 function AccountLayout() {
     const { pathname } = useLocation();
@@ -40,7 +41,7 @@ export default function Account() {
             <Routes>
                 <Route path="/" element={<AccountLayout />}>
                     <Route path="billing" element={<Todo />} />
-                    <Route path="organizations" element={<Todo />} />
+                    <Route path="organizations" element={<Organizations />} />
                     <Route path="apikeys" element={<APIKeys />} />
                     <Route path="security" element={<Security />} />
                     <Route path="/" element={<EditAccount />} />

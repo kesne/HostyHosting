@@ -54,6 +54,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex flex-col flex-1 overflow-hidden bg-white border border-gray-200 border-t-0 border-b-0">
+                    {/* <PageLoading /> */}
                     <Suspense fallback={<PageLoading />}>
                         <Routes>
                             <Route path="/" element={<Applications />} />

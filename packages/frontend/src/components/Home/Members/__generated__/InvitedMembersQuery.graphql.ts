@@ -3,6 +3,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
+import { FragmentRefs } from "relay-runtime";
 export type InvitedMembersQueryVariables = {
     organization: string;
     limit: number;
@@ -21,8 +22,7 @@ export type InvitedMembersQueryResponse = {
                 readonly cursor: string;
                 readonly node: {
                     readonly id: string;
-                    readonly email: string;
-                    readonly name: string;
+                    readonly " $fragmentRefs": FragmentRefs<"InvitedMember_OrganizationInvite">;
                 };
             }>;
         };
@@ -53,13 +53,19 @@ query InvitedMembersQuery(
         cursor
         node {
           id
-          email
-          name
+          ...InvitedMember_OrganizationInvite
         }
       }
     }
     id
   }
+}
+
+fragment InvitedMember_OrganizationInvite on OrganizationInvite {
+  id
+  name
+  permission
+  email
 }
 */
 
@@ -86,116 +92,69 @@ v3 = [
     "variableName": "organization"
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
+v4 = [
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  }
+],
 v5 = {
   "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "limit",
-      "variableName": "limit"
-    },
-    {
-      "kind": "Variable",
-      "name": "offset",
-      "variableName": "offset"
-    }
-  ],
-  "concreteType": "OrganizationInviteConnection",
+  "args": null,
+  "concreteType": "PageInfo",
   "kind": "LinkedField",
-  "name": "invites",
+  "name": "pageInfo",
   "plural": false,
   "selections": [
     {
       "alias": null,
       "args": null,
-      "concreteType": "PageInfo",
-      "kind": "LinkedField",
-      "name": "pageInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "startCursor",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "endCursor",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "hasPreviousPage",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "hasNextPage",
-          "storageKey": null
-        }
-      ],
+      "kind": "ScalarField",
+      "name": "startCursor",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
-      "concreteType": "OrganizationInviteEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "cursor",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "OrganizationInvite",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v4/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "email",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
+      "kind": "ScalarField",
+      "name": "endCursor",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasPreviousPage",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
       "storageKey": null
     }
   ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "cursor",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -217,7 +176,47 @@ return {
         "name": "organization",
         "plural": false,
         "selections": [
-          (v5/*: any*/)
+          {
+            "alias": null,
+            "args": (v4/*: any*/),
+            "concreteType": "OrganizationInviteConnection",
+            "kind": "LinkedField",
+            "name": "invites",
+            "plural": false,
+            "selections": [
+              (v5/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "OrganizationInviteEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "OrganizationInvite",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v7/*: any*/),
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "InvitedMember_OrganizationInvite"
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
@@ -243,22 +242,78 @@ return {
         "name": "organization",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
-          (v4/*: any*/)
+          {
+            "alias": null,
+            "args": (v4/*: any*/),
+            "concreteType": "OrganizationInviteConnection",
+            "kind": "LinkedField",
+            "name": "invites",
+            "plural": false,
+            "selections": [
+              (v5/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "OrganizationInviteEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "OrganizationInvite",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v7/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "permission",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "email",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          (v7/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "87be54fc2a27f98a115ed48607c60e86",
+    "cacheID": "9423ba2852c702ff819bf894cd5a60c3",
     "id": null,
     "metadata": {},
     "name": "InvitedMembersQuery",
     "operationKind": "query",
-    "text": "query InvitedMembersQuery(\n  $organization: String!\n  $limit: Int!\n  $offset: Int\n) {\n  organization(username: $organization) {\n    invites(limit: $limit, offset: $offset) {\n      pageInfo {\n        startCursor\n        endCursor\n        hasPreviousPage\n        hasNextPage\n      }\n      edges {\n        cursor\n        node {\n          id\n          email\n          name\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query InvitedMembersQuery(\n  $organization: String!\n  $limit: Int!\n  $offset: Int\n) {\n  organization(username: $organization) {\n    invites(limit: $limit, offset: $offset) {\n      pageInfo {\n        startCursor\n        endCursor\n        hasPreviousPage\n        hasNextPage\n      }\n      edges {\n        cursor\n        node {\n          id\n          ...InvitedMember_OrganizationInvite\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment InvitedMember_OrganizationInvite on OrganizationInvite {\n  id\n  name\n  permission\n  email\n}\n"
   }
 };
 })();
-(node as any).hash = 'dea42041da508dbd7b756470624ab620';
+(node as any).hash = '1a54761c820bc8f2e6d8246f23442c30';
 export default node;

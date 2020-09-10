@@ -20,10 +20,16 @@ function SelectOrganizationWithData() {
                         id
                         username
                     }
-                    organizations {
-                        id
-                        name
-                        username
+                    organizations(limit: 20) {
+                        edges {
+                            node {
+                                organization {
+                                    id
+                                    name
+                                    username
+                                }
+                            }
+                        }
                     }
                 }
                 organization(username: $organization) {
@@ -73,9 +79,9 @@ function SelectOrganizationWithData() {
                     <DropdownItem to={`/orgs/${data.viewer.personalOrganization.username}`}>
                         Personal
                     </DropdownItem>
-                    {data.viewer.organizations.map(org => (
-                        <DropdownItem key={org.username} to={`/orgs/${org.username}`}>
-                            {org.name}
+                    {data.viewer.organizations.edges.map(({ node: { organization } }) => (
+                        <DropdownItem key={organization.username} to={`/orgs/${organization.username}`}>
+                            {organization.name}
                         </DropdownItem>
                     ))}
                 </BaseDropdown>

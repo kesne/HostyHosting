@@ -104,7 +104,7 @@ export default function Members() {
                         }
                     >
                         {membership => (
-                            <TableRow>
+                            <TableRow key={membership.id}>
                                 <TableDataCell>{membership.user.name}</TableDataCell>
                                 <TableDataCell variant="secondary">
                                     {membership.user.username}

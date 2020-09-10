@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import Pagination, { usePagination } from '../../ui/Pagination';
 import { InvitedMembersQuery } from './__generated__/InvitedMembersQuery.graphql';
 import List from '../../ui/List';
+import InvitedMember from './InvitedMember';
 
 export default function InvitedMembers() {
     const params = useParams();
@@ -28,8 +29,7 @@ export default function InvitedMembers() {
                             cursor
                             node {
                                 id
-                                email
-                                name
+                                ...InvitedMember_OrganizationInvite
                             }
                         }
                     }
@@ -44,26 +44,11 @@ export default function InvitedMembers() {
 
     return (
         <>
-            <Button onClick={on}>2 Invited Members</Button>
+            <Button onClick={on}>View Invites</Button>
             <SlideOver title="Invited Members" visible={visible} onClose={off}>
                 <ul className="divide-y divide-gray-200 overflow-y-auto">
                     <List connection={data.organization.invites}>
-                        {invite => (
-                            <li className="px-4 sm:px-6 py-4 relative">
-                                <div className="group flex justify-between items-center space-x-2">
-                                    <div className="flex-1 flex items-center min-w-0 relative">
-                                        <div className="truncate">
-                                            <div className="text-sm leading-5 font-medium text-gray-900 truncate">
-                                                {invite.name}
-                                            </div>
-                                            <div className="text-sm leading-5 text-gray-500 truncate">
-                                                {invite.email}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        )}
+                        {invite => <InvitedMember key={invite.id} invite={invite} />}
                     </List>
                 </ul>
                 <Pagination

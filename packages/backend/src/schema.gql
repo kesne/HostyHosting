@@ -207,10 +207,11 @@ type Mutation {
   createComponent(input: CreateComponentInput!): Component!
   createContainerGroup(input: CreateContainerGroupInput!): ContainerGroup!
   createEnvironment(input: CreateEnvironmentInput!): Environment!
-  inviteToOrganization(input: InviteToOrganizationInput!): Result!
-  acceptInvite(id: ID!): Organization!
   deleteOrganizationMembership(input: DeleteOrganizationMembershipInput!): TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns!
   updateOrganizationMembership(input: UpdateOrganizationMembershipInput!): OrganizationMembership!
+  inviteToOrganization(input: InviteToOrganizationInput!): Result!
+  acceptInvite(id: ID!): Organization!
+  removeInvite(id: ID!): TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns!
   createRouterRule(input: CreateRouterRuleInput!): RouterRule!
   createSecret(input: CreateSecretInput!): Secret!
   updateSecret(input: UpdateSecretInput!): Secret!
@@ -293,6 +294,7 @@ type OrganizationMembership {
   createdAt: DateTime!
   updatedAt: DateTime!
   permission: OrganizationPermission!
+  organization: Organization!
   user: User!
 }
 
@@ -439,5 +441,5 @@ type User {
   onboardTOTP: String!
   hasTOTP: Boolean!
   apiKeys(limit: Int!, offset: Int): APIKeyConnection!
-  organizations: [Organization!]!
+  organizations(limit: Int!, offset: Int): OrganizationMembershipConnection!
 }

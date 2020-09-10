@@ -14,7 +14,7 @@ class DeleteOrganizationMembershipInput {
 }
 
 @ObjectType()
-class TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns {
+export class TODORemoveOnceRelayUpdatesToSupportRequiredIDReturns {
 	@Field(() => ID, { nullable: true }) id?: string;
 }
 

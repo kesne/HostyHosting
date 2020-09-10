@@ -25,6 +25,7 @@ import { APIKey } from '../entity/APIKey';
 // from things that are associated purely with auth (signup, signin, exchangetotp, forgot password, reset password)
 
 const [APIKeyConnection] = createConnection(APIKey);
+const [OrganizationMembershipConnection] = createConnection(OrganizationMembership);
 
 @Resolver(() => User)
 export class UserResolver {
@@ -43,11 +44,29 @@ export class UserResolver {
     @CurrentUserOnly()
     @FieldResolver(() => APIKeyConnection)
     async apiKeys(@Ctx() { user }: Context, @Args() args: LimitOffsetArgs) {
-        return await APIKey.findAndPaginate({
-            where: {
-                user
-            }
-        }, args);
+        return await APIKey.findAndPaginate(
+            {
+                where: {
+                    user,
+                },
+            },
+            args,
+        );
+    }
+
+    // TODO: Should this be renamed given it actually returns memberships, and not the organizations themselves?
+    @CurrentUserOnly()
+    @FieldResolver(() => OrganizationMembershipConnection)
+    async organizations(@Ctx() { user }: Context, @Args() args: LimitOffsetArgs) {
+        return await OrganizationMembership.findAndPaginate(
+            {
+                where: {
+                    user,
+                },
+                relations: ['organization'],
+            },
+            args,
+        );
     }
 
     @Mutation(() => Result)
@@ -197,21 +216,6 @@ export class UserResolver {
         await PasswordReset.createForEmail(email);
 
         return new Result();
-    }
-
-    @FieldResolver(() => [Organization])
-    async organizations(@Root() user: User) {
-        const memberships = await OrganizationMembership.find({
-            where: {
-                user: user,
-            },
-            relations: ['organization'],
-        });
-
-        // TODO: This won't work when we have external collaborators.
-        return memberships
-            .map(membership => membership.organization)
-            .filter(org => !org.isPersonal);
     }
 
     // TODO: Transaction:
