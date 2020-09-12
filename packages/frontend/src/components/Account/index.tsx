@@ -5,8 +5,8 @@ import EditAccount from './EditAccount';
 import VerticalNav, { VerticalNavItem } from '../ui/VerticalNav';
 import Container from '../ui/Container';
 import APIKeys from './APIKeys';
-import Spinner from '../Spinner';
 import Organizations from './Organizations';
+import Card from '../ui/placeholder/Card';
 
 function AccountLayout() {
     const { pathname } = useLocation();
@@ -23,7 +23,7 @@ function AccountLayout() {
                 </VerticalNav>
             </div>
             <div className="flex-1 mt-4 sm:ml-6 sm:mt-0">
-                <Suspense fallback={<Spinner />}>
+                <Suspense fallback={<Card />}>
                     <Outlet />
                 </Suspense>
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import HomePage from '../HomePage';
@@ -9,7 +9,7 @@ import Pagination, { usePagination } from '../../ui/Pagination';
 import Table, { TableRow, TableHeader, TableDataCell } from '../../ui/Table';
 import formatDate from '../../../utils/formatDate';
 import InviteMember from './InviteMember';
-import RemoveMembership from './RemoveMembership';
+import RemoveMembership from '../../shared/RemoveMembership';
 import EditMembership from './EditMembership';
 import InvitedMembers from './InvitedMembers';
 
@@ -115,14 +115,17 @@ export default function Members() {
                                 <TableDataCell variant="secondary">
                                     {formatDate(membership.createdAt)}
                                 </TableDataCell>
-                                {canEdit && (
-                                    <TableDataCell>
-                                        <div className="text-right space-x-2">
-                                            <EditMembership membership={membership} />
-                                            <RemoveMembership membership={membership} />
-                                        </div>
-                                    </TableDataCell>
-                                )}
+                                {canEdit &&
+                                    (membership.id === data.organization.membership.id ? (
+                                        <TableDataCell />
+                                    ) : (
+                                        <TableDataCell>
+                                            <div className="text-right space-x-2">
+                                                <EditMembership membership={membership} />
+                                                <RemoveMembership membership={membership} />
+                                            </div>
+                                        </TableDataCell>
+                                    ))}
                             </TableRow>
                         )}
                     </Table>

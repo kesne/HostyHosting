@@ -63,7 +63,7 @@ export class UserResolver {
                 where: {
                     user,
                 },
-                relations: ['organization'],
+                relations: ['organization', 'user'],
             },
             args,
         );

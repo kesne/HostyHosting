@@ -15,7 +15,7 @@ export function TableDataCell({
     variant = 'primary',
     className,
 }: {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     variant?: 'primary' | 'secondary';
     className?: string;
 }) {

@@ -2,6 +2,9 @@ import React from 'react';
 import Card from '../ui/Card';
 import { useLazyLoadQuery, graphql } from 'react-relay/hooks';
 import { OrganizationsQuery } from './__generated__/OrganizationsQuery.graphql';
+import List, { ListItem } from '../ui/List';
+import Button from '../ui/Button';
+import RemoveMembership from '../shared/RemoveMembership';
 
 export default function Organizations() {
     const data = useLazyLoadQuery<OrganizationsQuery>(
@@ -20,6 +23,12 @@ export default function Organizations() {
                             cursor
                             node {
                                 id
+                                permission
+                                organization {
+                                    id
+                                    name
+                                }
+                                ...RemoveMembership_organizationMembership
                             }
                         }
                     }
@@ -32,26 +41,29 @@ export default function Organizations() {
         },
     );
 
-    console.log(data);
-
     return (
         <Card title="Manage Organizations">
-            Hi
-            {/* <List items={data.viewer.apiKeys.edges}>
-                {({ node: apiKey }) => (
-                    <ListItem key={apiKey.id}>
+            <List connection={data.viewer.organizations}>
+                {membership => (
+                    <ListItem key={membership.id}>
                         <div className="flex justify-between">
-                            <div>{apiKey.description}</div>
+                            <div className="flex items-center space-x-2">
+                                <div className="text-sm leading-5 font-medium text-gray-900 truncate">
+                                    {membership.organization.name}
+                                </div>
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-100 text-gray-800">
+                                    {membership.permission}
+                                </span>
+                            </div>
                             <div>
-                                {new Date(apiKey.createdAt).toLocaleString()}
-                                <Button variant="danger" onClick={handleDelete(apiKey.id)}>
-                                    Delete
-                                </Button>
+                                <RemoveMembership membership={membership}>
+                                    <Button variant="danger">Leave Organization</Button>
+                                </RemoveMembership>
                             </div>
                         </div>
                     </ListItem>
                 )}
-            </List> */}
+            </List>
         </Card>
     );
 }
