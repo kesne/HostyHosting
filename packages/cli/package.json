@@ -11,7 +11,7 @@
         "@apollo/client": "^3.0.0-beta.44",
         "@boost/cli": "^1.1.0",
         "conf": "^6.2.4",
-        "node-fetch": "^2.6.0",
+        "node-fetch": "^2.6.1",
         "open": "^7.0.3",
         "react": "^16.13.1"
     },
